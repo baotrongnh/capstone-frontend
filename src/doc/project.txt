@@ -1,0 +1,11 @@
+* Tech:
+- Project sử dụng TailwindCSS + Antd (Ưu tiên sử dụng container của Tailwind do 
+đã được setup chuẩn kích thước, các component khác sử dụng của antd cho đồng bộ)
+- Màu sắc chủ đạo được setup sẵn, nếu cần dùng hay vấn đề gì thì hợp liên hệ setup 
+lại (tránh set màu thủ công làm project không đồng bộ)
+
+*i18n:
+- Dùng để thay đổi ngôn ngữ project
+- Truy cập vào /messages/vi.json để viết thêm
+- Có mẫu trong /src/app/page.tsx:
+
