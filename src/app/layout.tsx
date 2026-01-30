@@ -5,6 +5,7 @@ import { ConfigProvider } from "antd"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { NextIntlClientProvider } from "next-intl"
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
@@ -31,9 +32,11 @@ export default function RootLayout({
             }
           }}
           >
-            <Header />
-            {children}
-            <Footer />
+            <NextIntlClientProvider>
+              <Header />
+              {children}
+              <Footer />
+            </NextIntlClientProvider>
           </ConfigProvider>
         </AntdRegistry>
       </body>
