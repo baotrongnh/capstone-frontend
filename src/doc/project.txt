@@ -1,16 +1,52 @@
-* Tech:
-- Project sử dụng TailwindCSS + Antd 
+PROJECT CONVENTIONS
 
-*i18n:
-- Dùng để thay đổi ngôn ngữ project
-- Truy cập vào /messages/vi.json để viết thêm
-- Có mẫu trong /src/app/page.tsx
+1) Tech Stack
+- UI Framework: Ant Design (Antd)
+- Styling: TailwindCSS
 
-* Style:
-- Ưu tiên sử dụng container của Tailwind do đã được setup chuẩn kích thước, các
-component khác sử dụng của antd cho đồng bộ.
-- Màu sắc chủ đạo được setup sẵn, nếu cần dùng hay vấn đề gì thì hợp liên hệ setup 
-lại (tránh set màu thủ công làm project không đồng bộ).
-- Trong globals.css có danh sách các màu đã được custom, ví dụ muốn dùng màu chủ đạo
-thì nhập trong class: text-[primary/secondary/mute], tương tự với bg và những thuộc tính khác.
-     ex: <h1 className="text-primary">test color</h1> 
+Nguyên tắc chung:
+- Ưu tiên tái sử dụng component của Antd để đảm bảo đồng bộ UI/UX.
+- Sử dụng Tailwind cho layout/spacing/utility classes; hạn chế viết CSS thủ công nếu không cần thiết.
+
+
+2) i18n (Internationalization)
+Mục tiêu:
+- Hỗ trợ đa ngôn ngữ và dễ dàng mở rộng nội dung theo locale.
+
+Quy ước:
+- Tất cả text hiển thị ra UI phải lấy từ file messages (không hard-code string trực tiếp trong component).
+- Thêm/chỉnh sửa bản dịch tại: /messages/vi.json (và các file locale khác nếu có).
+- Tham khảo cách dùng i18n tại: /src/app/page.tsx.
+
+Khuyến nghị:
+- Key đặt theo nhóm tính năng (feature-based) và có ngữ nghĩa rõ ràng.
+     Ví dụ: "auth.login.title", "common.save", "profile.form.fullName".
+
+
+3) Styling & Design Tokens
+Mục tiêu:
+- Đảm bảo giao diện đồng nhất, dễ maintain và tránh “lệch màu / lệch style” giữa các màn.
+
+Quy ước:
+- Layout:
+     - Ưu tiên sử dụng container đã được setup sẵn bằng Tailwind để đảm bảo kích thước và breakpoint thống nhất.
+- Component:
+     - Dùng component Antd cho các phần UI phổ biến (Button, Form, Modal, Table, ...).
+- Màu sắc:
+     - Không set màu thủ công tùy tiện (tránh dùng mã màu rải rác trong code).
+     - Các màu chủ đạo/tokens đã được cấu hình sẵn; nếu cần bổ sung/chỉnh sửa token thì cập nhật tập trung.
+     - Danh sách màu custom nằm trong globals.css.
+
+Cách dùng token (ví dụ):
+- Dùng class Tailwind theo token đã khai báo:
+     - text-primary / text-secondary / text-muted
+     - bg-primary / bg-secondary / bg-muted
+
+Ví dụ:
+<h1 className="text-primary">Title</h1>
+
+
+4) Checklist trước khi merge
+- Không hard-code text (đã đưa vào messages).
+- Không hard-code màu sắc (đã dùng token).
+- UI dùng Antd nhất quán; layout dùng Tailwind hợp lý.
