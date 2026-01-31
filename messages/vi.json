@@ -1,5 +1,23 @@
 {
   "HomePage": {
-    "title": "Xin chào"
+    "title": "Xin chào",
+    "tabs": {
+      "search": "Luôn cần tìm",
+      "area": "Khu vực",
+      "people": "Ai người",
+      "packages": "Những gói"
+    },
+    "button": {
+      "find": "Tìm kiếm"
+    },
+    "heroTitle": "GIẢI PHÁP THUÊ CĂN HỘ THÔNG MINH",
+    "heroSubtitle": "Nền tảng giải quyết những cần thiết liên quan đến tìm kiếm, dọn dẻp và niêu quý",
+    "exploreTitle": "Khám phá căn hộ theo khu vực",
+    "exploreSubtitle": "Có không ít lựa chọn để lựa chọn các loại tiền tệ từ các cơn gió, chi tiêu và mục được cấp phép.",
+    "servicesTitle": "Dịch vụ nội bất của chúng tôi",
+    "servicesSubtitle": "Các dịch vụ khác khác khác các dịch vụ khác nơi cấp cứ để bạn biết rõ nhất sẽ đạt được những gì khác.",
+    "testimonialsTitle": "Đánh Giá Nội Bất Của Khách Hàng",
+    "appPromoTitle": "Tải ứng dụng ToletX",
+    "appPromoSubtitle": "Có thể quy là những phối hợp Lương cấp nước dữ liệu, trạm các trực quản lý được cập nhật."
   }
 }
