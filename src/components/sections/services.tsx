@@ -24,16 +24,14 @@ export default function ServicesSection() {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50 pb-10 ">
+    <div className="bg-gradient-to-b from-white to-gray-50 mt-10 pb-10 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="m-auto w-[30%] h-[1px] mb-10 bg-gray-400"></div>
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            {t("servicesTitle") || "Dịch vụ nội bất của chúng tôi"}
+            {t("services.title")}
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            {t("servicesSubtitle") ||
-              "Các dịch vụ khác khác khác các dịch vụ khác nơi cấp cứ để bạn biết rõ nhất sẽ đạt được những gì khác."}
+            {t("services.subtitle")}
           </p>
         </div>
 
@@ -63,13 +61,10 @@ export default function ServicesSection() {
               <HandCoins size={30} />
             </div>
             <h3 className="text-xl font-bold text-gray-800 mb-3">
-              Hỗ trợ bảo trì và sửa chữa
+              {t("services.service4.title")}
             </h3>
             <p className="text-gray-600 leading-relaxed">
-              IntelliRentOps cho phép người thuê gửi yêu cầu bảo trì và theo dõi
-              tình trạng xử lý trực tiếp trên hệ thống.  Giúp việc bảo trì căn
-              hộ được quản lý rõ ràng, giảm chậm trễ và nâng cao trải nghiệm
-              thuê.
+              {t("services.service4.description")}
             </p>
           </div>
         </div>

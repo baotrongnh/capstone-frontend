@@ -2,76 +2,87 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import banner from "../../../public/img/banner7.jpg";
-import { Bell } from "lucide-react";
+import banner from "../../../public/img/banner7.jpg"; // Giả sử đây là ảnh phong cảnh
+import { Bell, MapPin, Star, Calendar, User } from "lucide-react"; // Thêm icon
 
 import app1 from "../../../public/img/app1.jpg";
 import app2 from "../../../public/img/app2.jpg";
+
 export default function AppPromoSection() {
-  const t = useTranslations("HomePage");
+  const t = useTranslations("HomePage.appPromoSection");
 
   return (
-    <div className="bg-linear-to-r from-blue-50 to-cyan-50 py-5">
+    <div className="relative bg-linear-to-r from-blue-50 to-cyan-50 h-120 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative">
-          <div className="relative z-10">
-            <div className="inline-block bg-[#A3D5FF] text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              TẢI ỨNG DỤNG
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
+          <div className="relative bottom-15 z-10 order-2 lg:order-1">
+            <div className="inline-block bg-[#A3D5FF] text-white px-4 py-2 rounded-[8px] text-sm font-medium mb-6">
+              {t("badge")}
             </div>
 
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Tải ứng dụng ToletX{" "}
-              <span className="text-[#0D4E73]">miễn phí</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              {t("title")}
+              <span className="text-[#0D4E73]">{t("free") || "Miễn phí"}</span>
             </h2>
 
-            <p className="text-gray-600 mb-8 leading-relaxed text-sm max-w-md">
-              {t("appPromoSubtitle") ||
-                "Có thể quy là những phối hợp Lương cấp nước dữ liệu, trạm các trực quản lý được cập nhật."}
+            <p className="text-gray-600 mb-8 leading-relaxed text-base md:text-lg max-w-lg">
+              {t("subtitle") ||
+                "Tìm kiếm và đặt phòng dễ dàng hơn bao giờ hết với ứng dụng di động của chúng tôi. Trải nghiệm mượt mà, ưu đãi độc quyền."}
             </p>
 
-            <div className="flex gap-4 h-15 w-100">
+            <div className="flex gap-4">
               <a
                 href="#"
-                className="flex items-center rounded-2xl gap-3 bg-black text-white px-4 py-3  hover:opacity-90 transition"
+                className="hover:opacity-90 transition transform hover:-translate-y-1 duration-300 bg-black p-2 rounded-[10px]"
               >
-                <img src={app1.src} alt="Google Play" />
+                <img src={app1.src} alt="Google Play" className="h-10 w-auto" />
               </a>
-
               <a
                 href="#"
-                className="flex items-center rounded-2xl  gap-3 bg-black text-white px-4 py-3  hover:opacity-90 transition"
+                className="hover:opacity-90 transition transform hover:-translate-y-1 duration-300 bg-black p-2 rounded-[10px]"
               >
-                <img src={app2.src} alt="Google Play" />
+                <img src={app2.src} alt="App Store" className="h-10 w-auto" />
               </a>
             </div>
           </div>
 
-          <div className="relative h-96 flex items-center justify-end">
-            <div className="absolute top-8 left-30 -translate-x-1/2 bg-[#FC6A8D] text-white px-4 py-3 rounded-lg shadow-xl text-xs font-semibold max-w-xs z-20">
-              <div className="flex items-start gap-2">
-                <Bell />
+          <div className="relative flex items-center justify-center order-1 lg:order-2 h-[600px] w-full">
+            <div className="absolute top-20 left-[-110] bg-[#FC6A8D] backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] max-w-[420px] z-20 animate-bounce-slow border border-white/50">
+              <div className="flex gap-3 items-start">
+                <div className="bg-[#fc8fa8] p-2 rounded-full text-white ">
+                  <Bell size={18} fill="currentColor" />
+                </div>
                 <div>
-                  <p className="font-semibold mb-1">
-                    Nhận ngay cơ hội để tìm nhân sự hiểu
+                  <p className="text-sm  text-white font-light">
+                    {t("notification.title")}
                   </p>
-                  <p>người bạn mỗi ngày</p>
+                  <p className="text-xs text-white mt-1">
+                    {t("notification.description")}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="relative w-56 h-96 rounded-3xl overflow-hidden shadow-2xl bg-black border-[10px] border-gray-900 flex items-center justify-center">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-7 bg-black rounded-b-3xl z-30"></div>
+            <div className="relative top-15 ml-50 bg-gray-900 p-[12px] rounded-[3rem] h-[550px] w-[280px] md:h-[620px] md:w-[350px] shadow-2xl flex flex-col">
+              <div className="absolute top-24 -left-[2px] h-6 w-[3px] bg-gray-700 rounded-l-sm"></div>
+              <div className="absolute top-36 -left-[2px] h-10 w-[3px] bg-gray-700 rounded-l-sm"></div>
+              <div className="absolute top-48 -left-[2px] h-10 w-[3px] bg-gray-700 rounded-l-sm"></div>
+              <div className="absolute top-32 -right-[2px] h-16 w-[3px] bg-gray-700 rounded-r-sm"></div>
 
-              <div className="w-full h-full p-2 rounded-2xl overflow-hidden bg-white">
-                <img
-                  src={banner.src}
-                  alt="App Screenshot"
-                  className="w-full h-full object-cover rounded-xl"
-                />
+              <div className="w-full h-full bg-white rounded-[2.3rem] overflow-hidden flex flex-col relative z-0">
+                <div className="flex-1 relative bg-gray-100 overflow-hidden shadow-inner">
+                  <img
+                    src={banner.src}
+                    alt="City Landscape"
+                    className="w-full h-full object-cover block"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
+                </div>
               </div>
             </div>
 
-            <div className="absolute bottom-0 right-0 w-40 h-40 bg-cyan-200 rounded-full opacity-30 -z-10"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-cyan-200 rounded-full blur-3xl opacity-20 -z-10"></div>
           </div>
         </div>
       </div>
