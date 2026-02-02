@@ -192,13 +192,9 @@ export default function TestimonialsSection() {
                       ({project.rating}/5)
                     </span>
                   </div>
-                  <Button
-                    type="primary"
-                    size="large"
-                    className="!bg-[#FFDA32] hover:!bg-yellow-400 !text-gray-900 !border-0 !font-bold rounded-full px-8 shadow-lg shadow-yellow-500/20"
-                  >
+                  <button className="bg-[#FFDA32] py-2 hover:bg-yellow-400 text-gray-900 border-0 font-bold rounded-full px-8 shadow-lg shadow-yellow-500/20">
                     Xem chi tiết
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>

@@ -137,8 +137,7 @@ export default function HeroSection() {
               <Button
                 key={key}
                 size="large"
-                style={{ borderRadius: 19 }}
-                className="px-4 py-2 bg-gray-100 !border-1 !border-blue-300 !text-[#909090] hover:!bg-[#3980F3] hover:!text-white transition"
+                className="px-4 py-2 bg-gray-100 border-2 border-blue-300 text-[#909090] hover:bg-[#3980F3] hover:text-white transition"
               >
                 {t(`cities.${key}`)}
               </Button>
