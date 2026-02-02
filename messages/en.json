@@ -1,5 +1,23 @@
 {
   "HomePage": {
-    "title": "Hello world!"
+    "title": "Hello world!",
+    "tabs": {
+      "search": "Always Looking",
+      "area": "Area",
+      "people": "People",
+      "packages": "Packages"
+    },
+    "button": {
+      "find": "Search"
+    },
+    "heroTitle": "SMART APARTMENT RENTAL SOLUTION",
+    "heroSubtitle": "Platform solving everything related to finding, moving and more",
+    "exploreTitle": "Explore apartments by area",
+    "exploreSubtitle": "Many options to choose from different areas across the country",
+    "servicesTitle": "Our Services",
+    "servicesSubtitle": "Complete services to help you find the perfect place",
+    "testimonialsTitle": "Customer Reviews",
+    "appPromoTitle": "Download ToletX App for Free",
+    "appPromoSubtitle": "Get instant access to property listings and updates"
   }
 }
