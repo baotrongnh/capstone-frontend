@@ -1,5 +1,8 @@
 {
   "HomePage": {
     "title": "Xin chào"
+  },
+  "ApartmentList": {
+    "filterTitle": "Lọc theo nhà"
   }
 }
