@@ -83,9 +83,9 @@ export default function PropertiesSection() {
     },
   ];
 
-  const handleScroll = (direction) => {
+  const handleScroll = (direction: any) => {
     const container = scrollContainerRef.current;
-    const scrollAmount = 320; // Card width + gap
+    const scrollAmount = 320;
 
     if (direction === "left") {
       container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
@@ -95,9 +95,9 @@ export default function PropertiesSection() {
   };
 
   return (
-    <div className="bg-white ">
+    <div className="bg-white relative ">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative">
+        <div className="relative z-1">
           <div
             ref={scrollContainerRef}
             className="flex gap-2 overflow-x-auto scroll-smooth pb-4"
