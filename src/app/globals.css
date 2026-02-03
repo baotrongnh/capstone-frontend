@@ -51,3 +51,7 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.auth-modal .ant-modal-container {
+  padding: 0 !important;
+}
