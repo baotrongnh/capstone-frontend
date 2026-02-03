@@ -81,14 +81,14 @@ export default function Filter() {
      ]
 
      return (
-          <div className='space-y-6'>
+          <div className='space-y-6 pr-6'>
                {/* Header */}
                <h2 className='text-primary font-bold text-2xl'>
                     {t('filterTitle')}
                </h2>
 
                {/* Price Range Section */}
-               <div className='bg-white shadow-sm rounded-lg p-5 border border-gray-100'>
+               <div className='bg-white shadow-sm rounded-md p-5 border border-gray-100'>
                     <h3 className='font-semibold text-base mb-4 text-gray-800'>
                          Khoảng Giá
                     </h3>
@@ -109,7 +109,7 @@ export default function Filter() {
                </div>
 
                {/* Popular Filters Section */}
-               <div className='bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden'>
+               <div className='bg-white shadow-sm rounded-md border border-gray-100 overflow-hidden'>
                     <Collapse
                          defaultActiveKey={['1']}
                          ghost
@@ -126,7 +126,7 @@ export default function Filter() {
                </div>
 
                {/* Amenities Section */}
-               <div className='bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden'>
+               <div className='bg-white shadow-sm rounded-md border border-gray-100 overflow-hidden'>
                     <Collapse
                          defaultActiveKey={['1']}
                          ghost
