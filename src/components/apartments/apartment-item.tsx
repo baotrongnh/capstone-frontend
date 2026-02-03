@@ -16,6 +16,7 @@ export default function ApartmentItem({ apartment }
                     height={500}
                     alt='phongtro'
                     className='w-33 aspect-square object-cover rounded-bl-sm rounded-tl-sm'
+                    priority
                />
                <div className='p-3'>
                     <div className='flex items-center'>

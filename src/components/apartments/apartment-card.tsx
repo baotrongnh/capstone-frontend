@@ -14,6 +14,7 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentProps
                          height={500}
                          alt='apartment'
                          className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
+                         priority
                     />
                </div>
 
