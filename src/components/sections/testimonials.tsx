@@ -209,7 +209,10 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      <div className="bg-white py-24 relative overflow-hidden">
+      <div className="bg-white py-24 relative overflow-hidden ">
+        <div className="absolute top-0 left-0 w-full z-1">
+          <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
+        </div>
         <div className="absolute top-0 right-0 w-[40%] h-full bg-cyan-50/30 -skew-x-12 translate-x-1/4 -z-10"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
