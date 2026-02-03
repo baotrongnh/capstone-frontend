@@ -7,9 +7,11 @@ import { BellRing, ChevronDown, MessageSquareText, User } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react";
 import AuthModal from "../auth-modal";
+import { useTranslations } from "next-intl"
 
 export default function Header() {
      const [open, setOpen] = useState(false)
+     const t1 = useTranslations("Auth")
 
      const items = [
           {
@@ -56,14 +58,14 @@ export default function Header() {
                               </Dropdown>
                          </div>
                          <Button type="primary" onClick={() => setOpen(true)}>
-                    Login
-               </Button>
+                              {t1("login")}
+                         </Button>
 
-               <AuthModal
-                    open={open}
-                    onClose={() => setOpen(false)}
-               >
-               </AuthModal>
+                         <AuthModal
+                              open={open}
+                              onClose={() => setOpen(false)}
+                         >
+                         </AuthModal>
                     </div>
                </div>
           </header>
