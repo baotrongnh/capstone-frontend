@@ -41,13 +41,13 @@ export default function HeroSection() {
       <div className="absolute top-0 left-0 w-full z-1">
         <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
       </div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => setOpen(true)}
         className="fixed top-4 left-4 z-10"
       >
         Liên hệ
-      </Button>
+      </Button> */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-2 relative">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 uppercase">
