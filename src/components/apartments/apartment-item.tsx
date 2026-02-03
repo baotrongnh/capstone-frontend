@@ -1,19 +1,21 @@
+import { ROUTES } from '@/constants/routes'
 import { ApartmentProps } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Divider, Rate } from 'antd'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function ApartmentItem({ apartment }
      : { apartment: ApartmentProps }) {
 
      return (
-          <div className='flex shadow-sm rounded-sm items-center my-4 hover:opacity-80 hover:shadow-md duration-150'>
+          <Link href={`${ROUTES.APARTMENT}/${apartment.id}`} className='flex shadow-sm rounded-md items-center hover:opacity-80 hover:shadow-md duration-150'>
                <Image
                     src='/images/phongtro.jpg'
                     width={500}
                     height={500}
                     alt='phongtro'
-                    className='w-36 aspect-square object-cover rounded-sm'
+                    className='w-33 aspect-square object-cover rounded-bl-sm rounded-tl-sm'
                />
                <div className='p-3'>
                     <div className='flex items-center'>
@@ -56,12 +58,12 @@ export default function ApartmentItem({ apartment }
 
                <div className='flex flex-1 flex-col justify-center items-end p-4'>
                     <p className='font-bold text-[#0C4A6E] text-xl'>
-                         13.000.000vnđ
+                         {apartment.price}
                     </p>
                     <p className='text-muted font-light'>
                          /tháng
                     </p>
                </div>
-          </div>
+          </Link>
      )
 }

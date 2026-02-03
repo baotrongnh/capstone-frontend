@@ -3,6 +3,7 @@
 import ApartmentItem from '@/components/apartments/apartment-item'
 import Filter from '@/components/apartments/filter'
 import SimilarApartments from '@/components/apartments/similar-apartments'
+import AppPromoSection from '@/components/sections/app-promo'
 import { Pagination } from 'antd'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
@@ -33,7 +34,7 @@ export default function ApartmentList() {
     <>
       <div className='container grid grid-cols-5'>
         <Filter />
-        <div className='col-span-4 pl-4'>
+        <div className='col-span-4 pl-7 space-y-6'>
           {apartment?.map((item, index) => (
             <ApartmentItem
               key={index}
@@ -54,6 +55,7 @@ export default function ApartmentList() {
       </div>
 
       <SimilarApartments />
+      <AppPromoSection />
     </>
   )
 }

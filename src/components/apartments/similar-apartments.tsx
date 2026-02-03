@@ -1,6 +1,7 @@
 'use client'
 
-import { Icon } from '@iconify/react'
+import { Button } from 'antd'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef } from 'react'
 import ApartmentCard from './apartment-card'
 
@@ -8,65 +9,66 @@ interface SimilarApartment {
      name: string
 }
 
+const apartments: SimilarApartment[] = [
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
+]
+
 export default function SimilarApartments() {
      const scrollContainerRef = useRef<HTMLDivElement>(null)
 
      const scroll = (direction: 'left' | 'right') => {
           if (scrollContainerRef.current) {
-               const scrollAmount = 300
-               const newScrollLeft = scrollContainerRef.current.scrollLeft +
-                    (direction === 'left' ? -scrollAmount : scrollAmount)
-
-               scrollContainerRef.current.scrollTo({
-                    left: newScrollLeft,
+               const scrollAmount = 320
+               scrollContainerRef.current.scrollBy({
+                    left: direction === 'left' ? - scrollAmount : scrollAmount,
                     behavior: 'smooth'
                })
           }
      }
 
-     const apartments: SimilarApartment[] = [
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-          { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     ]
-
      return (
-          <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-               {/* Header with Navigation */}
+          <div className='container py-8'>
                <div className='flex items-center justify-between mb-6'>
-                    <h2 className='text-2xl font-bold text-gray-900'>
+                    <h2 className='text-2xl font-bold'>
                          Các căn hộ tương tự
                     </h2>
 
-                    <div className='flex items-center gap-2'>
-                         <button
+                    <div className='flex gap-2'>
+                         <Button
+                              shape='circle'
                               onClick={() => scroll('left')}
-                              className='w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 hover:bg-blue-50 transition-all duration-200 group cursor-pointer'
-                              aria-label='Scroll left'
+                              size='large'
                          >
-                              <Icon icon="lucide:chevron-left" width={20} className='text-gray-600 group-hover:text-blue-600' />
-                         </button>
-                         <button
+                              <ChevronLeft />
+                         </Button>
+                         <Button
+                              type='primary'
+                              shape='circle'
                               onClick={() => scroll('right')}
-                              className='w-10 h-10 flex items-center justify-center rounded-full bg-primary hover:bg-primary transition-all duration-200 shadow-md cursor-pointer'
-                              aria-label='Scroll right'
+                              size='large'
                          >
-                              <Icon icon="lucide:chevron-right" width={20} className='text-white' />
-                         </button>
+                              <ChevronRight />
+                         </Button>
                     </div>
                </div>
 
-               {/* Scrollable Cards Container */}
                <div
                     ref={scrollContainerRef}
-                    className='flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4'
+                    className='flex gap-4 overflow-x-auto scroll-smooth'
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                >
+                    <style jsx>{`
+                         div::-webkit-scrollbar {
+                              display: none;
+                         }
+                    `}</style>
                     {apartments.map((apartment, index) => (
-                         <div key={index} className='shrink-0 w-70 sm:w-75'>
+                         <div key={index} className='flex-none w-72'>
                               <ApartmentCard apartment={apartment} />
                          </div>
                     ))}
