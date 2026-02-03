@@ -23,7 +23,7 @@ export default function Header() {
      ];
 
      return (
-          <header className="flex justify-center items-center h-22 w-full">
+          <header className="flex justify-center items-center h-22 w-full fixed top-0 left-0 z-50 bg-white shadow-sm">
                <div className="container flex justify-between items-center">
                     <div className="max-w-56">
                          LOGO
