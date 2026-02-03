@@ -50,7 +50,7 @@ export default function AuthForm({ form, onSubmit, t: tProp }: AuthFormProps) {
       </Button>
 
       <Divider plain size="small">
-        <p className="text-gray-500 text-xs">{mode === 'login' ? t('orSignInWithEmail') : t('orSignUpWithEmail')}</p>
+        <p className="text-muted text-xs">{mode === 'login' ? t('orSignInWithEmail') : t('orSignUpWithEmail')}</p>
       </Divider>
 
       <Form

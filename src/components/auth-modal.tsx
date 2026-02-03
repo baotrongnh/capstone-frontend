@@ -25,9 +25,8 @@ export default function AuthModal({
       centered
       className='max-w-250'
       wrapClassName="auth-modal"
-
     >
-      <div className='flex flex-col md:flex-row'>
+      <div className='flex flex-col md:flex-row overflow-hidden rounded-md'>
         <div className='hidden md:block md:w-1/2 relative'>
           <Image
             src='/images/authModal.png'
@@ -56,7 +55,7 @@ export default function AuthModal({
             />
             <div className='flex flex-col gap-0.5'>
               <p className='text-xl font-bold text-blue-950'>{t('realTime')}</p>
-              <p className='text-base text-gray-400'>{t('utilityMonitoring')}</p>
+              <p className='text-base text-muted'>{t('utilityMonitoring')}</p>
             </div>
           </div>
 

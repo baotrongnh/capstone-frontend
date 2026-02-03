@@ -1,17 +1,10 @@
-'use client'
-
 import { ROUTES } from "@/constants/routes"
 import { Icon } from "@iconify/react"
 import { Avatar, Button, Dropdown } from "antd"
 import { BellRing, ChevronDown, MessageSquareText, User } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react";
-import AuthModal from "../auth-modal";
-import { useTranslations } from "next-intl"
 
 export default function Header() {
-     const [open, setOpen] = useState(false)
-     const t1 = useTranslations("Auth")
 
      const items = [
           {
@@ -57,15 +50,6 @@ export default function Header() {
                                    <ChevronDown strokeWidth={1.6} size={15} />
                               </Dropdown>
                          </div>
-                         <Button type="primary" onClick={() => setOpen(true)}>
-                              {t1("login")}
-                         </Button>
-
-                         <AuthModal
-                              open={open}
-                              onClose={() => setOpen(false)}
-                         >
-                         </AuthModal>
                     </div>
                </div>
           </header>
