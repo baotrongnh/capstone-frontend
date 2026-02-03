@@ -1,5 +1,12 @@
-import { Button, Form, Input, Modal } from "antd";
-import React from "react";
+import { Button, Form, Input, Modal, ConfigProvider, message } from "antd";
+import React, { useState } from "react";
+import {
+  UserOutlined,
+  PhoneOutlined,
+  FileTextOutlined,
+  SendOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
 export default function ModalUser({
   open,
@@ -9,50 +16,108 @@ export default function ModalUser({
   onClose: () => void;
 }) {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-    const data = await form.validateFields();
-    console.log("first", data);
+    try {
+      const data = await form.validateFields();
+      setLoading(true);
+
+      setTimeout(() => {
+        console.log("Form Data:", data);
+        setLoading(false);
+        onClose();
+        form.resetFields();
+      }, 1500);
+    } catch (error) {
+      console.error("Validate Failed:", error);
+    }
   };
 
   return (
-    <Modal open={open} footer={null} onOk={() => {}} onCancel={onClose}>
-      <div className="w-[80%] mx-auto">
-        <h1 className="text-center text-3xl font-medium">Yêu cầu liên hệ</h1>
-        <p className="text-muted flex justify-center mt-2 mb-2">
-          Điền thông tin của bạn
-        </p>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#4F46E5",
+          borderRadius: 8,
+          controlHeight: 42,
+        },
+      }}
+    >
+      <Modal
+        open={open}
+        footer={null}
+        onCancel={onClose}
+        centered
+        destroyOnClose
+        width={500}
+      >
+        <div className="p-4">
+          <div className="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
+            <div className="mx-auto">
+              <h2 className="flex justify-center text-xl font-bold text-gray-800 m-0">
+                Yêu cầu liên hệ
+              </h2>
+              <p className="flex justify-center text-gray-500 text-sm m-0">
+                Nhập thông tin để chúng tôi hỗ trợ bạn
+              </p>
+            </div>
+          </div>
+          <Form form={form} layout="vertical" requiredMark={false}>
+            <Form.Item
+              name="fullName"
+              label={
+                <span className="font-medium text-gray-700">Họ và tên</span>
+              }
+              rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
+            >
+              <Input
+                prefix={<UserOutlined className="text-gray-400 mr-2" />}
+                placeholder="Ví dụ: Nguyễn Văn A"
+              />
+            </Form.Item>
 
-        <Form form={form} layout="vertical" className="space-y-4 mt-4">
-          <Form.Item
-            name="fullName"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-          >
-            <Input className="h-10" placeholder="Nhập họ và tên" />
-          </Form.Item>
+            <Form.Item
+              name="phoneNumber"
+              label={
+                <span className="font-medium text-gray-700">Số điện thoại</span>
+              }
+              rules={[
+                { required: true, message: "Vui lòng nhập số điện thoại" },
+                { pattern: /^[0-9]+$/, message: "Số điện thoại không hợp lệ" },
+              ]}
+            >
+              <Input
+                prefix={<PhoneOutlined className="text-gray-400 mr-2" />}
+                placeholder="Ví dụ: 0912 345 678"
+              />
+            </Form.Item>
 
-          <Form.Item
-            name="phoneNumber"
-            rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-          >
-            <Input className="h-10" placeholder="Nhập số điện thoại" />
-          </Form.Item>
+            <Form.Item
+              name="note"
+              label={<span className="font-medium text-gray-700">Ghi chú</span>}
+              rules={[{ required: true, message: "Vui lòng nhập nội dung" }]}
+            >
+              <Input.TextArea
+                rows={4}
+                placeholder="Nội dung cần hỗ trợ..."
+                className="resize-none"
+              />
+            </Form.Item>
 
-          <Form.Item
-            name="note"
-            rules={[{ required: true, message: "Vui lòng nhập ghi chú" }]}
-          >
-            <Input.TextArea
-              className="h-10"
-              rows={4}
-              placeholder="Nhập ghi chú"
-            />
-          </Form.Item>
-          <Button onClick={handleSend} className="w-full mt-4">
-            Gửi yêu cầu
-          </Button>
-        </Form>
-      </div>
-    </Modal>
+            <div className="flex justify-end items-center gap-3 mt-8  border-t border-gray-50">
+              <Button
+                type="primary"
+                onClick={handleSend}
+                loading={loading}
+                className="  shadow-md hover:shadow-lg "
+              >
+                Gửi yêu cầu
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Modal>
+    </ConfigProvider>
   );
 }
