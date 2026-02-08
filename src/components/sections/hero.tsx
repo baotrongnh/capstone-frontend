@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button, Image } from "antd";
@@ -154,7 +153,7 @@ export default function HeroSection() {
           </div>
 
           <div className="w-full">
-            <div className="relative rounded-[3px] h-[350px] w-full overflow-hidden">
+            <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
               <Image
                 src={
                   banner?.src ||
