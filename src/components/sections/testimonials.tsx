@@ -28,7 +28,7 @@ const TestimonialCard = ({
       `}
     >
       <div
-        className={`absolute -top-6 -left-6 rounded-full border-[4px] border-white overflow-hidden shadow-md bg-gray-200 transition-all
+        className={`absolute -top-6 -left-6 rounded-full border-4 border-white overflow-hidden shadow-md bg-gray-200 transition-all
          ${isActive ? "w-16 h-16 md:w-20 md:h-20 opacity-100" : "w-12 h-12 opacity-0"} 
       `}
       >
@@ -156,7 +156,7 @@ export default function TestimonialsSection() {
             </button>
 
             <div className="flex-1 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-              <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
+              <div className="w-48 h-48 md:w-64 md:h-64 shrink-0 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
                 <img
                   src={project.image}
                   alt={project.name}
@@ -249,7 +249,7 @@ export default function TestimonialsSection() {
                   />
                 </div>
 
-                <div className="flex flex-col gap-4 pt-8 sticky top-24 hidden sm:flex">
+                <div className="flex flex-col gap-4 pt-8 sticky top-24  sm:flex">
                   <button
                     onClick={handlePrevTestimonial}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition duration-200"
