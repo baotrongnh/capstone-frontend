@@ -34,7 +34,9 @@ export default function RootLayout({
           >
             <NextIntlClientProvider>
               <Header />
-              {children}
+              <main className="mt-24">
+                {children}
+              </main>
               <Footer />
             </NextIntlClientProvider>
           </ConfigProvider>

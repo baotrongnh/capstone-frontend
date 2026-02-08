@@ -1,5 +1,61 @@
 {
   "HomePage": {
-    "title": "Hello world!"
+    "title": "Hello world!",
+    "tabs": {
+      "search": "Always Looking",
+      "area": "Area",
+      "people": "People",
+      "packages": "Packages"
+    },
+    "button": {
+      "find": "Search"
+    },
+    "heroTitle": "SMART APARTMENT RENTAL SOLUTION",
+    "heroSubtitle": "Platform solving everything related to finding, moving and more",
+    "exploreTitle": "Explore apartments by area",
+    "exploreSubtitle": "Many options to choose from different areas across the country",
+    "servicesTitle": "Our Services",
+    "servicesSubtitle": "Complete services to help you find the perfect place",
+    "testimonialsTitle": "Customer Reviews",
+    "appPromoTitle": "Download ToletX App for Free",
+    "appPromoSubtitle": "Get instant access to property listings and updates"
+  },
+  "Auth": {
+    "welcome": "Welcome Back",
+    "joinIntelliServOps": "Join",
+    "signUpWithGoogle": "Sign Up with Google",
+    "signInWithGoogle": "Sign In with Google",
+    "orSignUpWithEmail": "Or sign up with email",
+    "orSignInWithEmail": "Or sign in with email",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Enter your full name",
+    "fullNameRequired": "Please input your name!",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "emailRequired": "Please input your email!",
+    "emailInvalid": "Please enter a valid email!",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "passwordRequired": "Please input your password!",
+    "passwordMinLength": "Password must be at least 6 characters!",
+    "rememberMe": "Remember me",
+    "login": "Login",
+    "register": "Register",
+    "doNotHaveAccount": "Do not have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "termsText": "By clicking 'Register', you acknowledge that you have read and accept the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "loginSuccessful": "Login successful!",
+    "registrationSuccessful": "Registration successful!",
+    "loginFailed": "Login failed!",
+    "registrationFailed": "Registration failed!",
+    "checkFormFields": "Please check the form fields!",
+    "realTime": "Real-time",
+    "utilityMonitoring": "Utility monitoring",
+    "tenantName": "Lê Phạm Trường Huy",
+    "tenantRole": "Long-term Tenant",
+    "testimonial": "Renting feels easy when I can <br /> track utilities, pay bills, and <br />request maintenance in one app."
   }
 }

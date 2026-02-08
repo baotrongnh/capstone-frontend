@@ -1,5 +1,174 @@
 {
   "HomePage": {
-    "title": "Xin chào"
+    "title": "Xin chào",
+    "tabs": {
+      "search": "Luôn cần tìm",
+      "area": "Khu vực",
+      "people": "Ai người",
+      "packages": "Những gói"
+    },
+    "button": {
+      "find": "Tìm kiếm"
+    },
+    "heroTitle": "GIẢI PHÁP THUÊ CĂN HỘ THÔNG MINH",
+    "heroSubtitle": "Nền tảng giải quyết những cần thiết liên quan đến tìm kiếm, dọn dẹp và tiện ích",
+    "exploreTitle": "Khám phá căn hộ theo khu vực",
+    "exploreSubtitle": "Có nhiều lựa chọn đa dạng tại các khu vực khác nhau trên cả nước.",
+
+    "searchForm": {
+      "roomType": "Loại căn hộ",
+      "roomTypePlaceholder": "Tất cả loại",
+      "area": "Khu vực",
+      "areaPlaceholder": "Chọn khu vực",
+      "people": "Số người ở",
+      "peoplePlaceholder": "1-2 người",
+      "price": "Khoảng giá",
+      "pricePlaceholder": "VNĐ / tháng",
+      "submit": "Tìm kiếm"
+    },
+
+    "cities": {
+      "all": "Tất cả",
+      "hanoi": "Hà Nội",
+      "danang": "Đà Nẵng",
+      "hatinh": "Hà Tĩnh",
+      "nhatrang": "Nha Trang",
+      "haiduong": "Hải Dương",
+      "hcm": "TP. Hồ Chí Minh",
+      "hatay": "Hà Tây"
+    },
+
+    "highlightCity": {
+      "name": "Thành Phố Hồ Chí Minh",
+      "description": "Thành phố năng động với nhiều lựa chọn căn hộ cho thuê ở đa dạng khu vực, mức giá và diện tích. Vị trí thuận tiện di chuyển, gần các tiện ích thiết yếu, đáp ứng tốt nhu cầu sinh hoạt và làm việc hằng ngày của người thuê.",
+      "tags": {
+        "publicTransport": "Phương tiện công cộng",
+        "convenientLife": "Đời sống tiện nghi",
+        "easyMove": "Di chuyển thuận tiện",
+        "economicCenter": "Trung tâm kinh tế",
+        "manyChoices": "Nhiều lựa chọn"
+      }
+    },
+
+    "services": {
+      "title": "Dịch vụ nổi bật của chúng tôi",
+      "subtitle": "Chúng tôi cung cấp các dịch vụ toàn diện để đáp ứng mọi nhu cầu của bạn.",
+      "service1": {
+        "title": "Tìm kiếm căn hộ",
+        "description": "Dễ dàng tìm kiếm căn hộ phù hợp với nhu cầu và ngân sách của bạn."
+      },
+      "service2": {
+        "title": "Quản lý hợp đồng",
+        "description": "Hỗ trợ quản lý hợp đồng thuê một cách chuyên nghiệp và minh bạch."
+      },
+      "service3": {
+        "title": "Dọn dẹp và bảo trì",
+        "description": "Cung cấp dịch vụ dọn dẹp và bảo trì định kỳ để giữ cho căn hộ luôn trong tình trạng tốt nhất."
+      },
+      "service4": {
+        "title": "Hỗ trợ bảo trì và sửa chữa",
+        "description": "IntelliRentOps cho phép người thuê gửi yêu cầu bảo trì và theo dõi tình trạng xử lý trực tiếp trên hệ thống. Giúp việc bảo trì căn hộ được quản lý rõ ràng, giảm chậm trễ và nâng cao trải nghiệm thuê."
+      }
+    },
+    "appPromoSection": {
+      "badge": "Tải về ngay",
+      "title": "Tải ứng dụng ToletX",
+      "free": "miễn phí",
+      "subtitle": "Đặt chỗ nhanh hơn, dễ dàng hơn và nhận ưu đãi độc quyền.",
+      "notification": {
+        "title": "Nhận ngay các ưu đãi cá nhân hóa!",
+        "description": " Ưu đãi ngay bây giờ!"
+      },
+      "altText": {
+        "googlePlay": "Tải trên Google Play",
+        "appStore": "Tải trên App Store",
+        "screenshot": "Giao diện ứng dụng"
+      }
+    },
+    "testimonialsTitle": "Đánh giá nổi bật của khách hàng"
+  },
+  "Footer": {
+    "contact": {
+      "addressLine1": "18/6, Main road Mohammadia",
+      "addressLine2": "Housing Ltd, Mohammadpur, Dhaka",
+      "phone": "+ (88) 01719 461736",
+      "email": "toletxbd@gmail.com"
+    },
+    "sections": {
+      "mainMenu": {
+        "title": "Menu chính",
+        "partner": "Trở thành đối tác",
+        "post": "Đăng tin bất động sản của bạn",
+        "request": "Yêu cầu thông tin bất động sản",
+        "valuation": "Định giá bất động sản"
+      },
+      "hive": {
+        "title": "Hive",
+        "buy": "Mua",
+        "sell": "Bán",
+        "blog": "Viết blog",
+        "group": "Phân nhóm"
+      },
+      "categories": {
+        "title": "Danh mục bất động sản",
+        "residential": "Nhà ở",
+        "commercial": "Thương mại",
+        "entertainment": "Giải trí",
+        "agricultural": "Nông nghiệp"
+      },
+      "about": {
+        "title": "Giới thiệu về ToletX",
+        "terms": "Điều khoản và điều kiện",
+        "privacy": "Chính sách bảo mật",
+        "legal": "Pháp lý & Tuân thủ",
+        "contact": "Liên hệ với chúng tôi",
+        "aboutUs": "Về chúng tôi",
+        "team": "Đội ngũ",
+        "faq": "Câu hỏi thường gặp",
+        "support": "Hỗ trợ"
+      }
+    },
+    "copyright": "Copyright {year} • ToletX, All Rights Reserved"
+  },
+  "ApartmentList": {
+    "filterTitle": "Lọc theo nhà"
+  },
+  "Auth": {
+    "welcome": "Chào mừng trở lại",
+    "joinIntelliServOps": "Tham gia",
+    "signUpWithGoogle": "Đăng ký với Google",
+    "signInWithGoogle": "Đăng nhập với Google",
+    "orSignUpWithEmail": "Hoặc đăng ký bằng email",
+    "orSignInWithEmail": "Hoặc đăng nhập bằng email",
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nhập họ và tên của bạn",
+    "fullNameRequired": "Vui lòng nhập tên của bạn!",
+    "emailAddress": "Địa chỉ Email",
+    "emailPlaceholder": "Nhập địa chỉ email",
+    "emailRequired": "Vui lòng nhập email của bạn!",
+    "emailInvalid": "Vui lòng nhập email hợp lệ!",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu",
+    "passwordRequired": "Vui lòng nhập mật khẩu của bạn!",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 6 ký tự!",
+    "rememberMe": "Ghi nhớ đăng nhập",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "doNotHaveAccount": "Chưa có tài khoản?",
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "termsText": "Bằng cách nhấp 'Đăng ký', bạn xác nhận rằng bạn đã đọc và chấp nhận",
+    "termsOfService": "Điều khoản dịch vụ",
+    "and": "và",
+    "privacyPolicy": "Chính sách bảo mật",
+    "loginSuccessful": "Đăng nhập thành công!",
+    "registrationSuccessful": "Đăng ký thành công!",
+    "loginFailed": "Đăng nhập thất bại!",
+    "registrationFailed": "Đăng ký thất bại!",
+    "checkFormFields": "Vui lòng kiểm tra các trường!",
+    "realTime": "Thời gian thực",
+    "utilityMonitoring": "Giám sát tiện ích",
+    "tenantName": "Lê Phạm Trường Huy",
+    "tenantRole": "Khách thuê dài hạn",
+    "testimonial": "Thuê nhà trở nên dễ dàng khi tôi có thể <br /> theo dõi tiện ích, thanh toán hóa đơn và <br />yêu cầu bảo trì trong một ứng dụng."
   }
 }
