@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button, Image } from "antd";
@@ -14,10 +13,10 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import banner from "../../../public/img/banner2.jpg";
-
+import ModalUser from "../modal/modalUser";
 export default function HeroSection() {
-  const t = useTranslations("HomePage"); // Hook lấy ngữ liệu
-
+  const t = useTranslations("HomePage");
+  const [open, setOpen] = useState(false);
   const [searchData, setSearchData] = useState({
     roomType: "",
     area: "",
@@ -25,7 +24,6 @@ export default function HeroSection() {
     price: "",
   });
 
-  // Danh sách key của các thành phố để map ra button
   const cityKeys = [
     "all",
     "hanoi",
@@ -38,8 +36,18 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen relative">
+      <div className="absolute top-0 left-0 w-full z-1">
+        <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
+      </div>
+      {/* <Button
+        type="primary"
+        onClick={() => setOpen(true)}
+        className="fixed top-4 left-4 z-10"
+      >
+        Liên hệ
+      </Button> */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-2 relative">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 uppercase">
             {t("heroTitle")}
@@ -145,7 +153,7 @@ export default function HeroSection() {
           </div>
 
           <div className="w-full">
-            <div className="relative rounded-[3px] h-[350px] w-full overflow-hidden">
+            <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
               <Image
                 src={
                   banner?.src ||
@@ -214,6 +222,7 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+      <ModalUser open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

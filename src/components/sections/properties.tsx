@@ -6,7 +6,7 @@ import { StarFilled } from "@ant-design/icons";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const [scrollPosition, setScrollPosition] = useState(0);
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const properties = [
     {
@@ -83,21 +83,24 @@ export default function PropertiesSection() {
     },
   ];
 
-  const handleScroll = (direction) => {
+  const handleScroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
-    const scrollAmount = 320; // Card width + gap
 
-    if (direction === "left") {
-      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    if (container) {
+      const scrollAmount = 300;
+
+      if (direction === "left") {
+        container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
     }
   };
 
   return (
-    <div className="bg-white ">
+    <div className="bg-white relative ">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative">
+        <div className="relative z-1">
           <div
             ref={scrollContainerRef}
             className="flex gap-2 overflow-x-auto scroll-smooth pb-4"
@@ -110,7 +113,7 @@ export default function PropertiesSection() {
             {properties.map((property) => (
               <div
                 key={property.id}
-                className="flex-shrink-0 w-[260px] bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+                className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
               >
                 <div className="h-40 overflow-hidden">
                   <img
@@ -142,7 +145,7 @@ export default function PropertiesSection() {
                       {[...Array(5)].map((_, i) => (
                         <StarFilled
                           key={i}
-                          className="text-[11px]  !text-yellow-400"
+                          className="text-[11px]  text-yellow-400!"
                         />
                       ))}
                     </div>
@@ -153,7 +156,7 @@ export default function PropertiesSection() {
 
                   <div className="flex justify-between space-y-1 text-xs text-gray-500 mb-2">
                     <div className="flex items-center gap-2">
-                      <span>758 lượt đánh giá</span>
+                      <span>758 đánh giá</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span>{property.period}</span>

@@ -24,8 +24,8 @@ export default function ServicesSection() {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50 mt-10 pb-10 ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-linear-to-b from-white to-gray-50 mt-10 pb-10 ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  ">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
             {t("services.title")}
@@ -35,7 +35,10 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-20">
+          <div className="absolute top-10 left-0 w-full -z-1">
+            <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
+          </div>
           {services.map((service) => (
             <div
               key={service.id}
