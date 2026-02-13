@@ -1,5 +1,6 @@
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
+import ChatSupport from "@/components/chat/chat-support"
 import { AntdRegistry } from "@ant-design/nextjs-registry"
 import { ConfigProvider } from "antd"
 import type { Metadata } from "next"
@@ -38,6 +39,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <ChatSupport />
             </NextIntlClientProvider>
           </ConfigProvider>
         </AntdRegistry>

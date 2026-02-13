@@ -170,5 +170,14 @@
     "tenantName": "Lê Phạm Trường Huy",
     "tenantRole": "Khách thuê dài hạn",
     "testimonial": "Thuê nhà trở nên dễ dàng khi tôi có thể <br /> theo dõi tiện ích, thanh toán hóa đơn và <br />yêu cầu bảo trì trong một ứng dụng."
+  },
+  "Chat": {
+    "title": "Hỗ trợ trực tuyến",
+    "supportTooltip": "Liên hệ hỗ trợ",
+    "welcomeMessage": "Xin chào! Chúng tôi có thể giúp gì cho bạn?",
+    "autoReply": "Cảm ơn bạn đã liên hệ! Nhân viên hỗ trợ sẽ phản hồi trong giây lát.",
+    "inputPlaceholder": "Nhập tin nhắn của bạn...",
+    "send": "Gửi",
+    "responseTime": "Thời gian phản hồi trung bình: 2-5 phút"
   }
 }
