@@ -43,17 +43,17 @@ export default function ApartmentItem({ apartment }
 
                     <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-0'>
                          <span className='flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:clock" width={14} className='md:w-4 md:h-4 flex-shrink-0' />
+                              <Icon icon="lucide:clock" width={14} className='md:w-4 md:h-4 shrink-0' />
                               Loại hình: Căn hộ
                          </span>
                          <Divider vertical className='hidden md:block' />
                          <span className='flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:car" width={14} className='md:w-4 md:h-4 flex-shrink-0' />
+                              <Icon icon="lucide:car" width={14} className='md:w-4 md:h-4 shrink-0' />
                               Cơ sở nhà để xe
                          </span>
                          <Divider vertical className='hidden lg:block' />
                          <span className='hidden lg:flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:users" width={14} className='md:w-4 md:h-4 flex-shrink-0' />
+                              <Icon icon="lucide:users" width={14} className='md:w-4 md:h-4 shrink-0' />
                               An toàn cho các bé gái và gia đình lưu trú
                          </span>
                     </div>

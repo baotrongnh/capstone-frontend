@@ -4,10 +4,9 @@ import ApartmentItem from '@/components/apartments/apartment-item'
 import Filter from '@/components/apartments/filter'
 import SimilarApartments from '@/components/apartments/similar-apartments'
 import AppPromoSection from '@/components/sections/app-promo'
-import { Button, Drawer, Pagination } from 'antd'
-import { useTranslations } from 'next-intl'
-import React, { useState } from 'react'
 import { Icon } from '@iconify/react'
+import { Button, Drawer, Pagination } from 'antd'
+import { useState } from 'react'
 
 const apartment = [
   {
@@ -28,7 +27,6 @@ const apartment = [
 ]
 
 export default function ApartmentList() {
-  const t = useTranslations('ApartmentList')
   const [currentPage, setCurrentPage] = useState(1)
   const [filterOpen, setFilterOpen] = useState(false)
 
