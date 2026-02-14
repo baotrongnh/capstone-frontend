@@ -1,3 +1,4 @@
+import { ApartmentDetail } from "@/types/apartment";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
@@ -7,7 +8,7 @@ export const apartmentService = {
           return data
      },
 
-     getById: async (id: string | number) => {
+     getById: async (id: string | number): Promise<ApartmentDetail> => {
           const { data } = await apiClient.get(`${endpoints.apartments}/${id}`)
           return data
      },

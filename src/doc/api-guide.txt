@@ -1,0 +1,603 @@
+# HƯỚNG DẪN THÊM API MỚI
+
+## 📌 MỤC LỤC
+1. [Tổng quan](#tổng-quan)
+2. [Cấu trúc thư mục](#cấu-trúc-thư-mục)
+3. [Quy trình 5 bước](#quy-trình-5-bước)
+4. [Ví dụ hoàn chỉnh](#ví-dụ-hoàn-chỉnh)
+5. [Sử dụng trong Component](#sử-dụng-trong-component)
+6. [Xử lý lỗi thường gặp](#xử-lý-lỗi-thường-gặp)
+
+---
+
+## 📖 TỔNG QUAN
+
+Khi thêm API mới, ta sẽ tạo 3 files:
+
+```
+types/{resource}.ts          → Định nghĩa kiểu dữ liệu
+services/{resource}.service.ts  → Gọi API
+query/use{Resource}.ts       → React hooks để dùng trong component
+```
+
+**Luồng hoạt động:**
+```
+Component → Hook → Service → API Server
+```
+
+---
+
+## 📂 CẤU TRÚC THƯ MỤC
+
+```
+src/
+├── types/                    # Khai báo types
+│   └── apartment.ts
+├── lib/
+│   ├── apis/
+│   │   ├── client.ts        # Axios config (đã setup sẵn)
+│   │   └── endpoints.ts     # Danh sách API endpoints
+│   └── services/
+│       └── apartment.service.ts  # Logic gọi API
+└── hooks/
+    └── query/
+        └── useApartments.ts  # React Query hooks
+```
+
+---
+
+## 🚀 QUY TRÌNH 5 BƯỚC
+
+### BƯỚC 1: Tạo Type (types/{resource}.ts)
+
+**Mục đích:** Định nghĩa kiểu dữ liệu cho API
+
+```typescript
+// src/types/apartment.ts
+
+// ✅ Enum cho các giá trị cố định
+export enum ApartmentStatus {
+  AVAILABLE = 'available',
+  RENTED = 'rented',
+  MAINTENANCE = 'maintenance'
+}
+
+// ✅ Interface cho dữ liệu từ API
+export interface Apartment {
+  id: string
+  buildingName: string
+  apartmentNumber: string
+  address: string
+  status: ApartmentStatus
+  baseRentPrice: string
+  images: string[] | null
+  createdAt: string
+}
+
+// ✅ Interface cho dữ liệu chi tiết (nếu khác với list)
+export interface ApartmentDetail extends Apartment {
+  description: string
+  rooms: Room[]
+  partner: Partner
+}
+
+// ✅ Interface cho tạo mới
+export interface CreateApartmentDto {
+  buildingName: string
+  apartmentNumber: string
+  address: string
+  baseRentPrice: string
+}
+
+// ✅ Interface cho cập nhật (các field optional)
+export interface UpdateApartmentDto extends Partial<CreateApartmentDto> {}
+```
+
+**💡 Lưu ý:**
+- Đặt tên theo convention: `{Resource}`, `{Resource}Detail`, `Create{Resource}Dto`, `Update{Resource}Dto`
+- Export tất cả để dùng chung
+
+---
+
+### BƯỚC 2: Thêm Endpoint (lib/apis/endpoints.ts)
+
+```typescript
+// src/lib/apis/endpoints.ts
+
+export const endpoints = {
+  apartments: createEndpoints('apartments'),
+  bookings: createEndpoints('bookings'),    // ← Thêm mới ở đây
+  // ... các endpoints khác
+}
+```
+
+---
+
+### BƯỚC 3: Tạo Service (lib/services/{resource}.service.ts)
+
+**Mục đích:** Xử lý logic gọi API
+
+```typescript
+// src/lib/services/apartment.service.ts
+
+import { ApartmentDetail, CreateApartmentDto, UpdateApartmentDto } from "@/types/apartment"
+import { apiClient } from "../apis/client"
+import { endpoints } from "../apis/endpoints"
+
+export const apartmentService = {
+  // GET danh sách
+  getList: async (params?: any) => {
+    const { data } = await apiClient.get(endpoints.apartments, { params })
+    return data
+  },
+
+  // GET chi tiết theo ID
+  getById: async (id: string | number): Promise<ApartmentDetail> => {
+    const { data } = await apiClient.get(`${endpoints.apartments}/${id}`)
+    return data
+  },
+
+  // POST tạo mới
+  create: async (apartmentData: CreateApartmentDto) => {
+    const { data } = await apiClient.post(endpoints.apartments, apartmentData)
+    return data
+  },
+
+  // PUT cập nhật
+  update: async (id: string | number, apartmentData: UpdateApartmentDto) => {
+    const { data } = await apiClient.put(`${endpoints.apartments}/${id}`, apartmentData)
+    return data
+  },
+
+  // DELETE xóa
+  delete: async (id: string | number) => {
+    const { data } = await apiClient.delete(`${endpoints.apartments}/${id}`)
+    return data
+  }
+}
+```
+
+**💡 Template cho service mới:**
+```typescript
+export const {resource}Service = {
+  getList: async (params?) => apiClient.get(endpoints.{resource}, { params }),
+  getById: async (id) => apiClient.get(`${endpoints.{resource}}/${id}`),
+  create: async (data) => apiClient.post(endpoints.{resource}, data),
+  update: async (id, data) => apiClient.put(`${endpoints.{resource}}/${id}`, data),
+  delete: async (id) => apiClient.delete(`${endpoints.{resource}}/${id}`)
+}
+```
+
+---
+
+### BƯỚC 4: Tạo Hooks (hooks/query/use{Resource}.ts)
+
+**Mục đích:** Tạo React hooks để dùng trong component (sử dụng React Query)
+
+```typescript
+// src/hooks/query/useApartments.ts
+'use client'
+
+import { apartmentService } from '@/lib/services/apartment.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { message } from 'antd'
+
+// ========== QUERIES (GET) ==========
+
+// Lấy danh sách
+export const useApartments = (params?: any) => {
+  return useQuery({
+    queryKey: ['apartments', params],
+    queryFn: () => apartmentService.getList(params)
+  })
+}
+
+// Lấy chi tiết theo ID
+export const useApartment = (id: string | number) => {
+  return useQuery({
+    queryKey: ['apartments', id],
+    queryFn: () => apartmentService.getById(id),
+    enabled: !!id  // Chỉ fetch khi có id
+  })
+}
+
+// ========== MUTATIONS (POST/PUT/DELETE) ==========
+
+// Tạo mới
+export const useCreateApartment = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: apartmentService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apartments'] })  // Refresh lại list
+      message.success('Tạo thành công!')
+    },
+    onError: (error: any) => {
+      message.error(error?.message || 'Có lỗi xảy ra!')
+    }
+  })
+}
+
+// Cập nhật
+export const useUpdateApartment = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string | number, data: any }) =>
+      apartmentService.update(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['apartments'] })
+      queryClient.invalidateQueries({ queryKey: ['apartments', variables.id] })
+      message.success('Cập nhật thành công!')
+    },
+    onError: (error: any) => {
+      message.error(error?.message || 'Có lỗi xảy ra!')
+    }
+  })
+}
+
+// Xóa
+export const useDeleteApartment = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: apartmentService.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apartments'] })
+      message.success('Xóa thành công!')
+    },
+    onError: (error: any) => {
+      message.error(error?.message || 'Có lỗi xảy ra!')
+    }
+  })
+}
+```
+
+**💡 Template cho hooks mới:**
+```typescript
+'use client'
+
+import { {resource}Service } from '@/lib/services/{resource}.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { message } from 'antd'
+
+// GET list
+export const use{Resources} = (params?: any) => {
+  return useQuery({
+    queryKey: ['{resources}', params],
+    queryFn: () => {resource}Service.getList(params)
+  })
+}
+
+// GET by ID
+export const use{Resource} = (id: string | number) => {
+  return useQuery({
+    queryKey: ['{resources}', id],
+    queryFn: () => {resource}Service.getById(id),
+    enabled: !!id
+  })
+}
+
+// CREATE
+export const useCreate{Resource} = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: {resource}Service.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{resources}'] })
+      message.success('Tạo thành công!')
+    }
+  })
+}
+
+// UPDATE
+export const useUpdate{Resource} = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }) => {resource}Service.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{resources}'] })
+      message.success('Cập nhật thành công!')
+    }
+  })
+}
+
+// DELETE
+export const useDelete{Resource} = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: {resource}Service.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{resources}'] })
+      message.success('Xóa thành công!')
+    }
+  })
+}
+```
+
+---
+
+### BƯỚC 5: Sử dụng trong Component
+
+Done! Bây giờ có thể dùng trong component.
+
+---
+
+## 💻 VÍ DỤ HOÀN CHỈNH
+
+### 1. Hiển thị danh sách (GET List)
+
+```tsx
+// pages/apartments/page.tsx
+'use client'
+
+import { useApartments } from '@/hooks/query/useApartments'
+
+export default function ApartmentsPage() {
+  const { data: apartments, isLoading } = useApartments()
+
+  if (isLoading) return <div>Đang tải...</div>
+
+  return (
+    <div>
+      {apartments?.map(apartment => (
+        <div key={apartment.id}>
+          <h3>{apartment.buildingName}</h3>
+          <p>{apartment.address}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+---
+
+### 2. Hiển thị chi tiết (GET by ID)
+
+```tsx
+// pages/apartments/[id]/page.tsx
+'use client'
+
+import { useApartment } from '@/hooks/query/useApartments'
+import { use } from 'react'
+
+export default function ApartmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const { data: apartment, isLoading } = useApartment(id)
+
+  // ✅ Phải check null trước khi dùng
+  if (isLoading || !apartment) {
+    return <div>Đang tải...</div>
+  }
+
+  return (
+    <div>
+      <h1>{apartment.buildingName}</h1>
+      <p>{apartment.address}</p>
+      <p>{apartment.description}</p>
+    </div>
+  )
+}
+```
+
+**⚠️ Quan trọng:** Phải check `!apartment` trước khi render vì data có thể undefined
+
+---
+
+### 3. Tạo mới (POST)
+
+```tsx
+// components/CreateApartmentForm.tsx
+'use client'
+
+import { useCreateApartment } from '@/hooks/query/useApartments'
+import { Form, Input, Button } from 'antd'
+
+export default function CreateApartmentForm() {
+  const [form] = Form.useForm()
+  const createMutation = useCreateApartment()
+
+  const handleSubmit = async (values: any) => {
+    await createMutation.mutateAsync(values)
+    form.resetFields()
+  }
+
+  return (
+    <Form form={form} onFinish={handleSubmit}>
+      <Form.Item name="buildingName" label="Tên tòa nhà">
+        <Input />
+      </Form.Item>
+
+      <Form.Item name="apartmentNumber" label="Số căn hộ">
+        <Input />
+      </Form.Item>
+
+      <Button 
+        type="primary" 
+        htmlType="submit"
+        loading={createMutation.isPending}
+      >
+        Tạo căn hộ
+      </Button>
+    </Form>
+  )
+}
+```
+
+---
+
+### 4. Cập nhật (PUT)
+
+```tsx
+// components/EditApartmentForm.tsx
+'use client'
+
+import { useUpdateApartment, useApartment } from '@/hooks/query/useApartments'
+import { Form, Input, Button } from 'antd'
+import { useEffect } from 'react'
+
+export default function EditApartmentForm({ id }: { id: string }) {
+  const [form] = Form.useForm()
+  const { data: apartment } = useApartment(id)
+  const updateMutation = useUpdateApartment()
+
+  // Set giá trị ban đầu
+  useEffect(() => {
+    if (apartment) {
+      form.setFieldsValue(apartment)
+    }
+  }, [apartment, form])
+
+  const handleSubmit = async (values: any) => {
+    await updateMutation.mutateAsync({ id, data: values })
+  }
+
+  return (
+    <Form form={form} onFinish={handleSubmit}>
+      <Form.Item name="buildingName" label="Tên tòa nhà">
+        <Input />
+      </Form.Item>
+
+      <Button 
+        type="primary" 
+        htmlType="submit"
+        loading={updateMutation.isPending}
+      >
+        Cập nhật
+      </Button>
+    </Form>
+  )
+}
+```
+
+---
+
+### 5. Xóa (DELETE)
+
+```tsx
+// components/ApartmentCard.tsx
+'use client'
+
+import { useDeleteApartment } from '@/hooks/query/useApartments'
+import { Button, Popconfirm } from 'antd'
+
+export default function ApartmentCard({ apartment }: any) {
+  const deleteMutation = useDeleteApartment()
+
+  const handleDelete = async () => {
+    await deleteMutation.mutateAsync(apartment.id)
+  }
+
+  return (
+    <div>
+      <h3>{apartment.buildingName}</h3>
+      
+      <Popconfirm
+        title="Bạn có chắc muốn xóa?"
+        onConfirm={handleDelete}
+        okText="Xóa"
+        cancelText="Hủy"
+      >
+        <Button 
+          danger 
+          loading={deleteMutation.isPending}
+        >
+          Xóa
+        </Button>
+      </Popconfirm>
+    </div>
+  )
+}
+```
+
+---
+
+## ⚠️ XỬ LÝ LỖI THƯỜNG GẶP
+
+### Lỗi 1: Type 'undefined' is not assignable
+
+**Nguyên nhân:** Data từ API có thể undefined
+
+```tsx
+// ❌ Sai
+<Component data={apartment} />  // apartment có thể undefined
+
+// ✅ Đúng - Cách 1: Check trước khi render
+if (isLoading || !apartment) return <div>Loading...</div>
+return <Component data={apartment} />
+
+// ✅ Đúng - Cách 2: Component tự xử lý
+export default function Component({ data }: { data?: ApartmentDetail }) {
+  if (!data) return null
+  return <div>{data.name}</div>
+}
+```
+
+---
+
+### Lỗi 2: Data không refresh sau khi create/update/delete
+
+**Nguyên nhân:** Quên invalidate cache
+
+```tsx
+// ✅ Phải có invalidateQueries trong onSuccess
+onSuccess: () => {
+  queryClient.invalidateQueries({ queryKey: ['apartments'] })
+  message.success('Thành công!')
+}
+```
+
+---
+
+### Lỗi 3: API được gọi nhiều lần
+
+**Nguyên nhân:** Component re-render nhiều lần
+
+```tsx
+// ✅ Sử dụng enabled để control
+const { data } = useApartment(id, {
+  enabled: !!id  // Chỉ fetch khi có id
+})
+```
+
+---
+
+## ✅ CHECKLIST KHI THÊM API MỚI
+
+- [ ] Tạo types trong `types/{resource}.ts`
+- [ ] Thêm endpoint trong `lib/apis/endpoints.ts`
+- [ ] Tạo service trong `lib/services/{resource}.service.ts`
+- [ ] Tạo hooks trong `hooks/query/use{Resource}.ts`
+- [ ] Test API với Postman/Thunder Client
+- [ ] Implement trong component
+- [ ] Check loading state
+- [ ] Check error handling
+- [ ] Check null/undefined data
+
+---
+
+## 📚 THAM KHẢO NHANH
+
+**Query Keys:**
+```typescript
+['apartments']              // Tất cả apartments
+['apartments', params]      // Apartments với filters
+['apartments', id]          // Apartment cụ thể
+['apartments', 'building', id]  // Custom query
+```
+
+**React Query Methods:**
+```typescript
+isLoading     // Lần đầu fetch
+isFetching    // Đang fetch (kể cả refetch)
+isPending     // Đang chờ mutation
+isError       // Có lỗi
+error         // Error object
+data          // Dữ liệu trả về
+```
+
+---
+
+**🎉 Hoàn thành! Giờ bạn đã có thể thêm API mới vào dự án.**
