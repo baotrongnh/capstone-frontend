@@ -1,6 +1,5 @@
 import { Image } from 'antd'
 import Link from 'next/link'
-import React from 'react'
 
 interface ApartmentGalleryProps {
   images: string[]

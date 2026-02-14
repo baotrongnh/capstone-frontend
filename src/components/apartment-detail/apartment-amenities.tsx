@@ -1,18 +1,16 @@
 import { Button } from 'antd'
 import {
-  Shirt,
-  Utensils,
   AirVent,
-  PawPrint,
   Bed,
-  Tv,
-  FlaskConical,
-  Wifi,
-  Sun,
   BookOpen,
-  ShowerHead
+  FlaskConical,
+  PawPrint,
+  Shirt,
+  Sun,
+  Tv,
+  Utensils,
+  Wifi,
 } from 'lucide-react'
-import React from 'react'
 
 export default function ApartmentAmenities() {
   const amenities = [

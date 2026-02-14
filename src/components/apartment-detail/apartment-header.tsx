@@ -1,6 +1,5 @@
 import { Button, Divider, Rate } from 'antd'
 import { MapPin } from 'lucide-react'
-import React from 'react'
 
 interface ApartmentHeaderProps {
   title: string
