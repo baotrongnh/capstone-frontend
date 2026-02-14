@@ -1,16 +1,21 @@
 'use client'
 
-import SimilarApartments from '@/components/apartments/similar-apartments'
 import ApartmentActivities from '@/components/apartment-detail/apartment-activities'
 import ApartmentAmenities from '@/components/apartment-detail/apartment-amenities'
 import ApartmentDescription from '@/components/apartment-detail/apartment-description'
 import ApartmentGallery from '@/components/apartment-detail/apartment-gallery'
 import ApartmentHeader from '@/components/apartment-detail/apartment-header'
 import ApartmentLocation from '@/components/apartment-detail/apartment-location'
-import { Breadcrumb } from 'antd'
-import React from 'react'
+import SimilarApartments from '@/components/apartments/similar-apartments'
+import { useApartment } from '@/hooks/query/useApartments'
+import { Breadcrumb, Spin } from 'antd'
+import { use } from 'react'
 
-export default function ApartmentDetail() {
+export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
+
+  const { id } = use(params)
+  const { data: apartment, isLoading } = useApartment(id)
+
   // Temporary data - replace with actual API data
   const apartmentData = {
     title: 'Căn hộ Dhanmondi Central RD Grand Circle Inn Dhaka - 1100',
@@ -29,9 +34,14 @@ Tiếp tục tham quan Nhà thờ St. Paul, kiệt tác kiến ​​trúc của
 Là nơi cất giữ Vương miện Hoàng gia, Tháp London được bảo vệ bởi đội cận vệ Beefeaters nổi tiếng, và cung điện hùng vĩ này đã được sử dụng như một pháo đài và nhà tù trong suốt lịch sử của nó. Hướng dẫn viên sẽ đưa bạn đến Cổng Kẻ phản bội, nơi các tù nhân bước vào Tháp lần cuối cùng`
   }
 
+  if (isLoading || !apartment) {
+    return <div>Loading.....</div>
+  }
+
   return (
-    <div className='container h-min-screen'>
+    <div className='container h-min-screen px-4 sm:px-6 lg:px-8'>
       <Breadcrumb
+        className='py-4'
         items={[
           { title: 'Home' },
           { title: 'Apartment' }
@@ -41,10 +51,7 @@ Là nơi cất giữ Vương miện Hoàng gia, Tháp London được bảo vệ
       <ApartmentGallery images={apartmentData.images} />
 
       <ApartmentHeader
-        title={apartmentData.title}
-        location={apartmentData.location}
-        rating={apartmentData.rating}
-        totalReviews={apartmentData.totalReviews}
+        apartmentData={apartment}
       />
 
       <ApartmentDescription description={apartmentData.description} />

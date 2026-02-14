@@ -81,15 +81,15 @@ export default function Filter() {
      ]
 
      return (
-          <div className='space-y-6 pr-6'>
+          <div className='space-y-4 md:space-y-6 lg:pr-6'>
                {/* Header */}
-               <h2 className='text-primary font-bold text-2xl'>
+               <h2 className='text-primary font-bold text-xl md:text-2xl'>
                     {t('filterTitle')}
                </h2>
 
                {/* Price Range Section */}
-               <div className='bg-white shadow-sm rounded-md p-5 border border-gray-100'>
-                    <h3 className='font-semibold text-base mb-4 text-gray-800'>
+               <div className='bg-white shadow-sm rounded-md p-4 md:p-5 border border-gray-100'>
+                    <h3 className='font-semibold text-sm md:text-base mb-3 md:mb-4 text-gray-800'>
                          Khoảng Giá
                     </h3>
                     <Slider
@@ -103,7 +103,7 @@ export default function Filter() {
                               formatter: (value) => formatPrice(value || 0)
                          }}
                     />
-                    <p className='text-sm text-gray-600 mt-3 font-medium'>
+                    <p className='text-xs md:text-sm text-gray-600 mt-2 md:mt-3 font-medium'>
                          {formatPrice(priceRange[0])}
                     </p>
                </div>
