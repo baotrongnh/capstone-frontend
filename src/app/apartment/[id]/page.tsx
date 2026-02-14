@@ -30,8 +30,9 @@ Là nơi cất giữ Vương miện Hoàng gia, Tháp London được bảo vệ
   }
 
   return (
-    <div className='container h-min-screen'>
+    <div className='container h-min-screen px-4 sm:px-6 lg:px-8'>
       <Breadcrumb
+        className='py-4'
         items={[
           { title: 'Home' },
           { title: 'Apartment' }

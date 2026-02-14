@@ -10,14 +10,14 @@ export default function ApartmentActivities() {
   ]
 
   return (
-    <div className='mt-10'>
-      <div className='flex items-center gap-2 mb-4'>
-        <Map className='text-gray-700' size={24} />
-        <h2 className='font-semibold text-xl'>Hoạt Động</h2>
+    <div className='mt-8 md:mt-10'>
+      <div className='flex items-center gap-2 mb-3 md:mb-4'>
+        <Map className='text-gray-700 flex-shrink-0' size={20} />
+        <h2 className='font-semibold text-lg md:text-xl'>Hoạt Động</h2>
       </div>
-      <div className='bg-white rounded-lg p-6'>
-        <p className='font-medium mb-3'>Bạn Có Thể Làm Gì?</p>
-        <ul className='space-y-2 text-sm text-gray-700'>
+      <div className='bg-white rounded-lg p-4 md:p-6 border border-gray-100'>
+        <p className='font-medium mb-2 md:mb-3 text-sm md:text-base'>Bạn Có Thể Làm Gì?</p>
+        <ul className='space-y-2 text-xs md:text-sm text-gray-700'>
           {activities.map((activity, index) => (
             <li key={index} className='flex gap-2'>
               <span>•</span>
