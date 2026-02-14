@@ -31,8 +31,8 @@ export default function ApartmentList() {
   const [currentPage, setCurrentPage] = useState(1)
 
   return (
-    <>
-      <div className='container grid grid-cols-5'>
+    <div className='container'>
+      <div className='grid grid-cols-5'>
         <Filter />
         <div className='col-span-4 pl-7 space-y-6'>
           {apartment?.map((item, index) => (
@@ -55,7 +55,7 @@ export default function ApartmentList() {
       </div>
 
       <SimilarApartments />
-      {/* <AppPromoSection /> */}
-    </>
+      <AppPromoSection />
+    </div>
   )
 }
