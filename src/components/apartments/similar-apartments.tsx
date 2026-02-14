@@ -23,7 +23,7 @@ export default function SimilarApartments() {
      const carouselRef = useRef<CarouselRef>(null)
 
      return (
-          <div className='container py-10'>
+          <div className='py-10'>
                <div className='flex items-center justify-between mb-5'>
                     <h2 className='text-2xl font-bold'>
                          Các căn hộ tương tự

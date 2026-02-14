@@ -57,5 +57,14 @@
     "tenantName": "Lê Phạm Trường Huy",
     "tenantRole": "Long-term Tenant",
     "testimonial": "Renting feels easy when I can <br /> track utilities, pay bills, and <br />request maintenance in one app."
+  },
+  "Chat": {
+    "title": "Online Support",
+    "supportTooltip": "Contact Support",
+    "welcomeMessage": "Hello! How can we help you today?",
+    "autoReply": "Thank you for contacting us! Our support team will respond shortly.",
+    "inputPlaceholder": "Type your message...",
+    "send": "Send",
+    "responseTime": "Average response time: 2-5 minutes"
   }
 }
