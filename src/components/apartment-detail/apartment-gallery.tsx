@@ -8,7 +8,7 @@ interface ApartmentGalleryProps {
 export default function ApartmentGallery({ images }: ApartmentGalleryProps) {
   return (
     <div className='w-full h-auto grid grid-cols-2 md:grid-cols-4 grid-rows-2 md:grid-rows-2 gap-2 md:gap-4 mt-5'>
-      <div className='col-span-2 md:col-span-3 row-span-1 md:row-span-2 overflow-hidden rounded-lg h-[250px] md:h-[400px]'>
+      <div className='col-span-2 md:col-span-3 row-span-1 md:row-span-2 overflow-hidden rounded-lg h-62.5 md:h-100'>
         <Image
           height='100%'
           width="100%"
@@ -18,7 +18,7 @@ export default function ApartmentGallery({ images }: ApartmentGalleryProps) {
           style={{ objectFit: 'cover' }}
         />
       </div>
-      <div className='overflow-hidden rounded-lg h-[120px] md:h-[195px]'>
+      <div className='overflow-hidden rounded-lg h-30 md:h-48.75'>
         <Image
           height='100%'
           width="100%"
@@ -29,7 +29,7 @@ export default function ApartmentGallery({ images }: ApartmentGalleryProps) {
         />
       </div>
 
-      <div className='relative overflow-hidden rounded-lg h-[120px] md:h-[195px]'>
+      <div className='relative overflow-hidden rounded-lg h-30 md:h-48.75'>
         <Image
           height='100%'
           width="100%"

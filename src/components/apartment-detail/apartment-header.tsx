@@ -20,7 +20,7 @@ export default function ApartmentHeader({ title, location, rating, totalReviews 
 
       <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
         <span className='text-muted flex items-center gap-1 text-sm md:text-base'>
-          <MapPin size={16} className='flex-shrink-0' />
+          <MapPin size={16} className='shrink-0' />
           <span className='line-clamp-1'>{location}</span>
         </span>
         <Divider orientation="vertical" className='hidden sm:block' />
