@@ -5,19 +5,9 @@ import { Button, Carousel } from 'antd'
 import { CarouselRef } from 'antd/es/carousel'
 import { useRef } from 'react'
 import ApartmentCard from './apartment-card'
+import { Apartment } from '@/types/apartment'
 
-interface SimilarApartment {
-     name: string
-}
-
-const apartments: SimilarApartment[] = [
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-     { name: 'Dhanmondi: Hotel Grand Circle Inn Dhak Sài Gòn' },
-]
+const apartments: Apartment[] = []
 
 export default function SimilarApartments() {
      const carouselRef = useRef<CarouselRef>(null)

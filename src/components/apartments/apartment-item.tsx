@@ -1,13 +1,12 @@
 import { ROUTES } from '@/constants/routes'
-import { ApartmentProps } from '@/types/apartment'
+import { Apartment } from '@/types/apartment'
+import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import { Divider, Rate } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function ApartmentItem({ apartment }
-     : { apartment: ApartmentProps }) {
-
+export default function ApartmentItem({ apartment }: { apartment: Apartment }) {
      return (
           <Link href={`${ROUTES.APARTMENT}/${apartment.id}`} className='flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md duration-150 overflow-hidden'>
                <Image
@@ -38,7 +37,7 @@ export default function ApartmentItem({ apartment }
                     </div>
 
                     <h1 className='font-semibold text-base md:text-lg lg:text-xl text-[#1c2b38] pt-1.5 pb-2.5 line-clamp-2'>
-                         {apartment.name}
+                         {apartment.buildingName}
                     </h1>
 
                     <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-0'>
@@ -62,7 +61,7 @@ export default function ApartmentItem({ apartment }
                <div className='flex md:flex-col justify-between md:justify-center items-center md:items-end p-3 md:p-4 bg-gray-50 md:bg-transparent border-t md:border-t-0'>
                     <div className='flex md:flex-col items-baseline md:items-end gap-1'>
                          <p className='font-bold text-[#0C4A6E] text-lg md:text-xl'>
-                              {apartment.price}
+                              {formatVND(apartment.baseRentPrice)}
                          </p>
                          <p className='text-muted font-light text-sm md:text-base'>
                               /tháng

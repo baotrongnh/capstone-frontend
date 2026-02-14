@@ -32,7 +32,7 @@ export default function ApartmentAmenities() {
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
         {amenities.map((amenity, index) => (
           <div key={index} className='flex items-center gap-2 md:gap-3'>
-            <amenity.icon className='text-blue-600 flex-shrink-0' size={20} />
+            <amenity.icon className='text-blue-600 shrink-0' size={20} />
             <span className='text-xs md:text-sm'>{amenity.label}</span>
           </div>
         ))}

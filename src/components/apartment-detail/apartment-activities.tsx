@@ -12,7 +12,7 @@ export default function ApartmentActivities() {
   return (
     <div className='mt-8 md:mt-10'>
       <div className='flex items-center gap-2 mb-3 md:mb-4'>
-        <Map className='text-gray-700 flex-shrink-0' size={20} />
+        <Map className='text-gray-700 shrink-0' size={20} />
         <h2 className='font-semibold text-lg md:text-xl'>Hoạt Động</h2>
       </div>
       <div className='bg-white rounded-lg p-4 md:p-6 border border-gray-100'>

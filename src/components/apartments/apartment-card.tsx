@@ -1,9 +1,9 @@
-import { ApartmentProps } from '@/types/apartment'
+import { Apartment } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import Image from 'next/image'
 
-export default function ApartmentCard({ apartment }: { apartment: ApartmentProps }) {
+export default function ApartmentCard({ apartment }: { apartment: Apartment }) {
      return (
           <div className='bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer group'>
                {/* Image */}
@@ -22,7 +22,7 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentProps
                <div className='p-4'>
                     {/* Title */}
                     <h3 className='font-semibold text-base text-gray-800 mb-3 line-clamp-2 leading-snug min-h-11'>
-                         {apartment.name}
+                         {apartment.buildingName}
                     </h3>
 
                     {/* Features */}
