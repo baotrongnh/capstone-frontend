@@ -1,3 +1,4 @@
 export const ROUTES = {
-     APARTMENT: '/apartment'
-}
+  APARTMENT: "/apartment",
+  CONTACT: "/contact",
+};
