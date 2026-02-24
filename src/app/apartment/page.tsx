@@ -1,31 +1,31 @@
-'use client'
+"use client";
 
-import ApartmentItem from '@/components/apartments/apartment-item'
-import Filter from '@/components/apartments/filter'
-import SimilarApartments from '@/components/apartments/similar-apartments'
-import AppPromoSection from '@/components/sections/app-promo'
-import { useApartments } from '@/hooks/query/useApartments'
-import { Apartment } from '@/types/apartment'
-import { Icon } from '@iconify/react'
-import { Button, Drawer, Pagination } from 'antd'
-import { useState } from 'react'
+import ApartmentItem from "@/components/apartments/apartment-item";
+import Filter from "@/components/apartments/filter";
+import SimilarApartments from "@/components/apartments/similar-apartments";
+import AppPromoSection from "@/components/sections/app-promo";
+import { useApartments } from "@/hooks/query/useApartments";
+import { Apartment } from "@/types/apartment";
+import { Icon } from "@iconify/react";
+import { Button, Drawer, Pagination } from "antd";
+import { useState } from "react";
 
 export default function ApartmentList() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [filterOpen, setFilterOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filterOpen, setFilterOpen] = useState(false);
 
-  const { data: apartments } = useApartments()
+  const { data: apartments } = useApartments();
 
-  console.log(apartments)
+  console.log(apartments);
 
   return (
-    <div className='container'>
+    <div className="container">
       {/* Mobile Filter Button */}
-      <div className='lg:hidden mb-4'>
+      <div className="lg:hidden mb-4">
         <Button
           icon={<Icon icon="lucide:filter" width={18} />}
           onClick={() => setFilterOpen(true)}
-          className='flex items-center gap-2'
+          className="flex items-center gap-2"
         >
           Bộ lọc
         </Button>
@@ -37,26 +37,23 @@ export default function ApartmentList() {
         placement="left"
         onClose={() => setFilterOpen(false)}
         open={filterOpen}
-        className='lg:hidden'
+        className="lg:hidden"
       >
         <Filter />
       </Drawer>
 
-      <div className='grid grid-cols-1 lg:grid-cols-5 gap-6'>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Desktop Filter */}
-        <div className='hidden lg:block'>
+        <div className="hidden lg:block">
           <Filter />
         </div>
-        <div className='lg:col-span-4 lg:pl-7 space-y-6'>
+        <div className="lg:col-span-4 lg:pl-7 space-y-6">
           {apartments?.data?.map((apartment: Apartment) => (
-            <ApartmentItem
-              key={apartment.id}
-              apartment={apartment}
-            />
+            <ApartmentItem key={apartment.id} apartment={apartment} />
           ))}
 
           {/* Pagination */}
-          <div className='flex justify-center mt-8'>
+          <div className="flex justify-center mt-8">
             <Pagination
               current={currentPage}
               total={50}
@@ -71,5 +68,5 @@ export default function ApartmentList() {
       <SimilarApartments />
       <AppPromoSection />
     </div>
-  )
+  );
 }
