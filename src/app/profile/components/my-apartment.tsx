@@ -158,7 +158,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                 <Row gutter={[16, 16]}>
                     {/* Electricity */}
                     <Col xs={24} sm={12}>
-                        <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-orange-200">
+                        <Card className="bg-linear-to-br from-yellow-50 to-orange-50 border-orange-200">
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
                                     <ThunderboltOutlined className="text-white text-xl" />
@@ -198,7 +198,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
 
                     {/* Water */}
                     <Col xs={24} sm={12}>
-                        <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+                        <Card className="bg-linear-to-br from-blue-50 to-cyan-50 border-blue-200">
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
                                     <FireOutlined className="text-white text-xl" />
@@ -238,7 +238,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                 </Row>
 
                 {/* Total Summary */}
-                <Card className="mt-4 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+                <Card className="mt-4 bg-linear-to-br from-purple-50 to-pink-50 border-purple-200">
                     <Row gutter={16} align="middle">
                         <Col xs={24} sm={8}>
                             <Statistic
