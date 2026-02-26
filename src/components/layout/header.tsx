@@ -15,24 +15,28 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-function getInitialLocale(): string {
-  const cookieLocale = document.cookie
-    .split("; ")
-    .find(row => row.startsWith(`${APP_NAME}_LOCALE=`))
-    ?.split("=")[1]
-
-  if (cookieLocale) {
-    return cookieLocale
-  } else {
-    document.cookie = `${APP_NAME}_LOCALE=${DEFAULT_LOCALE}`
-    return DEFAULT_LOCALE
-  }
-}
-
 export default function Header() {
   const t = useTranslations('Header')
   const router = useRouter()
-  const [locale, setLocale] = useState(getInitialLocale())
+
+  // Lazy initialization to avoid server-side issues
+  const [locale, setLocale] = useState(() => {
+    if (typeof window === 'undefined') {
+      return DEFAULT_LOCALE
+    }
+
+    const cookieLocale = document.cookie
+      .split("; ")
+      .find(row => row.startsWith(`${APP_NAME}_LOCALE=`))
+      ?.split("=")[1]
+
+    if (!cookieLocale) {
+      document.cookie = `${APP_NAME}_LOCALE=${DEFAULT_LOCALE}; path=/`
+      return DEFAULT_LOCALE
+    }
+
+    return cookieLocale
+  })
 
   const toggleLanguage = () => {
     const newLocale = locale === 'vi' ? 'en' : 'vi'

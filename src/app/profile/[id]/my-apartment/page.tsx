@@ -20,7 +20,7 @@ export default function MyApartmentPage({ params }: MyApartmentPageProps) {
         totalArea: '75',
         numberOfBedrooms: 2,
         numberOfBathrooms: 2,
-        status: ApartmentStatus.RENTED,
+        status: ApartmentStatus.OCCUPIED,
         images: [
             'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
             'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
