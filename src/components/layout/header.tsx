@@ -1,3 +1,6 @@
+'use client'
+
+import { APP_NAME, DEFAULT_LOCALE, LOCALES } from "@/constants";
 import { ROUTES } from "@/constants/routes";
 import { Icon } from "@iconify/react";
 import { Avatar, Button, Dropdown } from "antd";
@@ -5,12 +8,43 @@ import {
   BellRing,
   ChevronDown,
   MessageSquareText,
-  Route,
-  User,
+  User
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+function getInitialLocale(): string {
+  const cookieLocale = document.cookie
+    .split("; ")
+    .find(row => row.startsWith(`${APP_NAME}_LOCALE=`))
+    ?.split("=")[1]
+
+  if (cookieLocale) {
+    return cookieLocale
+  } else {
+    document.cookie = `${APP_NAME}_LOCALE=${DEFAULT_LOCALE}`
+    return DEFAULT_LOCALE
+  }
+}
 
 export default function Header() {
+  const t = useTranslations('Header')
+  const router = useRouter()
+  const [locale, setLocale] = useState(getInitialLocale())
+
+  const toggleLanguage = () => {
+    const newLocale = locale === 'vi' ? 'en' : 'vi'
+    setLocale(newLocale)
+    document.cookie = `${APP_NAME}_LOCALE=${newLocale}; path=/`
+    router.refresh()
+  }
+
+  const getFlagIcon = () => {
+    return locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
+  }
+
   const items = [
     {
       key: "1",
@@ -37,28 +71,34 @@ export default function Header() {
         <div className="max-w-56">LOGO</div>
         <ul className="hidden lg:flex gap-10 font-medium shrink-0">
           <Link href={ROUTES.APARTMENT} className="hover:opacity-75">
-            Tìm căn hộ
+            {t('findApartment')}
           </Link>
           <Link href="/" className="flex items-center gap-1 hover:opacity-75">
-            Căn hộ của bạn
+            {t('yourApartment')}
             <Icon icon="lucide:chevron-down" width={17} />
           </Link>
           <Link href="/" className="hover:opacity-75">
-            Hóa đơn
+            {t('bills')}
           </Link>
           <Link href="/" className="hover:opacity-75">
-            Hỗ trợ
+            {t('support')}
           </Link>
           <Link href={ROUTES.CONTACT} className="hover:opacity-75">
-            Liên hệ
+            {t('contact')}
           </Link>
         </ul>
         <div className="hidden lg:flex items-center gap-5 shrink-0">
-          <Icon icon="flag:vn-4x3" width="24" height="24" />
+          <button
+            onClick={toggleLanguage}
+            className="hover:opacity-75 transition-opacity cursor-pointer"
+            title={locale === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+          >
+            <Icon icon={getFlagIcon()} width={24} height={24} />
+          </button>
           <MessageSquareText strokeWidth={1.4} />
           <BellRing strokeWidth={1.4} />
           <Button shape="round" type="primary">
-            Trở thành đối tác
+            {t('becomePartner')}
           </Button>
 
           <div className="flex items-center">

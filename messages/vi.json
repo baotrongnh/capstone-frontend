@@ -1,4 +1,13 @@
 {
+  "Header": {
+    "findApartment": "Tìm căn hộ",
+    "yourApartment": "Căn hộ của bạn",
+    "bills": "Hóa đơn",
+    "support": "Hỗ trợ",
+    "contact": "Liên hệ",
+    "becomePartner": "Trở thành đối tác",
+    "language": "Ngôn ngữ"
+  },
   "HomePage": {
     "title": "Xin chào",
     "tabs": {
