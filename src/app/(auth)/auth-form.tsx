@@ -98,29 +98,6 @@ export default function AuthForm({ form, onSubmit, t: tProp }: AuthFormProps) {
           <Input.Password placeholder={t('passwordPlaceholder')} style={{ height: 45, padding: 10 }} />
         </Form.Item>
 
-        {/* {mode === "register" && (
-          <Form.Item
-            label={<span className="font-semibold">Confirm password</span>}
-            name="confirmPassword"
-            dependencies={["password"]}
-            rules={[
-              { required: true, message: "Please confirm your password!" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("The two passwords do not match!")
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password placeholder="Confirm your password" />
-          </Form.Item>
-        )} */}
-
         {mode === "login" && (
           <Form.Item
             name="remember"

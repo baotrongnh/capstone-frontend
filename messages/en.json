@@ -1,4 +1,13 @@
 {
+  "Header": {
+    "findApartment": "Find Apartment",
+    "yourApartment": "Your Apartment",
+    "bills": "Bills",
+    "support": "Support",
+    "contact": "Contact",
+    "becomePartner": "Become a Partner",
+    "language": "Language"
+  },
   "HomePage": {
     "title": "Hello world!",
     "tabs": {
@@ -14,11 +23,124 @@
     "heroSubtitle": "Platform solving everything related to finding, moving and more",
     "exploreTitle": "Explore apartments by area",
     "exploreSubtitle": "Many options to choose from different areas across the country",
-    "servicesTitle": "Our Services",
-    "servicesSubtitle": "Complete services to help you find the perfect place",
-    "testimonialsTitle": "Customer Reviews",
-    "appPromoTitle": "Download ToletX App for Free",
-    "appPromoSubtitle": "Get instant access to property listings and updates"
+
+    "searchForm": {
+      "roomType": "Room Type",
+      "roomTypePlaceholder": "All types",
+      "area": "Area",
+      "areaPlaceholder": "Select area",
+      "people": "Number of people",
+      "peoplePlaceholder": "1-2 people",
+      "price": "Price range",
+      "pricePlaceholder": "VND / month",
+      "submit": "Search"
+    },
+
+    "cities": {
+      "all": "All",
+      "hanoi": "Hanoi",
+      "danang": "Da Nang",
+      "hatinh": "Ha Tinh",
+      "nhatrang": "Nha Trang",
+      "haiduong": "Hai Duong",
+      "hcm": "Ho Chi Minh City",
+      "hatay": "Ha Tay"
+    },
+
+    "highlightCity": {
+      "name": "Ho Chi Minh City",
+      "description": "A dynamic city with many rental apartment options in diverse areas, prices and sizes. Convenient location for travel, close to essential utilities, meeting the daily living and working needs of tenants.",
+      "tags": {
+        "publicTransport": "Public Transport",
+        "convenientLife": "Convenient Living",
+        "easyMove": "Easy to Move",
+        "economicCenter": "Economic Center",
+        "manyChoices": "Many Choices"
+      }
+    },
+
+    "services": {
+      "title": "Our Featured Services",
+      "subtitle": "We provide comprehensive services to meet all your needs.",
+      "service1": {
+        "title": "Apartment Search",
+        "description": "Easily find apartments that suit your needs and budget."
+      },
+      "service2": {
+        "title": "Contract Management",
+        "description": "Support professional and transparent rental contract management."
+      },
+      "service3": {
+        "title": "Cleaning and Maintenance",
+        "description": "Provide periodic cleaning and maintenance services to keep apartments in the best condition."
+      },
+      "service4": {
+        "title": "Maintenance and Repair Support",
+        "description": "IntelliRentOps allows tenants to submit maintenance requests and track processing status directly on the system. Helps apartment maintenance be managed clearly, reduces delays and enhances rental experience."
+      }
+    },
+    "appPromoSection": {
+      "badge": "Download Now",
+      "title": "Download ToletX App",
+      "free": "for free",
+      "subtitle": "Book faster, easier and get exclusive offers.",
+      "notification": {
+        "title": "Get personalized offers now!",
+        "description": "Offers available now!"
+      },
+      "altText": {
+        "googlePlay": "Get it on Google Play",
+        "appStore": "Download on App Store",
+        "screenshot": "App interface"
+      }
+    },
+    "testimonialsTitle": "Featured Customer Reviews"
+  },
+  "Footer": {
+    "contact": {
+      "addressLine1": "18/6, Main road Mohammadia",
+      "addressLine2": "Housing Ltd, Mohammadpur, Dhaka",
+      "phone": "+ (88) 01719 461736",
+      "email": "toletxbd@gmail.com"
+    },
+    "sections": {
+      "mainMenu": {
+        "title": "Main Menu",
+        "partner": "Become a Partner",
+        "post": "Post Your Property",
+        "request": "Request Property Info",
+        "valuation": "Property Valuation"
+      },
+      "hive": {
+        "title": "Hive",
+        "buy": "Buy",
+        "sell": "Sell",
+        "blog": "Blog",
+        "group": "Groups"
+      },
+      "categories": {
+        "title": "Property Categories",
+        "residential": "Residential",
+        "commercial": "Commercial",
+        "entertainment": "Entertainment",
+        "agricultural": "Agricultural"
+      },
+      "about": {
+        "title": "About ToletX",
+        "terms": "Terms and Conditions",
+        "privacy": "Privacy Policy",
+        "legal": "Legal & Compliance",
+        "contact": "Contact Us",
+        "aboutUs": "About Us",
+        "team": "Team",
+        "faq": "FAQ",
+        "support": "Support"
+      }
+    },
+    "copyright": "Copyright {year} • ToletX, All Rights Reserved"
+  },
+  "ApartmentList": {
+    "filterTitle": "Filter by House"
   },
   "Auth": {
     "welcome": "Welcome Back",
@@ -66,5 +188,144 @@
     "inputPlaceholder": "Type your message...",
     "send": "Send",
     "responseTime": "Average response time: 2-5 minutes"
+  },
+  "Profile": {
+    "sidebar": {
+      "myInformation": "My Information",
+      "accountInformation": "Account Information",
+      "myApartment": "My Apartment",
+      "paymentHistory": "Payment History",
+      "settings": "Settings",
+      "partnerDashboard": "Partner Dashboard",
+      "myProperties": "My Properties",
+      "bookings": "Bookings",
+      "revenue": "Revenue",
+      "logout": "Logout"
+    },
+    "account": {
+      "title": "My Information",
+      "titlePartner": "Account Information",
+      "subtitle": "Manage your personal information and profile details",
+      "subtitlePartner": "Update your account information and profile details",
+      "accountType": "Account Type",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "fullNameRequired": "Please enter your name",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "emailRequired": "Please enter your email",
+      "emailInvalid": "Please enter a valid email",
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "Enter your phone number",
+      "address": "Address",
+      "addressPlaceholder": "Enter your address",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "updateSuccess": "Profile updated successfully",
+      "updateFailed": "Failed to update profile"
+    },
+    "apartment": {
+      "title": "My Apartment",
+      "subtitle": "Your apartment information and utility usage",
+      "noApartment": "You don't have any apartment yet",
+      "loading": "Loading...",
+      "apartmentInfo": "Apartment Information",
+      "contractInfo": "Contract Information",
+      "utilityUsage": "Utility Usage",
+      "currentBillingPeriod": "Current billing period",
+      "buildingName": "Building Name",
+      "apartmentNumber": "Apartment Number",
+      "statusLabel": "Status",
+      "address": "Address",
+      "totalArea": "Total Area",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "rentPrice": "Rent Price",
+      "perMonth": "/month",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "monthlyRent": "Monthly Rent",
+      "depositAmount": "Deposit Amount",
+      "contractStatus": "Contract Status",
+      "electricity": "Electricity",
+      "water": "Water",
+      "previousReading": "Previous Reading",
+      "currentReading": "Current Reading",
+      "usage": "Usage",
+      "unitPrice": "Unit Price",
+      "totalCost": "Total Cost",
+      "totalUtilityCost": "Total Utility Cost",
+      "thisMonth": "This Month",
+      "status": {
+        "available": "Available",
+        "rented": "Rented",
+        "maintenance": "Maintenance",
+        "unavailable": "Unavailable"
+      }
+    },
+    "payment": {
+      "title": "Payment History",
+      "subtitle": "View all your payment transactions",
+      "noPayments": "No payment records found",
+      "transactionId": "Transaction ID",
+      "type": "Type",
+      "apartment": "Apartment",
+      "dueDate": "Due Date",
+      "paidDate": "Paid Date",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "invoice": "Invoice",
+      "all": "All",
+      "types": {
+        "rent": "Rent",
+        "electricity": "Electricity",
+        "water": "Water",
+        "maintenance": "Maintenance",
+        "deposit": "Deposit",
+        "other": "Other"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your account preferences and settings",
+      "notifications": "Notifications",
+      "emailNotifications": "Email Notifications",
+      "smsNotifications": "SMS Notifications",
+      "marketingEmails": "Marketing Emails",
+      "preferences": "Preferences",
+      "language": "Language",
+      "currency": "Currency",
+      "timezone": "Timezone",
+      "security": "Security",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "reset": "Reset",
+      "saveSettings": "Save Settings",
+      "languages": {
+        "en": "English",
+        "vi": "Tiếng Việt"
+      },
+      "currencies": {
+        "usd": "USD ($)",
+        "vnd": "VND (₫)"
+      },
+      "timezones": {
+        "utc": "UTC",
+        "asiaHoChiMinh": "Asia/Ho Chi Minh",
+        "americaNewYork": "America/New York"
+      }
+    }
   }
 }

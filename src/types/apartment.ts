@@ -7,9 +7,10 @@ export enum FurnishingStatus {
 
 export enum ApartmentStatus {
      AVAILABLE = 'available',
-     RENTED = 'rented',
+     OCCUPIED = 'occupied',
      MAINTENANCE = 'maintenance',
-     UNAVAILABLE = 'unavailable'
+     RESERVED = 'reserved',
+     INACTIVE = 'inactive'
 }
 
 export enum RoomType {
@@ -128,4 +129,34 @@ export interface ApartmentDetail {
      partner: Partner
      iotDevices: IotDevice[]
      utilityMeters: UtilityMeter[]
+}
+
+// Interface cho query params
+export interface ApartmentQueryParams {
+     city?: string
+     district?: string
+     keyword?: string
+     minBedrooms?: number
+     maxBedrooms?: number
+     minPrice?: number
+     maxPrice?: number
+     minArea?: number
+     maxArea?: number
+     furnishingStatus?: 'unfurnished' | 'semi_furnished' | 'fully_furnished'
+     status?: 'available' | 'occupied' | 'maintenance' | 'reserved' | 'inactive'
+     page?: number
+     limit?: number
+     sortBy?: 'baseRentPrice' | 'totalArea' | 'createdAt' | 'numberOfBedrooms'
+     sortOrder?: 'asc' | 'desc'
+}
+
+// Interface cho response pagination
+export interface ApartmentListResponse {
+     data: Apartment[]
+     meta: {
+          total: number
+          page: number
+          limit: number
+          totalPages: number
+     }
 }
