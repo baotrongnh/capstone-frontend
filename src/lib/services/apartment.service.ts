@@ -1,9 +1,9 @@
-import { ApartmentDetail } from "@/types/apartment";
+import { ApartmentDetail, ApartmentListResponse, ApartmentQueryParams } from "@/types/apartment";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
 export const apartmentService = {
-     getList: async (params?: string) => {
+     getList: async (params?: ApartmentQueryParams): Promise<ApartmentListResponse> => {
           const { data } = await apiClient.get(endpoints.apartments, { params })
           return data
      },
