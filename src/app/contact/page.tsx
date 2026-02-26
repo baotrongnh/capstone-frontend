@@ -44,7 +44,7 @@ export default function Contact() {
       console.log("Payload to submit:", payload);
       form.resetFields();
     } catch (error) {
-      console.error("Validate / Upload error:", error);
+      console.log("Validate / Upload error:", error);
     }
   };
 
@@ -52,9 +52,12 @@ export default function Contact() {
     <>
       <div
         className="relative bottom-2 h-100 md:h-125 bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{ backgroundImage: `url(${bg.src})` }}
+        style={{
+          backgroundImage: `url(${bg.src})`,
+          filter: "brightness(1.1) contrast(1.15)",
+        }}
       >
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
 
         <div className="relative z-10 text-center text-white max-w-3xl px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -83,7 +86,7 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <p className="text-primary font-semibold mb-2 uppercase text-sm">
+              <p className="text-primary font-semibold mb-10 uppercase text-sm">
                 INTELLISERVOPS
               </p>
               <h2 className="text-3xl font-bold mb-4">Liên hệ với chúng tôi</h2>
@@ -272,18 +275,20 @@ export default function Contact() {
               </Upload>
             </Form.Item>
 
-            <Button
-              type="primary"
-              onClick={handleRegister}
-              className="
-      mt-6 w-full h-12!
-      bg-primary hover:bg-blue-600
-      text-white font-semibold text-base
-      rounded-lg
-    "
-            >
-              Đăng ký hợp tác
-            </Button>
+            <div className="flex justify-center mt-6">
+              <Button
+                type="primary"
+                onClick={handleRegister}
+                className="
+        h-12! px-12!
+        bg-primary hover:bg-blue-600
+        text-white font-semibold text-base
+        rounded-lg
+      "
+              >
+                Đăng ký hợp tác
+              </Button>
+            </div>
           </div>
         </div>
       </Form>

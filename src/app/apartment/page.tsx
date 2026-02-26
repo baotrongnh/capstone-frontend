@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import ApartmentItem from '@/components/apartments/apartment-item'
 import ApartmentItemSkeleton from '@/components/apartments/apartment-item-skeleton'
@@ -162,5 +162,5 @@ export default function ApartmentList() {
       <SimilarApartments />
       <AppPromoSection />
     </div>
-  )
+  );
 }

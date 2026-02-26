@@ -4,10 +4,8 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { ChevronUp, ChevronDown, Quote } from "lucide-react";
 import banner3 from "../../../public/img/banner5.jpg";
-import { Button } from "antd";
 import { StarOutlined } from "@ant-design/icons";
 
-// --- COMPONENT CARD ---
 const TestimonialCard = ({
   item,
   type,
