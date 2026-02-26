@@ -4,6 +4,9 @@ import { MapPin } from 'lucide-react'
 
 
 export default function ApartmentHeader({ apartmentData }: { apartmentData: ApartmentDetail }) {
+  // Build location string
+  const location = [apartmentData.district, apartmentData.city].filter(Boolean).join(', ')
+
   return (
     <div className='pt-6 md:pt-10'>
       <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-4'>
@@ -16,12 +19,12 @@ export default function ApartmentHeader({ apartmentData }: { apartmentData: Apar
       <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
         <span className='text-muted flex items-center gap-1 text-sm md:text-base'>
           <MapPin size={16} className='shrink-0' />
-          <span className='line-clamp-1'>HCM</span>
+          <span className='line-clamp-1'>{location || 'Chưa có địa chỉ'}</span>
         </span>
         <Divider orientation="vertical" className='hidden sm:block' />
         <span className='text-muted flex gap-1 items-center text-sm md:text-base'>
-          <Rate disabled value={5} size='small' />
-          ({5} lượt đánh giá)
+          <Rate disabled value={4.5} size='small' />
+          (Chưa có đánh giá)
         </span>
       </div>
     </div>

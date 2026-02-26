@@ -7,60 +7,70 @@ import ApartmentGallery from '@/components/apartment-detail/apartment-gallery'
 import ApartmentHeader from '@/components/apartment-detail/apartment-header'
 import ApartmentLocation from '@/components/apartment-detail/apartment-location'
 import SimilarApartments from '@/components/apartments/similar-apartments'
+import { ROUTES } from '@/constants/routes'
 import { useApartment } from '@/hooks/query/useApartments'
-import { Breadcrumb, Spin } from 'antd'
+import { Breadcrumb, Spin, Result } from 'antd'
 import { use } from 'react'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
 
   const { id } = use(params)
-  const { data: apartment, isLoading } = useApartment(id)
+  const { data: apartment, isLoading, isError } = useApartment(id)
 
-  // Temporary data - replace with actual API data
-  const apartmentData = {
-    title: 'Căn hộ Dhanmondi Central RD Grand Circle Inn Dhaka - 1100',
-    location: 'Dhanmondi, Dhaka - 1100',
-    rating: 5,
-    totalReviews: 540,
-    images: [
-      '/img/auth/phongtro.jpg',
-      '/img/auth/phongtro.jpg',
-      '/img/auth/phongtro.jpg'
-    ],
-    description: `Khám phá những điểm nổi bật của London qua 2 phương tiện giao thông cổ điển trong chuyến phiêu lưu nửa ngày này. Đầu tiên, bạn sẽ được chiêm ngưỡng khung cảnh tuyệt đẹp của Tu viện Westminster, Tòa nhà Quốc hội và Vòng quay London Eye khi dạo quanh những con phố lịch sử trên một chiếc xe buýt hai tầng cổ điển.
-
-Tiếp tục tham quan Nhà thờ St. Paul, kiệt tác kiến ​​trúc của Sir Christopher Wren, nơi an táng các Đô đốc Nelson và Wellington, và nơi Công chúa Diana và Hoàng tử Charles kết hôn. Tiếp tục đến Tháp London, được xây dựng cách đây gần 1000 năm dưới thời trị vì của William Kẻ chinh phục.
-
-Là nơi cất giữ Vương miện Hoàng gia, Tháp London được bảo vệ bởi đội cận vệ Beefeaters nổi tiếng, và cung điện hùng vĩ này đã được sử dụng như một pháo đài và nhà tù trong suốt lịch sử của nó. Hướng dẫn viên sẽ đưa bạn đến Cổng Kẻ phản bội, nơi các tù nhân bước vào Tháp lần cuối cùng`
+  if (isLoading) {
+    return (
+      <div className='container h-screen flex items-center justify-center'>
+        <Spin size="large" tip="Đang tải thông tin căn hộ..." />
+      </div>
+    )
   }
 
-  if (isLoading || !apartment) {
-    return <div>Loading.....</div>
+  if (isError || !apartment) {
+    return (
+      <div className='container h-screen flex items-center justify-center'>
+        <Result
+          status="404"
+          title="Không tìm thấy căn hộ"
+          subTitle="Căn hộ không tồn tại hoặc đã bị xóa."
+        />
+      </div>
+    )
   }
+
+  // Prepare image array with fallback
+  const images = apartment.images && apartment.images.length > 0
+    ? apartment.images
+    : ['/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg']
 
   return (
     <div className='container h-min-screen px-4 sm:px-6 lg:px-8'>
       <Breadcrumb
         className='py-4'
         items={[
-          { title: 'Home' },
-          { title: 'Apartment' }
+          { title: 'Trang chủ', href: ROUTES.HOME },
+          { title: 'Danh sách căn hộ', href: ROUTES.APARTMENT },
+          { title: apartment.buildingName }
         ]}
       />
 
-      <ApartmentGallery images={apartmentData.images} />
+      <ApartmentGallery images={images} />
 
-      <ApartmentHeader
-        apartmentData={apartment}
-      />
+      <ApartmentHeader apartmentData={apartment} />
 
-      <ApartmentDescription description={apartmentData.description} />
+      <ApartmentDescription description={apartment.description || 'Chưa có mô tả.'} />
 
-      <ApartmentAmenities />
+      <ApartmentAmenities amenities={apartment.amenities} />
 
       <ApartmentActivities />
 
-      <ApartmentLocation />
+      <ApartmentLocation
+        address={apartment.address}
+        city={apartment.city}
+        district={apartment.district}
+        ward={apartment.ward}
+        latitude={apartment.latitude}
+        longitude={apartment.longitude}
+      />
 
       <SimilarApartments />
     </div>
