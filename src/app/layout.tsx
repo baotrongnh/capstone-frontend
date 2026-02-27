@@ -1,9 +1,10 @@
+import AuthProvider from "@/components/providers/auth-provider"
 import ChatSupport from "@/components/chat/chat-support"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
 import ReactQueryProvider from "@/components/providers/react-query-provider"
 import { AntdRegistry } from "@ant-design/nextjs-registry"
-import { ConfigProvider } from "antd"
+import { App, ConfigProvider } from "antd"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale, getMessages } from "next-intl/server"
@@ -38,16 +39,20 @@ export default async function RootLayout({
             }
           }}
           >
-            <ReactQueryProvider>
-              <NextIntlClientProvider messages={messages}>
-                <Header />
-                <main className="mt-24">
-                  {children}
-                </main>
-                <Footer />
-                <ChatSupport />
-              </NextIntlClientProvider>
-            </ReactQueryProvider>
+            <App>
+              <ReactQueryProvider>
+                <NextIntlClientProvider messages={messages}>
+                  <AuthProvider>
+                    <Header />
+                    <main className="mt-24">
+                      {children}
+                    </main>
+                    <Footer />
+                    <ChatSupport />
+                  </AuthProvider>
+                </NextIntlClientProvider>
+              </ReactQueryProvider>
+            </App>
           </ConfigProvider>
         </AntdRegistry>
       </body>

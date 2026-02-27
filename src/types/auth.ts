@@ -20,8 +20,22 @@ export type Register = {
 
 export type AuthFormProps = {
     form: FormInstance,
-    onSubmit?: (values: Login | Register) => void | Promise<void>;
+    onSubmit?: (values: LoginDto) => void | Promise<void>;
     t?: (key: string) => string;
+    loading?: boolean;
+    onGoogleLogin?: () => Promise<void>;
+    googleLoading?: boolean;
+}
+
+export type AuthState = {
+    user: UserInfo | null
+    tokens: AuthTokens | null
+    isAuthenticated: boolean
+    isHydrated: boolean
+    setAuth: (user: UserInfo, tokens: AuthTokens) => void
+    setTokens: (tokens: AuthTokens) => void
+    logout: () => void
+    hydrate: () => void
 }
 
 // ========== API Types ==========
@@ -34,38 +48,46 @@ export enum ActorType {
     PARTNER = 'partner'
 }
 
-export interface LoginDto {
+export type LoginDto = {
     email: string
     password: string
     actorType: ActorType
 }
 
-export interface AuthTokens {
+export type AuthTokens = {
     accessToken: string
     refreshToken: string
 }
 
-export interface UserInfo {
+export type UserInfo = {
     id: string
     email: string
+    fullName: string
+    role: string
     actorType: ActorType
-    name?: string
-    avatar?: string
-    isActive: boolean
+    availableRoles?: string[]
 }
 
-export interface LoginResponse {
+export type GoogleLoginDto = {
+    accessToken: string
+}
+
+export type SupabaseUrlResponse = {
+    url: string
+}
+
+export type LoginResponse = {
     user: UserInfo
     tokens: AuthTokens
 }
 
-export interface AuthError {
-    message: string
+export type AuthError = {
+    message: string | string[]
     statusCode?: number
     error?: string
 }
 
-export interface ApiErrorResponse {
+export type ApiErrorResponse = {
     response?: {
         data?: AuthError
         status?: number
@@ -73,14 +95,14 @@ export interface ApiErrorResponse {
     message?: string
 }
 
-export interface RefreshTokenDto {
+export type RefreshTokenDto = {
     refreshToken: string
 }
 
-export interface RefreshTokenResponse {
+export type RefreshTokenResponse = {
     tokens: AuthTokens
 }
 
-export interface LogoutDto {
+export type LogoutDto = {
     refreshToken: string
 }
