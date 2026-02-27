@@ -43,11 +43,12 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
     }
 
     const getStatusColor = (status: ApartmentStatus) => {
-        const colors = {
-            available: 'green',
-            rented: 'blue',
-            maintenance: 'orange',
-            unavailable: 'red'
+        const colors: Record<ApartmentStatus, string> = {
+            [ApartmentStatus.AVAILABLE]: 'green',
+            [ApartmentStatus.OCCUPIED]: 'blue',
+            [ApartmentStatus.MAINTENANCE]: 'orange',
+            [ApartmentStatus.RESERVED]: 'purple',
+            [ApartmentStatus.INACTIVE]: 'red'
         };
         return colors[status];
     };
