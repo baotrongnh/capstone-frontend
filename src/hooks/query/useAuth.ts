@@ -4,10 +4,11 @@ import { authService } from '@/lib/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
 import { ApiErrorResponse } from '@/types/auth'
 import { useMutation } from '@tanstack/react-query'
-import { message } from 'antd'
+import { App } from 'antd'
 
 // MUTATIONS
 export const useLogin = (onSuccess?: () => void) => {
+    const { message } = App.useApp()
     const setAuth = useAuthStore((s) => s.setAuth)
 
     return useMutation({
@@ -26,6 +27,7 @@ export const useLogin = (onSuccess?: () => void) => {
 }
 
 export const useRefreshToken = () => {
+    const { message } = App.useApp()
     const setTokens = useAuthStore((s) => s.setTokens)
 
     return useMutation({
@@ -42,6 +44,7 @@ export const useRefreshToken = () => {
 }
 
 export const useLogout = (onSuccess?: () => void) => {
+    const { message } = App.useApp()
     const logoutStore = useAuthStore((s) => s.logout)
 
     return useMutation({
