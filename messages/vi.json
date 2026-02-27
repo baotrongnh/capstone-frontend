@@ -6,7 +6,10 @@
     "support": "Hỗ trợ",
     "contact": "Liên hệ",
     "becomePartner": "Trở thành đối tác",
-    "language": "Ngôn ngữ"
+    "language": "Ngôn ngữ",
+    "login": "Đăng nhập",
+    "profile": "Trang cá nhân",
+    "logout": "Đăng xuất"
   },
   "HomePage": {
     "title": "Xin chào",
@@ -174,6 +177,11 @@
     "loginFailed": "Đăng nhập thất bại!",
     "registrationFailed": "Đăng ký thất bại!",
     "checkFormFields": "Vui lòng kiểm tra các trường!",
+    "forgotPassword": "Quên mật khẩu?",
+    "actorType": "Đăng nhập với tư cách",
+    "actorTypeRequired": "Vui lòng chọn loại tài khoản!",
+    "actorTypeGuest": "Khách thuê",
+    "actorTypePartner": "Đối tác",
     "realTime": "Thời gian thực",
     "utilityMonitoring": "Giám sát tiện ích",
     "tenantName": "Lê Phạm Trường Huy",

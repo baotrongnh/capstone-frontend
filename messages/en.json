@@ -6,7 +6,10 @@
     "support": "Support",
     "contact": "Contact",
     "becomePartner": "Become a Partner",
-    "language": "Language"
+    "language": "Language",
+    "login": "Login",
+    "profile": "My Profile",
+    "logout": "Logout"
   },
   "HomePage": {
     "title": "Hello world!",
@@ -174,6 +177,11 @@
     "loginFailed": "Login failed!",
     "registrationFailed": "Registration failed!",
     "checkFormFields": "Please check the form fields!",
+    "forgotPassword": "Forgot password?",
+    "actorType": "Login as",
+    "actorTypeRequired": "Please select a login type!",
+    "actorTypeGuest": "Guest",
+    "actorTypePartner": "Partner",
     "realTime": "Real-time",
     "utilityMonitoring": "Utility monitoring",
     "tenantName": "Lê Phạm Trường Huy",

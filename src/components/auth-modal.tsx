@@ -1,7 +1,10 @@
 import AuthForm from '@/app/(auth)/auth-form';
-import { AuthModal as AuthModalProps, Login, Register } from '@/types/auth'
-import { Form, Modal } from 'antd'
-import Image from 'next/image'
+import { ROUTES } from '@/constants/routes';
+import { useLogin } from '@/hooks/query/useAuth';
+import { AuthModal as AuthModalProps } from '@/types/auth';
+import { Form, Modal } from 'antd';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 export default function AuthModal({
@@ -9,11 +12,24 @@ export default function AuthModal({
   onClose,
 }: AuthModalProps) {
   const t = useTranslations('Auth');
+  const router = useRouter();
   const [form] = Form.useForm();
 
-  const handleSubmit = async (values: Login | Register) => {
-    console.log("Form submitted:", values)
-    // TODO
+  const { mutateAsync: login, isPending } = useLogin(() => {
+    onClose();
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      router.push(ROUTES.PROFILE(user.id));
+    }
+  });
+
+  const handleSubmit = async (values: Parameters<typeof login>[0]) => {
+    try {
+      await login(values)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return (
@@ -87,7 +103,7 @@ export default function AuthModal({
         </div>
 
         <div className='w-full md:w-1/2 p-4 md:p-8 flex justify-center items-center min-h-163.75'>
-          <AuthForm form={form} onSubmit={handleSubmit} t={t} />
+          <AuthForm form={form} onSubmit={handleSubmit} t={t} loading={isPending} />
         </div>
       </div>
     </Modal>

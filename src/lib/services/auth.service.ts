@@ -5,12 +5,12 @@ import { endpoints } from "../apis/endpoints";
 export const authService = {
     login: async (credentials: LoginDto): Promise<LoginResponse> => {
         const { data } = await apiClient.post(`${endpoints.auth}/login`, credentials)
-        return data
+        return data.data
     },
 
     refresh: async (tokenData: RefreshTokenDto): Promise<RefreshTokenResponse> => {
         const { data } = await apiClient.post(`${endpoints.auth}/refresh`, tokenData)
-        return data
+        return data.data
     },
 
     logout: async (tokenData: LogoutDto): Promise<void> => {

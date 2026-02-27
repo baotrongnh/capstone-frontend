@@ -1,3 +1,4 @@
+import AuthProvider from "@/components/providers/auth-provider"
 import ChatSupport from "@/components/chat/chat-support"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
@@ -40,12 +41,14 @@ export default async function RootLayout({
           >
             <ReactQueryProvider>
               <NextIntlClientProvider messages={messages}>
-                <Header />
-                <main className="mt-24">
-                  {children}
-                </main>
-                <Footer />
-                <ChatSupport />
+                <AuthProvider>
+                  <Header />
+                  <main className="mt-24">
+                    {children}
+                  </main>
+                  <Footer />
+                  <ChatSupport />
+                </AuthProvider>
               </NextIntlClientProvider>
             </ReactQueryProvider>
           </ConfigProvider>

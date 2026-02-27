@@ -1,58 +1,62 @@
 'use client'
 
 import { authService } from '@/lib/services/auth.service'
+import { useAuthStore } from '@/stores/auth.store'
 import { ApiErrorResponse } from '@/types/auth'
 import { useMutation } from '@tanstack/react-query'
 import { message } from 'antd'
 
 // MUTATIONS
-export const useLogin = () => {
+export const useLogin = (onSuccess?: () => void) => {
+    const setAuth = useAuthStore((s) => s.setAuth)
+
     return useMutation({
         mutationFn: authService.login,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setAuth(data.user, data.tokens)
             message.success('Login successful!')
-            // Store tokens if needed (access via mutation result)
-            // localStorage.setItem('accessToken', data.tokens.accessToken)
-            // localStorage.setItem('refreshToken', data.tokens.refreshToken)
+            onSuccess?.()
         },
         onError: (error: ApiErrorResponse) => {
-            const errorMessage = error?.response?.data?.message || error?.message || 'Invalid credentials or account deactivated'
+            const msg = error?.response?.data?.message
+            const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || 'Invalid credentials or account deactivated'
             message.error(errorMessage)
         }
     })
 }
 
 export const useRefreshToken = () => {
+    const setTokens = useAuthStore((s) => s.setTokens)
+
     return useMutation({
         mutationFn: authService.refresh,
-        onSuccess: () => {
-            // Store new tokens
-            // localStorage.setItem('accessToken', data.tokens.accessToken)
-            // localStorage.setItem('refreshToken', data.tokens.refreshToken)
+        onSuccess: (data) => {
+            setTokens(data.tokens)
         },
         onError: (error: ApiErrorResponse) => {
-            const errorMessage = error?.response?.data?.message || error?.message || 'Invalid or expired refresh token'
+            const msg = error?.response?.data?.message
+            const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || 'Invalid or expired refresh token'
             message.error(errorMessage)
-            // Redirect to login if refresh fails
-            // localStorage.removeItem('accessToken')
-            // localStorage.removeItem('refreshToken')
         }
     })
 }
 
-export const useLogout = () => {
+export const useLogout = (onSuccess?: () => void) => {
+    const logoutStore = useAuthStore((s) => s.logout)
+
     return useMutation({
-        mutationFn: authService.logout,
-        onSuccess: () => {
-            message.success('Logout successful!')
-            // Clear tokens
-            // localStorage.removeItem('accessToken')
-            // localStorage.removeItem('refreshToken')
-            // Redirect to login page
+        mutationFn: () => {
+            const refreshToken = localStorage.getItem('refreshToken') ?? ''
+            return authService.logout({ refreshToken })
         },
-        onError: (error: ApiErrorResponse) => {
-            const errorMessage = error?.response?.data?.message || error?.message || 'Logout failed'
-            message.error(errorMessage)
+        onSuccess: () => {
+            logoutStore()
+            message.success('Logout successful!')
+            onSuccess?.()
+        },
+        onError: () => {
+            // Clear local state even if API call fails
+            logoutStore()
         }
     })
 }
