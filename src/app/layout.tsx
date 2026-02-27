@@ -1,56 +1,57 @@
-import ChatSupport from "@/components/chat/chat-support"
-import Footer from "@/components/layout/footer"
-import Header from "@/components/layout/header"
-import ReactQueryProvider from "@/components/providers/react-query-provider"
-import { AntdRegistry } from "@ant-design/nextjs-registry"
-import { ConfigProvider } from "antd"
-import type { Metadata } from "next"
-import { NextIntlClientProvider } from "next-intl"
-import { getLocale, getMessages } from "next-intl/server"
-import { Inter } from "next/font/google"
-import "./globals.css"
+import ChatSupport from "@/components/chat/chat-support";
+import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
+import ModalContact from "@/components/modal/modalUser";
+import ReactQueryProvider from "@/components/providers/react-query-provider";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { ConfigProvider } from "antd";
+import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { getLocale, getMessages } from "next-intl/server";
 
-const inter = Inter({ subsets: ["latin", "vietnamese"] })
+const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
   title: "INTELLISERVOPS",
   description: "INTELLISERVOPS",
-}
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
-  const messages = await getMessages()
-  const locale = await getLocale()
+  const messages = await getMessages();
+  const locale = await getLocale();
 
   return (
     <html lang={locale}>
       <body className={inter.className}>
         <AntdRegistry>
-          <ConfigProvider theme={{
-            token: {
-              fontFamily: inter.style.fontFamily,
-              colorPrimary: "#3b82f6",
-              colorInfo: "#3b82f6",
-              colorTextBase: "#0f172a"
-            }
-          }}
+          <ConfigProvider
+            theme={{
+              token: {
+                fontFamily: inter.style.fontFamily,
+                colorPrimary: "#3b82f6",
+                colorInfo: "#3b82f6",
+                colorTextBase: "#0f172a",
+              },
+            }}
           >
             <ReactQueryProvider>
               <NextIntlClientProvider messages={messages}>
                 <Header />
-                <main className="mt-24">
-                  {children}
-                </main>
+                <main className="mt-24">{children}</main>
                 <Footer />
                 <ChatSupport />
+                <ModalContact />
               </NextIntlClientProvider>
             </ReactQueryProvider>
           </ConfigProvider>
         </AntdRegistry>
       </body>
-    </html >
-  )
+    </html>
+  );
 }
