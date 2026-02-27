@@ -15,5 +15,16 @@ export const authService = {
 
     logout: async (tokenData: LogoutDto): Promise<void> => {
         await apiClient.post(`${endpoints.auth}/logout`, tokenData)
-    }
+    },
+
+    getSupabaseUrl: async (): Promise<string> => {
+        const { data } = await apiClient.get(`${endpoints.auth}/supabaseUrl`)
+        // The API may return the URL as a plain string or inside a `url` property
+        return typeof data.data === 'string' ? data.data : data.data?.url
+    },
+
+    googleLogin: async (accessToken: string): Promise<LoginResponse> => {
+        const { data } = await apiClient.post(`${endpoints.auth}/google`, { accessToken })
+        return data.data
+    },
 }

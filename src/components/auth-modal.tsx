@@ -1,6 +1,6 @@
 import AuthForm from '@/app/(auth)/auth-form';
 import { ROUTES } from '@/constants/routes';
-import { useLogin } from '@/hooks/query/useAuth';
+import { useGoogleLogin, useLogin } from '@/hooks/query/useAuth';
 import { AuthModal as AuthModalProps } from '@/types/auth';
 import { Form, Modal } from 'antd';
 import Image from 'next/image';
@@ -23,6 +23,17 @@ export default function AuthModal({
       router.push(ROUTES.PROFILE(user.id));
     }
   });
+
+  const handleGoogleSuccess = () => {
+    onClose();
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      router.push(ROUTES.PROFILE(user.id));
+    }
+  };
+
+  const { login: googleLogin, loading: googleLoginLoading } = useGoogleLogin(handleGoogleSuccess);
 
   const handleSubmit = async (values: Parameters<typeof login>[0]) => {
     try {
@@ -103,7 +114,7 @@ export default function AuthModal({
         </div>
 
         <div className='w-full md:w-1/2 p-4 md:p-8 flex justify-center items-center min-h-163.75'>
-          <AuthForm form={form} onSubmit={handleSubmit} t={t} loading={isPending} />
+          <AuthForm form={form} onSubmit={handleSubmit} t={t} loading={isPending} onGoogleLogin={googleLogin} googleLoading={googleLoginLoading} />
         </div>
       </div>
     </Modal>

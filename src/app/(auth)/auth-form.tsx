@@ -5,7 +5,7 @@ import { Button, Divider, Form, Input, Select, message } from "antd";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
-export default function AuthForm({ form, onSubmit, t: tProp, loading }: AuthFormProps) {
+export default function AuthForm({ form, onSubmit, t: tProp, loading, onGoogleLogin, googleLoading }: AuthFormProps) {
   const tHook = useTranslations('Auth');
   const t = tProp || tHook;
 
@@ -29,13 +29,23 @@ export default function AuthForm({ form, onSubmit, t: tProp, loading }: AuthForm
 
       <p className="text-3xl font-semibold mb-6">{t('welcome')}</p>
 
-      <Button variant="outlined" color="blue" size="large" className="w-sm flex justify-center items-center mb-4">
-        <Image
-          src='/google.svg'
-          alt="Google icon"
-          width={20}
-          height={20}
-        />
+      <Button
+        variant="outlined"
+        color="blue"
+        size="large"
+        className="w-sm flex justify-center items-center mb-4"
+        onClick={onGoogleLogin}
+        loading={googleLoading}
+        disabled={googleLoading}
+      >
+        {!googleLoading && (
+          <Image
+            src='/google.svg'
+            alt="Google icon"
+            width={20}
+            height={20}
+          />
+        )}
         <p className="font-semibold">{t('signInWithGoogle')}</p>
       </Button>
 

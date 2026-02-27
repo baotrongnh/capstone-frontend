@@ -23,6 +23,8 @@ export type AuthFormProps = {
     onSubmit?: (values: LoginDto) => void | Promise<void>;
     t?: (key: string) => string;
     loading?: boolean;
+    onGoogleLogin?: () => Promise<void>;
+    googleLoading?: boolean;
 }
 
 export type AuthState = {
@@ -63,6 +65,15 @@ export type UserInfo = {
     fullName: string
     role: string
     actorType: ActorType
+    availableRoles?: string[]
+}
+
+export type GoogleLoginDto = {
+    accessToken: string
+}
+
+export type SupabaseUrlResponse = {
+    url: string
 }
 
 export type LoginResponse = {
