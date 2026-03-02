@@ -1,4 +1,4 @@
-import { LoginDto, LoginResponse, LogoutDto, RefreshTokenDto, RefreshTokenResponse } from "@/types/auth";
+import { LoginDto, LoginResponse, LogoutDto, RefreshTokenDto, RefreshTokenResponse, RegisterDto } from "@/types/auth";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
@@ -7,6 +7,12 @@ export const authService = {
         const { data } = await apiClient.post(`${endpoints.auth}/login`, credentials)
         return data.data
     },
+
+    register: async (payload: RegisterDto): Promise<LoginResponse> => {
+        const { data } = await apiClient.post(`${endpoints.auth}/register`, payload)
+        return data.data
+    },
+
 
     refresh: async (tokenData: RefreshTokenDto): Promise<RefreshTokenResponse> => {
         const { data } = await apiClient.post(`${endpoints.auth}/refresh`, tokenData)
