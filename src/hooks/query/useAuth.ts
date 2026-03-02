@@ -2,10 +2,18 @@
 
 import { authService } from '@/lib/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
-import { ApiErrorResponse } from '@/types/auth'
+import { ROLE_PRIORITY } from '@/constants/roles'
+import { ActorType, ApiErrorResponse, UserInfo } from '@/types/auth'
 import { useMutation } from '@tanstack/react-query'
 import { App } from 'antd'
 import { useState } from 'react'
+
+// ========== Helpers ==========
+const resolveEffectiveRole = (user: UserInfo): UserInfo => {
+    const availableRoles = user.availableRoles ?? [user.role]
+    const effectiveRole = ROLE_PRIORITY.find((r) => availableRoles.includes(r)) ?? ActorType.USER
+    return { ...user, actorType: effectiveRole, role: effectiveRole }
+}
 
 // MUTATIONS
 export const useLogin = (onSuccess?: () => void) => {
@@ -15,13 +23,32 @@ export const useLogin = (onSuccess?: () => void) => {
     return useMutation({
         mutationFn: authService.login,
         onSuccess: (data) => {
-            setAuth(data.user, data.tokens)
+            setAuth(resolveEffectiveRole(data.user), data.tokens)
             message.success('Login successful!')
             onSuccess?.()
         },
         onError: (error: ApiErrorResponse) => {
             const msg = error?.response?.data?.message
             const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || 'Invalid credentials or account deactivated'
+            message.error(errorMessage)
+        }
+    })
+}
+
+export const useRegister = (onSuccess?: () => void) => {
+    const { message } = App.useApp()
+    const setAuth = useAuthStore((s) => s.setAuth)
+
+    return useMutation({
+        mutationFn: authService.register,
+        onSuccess: (data) => {
+            setAuth(resolveEffectiveRole(data.user), data.tokens)
+            message.success('Registration successful!')
+            onSuccess?.()
+        },
+        onError: (error: ApiErrorResponse) => {
+            const msg = error?.response?.data?.message
+            const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || 'Registration failed. Email or phone may already be in use.'
             message.error(errorMessage)
         }
     })

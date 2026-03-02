@@ -21,8 +21,10 @@ export type Register = {
 export type AuthFormProps = {
     form: FormInstance,
     onSubmit?: (values: LoginDto) => void | Promise<void>;
+    onRegister?: (values: RegisterDto) => void | Promise<void>;
     t?: (key: string) => string;
     loading?: boolean;
+    registerLoading?: boolean;
     onGoogleLogin?: () => Promise<void>;
     googleLoading?: boolean;
 }
@@ -49,9 +51,16 @@ export enum ActorType {
 }
 
 export type LoginDto = {
-    email: string
+    identifier: string
     password: string
-    actorType: ActorType
+    actorType?: ActorType
+}
+
+export type RegisterDto = {
+    email: string
+    phone: string
+    fullName: string
+    password: string
 }
 
 export type AuthTokens = {

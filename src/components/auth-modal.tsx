@@ -1,6 +1,6 @@
 import AuthForm from '@/app/(auth)/auth-form';
 import { ROUTES } from '@/constants/routes';
-import { useGoogleLogin, useLogin } from '@/hooks/query/useAuth';
+import { useGoogleLogin, useLogin, useRegister } from '@/hooks/query/useAuth';
 import { AuthModal as AuthModalProps } from '@/types/auth';
 import { Form, Modal } from 'antd';
 import Image from 'next/image';
@@ -16,6 +16,15 @@ export default function AuthModal({
   const [form] = Form.useForm();
 
   const { mutateAsync: login, isPending } = useLogin(() => {
+    onClose();
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      router.push(ROUTES.PROFILE(user.id));
+    }
+  });
+
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister(() => {
     onClose();
     const userStr = localStorage.getItem('user');
     if (userStr) {
@@ -43,6 +52,14 @@ export default function AuthModal({
     }
   }
 
+  const handleRegister = async (values: Parameters<typeof register>[0]) => {
+    try {
+      await register(values)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <Modal
       open={open}
@@ -50,10 +67,11 @@ export default function AuthModal({
       footer={null}
       width="75%"
       centered
+      destroyOnHidden
       className='max-w-250'
       wrapClassName="auth-modal"
     >
-      <div className='flex flex-col md:flex-row overflow-hidden rounded-md'>
+      <div className='flex flex-col md:flex-row overflow-hidden rounded-md h-163.75'>
         <div className='hidden md:block md:w-1/2 relative'>
           <Image
             src='/images/authModal.png'
@@ -113,8 +131,8 @@ export default function AuthModal({
           </div>
         </div>
 
-        <div className='w-full md:w-1/2 p-4 md:p-8 flex justify-center items-center min-h-163.75'>
-          <AuthForm form={form} onSubmit={handleSubmit} t={t} loading={isPending} onGoogleLogin={googleLogin} googleLoading={googleLoginLoading} />
+        <div className='w-full md:w-1/2 p-4 md:p-8 flex justify-center items-center h-full overflow-y-auto'>
+          <AuthForm form={form} onSubmit={handleSubmit} onRegister={handleRegister} t={t} loading={isPending} registerLoading={isRegisterPending} onGoogleLogin={googleLogin} googleLoading={googleLoginLoading} />
         </div>
       </div>
     </Modal>
