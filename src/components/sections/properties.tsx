@@ -2,18 +2,25 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useRef } from "react";
-import { StarFilled } from "@ant-design/icons";
+import { MailOutlined, StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Apartment } from "@/types/apartment";
+import ModalContact from "../modal/modalUser";
+import { Button } from "antd";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedApartmentId, setSelectedApartmentId] = useState<
+    string | number | null
+  >(null);
   const { data: apartments } = useApartments();
 
   if (!apartments) {
     return <div>Loading...</div>;
   }
+  console.log("Fetched apartments data:", apartments);
 
   const apartmentsList = Array.isArray(apartments)
     ? apartments
@@ -26,7 +33,6 @@ export default function PropertiesSection() {
   }
 
   const handleDetail = (id: string | number) => {
-    // Implement navigation to apartment detail page
     console.log("Navigate to apartment detail with ID:", id);
   };
 
@@ -44,6 +50,10 @@ export default function PropertiesSection() {
     }
   };
 
+  const handleOpenModalContact = (apartmentId: string | number) => {
+    setSelectedApartmentId(apartmentId);
+    setIsModalOpen(true);
+  };
   return (
     <div className="bg-white relative ">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,61 +67,6 @@ export default function PropertiesSection() {
               msOverflowStyle: "none",
             }}
           >
-            {/* {properties.map((property) => (
-              <div
-                key={property.id}
-                className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
-              >
-                <div className="h-40 overflow-hidden">
-                  <img
-                    src={property.image}
-                    alt={property.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="p-3">
-                  <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                    {property.name}
-                  </h4>
-
-                  <div className="space-y-1 text-xs text-gray-500 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span>{property.area}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.amenities}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.description}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between  w-full  border-t border-gray-200 ">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <StarFilled
-                          key={i}
-                          className="text-[11px]  text-yellow-400!"
-                        />
-                      ))}
-                    </div>
-                    <p className="text-xl font-semibold text-[#A3D5FF]">
-                      {property.price} vnđ
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between space-y-1 text-xs text-gray-500 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span>758 đánh giá</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.period}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
             {apartmentsList.map((apartment: Apartment) => (
               <div
                 key={apartment.id}
@@ -179,6 +134,13 @@ export default function PropertiesSection() {
                     <span>758 đánh giá</span>
                     <span>/tháng</span>
                   </div>
+
+                  <Button
+                    className="bg-primary! text-white! hover:bg-blue-600! w-full! mt-3!"
+                    onClick={() => handleOpenModalContact(apartment.id)}
+                  >
+                    <MailOutlined /> Liên hệ ngay
+                  </Button>
                 </div>
               </div>
             ))}
@@ -197,6 +159,11 @@ export default function PropertiesSection() {
             →
           </button>
         </div>
+        <ModalContact
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          apartmentId={selectedApartmentId}
+        />
       </div>
     </div>
   );

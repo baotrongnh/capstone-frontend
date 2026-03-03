@@ -20,27 +20,47 @@ import {
   DiscordFilled,
   MailOutlined,
 } from "@ant-design/icons";
+import { useCreateViewRequest } from "@/hooks/query/useViewRequest";
+import { QueryClient } from "@tanstack/react-query";
 
-export default function ModalContact() {
+export default function ModalContact(props?: {
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  apartmentId?: string | number | null;
+}) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const open = props?.open ?? internalOpen;
+  const setOpen = props?.setOpen ?? setInternalOpen;
+  const apartmentId = props?.apartmentId;
+  const queryClient = new QueryClient();
+
+  const { mutateAsync: createViewRequest } = useCreateViewRequest();
 
   const handleSend = async () => {
-    try {
-      const data = await form.validateFields();
-      setLoading(true);
+    const data = await form.validateFields();
+    setLoading(true);
 
-      setTimeout(() => {
-        console.log("Dữ liệu Form:", data);
-        message.success("Gửi tin nhắn thành công!");
-        setLoading(false);
-        setOpen(false);
-        form.resetFields();
-      }, 1200);
-    } catch (err) {
-      console.log(err);
-    }
+    const payload = {
+      apartmentId: String(apartmentId),
+      fullName: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      phone: data.phone,
+      preferredMoveInDate: "2026-02-15",
+      numberOfOccupants: 2,
+      message: data.message,
+      preferredContactTime: "morning",
+    };
+
+    try {
+      await createViewRequest(payload);
+      queryClient.invalidateQueries({ queryKey: ["viewRequests"] });
+    } catch (error) {}
+    setLoading(false);
+    setOpen(false);
+    form.resetFields();
   };
 
   const inputStyle =
@@ -50,18 +70,20 @@ export default function ModalContact() {
 
   return (
     <>
-      <FloatButton
-        icon={<MailOutlined />}
-        type="primary"
-        style={{
-          right: 90,
-          bottom: 24,
-          width: 56,
-          height: 56,
-        }}
-        onClick={() => setOpen(true)}
-        tooltip={<div>Liên hệ với chúng tôi</div>}
-      />
+      {!props?.open && (
+        <FloatButton
+          icon={<MailOutlined />}
+          type="primary"
+          style={{
+            right: 90,
+            bottom: 24,
+            width: 56,
+            height: 56,
+          }}
+          onClick={() => setOpen(true)}
+          tooltip={<div>Liên hệ với chúng tôi</div>}
+        />
+      )}
 
       <ConfigProvider
         theme={{
@@ -147,6 +169,10 @@ export default function ModalContact() {
                 &times;
               </button>
 
+              <h1 className="flex justify-center text-2xl mb-5">
+                CĂN HỘ THÔNG MINH
+              </h1>
+
               <Form form={form} layout="vertical" requiredMark={false}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
                   <Form.Item
@@ -193,7 +219,7 @@ export default function ModalContact() {
                   </Form.Item>
                 </div>
 
-                <div className="mt-6 mb-8">
+                {/* <div className="mt-6 mb-8">
                   <h4 className="text-[#011c2b] font-semibold text-sm mb-3">
                     Bạn quan tâm vấn đề gì?
                   </h4>
@@ -225,7 +251,7 @@ export default function ModalContact() {
                       </Radio>
                     </Radio.Group>
                   </Form.Item>
-                </div>
+                </div> */}
 
                 <Form.Item
                   name="message"
