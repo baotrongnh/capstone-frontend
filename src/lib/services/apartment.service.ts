@@ -4,7 +4,7 @@ import { endpoints } from "../apis/endpoints";
 
 export const apartmentService = {
      getList: async (params?: ApartmentQueryParams): Promise<ApartmentListResponse> => {
-          const { data } = await apiClient.get(endpoints.apartments, { params })
+          const { data } = await apiClient.get(`${endpoints.apartments}/search`, { params })
           return data
      },
 
