@@ -1,3 +1,4 @@
+import { ROUTES } from '@/constants/routes'
 import { Image } from 'antd'
 import Link from 'next/link'
 
@@ -39,7 +40,7 @@ export default function ApartmentGallery({ images }: ApartmentGalleryProps) {
           style={{ objectFit: 'cover' }}
         />
         <div className='bg-primary text-center p-3 absolute bottom-0 w-full'>
-          <Link href='/' className='underline font-semibold text-white'>Xem thêm</Link>
+          <Link href={ROUTES.HOME} className='underline font-semibold text-white'>Xem thêm</Link>
         </div>
       </div>
     </div>

@@ -1,0 +1,3566 @@
+openapi: 3.0.0
+paths:
+  /api/v1:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        '200':
+          description: Returns API info
+      summary: API Root
+      tags: &ref_0
+        - Health
+  /api/v1/health:
+    get:
+      operationId: AppController_healthCheck
+      parameters: []
+      responses:
+        '200':
+          description: Returns health status
+      summary: Health Check
+      tags: *ref_0
+  /api/v1/auth/login:
+    post:
+      description: Authenticate any actor type (User, Staff, Operator, Admin, Partner)
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful, returns user info and tokens
+        '401':
+          description: Invalid credentials or account deactivated
+      summary: Login
+      tags: &ref_1
+        - Authentication
+  /api/v1/auth/refresh:
+    post:
+      description: Get new access token using refresh token
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenDto'
+      responses:
+        '200':
+          description: Returns new access and refresh tokens
+        '401':
+          description: Invalid or expired refresh token
+      summary: Refresh Token
+      tags: *ref_1
+  /api/v1/auth/logout:
+    post:
+      description: Revoke refresh token
+      operationId: AuthController_logout
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenDto'
+      responses:
+        '204':
+          description: Logout successful
+      security:
+        - bearer: []
+      summary: Logout
+      tags: *ref_1
+  /api/v1/auth/submit-guest:
+    post:
+      description: >-
+        Staff submits guest information after rental agreement. Creates a
+        pending registration.
+      operationId: AuthController_submitGuestInfo
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitGuestInfoDto'
+      responses:
+        '201':
+          description: Guest information submitted successfully
+        '409':
+          description: Phone number or email already registered
+      security:
+        - bearer: []
+      summary: Submit Guest Information (Staff only)
+      tags: *ref_1
+  /api/v1/auth/request-otp:
+    post:
+      description: >-
+        Guest requests OTP via mobile app. Phone must match a pending
+        registration.
+      operationId: AuthController_requestOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpDto'
+      responses:
+        '200':
+          description: OTP sent successfully
+        '400':
+          description: Rate limit exceeded or registration expired
+        '404':
+          description: No pending registration found for this phone
+      summary: Request OTP
+      tags: *ref_1
+  /api/v1/auth/verify-otp:
+    post:
+      description: >-
+        Guest verifies OTP and creates account. After success, Guest becomes
+        User.
+      operationId: AuthController_verifyOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpDto'
+      responses:
+        '201':
+          description: Registration successful, returns user info and tokens
+        '400':
+          description: Invalid OTP, expired, or too many attempts
+        '404':
+          description: No pending registration found
+      summary: Verify OTP and Complete Registration
+      tags: *ref_1
+  /api/v1/auth/resend-otp:
+    post:
+      description: Invalidate old OTP and send a new one
+      operationId: AuthController_resendOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpDto'
+      responses:
+        '200':
+          description: New OTP sent successfully
+        '400':
+          description: Rate limit exceeded
+      summary: Resend OTP
+      tags: *ref_1
+  /api/v1/auth/send-direct-otp:
+    post:
+      description: >-
+        Send OTP to any phone number without pending registration. For testing
+        purposes.
+      operationId: AuthController_sendDirectOtp
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpDto'
+      responses:
+        '200':
+          description: OTP sent successfully with code included
+        '400':
+          description: Rate limit exceeded
+      summary: '[DEV] Send OTP Directly'
+      tags: *ref_1
+  /api/v1/users:
+    get:
+      description: Get list of all users. Admin and Operator only.
+      operationId: UsersController_findAll
+      parameters:
+        - name: search
+          required: false
+          in: query
+          description: Search by email, name, or phone
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of users returned
+      security: &ref_2
+        - bearer: []
+      summary: List all users
+      tags: &ref_3
+        - Users
+    post:
+      description: >-
+        Create a new user account. Staff can create users after contract
+        signing.
+      operationId: UsersController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: User created successfully
+        '409':
+          description: Email already exists
+      security: *ref_2
+      summary: Create new user
+      tags: *ref_3
+  /api/v1/users/me:
+    get:
+      description: Get the profile of the currently authenticated user
+      operationId: UsersController_getProfile
+      parameters: []
+      responses:
+        '200':
+          description: User profile returned
+      security: *ref_2
+      summary: Get current user profile
+      tags: *ref_3
+  /api/v1/users/{id}:
+    get:
+      description: Get user details. Users can only view their own profile.
+      operationId: UsersController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details returned
+        '403':
+          description: Access denied
+        '404':
+          description: User not found
+      security: *ref_2
+      summary: Get user by ID
+      tags: *ref_3
+    patch:
+      description: Update user details. Users can only update their own profile.
+      operationId: UsersController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: User updated successfully
+        '403':
+          description: Access denied
+        '404':
+          description: User not found
+      security: *ref_2
+      summary: Update user
+      tags: *ref_3
+    delete:
+      description: Soft delete user (mark as inactive). Admin only.
+      operationId: UsersController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deactivated successfully
+        '404':
+          description: User not found
+      security: *ref_2
+      summary: Delete user
+      tags: *ref_3
+  /api/v1/apartments:
+    get:
+      description: Search available apartments with filters. Public endpoint.
+      operationId: ApartmentsController_search
+      parameters:
+        - name: city
+          required: false
+          in: query
+          schema:
+            example: Ho Chi Minh
+            type: string
+        - name: district
+          required: false
+          in: query
+          schema:
+            example: Binh Thanh
+            type: string
+        - name: keyword
+          required: false
+          in: query
+          schema:
+            example: Vinhomes
+            type: string
+        - name: minBedrooms
+          required: false
+          in: query
+          description: Minimum bedrooms
+          schema:
+            example: 1
+            type: number
+        - name: maxBedrooms
+          required: false
+          in: query
+          description: Maximum bedrooms
+          schema:
+            example: 3
+            type: number
+        - name: minPrice
+          required: false
+          in: query
+          description: Minimum rent
+          schema:
+            example: 5000000
+            type: number
+        - name: maxPrice
+          required: false
+          in: query
+          description: Maximum rent
+          schema:
+            example: 20000000
+            type: number
+        - name: minArea
+          required: false
+          in: query
+          description: Minimum area m²
+          schema:
+            example: 50
+            type: number
+        - name: maxArea
+          required: false
+          in: query
+          description: Maximum area m²
+          schema:
+            example: 100
+            type: number
+        - name: furnishingStatus
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - unfurnished
+              - semi_furnished
+              - fully_furnished
+        - name: status
+          required: false
+          in: query
+          schema:
+            default: available
+            type: string
+            enum:
+              - available
+              - occupied
+              - maintenance
+              - reserved
+              - inactive
+        - name: page
+          required: false
+          in: query
+          schema:
+            default: 1
+            example: 1
+            type: number
+        - name: limit
+          required: false
+          in: query
+          schema:
+            default: 20
+            example: 20
+            type: number
+        - name: sortBy
+          required: false
+          in: query
+          schema:
+            example: baseRentPrice
+            type: string
+            enum:
+              - baseRentPrice
+              - totalArea
+              - createdAt
+              - numberOfBedrooms
+        - name: sortOrder
+          required: false
+          in: query
+          schema:
+            example: asc
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: List of apartments with pagination
+      summary: Search apartments
+      tags: &ref_4
+        - Apartments
+    post:
+      description: Create new apartment listing. Admin, Operator, or Partner only.
+      operationId: ApartmentsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApartmentDto'
+      responses:
+        '201':
+          description: Apartment created
+      security:
+        - bearer: []
+      summary: Create apartment
+      tags: *ref_4
+  /api/v1/apartments/{id}:
+    get:
+      description: Get full apartment details by ID. Public endpoint.
+      operationId: ApartmentsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Apartment details
+        '404':
+          description: Apartment not found
+      summary: Get apartment details
+      tags: *ref_4
+    patch:
+      description: Update apartment details. Partners can only update their own.
+      operationId: ApartmentsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApartmentDto'
+      responses:
+        '200':
+          description: Apartment updated
+        '403':
+          description: Access denied
+        '404':
+          description: Apartment not found
+      security:
+        - bearer: []
+      summary: Update apartment
+      tags: *ref_4
+    delete:
+      description: Soft delete apartment (mark as inactive). Admin only.
+      operationId: ApartmentsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Apartment deactivated
+        '404':
+          description: Apartment not found
+      security:
+        - bearer: []
+      summary: Delete apartment
+      tags: *ref_4
+  /api/v1/apartments/partner/{partnerId}:
+    get:
+      description: Get all apartments owned by a partner.
+      operationId: ApartmentsController_findByPartner
+      parameters:
+        - name: partnerId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of partner apartments
+      security:
+        - bearer: []
+      summary: Get partner apartments
+      tags: *ref_4
+  /api/v1/apartments/{id}/approve:
+    patch:
+      description: Approve apartment for listing. Operator or Admin only.
+      operationId: ApartmentsController_approve
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Apartment approved
+      security:
+        - bearer: []
+      summary: Approve apartment
+      tags: *ref_4
+  /api/v1/contracts:
+    get:
+      description: Get all contracts. Users only see their own contracts.
+      operationId: ContractsController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - draft
+              - pending
+              - active
+              - expired
+              - terminated
+              - renewed
+            type: string
+      responses:
+        '200':
+          description: List of contracts
+      security: &ref_5
+        - bearer: []
+      summary: List contracts
+      tags: &ref_6
+        - Contracts
+    post:
+      description: Create new rental contract with members.
+      operationId: ContractsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContractDto'
+      responses:
+        '201':
+          description: Contract created
+        '409':
+          description: Apartment not available or overlapping contract
+      security: *ref_5
+      summary: Create contract
+      tags: *ref_6
+  /api/v1/contracts/{id}:
+    get:
+      description: Get contract by ID. Users only see their own contracts.
+      operationId: ContractsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contract details
+        '404':
+          description: Contract not found
+      security: *ref_5
+      summary: Get contract details
+      tags: *ref_6
+    patch:
+      description: Update contract details. Cannot modify active contracts.
+      operationId: ContractsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContractDto'
+      responses:
+        '200':
+          description: Contract updated
+        '404':
+          description: Contract not found
+      security: *ref_5
+      summary: Update contract
+      tags: *ref_6
+  /api/v1/contracts/{id}/activate:
+    patch:
+      description: Sign and activate pending contract. Updates apartment to occupied.
+      operationId: ContractsController_activate
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contract activated
+        '409':
+          description: Contract not in pending status
+      security: *ref_5
+      summary: Activate contract
+      tags: *ref_6
+  /api/v1/contracts/{id}/terminate:
+    patch:
+      description: Terminate active contract early. Updates apartment to available.
+      operationId: ContractsController_terminate
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contract terminated
+        '409':
+          description: Contract not active
+      security: *ref_5
+      summary: Terminate contract
+      tags: *ref_6
+  /api/v1/invoices:
+    get:
+      operationId: InvoicesController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - draft
+              - issued
+              - sent
+              - partially_paid
+              - paid
+              - overdue
+              - cancelled
+            type: string
+      responses:
+        '200':
+          description: List of invoices
+      security: &ref_7
+        - bearer: []
+      summary: List invoices
+      tags: &ref_8
+        - Invoices
+    post:
+      operationId: InvoicesController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceDto'
+      responses:
+        '201':
+          description: Invoice created
+      security: *ref_7
+      summary: Create invoice
+      tags: *ref_8
+  /api/v1/invoices/{id}:
+    get:
+      operationId: InvoicesController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invoice details
+      security: *ref_7
+      summary: Get invoice details
+      tags: *ref_8
+    patch:
+      operationId: InvoicesController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInvoiceDto'
+      responses:
+        '200':
+          description: Invoice updated
+      security: *ref_7
+      summary: Update invoice
+      tags: *ref_8
+  /api/v1/payments:
+    get:
+      operationId: PaymentsController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - pending
+              - processing
+              - completed
+              - failed
+              - refunded
+              - cancelled
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: &ref_9
+        - bearer: []
+      summary: List payments
+      tags: &ref_10
+        - Payments
+    post:
+      operationId: PaymentsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentDto'
+      responses:
+        '201':
+          description: Payment created
+      security: *ref_9
+      summary: Create payment
+      tags: *ref_10
+  /api/v1/payments/{id}:
+    get:
+      operationId: PaymentsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_9
+      summary: Get payment details
+      tags: *ref_10
+  /api/v1/payments/{id}/confirm:
+    post:
+      operationId: PaymentsController_confirm
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      security: *ref_9
+      summary: Confirm payment
+      tags: *ref_10
+  /api/v1/payments/webhook/payos:
+    post:
+      operationId: PaymentsController_payosWebhook
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      security: *ref_9
+      summary: PayOS webhook endpoint
+      tags: *ref_10
+  /api/v1/maintenance:
+    get:
+      operationId: MaintenanceController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - submitted
+              - acknowledged
+              - scheduled
+              - in_progress
+              - completed
+              - cancelled
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: &ref_11
+        - bearer: []
+      summary: List maintenance requests
+      tags: &ref_12
+        - Maintenance
+    post:
+      operationId: MaintenanceController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaintenanceDto'
+      responses:
+        '201':
+          description: Request created
+      security: *ref_11
+      summary: Create maintenance request
+      tags: *ref_12
+  /api/v1/maintenance/{id}:
+    get:
+      operationId: MaintenanceController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_11
+      summary: Get maintenance request details
+      tags: *ref_12
+    patch:
+      operationId: MaintenanceController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMaintenanceDto'
+      responses:
+        '200':
+          description: ''
+      security: *ref_11
+      summary: Update maintenance request
+      tags: *ref_12
+  /api/v1/maintenance/{id}/complete:
+    patch:
+      operationId: MaintenanceController_complete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_11
+      summary: Complete maintenance request
+      tags: *ref_12
+  /api/v1/tickets:
+    get:
+      operationId: TicketsController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - open
+              - in_progress
+              - waiting_for_user
+              - resolved
+              - closed
+              - escalated
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: &ref_13
+        - bearer: []
+      summary: List tickets
+      tags: &ref_14
+        - Tickets
+    post:
+      operationId: TicketsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketDto'
+      responses:
+        '201':
+          description: Ticket created
+      security: *ref_13
+      summary: Create ticket
+      tags: *ref_14
+  /api/v1/tickets/{id}:
+    get:
+      operationId: TicketsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_13
+      summary: Get ticket details
+      tags: *ref_14
+    patch:
+      operationId: TicketsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketDto'
+      responses:
+        '200':
+          description: ''
+      security: *ref_13
+      summary: Update ticket
+      tags: *ref_14
+  /api/v1/tickets/{id}/assign:
+    patch:
+      operationId: TicketsController_assign
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_13
+      summary: Assign ticket to staff
+      tags: *ref_14
+  /api/v1/tickets/{id}/resolve:
+    patch:
+      operationId: TicketsController_resolve
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_13
+      summary: Resolve ticket
+      tags: *ref_14
+  /api/v1/tickets/{id}/close:
+    patch:
+      operationId: TicketsController_close
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      security: *ref_13
+      summary: Close ticket
+      tags: *ref_14
+  /api/v1/viewing-requests:
+    post:
+      description: >-
+        Guest submits request to view an apartment. Staff is auto-assigned based
+        on proximity.
+      operationId: ViewingRequestsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateViewingRequestDto'
+      responses:
+        '201':
+          description: Viewing request created
+        '404':
+          description: Apartment not found
+      summary: Submit viewing request
+      tags: &ref_15
+        - Viewing Requests
+  /api/v1/viewing-requests/my-assigned:
+    get:
+      description: Staff sees viewing requests in their working area.
+      operationId: ViewingRequestsController_getMyAssigned
+      parameters: []
+      responses:
+        '200':
+          description: List of assigned viewing requests
+      security:
+        - bearer: []
+      summary: Get my assigned viewing requests
+      tags: *ref_15
+  /api/v1/viewing-requests/{id}/appointments:
+    post:
+      description: Staff creates appointment after contacting guest. Checks slot limits.
+      operationId: ViewingRequestsController_createAppointment
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentDto'
+      responses:
+        '201':
+          description: Appointment created
+        '409':
+          description: Slot is full
+      security:
+        - bearer: []
+      summary: Create appointment from viewing request
+      tags: *ref_15
+  /api/v1/viewing-requests/apartments/{apartmentId}/appointments:
+    get:
+      description: >-
+        View scheduled appointments for an apartment so staff can see when it is
+        busy.
+      operationId: ViewingRequestsController_getApartmentAppointments
+      parameters:
+        - name: apartmentId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: date
+          required: true
+          in: query
+          schema:
+            example: '2026-02-10'
+            type: string
+      responses:
+        '200':
+          description: ''
+      security:
+        - bearer: []
+      summary: Get apartment appointments for a date
+      tags: *ref_15
+  /api/v1/iot/devices:
+    get:
+      operationId: IoTController_findAllDevices
+      parameters:
+        - name: apartmentId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - active
+              - inactive
+              - maintenance
+              - error
+            type: string
+      responses:
+        '200':
+          description: List of IoT devices
+      security: &ref_16
+        - bearer: []
+      summary: List all IoT devices
+      tags: &ref_17
+        - IoT
+    post:
+      operationId: IoTController_createDevice
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIoTDeviceDto'
+      responses:
+        '201':
+          description: Device registered
+      security: *ref_16
+      summary: Register new IoT device
+      tags: *ref_17
+  /api/v1/iot/devices/{id}:
+    get:
+      operationId: IoTController_findOneDevice
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Device details
+        '404':
+          description: Device not found
+      security: *ref_16
+      summary: Get IoT device details
+      tags: *ref_17
+    patch:
+      operationId: IoTController_updateDevice
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIoTDeviceDto'
+      responses:
+        '200':
+          description: Device updated
+      security: *ref_16
+      summary: Update IoT device
+      tags: *ref_17
+    delete:
+      operationId: IoTController_removeDevice
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Device deactivated
+      security: *ref_16
+      summary: Deactivate IoT device
+      tags: *ref_17
+  /api/v1/iot/apartments/{apartmentId}/devices:
+    get:
+      description: Tenants see only controllable active devices.
+      operationId: IoTController_findDevicesByApartment
+      parameters:
+        - name: apartmentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of apartment devices
+      security: *ref_16
+      summary: Get devices by apartment
+      tags: *ref_17
+  /api/v1/iot/devices/{id}/control:
+    post:
+      description: Control device (lock/unlock, on/off). Tenants must have active contract.
+      operationId: IoTController_controlDevice
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ControlDeviceDto'
+      responses:
+        '200':
+          description: Command sent
+        '403':
+          description: Access denied
+      security: *ref_16
+      summary: Send command to IoT device
+      tags: *ref_17
+  /api/v1/iot/meters:
+    get:
+      operationId: IoTController_findAllMeters
+      parameters:
+        - name: apartmentId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - active
+              - inactive
+              - faulty
+              - replaced
+            type: string
+      responses:
+        '200':
+          description: List of utility meters
+      security: *ref_16
+      summary: List all utility meters
+      tags: *ref_17
+    post:
+      operationId: IoTController_createMeter
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUtilityMeterDto'
+      responses:
+        '201':
+          description: Meter registered
+      security: *ref_16
+      summary: Register new utility meter
+      tags: *ref_17
+  /api/v1/iot/meters/{id}:
+    get:
+      operationId: IoTController_findOneMeter
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Meter details with readings
+      security: *ref_16
+      summary: Get utility meter details with readings history
+      tags: *ref_17
+    patch:
+      operationId: IoTController_updateMeter
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUtilityMeterDto'
+      responses:
+        '200':
+          description: Meter updated
+      security: *ref_16
+      summary: Update utility meter
+      tags: *ref_17
+  /api/v1/iot/readings:
+    post:
+      operationId: IoTController_createReading
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUtilityReadingDto'
+      responses:
+        '201':
+          description: Reading recorded
+      security: *ref_16
+      summary: Record utility reading
+      tags: *ref_17
+  /api/v1/iot/meters/{meterId}/readings:
+    get:
+      operationId: IoTController_getReadings
+      parameters:
+        - name: meterId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          schema:
+            example: 12
+            type: number
+      responses:
+        '200':
+          description: Reading history
+      security: *ref_16
+      summary: Get meter reading history
+      tags: *ref_17
+  /api/v1/iot/readings/{id}/verify:
+    patch:
+      operationId: IoTController_verifyReading
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reading verified
+      security: *ref_16
+      summary: Verify utility reading
+      tags: *ref_17
+  /api/v1/tasks:
+    get:
+      description: Staff sees assigned tasks. Operators see tasks they created.
+      operationId: TasksController_findAll
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - pending
+              - assigned
+              - in_progress
+              - completed
+              - cancelled
+            type: string
+      responses:
+        '200':
+          description: List of tasks
+      security: &ref_18
+        - bearer: []
+      summary: List tasks
+      tags: &ref_19
+        - Tasks
+    post:
+      description: Operator or Admin creates a task and optionally assigns to staff.
+      operationId: TasksController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskDto'
+      responses:
+        '201':
+          description: Task created
+      security: *ref_18
+      summary: Create task
+      tags: *ref_19
+  /api/v1/tasks/{id}:
+    get:
+      operationId: TasksController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+        '404':
+          description: Task not found
+      security: *ref_18
+      summary: Get task details
+      tags: *ref_19
+    patch:
+      operationId: TasksController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskDto'
+      responses:
+        '200':
+          description: Task updated
+      security: *ref_18
+      summary: Update task
+      tags: *ref_19
+  /api/v1/tasks/{id}/assign:
+    patch:
+      operationId: TasksController_assign
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task assigned
+      security: *ref_18
+      summary: Assign task to staff
+      tags: *ref_19
+  /api/v1/tasks/{id}/start:
+    patch:
+      operationId: TasksController_start
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task started
+      security: *ref_18
+      summary: Start task
+      tags: *ref_19
+  /api/v1/tasks/{id}/complete:
+    patch:
+      operationId: TasksController_complete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task completed
+      security: *ref_18
+      summary: Complete task
+      tags: *ref_19
+  /api/v1/tasks/{id}/cancel:
+    patch:
+      operationId: TasksController_cancel
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task cancelled
+      security: *ref_18
+      summary: Cancel task
+      tags: *ref_19
+  /api/v1/partners:
+    get:
+      operationId: PartnersController_findAllPartners
+      parameters:
+        - name: isActive
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of partners
+      security: &ref_20
+        - bearer: []
+      summary: List all partners
+      tags: &ref_21
+        - Partners
+  /api/v1/partners/profile:
+    get:
+      operationId: PartnersController_getMyProfile
+      parameters: []
+      responses:
+        '200':
+          description: Partner profile
+      security: *ref_20
+      summary: Get my partner profile
+      tags: *ref_21
+  /api/v1/partners/{id}:
+    get:
+      operationId: PartnersController_findOnePartner
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Partner details
+        '404':
+          description: Partner not found
+      security: *ref_20
+      summary: Get partner details
+      tags: *ref_21
+  /api/v1/partners/requests/all:
+    get:
+      description: Operator/Admin views all property listing requests
+      operationId: PartnersController_findAllRequests
+      parameters:
+        - name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - submitted
+              - under_review
+              - approved
+              - rejected
+              - on_hold
+            type: string
+      responses:
+        '200':
+          description: List of partner requests
+      security: *ref_20
+      summary: List all partner requests
+      tags: *ref_21
+  /api/v1/partners/requests/mine:
+    get:
+      operationId: PartnersController_findMyRequests
+      parameters: []
+      responses:
+        '200':
+          description: My partner requests
+      security: *ref_20
+      summary: List my requests
+      tags: *ref_21
+  /api/v1/partners/requests/{id}:
+    get:
+      operationId: PartnersController_findOneRequest
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Partner request details
+      security: *ref_20
+      summary: Get request details
+      tags: *ref_21
+    patch:
+      operationId: PartnersController_updateRequest
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePartnerRequestDto'
+      responses:
+        '200':
+          description: Request updated
+      security: *ref_20
+      summary: Update my request
+      tags: *ref_21
+  /api/v1/partners/requests:
+    post:
+      description: Partner submits a new property for review
+      operationId: PartnersController_createRequest
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePartnerRequestDto'
+      responses:
+        '201':
+          description: Request created
+      security: *ref_20
+      summary: Submit property listing request
+      tags: *ref_21
+  /api/v1/partners/requests/{id}/review:
+    patch:
+      description: Approve or reject a partner property request
+      operationId: PartnersController_reviewRequest
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewPartnerRequestDto'
+      responses:
+        '200':
+          description: Request reviewed
+      security: *ref_20
+      summary: Review partner request
+      tags: *ref_21
+  /api/v1/notifications:
+    get:
+      operationId: NotificationsController_findMyNotifications
+      parameters:
+        - name: isRead
+          required: false
+          in: query
+          description: Filter by read status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of notifications
+      security: &ref_22
+        - bearer: []
+      summary: Get my notifications
+      tags: &ref_23
+        - Notifications
+    post:
+      description: Admin/Operator sends notification to a user
+      operationId: NotificationsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNotificationDto'
+      responses:
+        '201':
+          description: Notification sent
+      security: *ref_22
+      summary: Send notification
+      tags: *ref_23
+  /api/v1/notifications/unread-count:
+    get:
+      operationId: NotificationsController_countUnread
+      parameters: []
+      responses:
+        '200':
+          description: Unread count
+      security: *ref_22
+      summary: Count unread notifications
+      tags: *ref_23
+  /api/v1/notifications/all:
+    get:
+      operationId: NotificationsController_findAll
+      parameters:
+        - name: recipientType
+          required: false
+          in: query
+          schema:
+            enum:
+              - guest
+              - user
+              - staff
+              - operator
+              - admin
+              - partner
+              - system
+            type: string
+      responses:
+        '200':
+          description: All notifications
+      security: *ref_22
+      summary: List all notifications (admin)
+      tags: *ref_23
+  /api/v1/notifications/{id}/read:
+    patch:
+      operationId: NotificationsController_markAsRead
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Marked as read
+      security: *ref_22
+      summary: Mark notification as read
+      tags: *ref_23
+  /api/v1/notifications/read-all:
+    patch:
+      operationId: NotificationsController_markAllAsRead
+      parameters: []
+      responses:
+        '200':
+          description: All marked as read
+      security: *ref_22
+      summary: Mark all notifications as read
+      tags: *ref_23
+  /api/v1/policies:
+    get:
+      operationId: PoliciesController_findAllPolicies
+      parameters:
+        - name: policyType
+          required: false
+          in: query
+          schema:
+            enum:
+              - terms_of_service
+              - privacy_policy
+              - rental_rules
+              - cancellation_policy
+              - community_guidelines
+            type: string
+        - name: isActive
+          required: false
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of policies
+      security: &ref_24
+        - bearer: []
+      summary: List all policies
+      tags: &ref_25
+        - Policies
+    post:
+      operationId: PoliciesController_createPolicy
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePolicyDto'
+      responses:
+        '201':
+          description: Policy created
+      security: *ref_24
+      summary: Create policy
+      tags: *ref_25
+  /api/v1/policies/public:
+    get:
+      description: No auth required. Returns active policies for tenants/guests.
+      operationId: PoliciesController_findActivePublicPolicies
+      parameters: []
+      responses:
+        '200':
+          description: Public policies
+      security: *ref_24
+      summary: Get active public policies
+      tags: *ref_25
+  /api/v1/policies/{id}:
+    get:
+      operationId: PoliciesController_findOnePolicy
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Policy details
+      security: *ref_24
+      summary: Get policy details
+      tags: *ref_25
+    patch:
+      operationId: PoliciesController_updatePolicy
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePolicyDto'
+      responses:
+        '200':
+          description: Policy updated
+      security: *ref_24
+      summary: Update policy
+      tags: *ref_25
+  /api/v1/policies/{id}/approve:
+    patch:
+      operationId: PoliciesController_approvePolicy
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Policy approved and activated
+      security: *ref_24
+      summary: Approve policy
+      tags: *ref_25
+  /api/v1/policies/documents/all:
+    get:
+      operationId: PoliciesController_findAllDocuments
+      parameters:
+        - name: documentType
+          required: false
+          in: query
+          schema:
+            enum:
+              - contract_template
+              - addendum
+              - disclosure
+              - consent_form
+              - inspection_report
+              - other
+            type: string
+        - name: isPublic
+          required: false
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of documents
+      security: *ref_24
+      summary: List all legal documents
+      tags: *ref_25
+  /api/v1/policies/documents/public:
+    get:
+      operationId: PoliciesController_findPublicDocuments
+      parameters: []
+      responses:
+        '200':
+          description: Public legal documents
+      security: *ref_24
+      summary: Get public legal documents
+      tags: *ref_25
+  /api/v1/policies/documents/{id}:
+    get:
+      operationId: PoliciesController_findOneDocument
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document details
+      security: *ref_24
+      summary: Get legal document details
+      tags: *ref_25
+    patch:
+      operationId: PoliciesController_updateDocument
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLegalDocumentDto'
+      responses:
+        '200':
+          description: Document updated
+      security: *ref_24
+      summary: Update legal document
+      tags: *ref_25
+  /api/v1/policies/documents:
+    post:
+      operationId: PoliciesController_createDocument
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLegalDocumentDto'
+      responses:
+        '201':
+          description: Document created
+      security: *ref_24
+      summary: Create legal document
+      tags: *ref_25
+  /api/v1/activity-logs:
+    get:
+      description: Filter by actor, entity, action, date range
+      operationId: ActivityLogsController_findAll
+      parameters:
+        - name: actorType
+          required: false
+          in: query
+          schema:
+            enum:
+              - guest
+              - user
+              - staff
+              - operator
+              - admin
+              - partner
+              - system
+            type: string
+        - name: actorId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: entityType
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: entityId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: action
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          required: false
+          in: query
+          schema:
+            example: '2026-01-01'
+            type: string
+        - name: endDate
+          required: false
+          in: query
+          schema:
+            example: '2026-12-31'
+            type: string
+      responses:
+        '200':
+          description: List of activity logs
+      security: &ref_26
+        - bearer: []
+      summary: List activity logs
+      tags: &ref_27
+        - Activity Logs
+  /api/v1/activity-logs/{id}:
+    get:
+      operationId: ActivityLogsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Activity log details
+      security: *ref_26
+      summary: Get activity log details
+      tags: *ref_27
+info:
+  title: IntelliRentOps API
+  description: Property Rental Management Platform API Documentation
+  version: 1.0.0
+  contact: {}
+tags:
+  - name: Authentication
+    description: Authentication endpoints
+  - name: Users
+    description: User management endpoints
+  - name: Apartments
+    description: Apartment listing endpoints
+  - name: Contracts
+    description: Rental contract endpoints
+  - name: Invoices
+    description: Invoice and billing endpoints
+  - name: Payments
+    description: Payment processing endpoints
+  - name: IoT
+    description: IoT device control endpoints
+  - name: Maintenance
+    description: Maintenance request endpoints
+  - name: Tickets
+    description: Support ticket endpoints
+  - name: Tasks
+    description: Task management endpoints
+  - name: Partners
+    description: Partner & property request endpoints
+  - name: Notifications
+    description: Notification endpoints
+  - name: Policies
+    description: Policy & legal document endpoints
+  - name: Activity Logs
+    description: Audit trail endpoints
+  - name: Viewing Requests
+    description: Property viewing & appointment endpoints
+servers: []
+components:
+  securitySchemes:
+    JWT-auth:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      name: JWT
+      description: Enter JWT token
+      in: header
+  schemas:
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+          description: Email address of the actor
+        password:
+          type: string
+          example: password123
+          description: Password (minimum 8 characters)
+        actorType:
+          type: string
+          enum:
+            - user
+            - staff
+            - operator
+            - admin
+            - partner
+          description: Type of actor logging in. If not provided, system will auto-detect.
+      required:
+        - email
+        - password
+    RefreshTokenDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          description: Refresh token obtained during login
+      required:
+        - refreshToken
+    SubmitGuestInfoDto:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '0901234567'
+          description: Phone number of the guest (used for OTP verification)
+        email:
+          type: string
+          example: guest@example.com
+          description: Email address of the guest
+        fullName:
+          type: string
+          example: Nguyen Van A
+          description: Full name of the guest
+        dateOfBirth:
+          type: string
+          example: '1990-05-15'
+          description: Date of birth (ISO format)
+        nationalId:
+          type: string
+          example: '012345678901'
+          description: National ID number (CCCD)
+        passportNumber:
+          type: string
+          example: A12345678
+          description: Passport number
+        emergencyContactName:
+          type: string
+          example: Nguyen Thi B
+          description: Emergency contact name
+        emergencyContactPhone:
+          type: string
+          example: '0909876543'
+          description: Emergency contact phone
+        notes:
+          type: string
+          example: Tenant for apartment 101, building A
+          description: Additional notes from staff
+      required:
+        - phone
+        - fullName
+    RequestOtpDto:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '0901234567'
+          description: Phone number to receive OTP (must match pending registration)
+      required:
+        - phone
+    VerifyOtpDto:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '0901234567'
+          description: Phone number used to request OTP
+        otpCode:
+          type: string
+          example: '123456'
+          description: 6-digit OTP code received via SMS
+        password:
+          type: string
+          example: P@ssword123
+          description: Password for the new account (minimum 8 characters)
+      required:
+        - phone
+        - otpCode
+        - password
+    CreateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+          description: Email address (must be unique)
+        phone:
+          type: string
+          example: '0901234567'
+          description: Phone number
+        fullName:
+          type: string
+          example: Nguyen Van A
+          description: Full name of the user
+        password:
+          type: string
+          example: P@ssword123
+          description: Password (minimum 8 characters)
+        dateOfBirth:
+          type: string
+          example: '1990-05-15'
+          description: Date of birth (ISO format)
+        nationalId:
+          type: string
+          example: '012345678901'
+          description: National ID number (CCCD)
+        passportNumber:
+          type: string
+          example: A12345678
+          description: Passport number
+        profileImageUrl:
+          type: string
+          example: https://example.com/avatar.jpg
+          description: Profile image URL
+        emergencyContactName:
+          type: string
+          example: Nguyen Thi B
+          description: Emergency contact name
+        emergencyContactPhone:
+          type: string
+          example: '0909876543'
+          description: Emergency contact phone
+      required:
+        - email
+        - phone
+        - fullName
+        - password
+    UpdateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+          description: Email address (must be unique)
+        phone:
+          type: string
+          example: '0901234567'
+          description: Phone number
+        fullName:
+          type: string
+          example: Nguyen Van A
+          description: Full name of the user
+        password:
+          type: string
+          example: P@ssword123
+          description: Password (minimum 8 characters)
+        dateOfBirth:
+          type: string
+          example: '1990-05-15'
+          description: Date of birth (ISO format)
+        nationalId:
+          type: string
+          example: '012345678901'
+          description: National ID number (CCCD)
+        passportNumber:
+          type: string
+          example: A12345678
+          description: Passport number
+        profileImageUrl:
+          type: string
+          example: https://example.com/avatar.jpg
+          description: Profile image URL
+        emergencyContactName:
+          type: string
+          example: Nguyen Thi B
+          description: Emergency contact name
+        emergencyContactPhone:
+          type: string
+          example: '0909876543'
+          description: Emergency contact phone
+        isActive:
+          type: boolean
+          description: Whether the user account is active
+          default: true
+        isVerified:
+          type: boolean
+          description: Whether the user email is verified
+    CreateApartmentDto:
+      type: object
+      properties:
+        buildingName:
+          type: string
+          example: Vinhomes Central Park
+        apartmentNumber:
+          type: string
+          example: A-1501
+        floorNumber:
+          type: number
+          example: 15
+        address:
+          type: string
+          example: 208 Nguyen Huu Canh, Binh Thanh
+        city:
+          type: string
+          example: Ho Chi Minh
+        district:
+          type: string
+          example: Binh Thanh
+        ward:
+          type: string
+          example: Ward 22
+        latitude:
+          type: number
+          example: 10.8012
+        longitude:
+          type: number
+          example: 106.72
+        totalArea:
+          type: number
+          example: 75.5
+          description: Total area in m²
+        usableArea:
+          type: number
+          example: 70
+          description: Usable area in m²
+        numberOfBedrooms:
+          type: number
+          example: 2
+        numberOfBathrooms:
+          type: number
+          example: 2
+        furnishingStatus:
+          type: string
+          enum: &ref_28
+            - unfurnished
+            - semi_furnished
+            - fully_furnished
+          default: unfurnished
+        amenities:
+          example: &ref_29
+            - air_conditioning
+            - wifi
+            - parking
+            - gym
+          description: List of amenities
+          type: array
+          items:
+            type: string
+        baseRentPrice:
+          type: number
+          example: 15000000
+          description: Monthly rent in VND
+        depositAmount:
+          type: number
+          example: 30000000
+          description: Deposit in VND
+        description:
+          type: string
+          example: Modern apartment with city view
+        images:
+          example: &ref_30
+            - https://example.com/img1.jpg
+          description: Array of image URLs
+          type: array
+          items:
+            type: string
+        videoTourUrl:
+          type: string
+          example: https://youtube.com/watch?v=...
+        yearBuilt:
+          type: number
+          example: 2020
+        partnerId:
+          type: string
+          description: Partner ID if listed by partner
+      required:
+        - apartmentNumber
+        - address
+        - city
+        - district
+        - totalArea
+        - numberOfBedrooms
+        - numberOfBathrooms
+        - baseRentPrice
+    UpdateApartmentDto:
+      type: object
+      properties:
+        buildingName:
+          type: string
+          example: Vinhomes Central Park
+        apartmentNumber:
+          type: string
+          example: A-1501
+        floorNumber:
+          type: number
+          example: 15
+        address:
+          type: string
+          example: 208 Nguyen Huu Canh, Binh Thanh
+        city:
+          type: string
+          example: Ho Chi Minh
+        district:
+          type: string
+          example: Binh Thanh
+        ward:
+          type: string
+          example: Ward 22
+        latitude:
+          type: number
+          example: 10.8012
+        longitude:
+          type: number
+          example: 106.72
+        totalArea:
+          type: number
+          example: 75.5
+          description: Total area in m²
+        usableArea:
+          type: number
+          example: 70
+          description: Usable area in m²
+        numberOfBedrooms:
+          type: number
+          example: 2
+        numberOfBathrooms:
+          type: number
+          example: 2
+        furnishingStatus:
+          type: string
+          enum: *ref_28
+          default: unfurnished
+        amenities:
+          example: *ref_29
+          description: List of amenities
+          type: array
+          items:
+            type: string
+        baseRentPrice:
+          type: number
+          example: 15000000
+          description: Monthly rent in VND
+        depositAmount:
+          type: number
+          example: 30000000
+          description: Deposit in VND
+        description:
+          type: string
+          example: Modern apartment with city view
+        images:
+          example: *ref_30
+          description: Array of image URLs
+          type: array
+          items:
+            type: string
+        videoTourUrl:
+          type: string
+          example: https://youtube.com/watch?v=...
+        yearBuilt:
+          type: number
+          example: 2020
+        partnerId:
+          type: string
+          description: Partner ID if listed by partner
+        status:
+          type: string
+          enum:
+            - available
+            - occupied
+            - maintenance
+            - reserved
+            - inactive
+          description: Apartment status
+    ContractMemberDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User ID of the tenant
+        memberType:
+          type: string
+          enum:
+            - primary
+            - co_tenant
+            - guarantor
+        isPrimaryContact:
+          type: boolean
+          example: true
+        sharePercentage:
+          type: number
+          example: 50
+          description: Share percentage
+      required:
+        - userId
+        - memberType
+    CreateContractDto:
+      type: object
+      properties:
+        apartmentId:
+          type: string
+          description: Apartment ID to rent
+        startDate:
+          type: string
+          example: '2026-02-01'
+          description: Contract start date
+        endDate:
+          type: string
+          example: '2027-02-01'
+          description: Contract end date
+        monthlyRent:
+          type: number
+          example: 15000000
+          description: Monthly rent in VND
+        depositAmount:
+          type: number
+          example: 30000000
+          description: Deposit amount in VND
+        paymentDueDay:
+          type: number
+          example: 5
+          description: Day of month for payment (1-31)
+        paymentMethod:
+          type: string
+          enum: &ref_31
+            - bank_transfer
+            - cash
+            - e_wallet
+            - auto_debit
+            - credit_card
+            - debit_card
+          default: bank_transfer
+        utilitiesIncluded:
+          type: object
+          example: &ref_32
+            electricity: true
+            water: true
+            internet: false
+          description: Utilities included in rent
+        utilitiesCharges:
+          type: object
+          example: &ref_33
+            electricity: 3500
+            water: 15000
+          description: Per-unit utility charges if not included
+        contractTerms:
+          type: string
+          description: Contract terms and conditions
+        specialConditions:
+          type: string
+          description: Special conditions
+        members:
+          description: List of tenants on this contract
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractMemberDto'
+      required:
+        - apartmentId
+        - startDate
+        - endDate
+        - monthlyRent
+        - depositAmount
+        - paymentDueDay
+        - members
+    UpdateContractDto:
+      type: object
+      properties:
+        startDate:
+          type: string
+          example: '2026-02-01'
+          description: Contract start date
+        endDate:
+          type: string
+          example: '2027-02-01'
+          description: Contract end date
+        monthlyRent:
+          type: number
+          example: 15000000
+          description: Monthly rent in VND
+        depositAmount:
+          type: number
+          example: 30000000
+          description: Deposit amount in VND
+        paymentDueDay:
+          type: number
+          example: 5
+          description: Day of month for payment (1-31)
+        paymentMethod:
+          type: string
+          enum: *ref_31
+          default: bank_transfer
+        utilitiesIncluded:
+          type: object
+          example: *ref_32
+          description: Utilities included in rent
+        utilitiesCharges:
+          type: object
+          example: *ref_33
+          description: Per-unit utility charges if not included
+        contractTerms:
+          type: string
+          description: Contract terms and conditions
+        specialConditions:
+          type: string
+          description: Special conditions
+        status:
+          type: string
+          enum:
+            - draft
+            - pending
+            - active
+            - expired
+            - terminated
+            - renewed
+        signedDate:
+          type: string
+          description: Signed date when contract is activated
+        contractDocumentUrl:
+          type: string
+          description: URL to signed contract document
+        terminationDate:
+          type: string
+          description: Date of early termination
+        terminationReason:
+          type: string
+          description: Reason for termination
+        earlyTerminationFee:
+          type: number
+          description: Early termination fee
+    InvoiceItemDto:
+      type: object
+      properties:
+        description:
+          type: string
+          example: Monthly Rent
+        amount:
+          type: number
+          example: 15000000
+        quantity:
+          type: number
+          example: 1
+        itemType:
+          type: string
+          example: rent
+      required:
+        - description
+        - amount
+    CreateInvoiceDto:
+      type: object
+      properties:
+        rentalContractId:
+          type: string
+          description: Contract ID for this invoice
+        dueDate:
+          type: string
+          example: '2026-02-15'
+          description: Due date
+        billingPeriodStart:
+          type: string
+          example: '2026-02-01'
+          description: Billing period start
+        billingPeriodEnd:
+          type: string
+          example: '2026-02-28'
+          description: Billing period end
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceItemDto'
+        notes:
+          type: string
+          description: Additional notes
+      required:
+        - rentalContractId
+        - dueDate
+        - billingPeriodStart
+        - billingPeriodEnd
+        - items
+    UpdateInvoiceDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - draft
+            - issued
+            - sent
+            - partially_paid
+            - paid
+            - overdue
+            - cancelled
+        notes:
+          type: string
+    CreatePaymentDto:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          description: Invoice ID to pay
+        amount:
+          type: number
+          example: 15000000
+        paymentMethod:
+          type: string
+          enum:
+            - bank_transfer
+            - cash
+            - e_wallet
+            - auto_debit
+            - credit_card
+            - debit_card
+          default: bank_transfer
+        transactionReference:
+          type: string
+          description: Transaction reference
+        notes:
+          type: string
+          description: Payment notes
+      required:
+        - invoiceId
+        - amount
+        - paymentMethod
+    CreateMaintenanceDto:
+      type: object
+      properties:
+        apartmentId:
+          type: string
+          description: Apartment ID
+        roomId:
+          type: string
+          description: Room ID if specific to a room
+        title:
+          type: string
+          example: Broken air conditioner
+        description:
+          type: string
+          example: AC unit in bedroom not cooling properly
+        category:
+          type: string
+          enum:
+            - plumbing
+            - electrical
+            - hvac
+            - appliance
+            - structural
+            - pest_control
+            - other
+          default: appliances
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - emergency
+          default: medium
+          description: Urgency level
+        images:
+          description: Image URLs of the issue
+          type: array
+          items:
+            type: string
+      required:
+        - apartmentId
+        - title
+        - description
+        - category
+    UpdateMaintenanceDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - submitted
+            - acknowledged
+            - scheduled
+            - in_progress
+            - completed
+            - cancelled
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - emergency
+        scheduledDate:
+          type: string
+          description: Scheduled date for maintenance
+        completedAt:
+          type: string
+          description: Completion date
+        resolutionNotes:
+          type: string
+          description: Resolution notes
+        cost:
+          type: number
+          description: Maintenance cost
+    CreateTicketDto:
+      type: object
+      properties:
+        subject:
+          type: string
+          example: Question about lease renewal
+        description:
+          type: string
+          example: I would like to know if I can renew my lease...
+        category:
+          type: string
+          enum:
+            - billing
+            - contract
+            - account
+            - complaint
+            - inquiry
+            - documentation
+            - other
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - urgent
+          default: medium
+        rentalContractId:
+          type: string
+          description: Related contract ID
+      required:
+        - subject
+        - description
+        - category
+    UpdateTicketDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - open
+            - in_progress
+            - waiting_for_user
+            - resolved
+            - closed
+            - escalated
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - urgent
+        assignedToStaffId:
+          type: string
+          description: Staff ID to assign
+        resolutionNotes:
+          type: string
+          description: Resolution notes
+    CreateViewingRequestDto:
+      type: object
+      properties:
+        apartmentId:
+          type: string
+          description: Apartment ID to view
+        fullName:
+          type: string
+          example: Nguyen Van A
+        email:
+          type: string
+          example: guest@example.com
+        phone:
+          type: string
+          example: '0901234567'
+        preferredMoveInDate:
+          type: string
+          example: '2026-02-15'
+          description: Preferred move-in date
+        message:
+          type: string
+          example: Looking for 2BR apartment near downtown
+        numberOfOccupants:
+          type: number
+          example: 2
+          description: Number of people who will live
+        preferredContactTime:
+          type: string
+          example: morning
+          description: Best time to contact
+      required:
+        - apartmentId
+        - fullName
+        - email
+        - phone
+    CreateAppointmentDto:
+      type: object
+      properties:
+        appointmentDate:
+          type: string
+          example: '2026-02-10'
+          description: Appointment date
+        appointmentTime:
+          type: string
+          example: '14:00'
+          description: Appointment time (HH:mm)
+        durationMinutes:
+          type: number
+          example: 30
+          default: 30
+        meetingLocation:
+          type: string
+          description: Meeting location
+        staffNotes:
+          type: string
+          description: Staff notes
+      required:
+        - appointmentDate
+        - appointmentTime
+    CreateIoTDeviceDto:
+      type: object
+      properties:
+        deviceName:
+          type: string
+          example: Smart Lock - Front Door
+        deviceType:
+          type: string
+          enum: &ref_34
+            - smart_lock
+            - thermostat
+            - light
+            - camera
+            - sensor
+            - alarm
+            - doorbell
+        brand:
+          type: string
+          example: Tuya
+        model:
+          type: string
+          example: ZM-100
+        serialNumber:
+          type: string
+          example: SN-123456
+        macAddress:
+          type: string
+          example: AA:BB:CC:DD:EE:FF
+        apartmentId:
+          type: string
+          description: Apartment ID
+        roomId:
+          type: string
+          description: Room ID
+        locationDescription:
+          type: string
+          example: Installed at main entrance
+        firmwareVersion:
+          type: string
+          example: 1.2.3
+        isControllableByTenant:
+          type: boolean
+          default: true
+        installationDate:
+          type: string
+          example: '2026-01-15'
+        warrantyExpiryDate:
+          type: string
+          example: '2028-01-15'
+        configuration:
+          type: object
+          description: Device configuration JSON
+        notes:
+          type: string
+      required:
+        - deviceName
+        - deviceType
+        - apartmentId
+    UpdateIoTDeviceDto:
+      type: object
+      properties:
+        deviceName:
+          type: string
+          example: Smart Lock - Front Door
+        deviceType:
+          type: string
+          enum: *ref_34
+        brand:
+          type: string
+          example: Tuya
+        model:
+          type: string
+          example: ZM-100
+        serialNumber:
+          type: string
+          example: SN-123456
+        macAddress:
+          type: string
+          example: AA:BB:CC:DD:EE:FF
+        apartmentId:
+          type: string
+          description: Apartment ID
+        roomId:
+          type: string
+          description: Room ID
+        locationDescription:
+          type: string
+          example: Installed at main entrance
+        firmwareVersion:
+          type: string
+          example: 1.2.3
+        isControllableByTenant:
+          type: boolean
+          default: true
+        installationDate:
+          type: string
+          example: '2026-01-15'
+        warrantyExpiryDate:
+          type: string
+          example: '2028-01-15'
+        configuration:
+          type: object
+          description: Device configuration JSON
+        notes:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - maintenance
+            - error
+    ControlDeviceDto:
+      type: object
+      properties:
+        command:
+          type: string
+          example: unlock
+          description: Command to send to device (e.g., lock, unlock, on, off)
+      required:
+        - command
+    CreateUtilityMeterDto:
+      type: object
+      properties:
+        meterNumber:
+          type: string
+          example: EL-2026-001
+        meterType:
+          type: string
+          enum: &ref_35
+            - electricity
+            - water
+            - gas
+            - internet
+        brand:
+          type: string
+          example: Schneider
+        model:
+          type: string
+          example: iEM3155
+        apartmentId:
+          type: string
+          description: Apartment ID
+        installationDate:
+          type: string
+          example: '2026-01-15'
+        unitOfMeasurement:
+          type: string
+          example: kWh
+        ratePerUnit:
+          type: number
+          example: 3500
+          description: Rate per unit in VND
+        isDigital:
+          type: boolean
+          default: false
+        notes:
+          type: string
+      required:
+        - meterNumber
+        - meterType
+        - apartmentId
+        - installationDate
+    UpdateUtilityMeterDto:
+      type: object
+      properties:
+        meterNumber:
+          type: string
+          example: EL-2026-001
+        meterType:
+          type: string
+          enum: *ref_35
+        brand:
+          type: string
+          example: Schneider
+        model:
+          type: string
+          example: iEM3155
+        apartmentId:
+          type: string
+          description: Apartment ID
+        installationDate:
+          type: string
+          example: '2026-01-15'
+        unitOfMeasurement:
+          type: string
+          example: kWh
+        ratePerUnit:
+          type: number
+          example: 3500
+          description: Rate per unit in VND
+        isDigital:
+          type: boolean
+          default: false
+        notes:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - faulty
+            - replaced
+    CreateUtilityReadingDto:
+      type: object
+      properties:
+        utilityMeterId:
+          type: string
+          description: Utility meter ID
+        rentalContractId:
+          type: string
+          description: Rental contract ID
+        readingDate:
+          type: string
+          example: '2026-02-01'
+        readingValue:
+          type: number
+          example: 1250.5
+          description: Current reading value
+        readingType:
+          type: string
+          enum:
+            - manual
+            - automatic
+            - estimated
+          default: manual
+        images:
+          description: Photo evidence of meter reading
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+      required:
+        - utilityMeterId
+        - readingDate
+        - readingValue
+    CreateTaskDto:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Inspect apartment A-1501 AC
+        description:
+          type: string
+          example: Check AC unit reported by tenant
+        taskType:
+          type: string
+          enum: &ref_36
+            - followup
+            - maintenance
+            - inspection
+            - delivery
+            - cleaning
+            - general
+        priority:
+          type: string
+          enum: &ref_37
+            - low
+            - medium
+            - high
+            - urgent
+          default: medium
+        assignedToStaffId:
+          type: string
+          description: Staff ID to assign
+        apartmentId:
+          type: string
+          description: Apartment ID
+        relatedEntityType:
+          type: string
+          enum:
+            - contact_request
+            - maintenance_request
+            - appointment
+            - inspection
+        relatedEntityId:
+          type: string
+          description: Related entity UUID
+        scheduledDate:
+          type: string
+          example: '2026-02-15'
+        scheduledTime:
+          type: string
+          example: '14:00'
+          description: Scheduled time (HH:mm)
+        estimatedDurationMins:
+          type: number
+          example: 60
+          description: Estimated duration in minutes
+      required:
+        - title
+        - taskType
+    UpdateTaskDto:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Inspect apartment A-1501 AC
+        description:
+          type: string
+          example: Check AC unit reported by tenant
+        taskType:
+          type: string
+          enum: *ref_36
+        priority:
+          type: string
+          enum: *ref_37
+          default: medium
+        assignedToStaffId:
+          type: string
+          description: Staff ID to assign
+        apartmentId:
+          type: string
+          description: Apartment ID
+        scheduledDate:
+          type: string
+          example: '2026-02-15'
+        scheduledTime:
+          type: string
+          example: '14:00'
+          description: Scheduled time (HH:mm)
+        estimatedDurationMins:
+          type: number
+          example: 60
+          description: Estimated duration in minutes
+        status:
+          type: string
+          enum:
+            - pending
+            - assigned
+            - in_progress
+            - completed
+            - cancelled
+        completionNotes:
+          type: string
+          description: Completion notes
+    CreatePartnerRequestDto:
+      type: object
+      properties:
+        propertyType:
+          type: string
+          enum: &ref_38
+            - apartment
+            - house
+            - condo
+            - studio
+          default: apartment
+        address:
+          type: string
+          example: 123 Nguyễn Xiển, Long Thạnh Mỹ
+        city:
+          type: string
+          example: TP. Hồ Chí Minh
+        district:
+          type: string
+          example: Quận 9
+        totalArea:
+          type: number
+          example: 75.5
+          description: Total area in m²
+        numberOfUnits:
+          type: number
+          example: 1
+          description: Number of units
+        expectedRentPrice:
+          type: number
+          example: 15000000
+          description: Expected monthly rent in VND
+        description:
+          type: string
+          example: Căn hộ mới, full nội thất...
+        amenities:
+          example: &ref_39
+            - parking
+            - gym
+            - pool
+          type: array
+          items:
+            type: string
+      required:
+        - address
+        - city
+        - district
+    UpdatePartnerRequestDto:
+      type: object
+      properties:
+        propertyType:
+          type: string
+          enum: *ref_38
+          default: apartment
+        address:
+          type: string
+          example: 123 Nguyễn Xiển, Long Thạnh Mỹ
+        city:
+          type: string
+          example: TP. Hồ Chí Minh
+        district:
+          type: string
+          example: Quận 9
+        totalArea:
+          type: number
+          example: 75.5
+          description: Total area in m²
+        numberOfUnits:
+          type: number
+          example: 1
+          description: Number of units
+        expectedRentPrice:
+          type: number
+          example: 15000000
+          description: Expected monthly rent in VND
+        description:
+          type: string
+          example: Căn hộ mới, full nội thất...
+        amenities:
+          example: *ref_39
+          type: array
+          items:
+            type: string
+    ReviewPartnerRequestDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - approved
+            - rejected
+          description: Approve or reject the request
+        reviewNotes:
+          type: string
+          example: Đã xác minh thông tin bất động sản
+        rejectionReason:
+          type: string
+          example: Thiếu giấy tờ sở hữu
+      required:
+        - status
+    CreateNotificationDto:
+      type: object
+      properties:
+        recipientType:
+          type: string
+          enum:
+            - guest
+            - user
+            - staff
+            - operator
+            - admin
+            - partner
+            - system
+        recipientId:
+          type: string
+          description: Recipient UUID
+        notificationType:
+          type: string
+          enum:
+            - info
+            - warning
+            - success
+            - error
+            - reminder
+            - promotion
+          default: info
+        channel:
+          type: string
+          enum:
+            - in_app
+            - email
+            - sms
+            - push
+            - webhook
+        title:
+          type: string
+          example: Hóa đơn tháng 2 đã sẵn sàng
+        message:
+          type: string
+          example: Hóa đơn tháng 2/2026 đã được tạo...
+        actionUrl:
+          type: string
+          example: /invoices/abc-123
+        actionLabel:
+          type: string
+          example: Xem hóa đơn
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - urgent
+          default: medium
+        relatedEntityType:
+          type: string
+          example: Invoice
+        relatedEntityId:
+          type: string
+      required:
+        - recipientType
+        - recipientId
+        - channel
+        - title
+        - message
+    CreatePolicyDto:
+      type: object
+      properties:
+        policyType:
+          type: string
+          enum: &ref_40
+            - terms_of_service
+            - privacy_policy
+            - rental_rules
+            - cancellation_policy
+            - community_guidelines
+        title:
+          type: string
+          example: Chính sách bảo mật thông tin
+        content:
+          type: string
+          example: Nội dung chính sách bảo mật...
+        version:
+          type: string
+          example: '1.0'
+        language:
+          type: string
+          example: vi
+          default: vi
+        effectiveDate:
+          type: string
+          example: '2026-03-01'
+          description: Effective date
+        expiryDate:
+          type: string
+          example: '2027-03-01'
+        requiresAcceptance:
+          type: boolean
+          default: false
+        displayOrder:
+          type: number
+          example: 0
+      required:
+        - policyType
+        - title
+        - content
+        - version
+        - effectiveDate
+    UpdatePolicyDto:
+      type: object
+      properties:
+        policyType:
+          type: string
+          enum: *ref_40
+        title:
+          type: string
+          example: Chính sách bảo mật thông tin
+        content:
+          type: string
+          example: Nội dung chính sách bảo mật...
+        version:
+          type: string
+          example: '1.0'
+        language:
+          type: string
+          example: vi
+          default: vi
+        effectiveDate:
+          type: string
+          example: '2026-03-01'
+          description: Effective date
+        expiryDate:
+          type: string
+          example: '2027-03-01'
+        requiresAcceptance:
+          type: boolean
+          default: false
+        displayOrder:
+          type: number
+          example: 0
+        isActive:
+          type: boolean
+          description: Activate or deactivate policy
+    CreateLegalDocumentDto:
+      type: object
+      properties:
+        documentType:
+          type: string
+          enum: &ref_41
+            - contract_template
+            - addendum
+            - disclosure
+            - consent_form
+            - inspection_report
+            - other
+        title:
+          type: string
+          example: Mẫu hợp đồng thuê nhà
+        description:
+          type: string
+          example: Hợp đồng mẫu cho căn hộ chung cư
+        fileUrl:
+          type: string
+          example: https://storage.example.com/docs/contract-template.pdf
+        fileType:
+          type: string
+          example: application/pdf
+        fileSizeBytes:
+          format: int64
+          type: integer
+          example: 1048576
+          description: File size in bytes
+        category:
+          type: string
+          example: contracts
+        language:
+          type: string
+          example: vi
+          default: vi
+        version:
+          type: string
+          example: '1.0'
+        isTemplate:
+          type: boolean
+          default: false
+        requiresSignature:
+          type: boolean
+          default: false
+        isPublic:
+          type: boolean
+          default: false
+        tags:
+          example: &ref_42
+            - contract
+            - template
+          type: array
+          items:
+            type: string
+        effectiveDate:
+          type: string
+          example: '2026-03-01'
+      required:
+        - documentType
+        - title
+        - fileUrl
+    UpdateLegalDocumentDto:
+      type: object
+      properties:
+        documentType:
+          type: string
+          enum: *ref_41
+        title:
+          type: string
+          example: Mẫu hợp đồng thuê nhà
+        description:
+          type: string
+          example: Hợp đồng mẫu cho căn hộ chung cư
+        fileUrl:
+          type: string
+          example: https://storage.example.com/docs/contract-template.pdf
+        fileType:
+          type: string
+          example: application/pdf
+        fileSizeBytes:
+          format: int64
+          type: integer
+          example: 1048576
+          description: File size in bytes
+        category:
+          type: string
+          example: contracts
+        language:
+          type: string
+          example: vi
+          default: vi
+        version:
+          type: string
+          example: '1.0'
+        isTemplate:
+          type: boolean
+          default: false
+        requiresSignature:
+          type: boolean
+          default: false
+        isPublic:
+          type: boolean
+          default: false
+        tags:
+          example: *ref_42
+          type: array
+          items:
+            type: string
+        effectiveDate:
+          type: string
+          example: '2026-03-01'

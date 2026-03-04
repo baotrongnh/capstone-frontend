@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, Image } from "antd";
+import { Button, Form, Image, Input } from "antd";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   EnvironmentOutlined,
   UserOutlined,
@@ -12,17 +12,19 @@ import {
   BankOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import banner from "../../../public/img/banner2.jpg";
+import banner9 from "../../../public/img/banner9.jpg";
+
 import ModalUser from "../modal/modalUser";
+import { useRouter } from "next/navigation";
 export default function HeroSection() {
   const t = useTranslations("HomePage");
+  const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const [searchData, setSearchData] = useState({
-    roomType: "",
-    area: "",
-    people: "",
-    price: "",
-  });
+  const route = useRouter();
+  // const [typeRoom, setTypeRoom] = useState("");
+  // const [area, setArea] = useState("");
+  // const [people, setPeople] = useState("");
+  // const [price, setPrice] = useState("");
 
   const cityKeys = [
     "all",
@@ -34,6 +36,21 @@ export default function HeroSection() {
     "hcm",
     "hatay",
   ];
+
+  // const handleSearch = async () => {
+  //   try {
+  //     const values = await form.validateFields();
+  //     console.log("Search payload:", values);
+  //     setTypeRoom(values.roomType || "");
+  //     setArea(values.area || "");
+  //     setPeople(values.people || "");
+  //     setPrice(values.price || "");
+
+  //     form.resetFields();
+  //   } catch (error) {
+  //     console.log("Validation failed:", error);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen relative">
@@ -57,77 +74,90 @@ export default function HeroSection() {
 
           <div className="mt-8 mb-12 w-full max-w-6xl mx-auto px-4">
             <div className="bg-white rounded-2xl px-25 shadow-[0_9px_20px_rgba(95,130,170,0.72)] py-4 flex items-center justify-between gap-4">
-              <div className="flex-1 border-r border-gray-200 pr-4 last:border-r-0">
-                <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
-                  <EnvironmentOutlined className="text-[#334155]" />
-                  {t("searchForm.roomType")}
-                </label>
-                <input
-                  type="text"
-                  placeholder={t("searchForm.roomTypePlaceholder")}
-                  value={searchData.roomType}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, roomType: e.target.value })
-                  }
-                  className="w-full pl-6 outline-none text-gray-500 text-sm bg-transparent placeholder-gray-400"
-                />
-              </div>
-
-              <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
-                <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
-                  <EnvironmentOutlined className="text-[#334155]" />
-                  {t("searchForm.area")}
-                </label>
-                <input
-                  type="text"
-                  placeholder={t("searchForm.areaPlaceholder")}
-                  value={searchData.area}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, area: e.target.value })
-                  }
-                  className="w-full pl-6 outline-none text-gray-500 text-sm bg-transparent placeholder-gray-400"
-                />
-              </div>
-
-              <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
-                <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
-                  <UserOutlined className="text-[#334155]" />
-                  {t("searchForm.people")}
-                </label>
-                <input
-                  type="text"
-                  placeholder={t("searchForm.peoplePlaceholder")}
-                  value={searchData.people}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, people: e.target.value })
-                  }
-                  className="w-full pl-6 outline-none text-gray-500 text-sm bg-transparent placeholder-gray-400"
-                />
-              </div>
-
-              <div className="flex-1 px-4">
-                <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
-                  <DollarOutlined className="text-[#334155]" />
-                  {t("searchForm.price")}
-                </label>
-                <input
-                  type="text"
-                  placeholder={t("searchForm.pricePlaceholder")}
-                  value={searchData.price}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, price: e.target.value })
-                  }
-                  className="w-full pl-6 outline-none text-gray-500 text-sm bg-transparent placeholder-gray-400"
-                />
-              </div>
-
-              <Button
-                type="primary"
-                size="large"
-                className="bg-[#3980F3] hover:bg-[#2a5ec7] h-12 px-8 rounded-full text-white font-bold shadow-md flex items-center justify-center ml-2 border-none"
+              <Form
+                form={form}
+                layout="inline"
+                className="flex-1 flex items-center gap-4"
               >
-                {t("searchForm.submit")}
-              </Button>
+                <div className="flex-1 border-r border-gray-200 pr-4 last:border-r-0">
+                  <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
+                    <EnvironmentOutlined className="text-[#334155]" />
+                    {t("searchForm.roomType")}
+                  </label>
+                  <Form.Item name="roomType" className="m-0" rules={[]}>
+                    <Input
+                      placeholder={t("searchForm.roomTypePlaceholder")}
+                      className="w-full text-gray-500 text-sm"
+                      variant="borderless"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
+                  <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
+                    <EnvironmentOutlined className="text-[#334155]" />
+                    {t("searchForm.area")}
+                  </label>
+                  <Form.Item name="area" className="m-0" rules={[]}>
+                    <Input
+                      placeholder={t("searchForm.areaPlaceholder")}
+                      className="w-full text-gray-500 text-sm"
+                      variant="borderless"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
+                  <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
+                    <UserOutlined className="text-[#334155]" />
+                    {t("searchForm.people")}
+                  </label>
+                  <Form.Item name="people" className="m-0" rules={[]}>
+                    <Input
+                      placeholder={t("searchForm.peoplePlaceholder")}
+                      className="w-full text-gray-500 text-sm"
+                      variant="borderless"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex-1 px-4">
+                  <label className="flex items-center gap-2 text-md text-[#334155] font-bold mb-1">
+                    <DollarOutlined className="text-[#334155]" />
+                    {t("searchForm.price")}
+                  </label>
+                  <Form.Item name="price" className="m-0" rules={[]}>
+                    <Input
+                      placeholder={t("searchForm.pricePlaceholder")}
+                      className="w-full text-gray-500 text-sm"
+                      variant="borderless"
+                    />
+                  </Form.Item>
+                </div>
+
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    const area = form.getFieldValue("area") || "";
+                    const roomType = form.getFieldValue("roomType") || "";
+                    const people = form.getFieldValue("people") || "";
+                    const price = form.getFieldValue("price") || "";
+
+                    const searchParams = new URLSearchParams({
+                      city: area,
+                      roomType: roomType,
+                      people: people,
+                      price: price,
+                    });
+
+                    route.push(`/apartment?${searchParams.toString()}`);
+                  }}
+                  size="large"
+                  className="bg-[#3980F3] hover:bg-[#2a5ec7] h-12 px-8 rounded-full text-white font-bold shadow-md flex items-center justify-center ml-2 border-none"
+                >
+                  {t("searchForm.submit")}
+                </Button>
+              </Form>
             </div>
           </div>
         </div>
@@ -156,7 +186,7 @@ export default function HeroSection() {
             <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
               <Image
                 src={
-                  banner?.src ||
+                  banner9?.src ||
                   "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop"
                 }
                 alt="City Banner"
@@ -167,7 +197,7 @@ export default function HeroSection() {
               <div className="absolute inset-0 bg-black/10"></div>
             </div>
 
-            <div className="relative  z-10 -mt-32 w-[95%] max-w-7xl mx-auto px-4 pb-12">
+            <div className="relative  z-10 -mt-22 w-[95%] max-w-7xl mx-auto px-4 pb-12">
               <div className="bg-[#F9FFFF] shadow-xl rounded-[3px] p-12 flex flex-col md:flex-row items-center justify-between gap-10">
                 <div className="flex-1 w-[80%]">
                   <h4 className="font-bold text-[40px] text-[#1e293b] leading-tight font-sans mb-6">

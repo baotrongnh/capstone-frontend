@@ -1,11 +1,13 @@
+import AuthProvider from "@/components/providers/auth-provider"
 import ChatSupport from "@/components/chat/chat-support"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
 import ReactQueryProvider from "@/components/providers/react-query-provider"
 import { AntdRegistry } from "@ant-design/nextjs-registry"
-import { ConfigProvider } from "antd"
+import { App, ConfigProvider } from "antd"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages } from "next-intl/server"
 import { Inter } from "next/font/google"
 import "./globals.css"
 
@@ -16,13 +18,16 @@ export const metadata: Metadata = {
   description: "INTELLISERVOPS",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const messages = await getMessages()
+  const locale = await getLocale()
+
   return (
-    <html lang="vi">
+    <html lang={locale}>
       <body className={inter.className}>
         <AntdRegistry>
           <ConfigProvider theme={{
@@ -34,16 +39,20 @@ export default function RootLayout({
             }
           }}
           >
-            <ReactQueryProvider>
-              <NextIntlClientProvider>
-                <Header />
-                <main className="mt-24">
-                  {children}
-                </main>
-                <Footer />
-                <ChatSupport />
-              </NextIntlClientProvider>
-            </ReactQueryProvider>
+            <App>
+              <ReactQueryProvider>
+                <NextIntlClientProvider messages={messages}>
+                  <AuthProvider>
+                    <Header />
+                    <main className="mt-24">
+                      {children}
+                    </main>
+                    <Footer />
+                    <ChatSupport />
+                  </AuthProvider>
+                </NextIntlClientProvider>
+              </ReactQueryProvider>
+            </App>
           </ConfigProvider>
         </AntdRegistry>
       </body>

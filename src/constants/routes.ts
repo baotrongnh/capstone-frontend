@@ -1,3 +1,6 @@
 export const ROUTES = {
-     APARTMENT: '/apartment'
-}
+  HOME: "/",
+  APARTMENT: "/apartment",
+  CONTACT: "/contact",
+  PROFILE: (id: string) => `/profile/${id}`,
+};

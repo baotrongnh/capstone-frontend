@@ -1,11 +1,12 @@
 'use client'
 
 import { apartmentService } from '@/lib/services/apartment.service'
+import { ApartmentQueryParams } from '@/types/apartment'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { message } from 'antd'
 
 // QUERIES
-export const useApartments = (params?: string) => {
+export const useApartments = (params?: ApartmentQueryParams) => {
      return useQuery({
           queryKey: ['apartments', params],
           queryFn: () => apartmentService.getList(params)

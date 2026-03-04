@@ -20,6 +20,98 @@ export type Register = {
 
 export type AuthFormProps = {
     form: FormInstance,
-    onSubmit?: (values: Login | Register) => void | Promise<void>;
+    onSubmit?: (values: LoginDto) => void | Promise<void>;
+    onRegister?: (values: RegisterDto) => void | Promise<void>;
     t?: (key: string) => string;
+    loading?: boolean;
+    registerLoading?: boolean;
+    onGoogleLogin?: () => Promise<void>;
+    googleLoading?: boolean;
+}
+
+export type AuthState = {
+    user: UserInfo | null
+    tokens: AuthTokens | null
+    isAuthenticated: boolean
+    isHydrated: boolean
+    setAuth: (user: UserInfo, tokens: AuthTokens) => void
+    setTokens: (tokens: AuthTokens) => void
+    logout: () => void
+    hydrate: () => void
+}
+
+// ========== API Types ==========
+
+export enum ActorType {
+    USER = 'user',
+    STAFF = 'staff',
+    OPERATOR = 'operator',
+    ADMIN = 'admin',
+    PARTNER = 'partner'
+}
+
+export type LoginDto = {
+    identifier: string
+    password: string
+    actorType?: ActorType
+}
+
+export type RegisterDto = {
+    email: string
+    phone: string
+    fullName: string
+    password: string
+}
+
+export type AuthTokens = {
+    accessToken: string
+    refreshToken: string
+}
+
+export type UserInfo = {
+    id: string
+    email: string
+    fullName: string
+    role: string
+    actorType: ActorType
+    availableRoles?: string[]
+}
+
+export type GoogleLoginDto = {
+    accessToken: string
+}
+
+export type SupabaseUrlResponse = {
+    url: string
+}
+
+export type LoginResponse = {
+    user: UserInfo
+    tokens: AuthTokens
+}
+
+export type AuthError = {
+    message: string | string[]
+    statusCode?: number
+    error?: string
+}
+
+export type ApiErrorResponse = {
+    response?: {
+        data?: AuthError
+        status?: number
+    }
+    message?: string
+}
+
+export type RefreshTokenDto = {
+    refreshToken: string
+}
+
+export type RefreshTokenResponse = {
+    tokens: AuthTokens
+}
+
+export type LogoutDto = {
+    refreshToken: string
 }
