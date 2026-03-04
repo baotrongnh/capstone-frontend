@@ -1,9 +1,9 @@
-import { Apartment } from '@/types/apartment'
+import { ApartmentItem } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import Image from 'next/image'
 
-export default function ApartmentCard({ apartment }: { apartment: Apartment }) {
+export default function ApartmentCard({ apartment }: { apartment: ApartmentItem }) {
      return (
           <div className='bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer group'>
                {/* Image */}

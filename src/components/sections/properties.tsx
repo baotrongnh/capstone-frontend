@@ -1,13 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { useState, useRef } from "react";
-import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
-import { Apartment } from "@/types/apartment";
+import { ApartmentItem } from "@/types/apartment";
+import { StarFilled } from "@ant-design/icons";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useRef } from "react";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
-  const [scrollPosition, setScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { data: apartments } = useApartments();
 
@@ -112,20 +112,21 @@ export default function PropertiesSection() {
                 </div>
               </div>
             ))} */}
-            {apartmentsList.map((apartment: Apartment) => (
+            {apartmentsList.map((apartment: ApartmentItem) => (
               <div
                 key={apartment.id}
                 className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
                 onClick={() => handleDetail(apartment.id)}
               >
-                <div className="h-40 overflow-hidden">
-                  <img
+                <div className="h-40 overflow-hidden relative">
+                  <Image
                     src={
                       apartment.images?.[0] ??
                       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
                     }
-                    alt={apartment.buildingName}
-                    className="w-full h-full object-cover"
+                    alt={apartment.buildingName ?? "Apartment"}
+                    fill
+                    className="object-cover"
                   />
                 </div>
 
