@@ -1,13 +1,13 @@
 import { Button } from 'antd'
 import { Map } from 'lucide-react'
 
-interface ApartmentLocationProps {
-  address?: string
-  city?: string
-  district?: string
-  ward?: string
-  latitude?: string
-  longitude?: string
+type ApartmentLocationProps = {
+  address?: string | null
+  city?: string | null
+  district?: string | null
+  ward?: string | null
+  latitude?: string | null
+  longitude?: string | null
 }
 
 export default function ApartmentLocation({

@@ -1,14 +1,15 @@
 import { ROUTES } from '@/constants/routes'
-import { Apartment } from '@/types/apartment'
+import type { ApartmentItem } from '@/types/apartment'
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import { Divider, Rate } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function ApartmentItem({ apartment }: { apartment: Apartment }) {
+export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
+
      return (
-          <Link href={`${ROUTES.APARTMENT}/${apartment.id}`} className='flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md duration-150 overflow-hidden'>
+          <Link href={`${ROUTES.APARTMENT}/${apartment?.id}`} className='flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md duration-150 overflow-hidden'>
                <Image
                     src='/images/phongtro.jpg'
                     width={500}
@@ -37,7 +38,7 @@ export default function ApartmentItem({ apartment }: { apartment: Apartment }) {
                     </div>
 
                     <h1 className='font-semibold text-base md:text-lg lg:text-xl text-[#1c2b38] pt-1.5 pb-2.5 line-clamp-2'>
-                         {apartment.buildingName}
+                         {apartment?.buildingName}
                     </h1>
 
                     <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-0'>
