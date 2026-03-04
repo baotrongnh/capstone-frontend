@@ -1,3 +1,5 @@
+import { ApartmentListResponse } from "@/lib/services/apartment.service";
+
 // Enums
 export enum FurnishingStatus {
      FULLY_FURNISHED = 'fully_furnished',
@@ -44,98 +46,15 @@ export enum DeviceStatus {
      OFFLINE = 'offline'
 }
 
-// Interface cho danh sách apartment (list view)
-export interface Apartment {
-     id: string
-     buildingName: string
-     apartmentNumber: string
-     floorNumber: number
-     address: string
-     city: string
-     district: string
-     totalArea: string
-     numberOfBedrooms: number
-     numberOfBathrooms: number
-     furnishingStatus: FurnishingStatus
-     baseRentPrice: string
-     depositAmount: string
-     status: ApartmentStatus
-     images: string[] | null
-     createdAt: string
-}
+export type ApartmentItem = NonNullable<ApartmentListResponse['data']>[number]
+export type ApartmenList = ApartmentItem[]
 
-// Nested interfaces cho apartment detail
-export interface Room {
-     id: string
-     roomNumber: string
-     roomType: RoomType
-     area: string
-     status: RoomStatus
-}
-
-export interface Partner {
-     id: string
-     companyName: string
-     fullName: string
-}
-
-export interface IotDevice {
-     id: string
-     deviceName: string
-     deviceType: DeviceType
-     status: DeviceStatus
-}
-
-export interface UtilityMeter {
-     id: string
-     meterType: string
-     meterNumber: string
-     status: string
-}
-
-// Interface cho apartment detail (chi tiết)
-export interface ApartmentDetail {
-     id: string
-     buildingName: string
-     apartmentNumber: string
-     apartmentType: string
-     maxConcurrentViewings: number
-     floorNumber: number
-     address: string
-     city: string
-     district: string
-     ward: string
-     latitude: string
-     longitude: string
-     totalArea: string
-     usableArea: string | null
-     numberOfBedrooms: number
-     numberOfBathrooms: number
-     furnishingStatus: FurnishingStatus
-     amenities: string[]
-     baseRentPrice: string
-     depositAmount: string
-     status: ApartmentStatus
-     description: string
-     images: string[] | null
-     videoTourUrl: string | null
-     yearBuilt: number | null
-     partnerId: string
-     approvedByOperatorId: string
-     approvedAt: string
-     createdAt: string
-     updatedAt: string
-     rooms: Room[]
-     partner: Partner
-     iotDevices: IotDevice[]
-     utilityMeters: UtilityMeter[]
-}
-
-// Interface cho query params
 export interface ApartmentQueryParams {
+     page?: number
+     limit?: number
+     keyword?: string
      city?: string
      district?: string
-     keyword?: string
      minBedrooms?: number
      maxBedrooms?: number
      minPrice?: number
@@ -144,19 +63,6 @@ export interface ApartmentQueryParams {
      maxArea?: number
      furnishingStatus?: 'unfurnished' | 'semi_furnished' | 'fully_furnished'
      status?: 'available' | 'occupied' | 'maintenance' | 'reserved' | 'inactive'
-     page?: number
-     limit?: number
      sortBy?: 'baseRentPrice' | 'totalArea' | 'createdAt' | 'numberOfBedrooms'
      sortOrder?: 'asc' | 'desc'
-}
-
-// Interface cho response pagination
-export interface ApartmentListResponse {
-     data: Apartment[]
-     meta: {
-          total: number
-          page: number
-          limit: number
-          totalPages: number
-     }
 }

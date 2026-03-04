@@ -1,7 +1,6 @@
 'use client'
 
 import ApartmentActivities from '@/components/apartment-detail/apartment-activities'
-import ApartmentAmenities from '@/components/apartment-detail/apartment-amenities'
 import ApartmentDescription from '@/components/apartment-detail/apartment-description'
 import ApartmentGallery from '@/components/apartment-detail/apartment-gallery'
 import ApartmentHeader from '@/components/apartment-detail/apartment-header'
@@ -15,17 +14,19 @@ import { use } from 'react'
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
 
   const { id } = use(params)
-  const { data: apartment, isLoading, isError } = useApartment(id)
+  const { data, isLoading, isError } = useApartment(id)
 
   if (isLoading) {
     return (
       <div className='container h-screen flex items-center justify-center'>
-        <Spin size="large" tip="Đang tải thông tin căn hộ..." />
+        <Spin size="large">
+          <div className='p-10 text-gray-400'>Đang tải thông tin căn hộ...</div>
+        </Spin>
       </div>
     )
   }
 
-  if (isError || !apartment) {
+  if (isError || !data) {
     return (
       <div className='container h-screen flex items-center justify-center'>
         <Result
@@ -38,8 +39,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   }
 
   // Prepare image array with fallback
-  const images = apartment.images && apartment.images.length > 0
-    ? apartment.images
+  const images = data?.data?.images && data?.data?.images.length > 0
+    ? data?.data.images
     : ['/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg']
 
   return (
@@ -49,28 +50,21 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         items={[
           { title: 'Trang chủ', href: ROUTES.HOME },
           { title: 'Danh sách căn hộ', href: ROUTES.APARTMENT },
-          { title: apartment.buildingName }
+          { title: data?.data?.buildingName }
         ]}
       />
 
       <ApartmentGallery images={images} />
 
-      <ApartmentHeader apartmentData={apartment} />
+      <ApartmentHeader apartmentData={data} />
 
-      <ApartmentDescription description={apartment.description || 'Chưa có mô tả.'} />
+      <ApartmentDescription description={data?.data?.description || 'Chưa có mô tả.'} />
 
-      <ApartmentAmenities amenities={apartment.amenities} />
+      {/* <ApartmentAmenities amenities={data?.data?.amenities} /> */}
 
       <ApartmentActivities />
 
-      <ApartmentLocation
-        address={apartment.address}
-        city={apartment.city}
-        district={apartment.district}
-        ward={apartment.ward}
-        latitude={apartment.latitude}
-        longitude={apartment.longitude}
-      />
+      <ApartmentLocation {...data.data} />
 
       <SimilarApartments />
     </div>
