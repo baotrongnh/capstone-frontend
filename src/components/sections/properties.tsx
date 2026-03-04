@@ -7,11 +7,13 @@ import { useApartments } from "@/hooks/query/useApartments";
 import { Apartment } from "@/types/apartment";
 import ModalContact from "../modal/modalUser";
 import { Button } from "antd";
+import ModalReservation from "../modal/modalReservation";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalReservation, setModalReservation] = useState(false);
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
@@ -53,6 +55,10 @@ export default function PropertiesSection() {
   const handleOpenModalContact = (apartmentId: string | number) => {
     setSelectedApartmentId(apartmentId);
     setIsModalOpen(true);
+  };
+
+  const handleReservation = () => {
+    setModalReservation(true);
   };
   return (
     <div className="bg-white relative ">
@@ -135,12 +141,21 @@ export default function PropertiesSection() {
                     <span>/tháng</span>
                   </div>
 
-                  <Button
-                    className="bg-primary! text-white! hover:bg-blue-600! w-full! mt-3!"
-                    onClick={() => handleOpenModalContact(apartment.id)}
-                  >
-                    <MailOutlined /> Liên hệ ngay
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      className="bg-primary! text-white! hover:bg-blue-600! w-[50%]! mt-3!"
+                      onClick={() => handleOpenModalContact(apartment.id)}
+                    >
+                      <MailOutlined /> Liên hệ
+                    </Button>
+
+                    <Button
+                      className="bg-primary! text-white! hover:bg-blue-600! w-[50%]! mt-3!"
+                      onClick={handleReservation}
+                    >
+                      <MailOutlined /> Đặt chỗ
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -163,6 +178,10 @@ export default function PropertiesSection() {
           open={isModalOpen}
           setOpen={setIsModalOpen}
           apartmentId={selectedApartmentId}
+        />
+        <ModalReservation
+          open={modalReservation}
+          onClose={() => setModalReservation(false)}
         />
       </div>
     </div>

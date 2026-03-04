@@ -1,12 +1,16 @@
 'use client'
 
-import { APP_NAME, DEFAULT_LOCALE, LOCALES } from "@/constants";
+import { APP_NAME, DEFAULT_LOCALE } from "@/constants";
 import { ROUTES } from "@/constants/routes";
+import { useLogout } from "@/hooks/query/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
 import { Icon } from "@iconify/react";
 import { Avatar, Button, Dropdown } from "antd";
+import type { MenuProps } from "antd";
 import {
   BellRing,
   ChevronDown,
+  LogOut,
   MessageSquareText,
   User
 } from "lucide-react";
@@ -14,12 +18,18 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AuthModal from "../auth-modal";
 
 export default function Header() {
   const t = useTranslations('Header')
   const router = useRouter()
 
+  const { user, isAuthenticated, isHydrated } = useAuthStore()
+  const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
+
   // Lazy initialization to avoid server-side issues
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
   const [locale, setLocale] = useState(() => {
     if (typeof window === 'undefined') {
       return DEFAULT_LOCALE
@@ -49,23 +59,26 @@ export default function Header() {
     return locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
   }
 
-  const items = [
+  const handleLogout = async () => {
+    await logoutApi()
+  }
+
+  const userMenuItems: MenuProps['items'] = [
     {
-      key: "1",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          1st menu item
-        </a>
-      ),
+      key: 'profile',
+      label: t('profile'),
+      icon: <User size={16} />,
+      onClick: () => {
+        if (user) router.push(ROUTES.PROFILE(user.id))
+      },
     },
+    { type: 'divider' },
     {
-      key: "4",
+      key: 'logout',
+      label: t('logout'),
+      icon: <LogOut size={16} />,
       danger: true,
-      label: "a danger item",
+      onClick: handleLogout,
     },
   ];
 
@@ -105,13 +118,21 @@ export default function Header() {
             {t('becomePartner')}
           </Button>
 
-          <div className="flex items-center">
-            <span className="mr-3">Name</span>
-            <Avatar size="default" icon={<User />} />
-            <Dropdown menu={{ items }}>
-              <ChevronDown strokeWidth={1.6} size={15} />
+          {isHydrated && isAuthenticated && user ? (
+            <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
+              <div className="flex items-center cursor-pointer gap-2">
+                <span className="font-medium">{user.fullName}</span>
+                <Avatar size="default" icon={<User />} />
+                <ChevronDown strokeWidth={1.6} size={15} />
+              </div>
             </Dropdown>
-          </div>
+          ) : (
+            <Button type="default" shape="round" onClick={() => setIsAuthModalOpen(true)}>
+              {t('login')}
+            </Button>
+          )}
+
+          <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </div>
       </div>
     </header>

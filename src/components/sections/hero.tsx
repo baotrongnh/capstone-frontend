@@ -16,6 +16,7 @@ import banner9 from "../../../public/img/banner9.jpg";
 
 import ModalUser from "../modal/modalUser";
 import { useRouter } from "next/navigation";
+import ModalContact from "../modal/modalUser";
 export default function HeroSection() {
   const t = useTranslations("HomePage");
   const [form] = Form.useForm();
@@ -252,7 +253,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-      <ModalUser open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

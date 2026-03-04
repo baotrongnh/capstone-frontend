@@ -1,5 +1,7 @@
 import { ActorType } from "./auth";
 import { ApartmentStatus } from "./apartment";
+import { UserDetail, UpdateUserDto } from "./user";
+import { PartnerDetail } from "./partner";
 
 // ========== Core Profile Types ==========
 
@@ -124,8 +126,10 @@ export type ProfileLayoutProps = {
 }
 
 export type AccountInformationProps = {
-    profile: UserProfile;
-    onUpdate?: (values: Partial<UserProfile>) => Promise<void>;
+    actorType: ActorType;
+    profile: UserDetail | PartnerDetail;
+    onUpdate?: (values: UpdateUserDto) => Promise<void>;
+    loading?: boolean;
 }
 
 export type MyApartmentProps = {

@@ -8,5 +8,7 @@ export const endpoints = {
   apartments: createEndpoints("apartments/search"),
   viewRequest: createEndpoints("viewing-requests"),
   apartmentPolicies: createEndpoints("apartment-policies/apartment"),
+  contracts: createEndpoints("contracts"),
   auth: createEndpoints("auth"),
+  users: createEndpoints("users"),
 };

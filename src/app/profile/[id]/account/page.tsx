@@ -1,38 +1,59 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import ProfileLayout from '../../components/profile-layout';
-import AccountInformation from '../../components/account-information';
-import { ActorType } from '@/types/auth';
-import { UserProfile, AccountPageProps } from '@/types/profile';
+import { use } from "react";
+import ProfileLayout from "../../components/profile-layout";
+import AccountInformation from "../../components/account-information";
+import { ActorType } from "@/types/auth";
+import { AccountPageProps } from "@/types/profile";
+import { useAuthStore } from "@/stores/auth.store";
+import { useUserProfile, useUpdateUser } from "@/hooks/query/useUser";
+import { usePartnerProfile } from "@/hooks/query/usePartner";
+import { UpdateUserDto } from "@/types/user";
+import { Spin } from "antd";
 
 export default function AccountPage({ params }: AccountPageProps) {
-    const { id } = use(params);
+  const { id } = use(params);
 
-    const mockProfile: UserProfile = {
-        id: id,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        avatar: undefined,
-        phone: '+1 234 567 8900',
-        address: '123 Main Street, City, Country',
-        actorType: ActorType.USER,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    };
+  const user = useAuthStore((s) => s.user);
+  const actorType = user?.actorType ?? ActorType.USER;
 
-    const handleUpdateProfile = async (values: Partial<UserProfile>) => {
-        console.log('Updating profile:', values);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-    };
+  const isPartner = actorType === ActorType.PARTNER;
 
+  const { data: userProfile, isLoading: userLoading } =
+    useUserProfile(!isPartner);
+
+  const { data: partnerProfile, isLoading: partnerLoading } =
+    usePartnerProfile(isPartner);
+
+  const { mutateAsync: updateUser } = useUpdateUser(id);
+
+  const profile = isPartner ? partnerProfile : userProfile;
+  const isLoading = isPartner ? partnerLoading : userLoading;
+
+  const handleUpdate = async (values: UpdateUserDto) => {
+    if (!isPartner) {
+      await updateUser(values);
+    }
+    // Partner update not yet supported by API
+  };
+
+  if (isLoading || !profile) {
     return (
-        <ProfileLayout userId={id} actorType={mockProfile.actorType}>
-            <AccountInformation
-                profile={mockProfile}
-                onUpdate={handleUpdateProfile}
-            />
-        </ProfileLayout>
+      <ProfileLayout userId={id} actorType={actorType}>
+        <div className="flex items-center justify-center py-20">
+          <Spin size="large" />
+        </div>
+      </ProfileLayout>
     );
+  }
+
+  return (
+    <ProfileLayout userId={String(id)} actorType={actorType}>
+      <AccountInformation
+        actorType={actorType}
+        profile={profile}
+        onUpdate={handleUpdate}
+      />
+    </ProfileLayout>
+  );
 }

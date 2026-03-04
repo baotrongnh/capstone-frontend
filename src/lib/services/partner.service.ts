@@ -1,0 +1,15 @@
+import { PartnerDetail } from "@/types/partner";
+import { apiClient } from "../apis/client";
+import { endpoints } from "../apis/endpoints";
+
+export const partnerService = {
+    getProfile: async (): Promise<PartnerDetail> => {
+        const { data } = await apiClient.get(`${endpoints.partners}/profile`);
+        return data.data;
+    },
+
+    getById: async (id: string): Promise<PartnerDetail> => {
+        const { data } = await apiClient.get(`${endpoints.partners}/${id}`);
+        return data.data;
+    },
+};

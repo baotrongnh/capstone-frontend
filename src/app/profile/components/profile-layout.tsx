@@ -4,6 +4,7 @@ import { ActorType } from '@/types/auth';
 import { ProfileLayoutProps } from '@/types/profile';
 import ProfileSidebar from './profile-sidebar';
 import { useRouter } from 'next/navigation';
+import { useLogout } from '@/hooks/query/useAuth';
 
 export default function ProfileLayout({
     userId,
@@ -11,13 +12,7 @@ export default function ProfileLayout({
     children
 }: ProfileLayoutProps) {
     const router = useRouter();
-
-    const handleLogout = () => {
-        // TODO: Implement logout logic
-        // Clear tokens, clear user data, redirect to home
-        console.log('Logout clicked');
-        router.push('/');
-    };
+    const { mutate: logout } = useLogout(() => router.push('/'));
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -29,7 +24,7 @@ export default function ProfileLayout({
                             <ProfileSidebar
                                 userId={userId}
                                 actorType={actorType}
-                                onLogout={handleLogout}
+                                onLogout={() => logout()}
                             />
                         </div>
                     </div>
