@@ -1,5 +1,4 @@
 import { ApartmentDetailResponse } from '@/lib/services/apartment.service'
-import { ApartmentDetail } from '@/types/apartment'
 import { Button, Divider, Rate } from 'antd'
 import { MapPin } from 'lucide-react'
 
