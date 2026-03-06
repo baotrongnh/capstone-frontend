@@ -48,7 +48,9 @@ export const useUpdateUserCardImages = () => {
       userService.updateCardImages(profileImageUrl),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-      message.success("Card images updated successfully!");
+      message.success(
+        "Thông tin thẻ đã được cập nhật thành công! Xin vui lòng chờ xét duyệt.",
+      );
     },
     onError: (error: Error) => {
       message.error(error?.message || "Failed to update profile");

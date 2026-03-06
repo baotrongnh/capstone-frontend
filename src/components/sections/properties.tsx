@@ -146,14 +146,14 @@ export default function PropertiesSection() {
                       className="bg-primary! text-white! hover:bg-blue-600! w-[50%]! mt-3!"
                       onClick={() => handleOpenModalContact(apartment.id)}
                     >
-                      <MailOutlined /> Liên hệ
+                      <MailOutlined /> Xem nhà
                     </Button>
 
                     <Button
                       className="bg-primary! text-white! hover:bg-blue-600! w-[50%]! mt-3!"
                       onClick={handleReservation}
                     >
-                      <MailOutlined /> Đặt chỗ
+                      <MailOutlined /> Muốn thuê
                     </Button>
                   </div>
                 </div>

@@ -24,16 +24,19 @@ export default function ModalReservation({
 }: ModalReservationProps) {
   const [frontImage, setFrontImage] = useState<any>(null);
   const [backImage, setBackImage] = useState<any>(null);
-
+  const [submitting, setSubmitting] = useState(false);
   const canSubmit = frontImage && backImage;
   const [form] = useForm();
 
   const { data: userProfile } = useUserProfile();
 
-  const { mutateAsync: updateUserCardImages } = useUpdateUserCardImages();
+  const { mutateAsync: updateUserCardImages, error } =
+    useUpdateUserCardImages();
 
   const handleReservation = async () => {
     try {
+      setSubmitting(true);
+
       const values = await form.validateFields();
       const fileList = values.profileImageUrl || [];
 
@@ -48,9 +51,12 @@ export default function ModalReservation({
 
       await updateUserCardImages(payload.profileImageUrl);
 
+      form.resetFields();
       onClose();
     } catch (error) {
       console.error("Error updating card image:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
   return (
@@ -63,82 +69,91 @@ export default function ModalReservation({
             onCancel={onClose}
             footer={null}
             centered
-            width={520}
+            width={540}
           >
-            <Space
-              className="flex justify-center"
-              size={4}
-              style={{ width: "100%" }}
-            >
-              <h1 className="font-medium text-2xl">Xác thực danh tính</h1>
-            </Space>
+            <div className="space-y-6">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                  <IdcardOutlined className="text-2xl text-blue-600" />
+                </div>
+                <Title level={2} className="mb-1 text-center">
+                  Xác thực danh tính
+                </Title>
+                <Text type="secondary" className="text-center text-sm">
+                  Hoàn thành xác thực để mở khóa đầy đủ tính năng
+                </Text>
+              </div>
 
-            <Space
-              direction="vertical"
-              size={20}
-              style={{ width: "100%", marginTop: 24 }}
-            >
               <Alert
                 icon={<SafetyOutlined />}
                 message="Thông tin của bạn được mã hóa và bảo mật tuyệt đối"
+                description="Chúng tôi không bao giờ chia sẻ dữ liệu cá nhân của bạn với bên thứ ba"
                 type="info"
                 showIcon
+                style={{ borderRadius: "8px" }}
               />
-              <Form form={form} layout="vertical">
-                <div className="flex gap-2 items-center">
-                  <p className="w-30">Mặt sau CCCD</p>
 
-                  <Form.Item
-                    name="profileImageUrl"
-                    valuePropName="fileList"
-                    getValueFromEvent={(e) =>
-                      Array.isArray(e) ? e : e && e.fileList
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng tải lên ít nhất một ảnh",
-                      },
-                    ]}
-                  >
-                    <Upload beforeUpload={() => false} listType="picture">
-                      <Button icon={<UploadOutlined />}>Upload photo</Button>
-                    </Upload>
-                  </Form.Item>
-                </div>
-
-                {/* <div className="flex gap-2 items-center">
-            <p className="w-30">Mặt sau CCCD</p>
-            <Form.Item
-              name="profileImageUrl"
-              valuePropName="fileList"
-              getValueFromEvent={(e) =>
-                Array.isArray(e) ? e : e && e.fileList
-              }
-              rules={[
-                { required: true, message: "Vui lòng tải lên ít nhất một ảnh" },
-              ]}
-            >
-              <Upload beforeUpload={() => false} listType="picture">
-                <Button icon={<UploadOutlined />}>Upload photo</Button>
-              </Upload>
-            </Form.Item>
-          </div> */}
-
-                <Space
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    marginTop: 32,
-                  }}
+              <Form form={form} layout="vertical" className="space-y-4">
+                <Form.Item
+                  label={
+                    <span className="font-semibold flex mt-2 items-center gap-2">
+                      <IdcardOutlined className="text-base" />
+                      Ảnh CCCD
+                    </span>
+                  }
+                  name="profileImageUrl"
+                  valuePropName="fileList"
+                  getValueFromEvent={(e) =>
+                    Array.isArray(e) ? e : e && e.fileList
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng tải lên ảnh CCCD",
+                    },
+                  ]}
+                  className="mb-0"
                 >
-                  <Button onClick={onClose}>Huỷ</Button>
-                  <Button onClick={handleReservation} type="primary">
-                    Xác nhận & Gửi
-                  </Button>
-                </Space>
+                  <Upload
+                    beforeUpload={() => false}
+                    listType="picture"
+                    accept="image/*"
+                    className="w-full"
+                  >
+                    <Button
+                      icon={<UploadOutlined />}
+                      className="w-full h-12"
+                      style={{
+                        borderColor: "#d9d9d9",
+                        color: "#1890ff",
+                      }}
+                    >
+                      Chọn ảnh từ thiết bị
+                    </Button>
+                  </Upload>
+                </Form.Item>
+
+                <Text type="secondary" className="text-xs">
+                  Hỗ trợ các định dạng: JPG, PNG (Dung lượng tối đa: 5MB)
+                </Text>
               </Form>
-            </Space>
+
+              <div className="flex gap-3 pt-4">
+                <Button onClick={onClose} className="flex-1 h-10 font-medium">
+                  Huỷ
+                </Button>
+                <Button
+                  onClick={handleReservation}
+                  type="primary"
+                  loading={submitting}
+                  disabled={submitting}
+                  className="flex-1 h-10 font-medium"
+                  style={{ borderRadius: "6px" }}
+                >
+                  {submitting ? "Đang gửi..." : "Xác nhận & Gửi"}
+                </Button>
+              </div>
+            </div>
           </Modal>
         </>
       ) : (
