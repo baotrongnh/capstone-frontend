@@ -18,11 +18,10 @@ export default function AccountPage({ params }: AccountPageProps) {
 
     const isPartner = actorType === ActorType.PARTNER;
 
-    const {data: userProfile} = useUserProfile()
-    // const {
-    //     data: userProfile,
-    //     isLoading: userLoading,
-    // } = useUserProfile(!isPartner);
+    const {
+        data: userProfile,
+        isLoading: userLoading,
+    } = useUserProfile(!isPartner);
 
     const {
         data: partnerProfile,
@@ -32,7 +31,7 @@ export default function AccountPage({ params }: AccountPageProps) {
     const { mutateAsync: updateUser } = useUpdateUser(id);
 
     const profile = isPartner ? partnerProfile : userProfile;
-    const isLoading = false
+    const isLoading = isPartner ? partnerLoading : userLoading;
 
     const handleUpdate = async (values: UpdateUserDto) => {
         if (!isPartner) {
