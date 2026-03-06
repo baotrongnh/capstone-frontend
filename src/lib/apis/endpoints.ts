@@ -5,11 +5,12 @@ export const createEndpoints = (resource: string) => {
 };
 
 export const endpoints = {
-  apartments: createEndpoints("apartments/search"),
+  apartments: createEndpoints("apartments"),
   viewRequest: createEndpoints("viewing-requests"),
   apartmentPolicies: createEndpoints("apartment-policies/apartment"),
   contracts: createEndpoints("contracts"),
   auth: createEndpoints("auth"),
   users: createEndpoints("users"),
   partners: createEndpoints("partners"),
+  reservations: createEndpoints("reservations"),
 };

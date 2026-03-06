@@ -41,19 +41,15 @@ export const useUpdateUser = (id: string) => {
 };
 
 export const useUpdateUserCardImages = () => {
-  const { message } = App.useApp();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (profileImageUrl: string) =>
       userService.updateCardImages(profileImageUrl),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-      message.success(
-        "Thông tin thẻ đã được cập nhật thành công! Xin vui lòng chờ xét duyệt.",
-      );
     },
     onError: (error: Error) => {
-      message.error(error?.message || "Failed to update profile");
+      console.log(error);
     },
   });
 };

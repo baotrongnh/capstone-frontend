@@ -1,13 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { MailOutlined, StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import ModalContact from "../modal/modalUser";
 import { Button, Image } from "antd";
 import ModalReservation from "../modal/modalReservation";
-import { ApartmentItem } from "@/types/apartment";
+import {
+  ApartmenList,
+  ApartmentItem,
+  ApartmentQueryParams,
+} from "@/types/apartment";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -16,7 +20,17 @@ export default function PropertiesSection() {
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
-  const { data: apartments } = useApartments();
+
+  const params = useMemo<ApartmentQueryParams>(
+    () => ({
+      status: "available",
+      sortBy: "baseRentPrice",
+      sortOrder: "asc",
+    }),
+    [],
+  );
+
+  const { data: apartments } = useApartments(params);
 
   if (!apartments) {
     return <div>Loading...</div>;
@@ -56,7 +70,8 @@ export default function PropertiesSection() {
     setIsModalOpen(true);
   };
 
-  const handleReservation = () => {
+  const handleReservation = (apartmentId: string | number) => {
+    setSelectedApartmentId(apartmentId);
     setModalReservation(true);
   };
   return (
@@ -150,7 +165,7 @@ export default function PropertiesSection() {
 
                     <Button
                       className="bg-primary! text-white! hover:bg-blue-600! w-[50%]! mt-3!"
-                      onClick={handleReservation}
+                      onClick={() => handleReservation(apartment.id)}
                     >
                       <MailOutlined /> Muốn thuê
                     </Button>
@@ -181,6 +196,7 @@ export default function PropertiesSection() {
         <ModalReservation
           open={modalReservation}
           onClose={() => setModalReservation(false)}
+          apartmentId={selectedApartmentId}
         />
       </div>
     </div>
