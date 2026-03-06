@@ -5,8 +5,8 @@ import { ROUTES } from "@/constants/routes";
 import { useLogout } from "@/hooks/query/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
 import { Icon } from "@iconify/react";
-import { Avatar, Button, Dropdown } from "antd";
 import type { MenuProps } from "antd";
+import { Avatar, Button, Dropdown } from "antd";
 import {
   BellRing,
   ChevronDown,
@@ -16,19 +16,21 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useState } from "react";
 import AuthModal from "../auth-modal";
 
 export default function Header() {
+  const searchParams = useSearchParams()
   const t = useTranslations('Header')
   const router = useRouter()
-
   const { user, isAuthenticated, isHydrated } = useAuthStore()
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
-
-  // Lazy initialization to avoid server-side issues
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get('auth') === 'true') startTransition(() => setIsAuthModalOpen(true))
+  }, [searchParams])
 
   const [locale, setLocale] = useState(() => {
     if (typeof window === 'undefined') {
