@@ -1,24 +1,24 @@
 'use client'
 
-import { APP_NAME, DEFAULT_LOCALE } from "@/constants";
-import { ROUTES } from "@/constants/routes";
-import { useLogout } from "@/hooks/query/useAuth";
-import { useAuthStore } from "@/stores/auth.store";
-import { Icon } from "@iconify/react";
-import type { MenuProps } from "antd";
-import { Avatar, Button, Dropdown } from "antd";
+import { APP_NAME, DEFAULT_LOCALE } from "@/constants"
+import { ROUTES } from "@/constants/routes"
+import { useLogout } from "@/hooks/query/useAuth"
+import { useAuthStore } from "@/stores/auth.store"
+import { Icon } from "@iconify/react"
+import type { MenuProps } from "antd"
+import { Avatar, Button, Dropdown } from "antd"
 import {
   BellRing,
   ChevronDown,
   LogOut,
   MessageSquareText,
   User
-} from "lucide-react";
-import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useEffect, useState } from "react";
-import AuthModal from "../auth-modal";
+} from "lucide-react"
+import { useTranslations } from "next-intl"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { startTransition, useEffect, useState } from "react"
+import AuthModal from "../auth-modal"
 
 export default function Header() {
   const searchParams = useSearchParams()
@@ -27,6 +27,11 @@ export default function Header() {
   const { user, isAuthenticated, isHydrated } = useAuthStore()
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  //Redirect to this page (làm xong nhớ xóa dùm t dòng log, nhớ code kĩ)
+  //Mấy đường link còn fix cứng trong code mang ra constant cho t nha
+  const redirect = searchParams.get('redirect')
+  console.log(redirect)
 
   useEffect(() => {
     if (searchParams.get('auth') === 'true') startTransition(() => setIsAuthModalOpen(true))
