@@ -24,7 +24,9 @@ export default function Header() {
   const t = useTranslations('Header')
   const router = useRouter()
 
-  const { user, isAuthenticated, isHydrated } = useAuthStore()
+  const user = useAuthStore((s) => s.user)
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isHydrated = useAuthStore((s) => s.isHydrated)
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
 
   // Lazy initialization to avoid server-side issues
