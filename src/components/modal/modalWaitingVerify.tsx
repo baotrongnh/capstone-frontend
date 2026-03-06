@@ -28,13 +28,13 @@ export default function ModalWaitingVerify({
         <h3 className="text-[22px] font-bold text-gray-900 mb-2">
           Hồ sơ đang xét duyệt
         </h3>
-        <p className="text-[15px] text-gray-500 mb-8 max-w-[340px] leading-relaxed">
+        <p className="text-[15px] text-gray-500 mb-8 max-w-85 leading-relaxed">
           Thông tin của bạn đã được tiếp nhận và đang trong quá trình kiểm tra.
           Xin vui lòng chờ trong ít phút.
         </p>
 
         <div className="w-full bg-gray-50 rounded-xl p-5 mb-8 border border-gray-100 text-left relative">
-          <div className="absolute left-[29px] top-[36px] h-8 w-[2px] bg-blue-200"></div>
+          <div className="absolute left-7.25 top-9 h-8 w-0.5 bg-blue-200"></div>
 
           <div className="flex items-start gap-4 mb-5 relative z-10">
             <div className="bg-gray-50 mt-0.5">
