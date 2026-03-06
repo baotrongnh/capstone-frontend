@@ -18,7 +18,7 @@ interface ApartmentAmenitiesProps {
 }
 
 // Icon mapping for amenities
-const amenityIcons: Record<string, any> = {
+const amenityIcons = {
   'wifi': Wifi,
   'điều hòa': AirVent,
   'tv': Tv,

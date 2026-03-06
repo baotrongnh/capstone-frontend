@@ -5,9 +5,9 @@ import { Button, Carousel } from 'antd'
 import { CarouselRef } from 'antd/es/carousel'
 import { useRef } from 'react'
 import ApartmentCard from './apartment-card'
-import { Apartment } from '@/types/apartment'
+import { ApartmentItem } from '@/types/apartment'
 
-const apartments: Apartment[] = []
+const apartments: ApartmentItem[] = []
 
 export default function SimilarApartments() {
      const carouselRef = useRef<CarouselRef>(null)

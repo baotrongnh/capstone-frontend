@@ -11,4 +11,5 @@ export const endpoints = {
   contracts: createEndpoints("contracts"),
   auth: createEndpoints("auth"),
   users: createEndpoints("users"),
+  partners: createEndpoints("partners"),
 };

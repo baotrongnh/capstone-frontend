@@ -4,13 +4,12 @@ import { useTranslations } from "next-intl";
 import { useState, useRef } from "react";
 import { MailOutlined, StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
-import { Apartment } from "@/types/apartment";
 import ModalContact from "../modal/modalUser";
-import { Button } from "antd";
+import { Button, Image } from "antd";
 import ModalReservation from "../modal/modalReservation";
+import { ApartmentItem } from "@/types/apartment";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
-  const [scrollPosition, setScrollPosition] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
@@ -73,20 +72,20 @@ export default function PropertiesSection() {
               msOverflowStyle: "none",
             }}
           >
-            {apartmentsList.map((apartment: Apartment) => (
+            {apartmentsList.map((apartment: ApartmentItem) => (
               <div
                 key={apartment.id}
                 className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
                 onClick={() => handleDetail(apartment.id)}
               >
-                <div className="h-40 overflow-hidden">
-                  <img
+                <div className="h-40 overflow-hidden relative">
+                  <Image
                     src={
                       apartment.images?.[0] ??
                       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
                     }
-                    alt={apartment.buildingName}
-                    className="w-full h-full object-cover"
+                    alt={apartment.buildingName ?? "Apartment"}
+                    className="object-cover"
                   />
                 </div>
 

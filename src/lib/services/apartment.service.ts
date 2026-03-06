@@ -1,10 +1,12 @@
-import {
-  ApartmentDetail,
-  ApartmentListResponse,
-  ApartmentQueryParams,
-} from "@/types/apartment";
+import { ApartmentQueryParams } from "@/types/apartment";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
+import { paths } from "@/types/api";
+
+export type ApartmentListResponse =
+  paths["/api/v1/apartments/search"]["get"]["responses"]["200"]["content"]["application/json"];
+export type ApartmentDetailResponse =
+  paths["/api/v1/apartments/{id}"]["get"]["responses"]["200"]["content"]["application/json"];
 
 export const apartmentService = {
   getList: async (
@@ -14,7 +16,7 @@ export const apartmentService = {
     return data;
   },
 
-  getById: async (id: string | number): Promise<ApartmentDetail> => {
+  getById: async (id: string | number): Promise<ApartmentDetailResponse> => {
     const { data } = await apiClient.get(`${endpoints.apartments}/${id}`);
     return data;
   },
