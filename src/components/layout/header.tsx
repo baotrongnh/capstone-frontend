@@ -34,7 +34,7 @@ export default function Header() {
   console.log(redirect)
 
   useEffect(() => {
-    if (searchParams.get('auth') === 'true') startTransition(() => setIsAuthModalOpen(true))
+    if (searchParams.get('openAuthModal') === 'true') startTransition(() => setIsAuthModalOpen(true))
   }, [searchParams])
 
   const [locale, setLocale] = useState(() => {
