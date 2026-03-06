@@ -1,7 +1,7 @@
 import { AuthState, UserInfo } from '@/types/auth'
 import { create } from 'zustand'
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     tokens: null,
     isAuthenticated: false,
@@ -28,8 +28,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     hydrate: () => {
-        if (get().isHydrated) return
-
         const accessToken = localStorage.getItem('accessToken')
         const refreshToken = localStorage.getItem('refreshToken')
         const userStr = localStorage.getItem('user')
