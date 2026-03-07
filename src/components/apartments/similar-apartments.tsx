@@ -1,16 +1,18 @@
 'use client'
 
+import { useApartments } from '@/hooks/query/useApartments'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Carousel } from 'antd'
 import { CarouselRef } from 'antd/es/carousel'
 import { useRef } from 'react'
 import ApartmentCard from './apartment-card'
-import { ApartmentItem } from '@/types/apartment'
-
-const apartments: ApartmentItem[] = []
 
 export default function SimilarApartments() {
      const carouselRef = useRef<CarouselRef>(null)
+     const { data } = useApartments({ limit: 8, status: 'available' })
+     const apartments = data?.data ?? []
+
+     if (apartments.length === 0) return null
 
      return (
           <div className='py-10'>

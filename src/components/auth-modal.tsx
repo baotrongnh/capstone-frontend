@@ -1,10 +1,8 @@
 import AuthForm from '@/app/(auth)/auth-form';
-import { ROUTES } from '@/constants/routes';
 import { useGoogleLogin, useLogin, useRegister } from '@/hooks/query/useAuth';
 import { AuthModal as AuthModalProps } from '@/types/auth';
 import { Form, Modal } from 'antd';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 export default function AuthModal({
@@ -12,37 +10,13 @@ export default function AuthModal({
   onClose,
 }: AuthModalProps) {
   const t = useTranslations('Auth');
-  const router = useRouter();
   const [form] = Form.useForm();
 
-  const { mutateAsync: login, isPending } = useLogin(() => {
-    onClose();
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      router.push(ROUTES.PROFILE(user.id));
-    }
-  });
+  const { mutateAsync: login, isPending } = useLogin(onClose);
 
-  const { mutateAsync: register, isPending: isRegisterPending } = useRegister(() => {
-    onClose();
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      router.push(ROUTES.PROFILE(user.id));
-    }
-  });
+  const { mutateAsync: register, isPending: isRegisterPending } = useRegister(onClose);
 
-  const handleGoogleSuccess = () => {
-    onClose();
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      router.push(ROUTES.PROFILE(user.id));
-    }
-  };
-
-  const { login: googleLogin, loading: googleLoginLoading } = useGoogleLogin(handleGoogleSuccess);
+  const { login: googleLogin, loading: googleLoginLoading } = useGoogleLogin(onClose);
 
   const handleSubmit = async (values: Parameters<typeof login>[0]) => {
     try {

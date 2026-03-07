@@ -1,166 +1,109 @@
 'use client'
 
-import { CloseOutlined, CustomerServiceOutlined, SendOutlined } from '@ant-design/icons'
-import { Avatar, Button, Divider, FloatButton, Input, Modal, Space } from 'antd'
+import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
+import { useApartment } from '@/hooks/query/useApartments'
+import { Avatar, Divider, FloatButton, Space } from 'antd'
 import { useTranslations } from 'next-intl'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-
-const { TextArea } = Input
-
-interface Message {
-     id: number
-     content: string
-     sender: 'user' | 'support'
-     timestamp: Date
-}
+import { ChatInput } from './chat-input'
+import { ChatMessages } from './chat-messages'
+import { ChatModeSelect } from './chat-mode-select'
+import { ChatWindow } from './chat-window'
+import { ChatMode, ChatMessage, STORAGE_KEY } from '@/types/chat'
 
 export default function ChatSupport() {
      const t = useTranslations('Chat')
+     const pathname = usePathname()
+
      const [open, setOpen] = useState(false)
-     const [message, setMessage] = useState('')
-     const [messages, setMessages] = useState<Message[]>([
-          {
-               id: 1,
-               content: t('welcomeMessage'),
+     const [mode, setMode] = useState<ChatMode>(() =>
+          typeof window !== 'undefined' ? (localStorage.getItem(STORAGE_KEY) as ChatMode) ?? null : null
+     )
+     const [messages, setMessages] = useState<ChatMessage[]>([])
+
+     // Detect current apartment page
+     const apartmentIdMatch = pathname.match(/^\/apartment\/([^/]+)$/)
+     const currentApartmentId = apartmentIdMatch?.[1] ?? ''
+     const { data: aptData } = useApartment(currentApartmentId)
+     const currentApartment = aptData?.data
+
+     const accentColor = mode === 'ai' ? '#7c3aed' : '#3b82f6'
+
+     function pushMessage(msg: ChatMessage) {
+          setMessages(prev => [...prev, msg])
+     }
+
+     function autoReply(content: string) {
+          setTimeout(() => pushMessage({ id: Date.now(), content, sender: 'support', timestamp: new Date() }), 1000)
+     }
+
+     function selectMode(selected: 'support' | 'ai') {
+          setMode(selected)
+          localStorage.setItem(STORAGE_KEY, selected)
+          pushMessage({
+               id: Date.now(),
+               content: selected === 'ai' ? t('aiWelcome') : t('welcomeMessage'),
                sender: 'support',
-               timestamp: new Date()
-          }
-     ])
-
-     const handleSendMessage = () => {
-          if (!message.trim()) return
-
-          // Add user message
-          const userMessage: Message = {
-               id: messages.length + 1,
-               content: message,
-               sender: 'user',
-               timestamp: new Date()
-          }
-
-          setMessages([...messages, userMessage])
-          setMessage('')
-
-          // Simulate support response
-          setTimeout(() => {
-               const supportMessage: Message = {
-                    id: messages.length + 2,
-                    content: t('autoReply'),
-                    sender: 'support',
-                    timestamp: new Date()
-               }
-               setMessages(prev => [...prev, supportMessage])
-          }, 1000)
+               timestamp: new Date(),
+          })
      }
 
-     const handleKeyPress = (e: React.KeyboardEvent) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-               e.preventDefault()
-               handleSendMessage()
-          }
+     function handleBack() {
+          setMode(null)
+          setMessages([])
+          localStorage.removeItem(STORAGE_KEY)
      }
+
+     function handleSend(content: string, images?: string[]) {
+          pushMessage({ id: Date.now(), content, images, sender: 'user', timestamp: new Date() })
+          autoReply(mode === 'ai' ? t('aiReply') : t('autoReply'))
+     }
+
+     function handleSendApartment() {
+          if (!currentApartment) return
+          pushMessage({ id: Date.now(), content: '', apartmentId: String(currentApartment.id), sender: 'user', timestamp: new Date() })
+          autoReply(t('autoReply'))
+     }
+
+     const title = (
+          <Space>
+               <Avatar style={{ backgroundColor: accentColor }} icon={mode === 'ai' ? <RobotOutlined /> : <CustomerServiceOutlined />} />
+               <span>{mode === 'ai' ? t('aiTitle') : mode === 'support' ? t('title') : t('selectTitle')}</span>
+          </Space>
+     )
 
      return (
           <>
                <FloatButton
                     icon={<CustomerServiceOutlined />}
                     type="primary"
-                    style={{
-                         right: 24,
-                         bottom: 24,
-                         width: 56,
-                         height: 56
-                    }}
+                    style={{ right: 24, bottom: 24, width: 56, height: 56 }}
                     onClick={() => setOpen(true)}
-                    tooltip={<div>{t('supportTooltip')}</div>}
+                    tooltip={t('supportTooltip')}
                />
 
-               <Modal
-                    title={
-                         <Space>
-                              <Avatar
-                                   style={{ backgroundColor: '#3b82f6' }}
-                                   icon={<CustomerServiceOutlined />}
-                              />
-                              <span>{t('title')}</span>
-                         </Space>
-                    }
-                    open={open}
-                    onCancel={() => setOpen(false)}
-                    footer={null}
-                    width={400}
-                    style={{
-                         position: 'fixed',
-                         bottom: 100,
-                         right: 24,
-                         top: 'auto',
-                         margin: 0
-                    }}
-                    styles={{
-                         body: {
-                              padding: 0,
-                              maxHeight: '400px',
-                              display: 'flex',
-                              flexDirection: 'column'
-                         }
-                    }}
-                    closeIcon={<CloseOutlined />}
-               >
-                    <div className="flex flex-col h-full">
-                         {/* Messages Area */}
-                         <div className="flex-1 overflow-y-auto p-3" style={{ maxHeight: '400px' }}>
-                              {messages.map((item) => (
-                                   <div
-                                        key={item.id}
-                                        className={`mb-3 flex ${item.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                   >
-                                        <div
-                                             className={`max-w-[80%] px-3 py-2 rounded-lg ${item.sender === 'user'
-                                                  ? 'bg-primary text-white'
-                                                  : 'bg-gray-100 text-gray-800'
-                                                  }`}
-                                        >
-                                             <p className="text-sm mb-0">{item.content}</p>
-                                             <p className={`text-xs mt-1 mb-0 ${item.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
-                                                  }`}>
-                                                  {item.timestamp.toLocaleTimeString('vi-VN', {
-                                                       hour: '2-digit',
-                                                       minute: '2-digit'
-                                                  })}
-                                             </p>
-                                        </div>
-                                   </div>
-                              ))}
-                         </div>
+               <ChatWindow open={open} title={title} onClose={() => setOpen(false)}>
+                    {!mode && <ChatModeSelect onSelect={selectMode} />}
 
-                         <Divider className="my-0" />
-
-                         {/* Input Area */}
-                         <div className="p-1">
-                              <div className="flex gap-2 w-full">
-                                   <TextArea
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        onKeyPress={handleKeyPress}
-                                        placeholder={t('inputPlaceholder')}
-                                        autoSize={{ minRows: 1, maxRows: 3 }}
-                                        className="flex-1"
-                                   />
-                                   <Button
-                                        type="primary"
-                                        icon={<SendOutlined />}
-                                        onClick={handleSendMessage}
-                                        disabled={!message.trim()}
-                                   >
-                                        {t('send')}
-                                   </Button>
+                    {mode && (
+                         <div className="flex flex-col h-full">
+                              <div className="px-4 pt-2 pb-1">
+                                   <button onClick={handleBack} className="text-xs text-gray-400 hover:text-gray-600">
+                                        &larr; {t('back')}
+                                   </button>
                               </div>
-                              <p className="text-xs text-gray-500 mt-2 mb-0">
-                                   {t('responseTime')}
-                              </p>
+                              <ChatMessages messages={messages} />
+                              <Divider className="my-0" />
+                              <ChatInput
+                                   onSend={handleSend}
+                                   currentApartment={currentApartment}
+                                   onSendApartment={handleSendApartment}
+                                   accentColor={accentColor}
+                              />
                          </div>
-                    </div>
-               </Modal>
+                    )}
+               </ChatWindow>
           </>
      )
 }
