@@ -108,12 +108,21 @@ export default function Header() {
       </div>
 
       {/* Mobile drawer */}
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} placement="right" width={260}>
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        placement="right"
+      >
         <nav className="flex flex-col gap-1 mb-4">
           {NAV_LINKS(t).map(({ href, label }) => (
-            <Link key={label} href={href} onClick={() => setDrawerOpen(false)}
+            <Link
+              key={label}
+              href={href}
+              onClick={() => setDrawerOpen(false)}
               className="px-3 py-2.5 rounded-lg font-medium hover:bg-gray-100"
-            >{label}</Link>
+            >
+              {label}
+            </Link>
           ))}
         </nav>
 
@@ -124,7 +133,13 @@ export default function Header() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Button shape="round" type="primary" block>{t('becomePartner')}</Button>
+          <Button
+            shape="round"
+            type="primary"
+            block
+          >
+            {t('becomePartner')}
+          </Button>
           {isLoggedIn ? (
             <>
               <div className="flex items-center gap-3 px-3 py-2">
