@@ -6,11 +6,22 @@ import { useApartment } from '@/hooks/query/useApartments'
 import { Breadcrumb, Button, Divider, Image, Rate, Result, Spin, Typography } from 'antd'
 import Link from 'next/link'
 import { Map, MapPin } from 'lucide-react'
-import { use } from 'react'
+import { use, useState } from 'react'
+import { useAuthStore } from '@/stores/auth.store'
+import ModalLoginRequired from '@/components/modal/modalLoginRequired'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, isLoading, isError } = useApartment(id)
+  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
+  const user = useAuthStore(s => s.user)
+  
+  const handleButtonRedirect = (url: string) => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true)
+    }
+    console.log(url)
+  }
 
   if (isLoading) {
     return (
@@ -55,6 +66,10 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
 
   return (
     <div className='container px-4 sm:px-6 lg:px-8'>
+      <ModalLoginRequired
+        isModalOpen={isModalLoginRequiredOpen}
+        setIsModalOpen={setIsModalLoginRequiredLogin}
+      />
       <Breadcrumb
         className='py-4'
         items={[
@@ -85,8 +100,18 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex md:flex-row md:justify-between md:items-center gap-4'>
           <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName}</h1>
           <div className='space-x-2'>
-            <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }}>Đặt lịch xem căn hộ</Button>
-            <Button size='middle' type='primary' shape='round' style={{ minWidth: 170, height: 40 }}>Đặt thuê căn hộ</Button>
+            <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }}>
+              Đặt lịch xem căn hộ
+            </Button>
+            <Button
+              size='middle'
+              type='primary'
+              shape='round'
+              style={{ minWidth: 170, height: 40 }}
+              onClick={() => handleButtonRedirect('/')}
+            >
+              Đặt thuê căn hộ
+            </Button>
           </div>
         </div>
         <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
