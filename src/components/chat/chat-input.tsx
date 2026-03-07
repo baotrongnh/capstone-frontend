@@ -17,7 +17,7 @@ interface Props {
      accentColor: string
 }
 
-export function ChatInput({ onSend, currentApartment, onSendApartment, accentColor }: Props) {
+export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) {
      const t = useTranslations('Chat')
      const [message, setMessage] = useState('')
      const [pendingImages, setPendingImages] = useState<string[]>([])
@@ -90,7 +90,6 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, accentCol
                          icon={<SendOutlined />}
                          onClick={handleSend}
                          disabled={!message.trim() && pendingImages.length === 0}
-                         style={{ backgroundColor: accentColor, borderColor: accentColor }}
                     >
                          {t('send')}
                     </Button>
