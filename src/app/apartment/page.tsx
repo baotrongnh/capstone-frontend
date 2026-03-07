@@ -120,7 +120,11 @@ export default function ApartmentList() {
               <Icon icon="lucide:search-x" className="text-gray-400 mx-auto mb-4" width={64} />
               <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
               <p className='text-gray-500 mb-6'>Thử thay đổi bộ lọc tìm kiếm.</p>
-              <Button onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}>Xóa bộ lọc</Button>
+              <Button
+                onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}
+              >
+                Xóa bộ lọc
+              </Button>
             </div>
           )}
 

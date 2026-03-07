@@ -198,7 +198,21 @@
     "autoReply": "Cảm ơn bạn đã liên hệ! Nhân viên hỗ trợ sẽ phản hồi trong giây lát.",
     "inputPlaceholder": "Nhập tin nhắn của bạn...",
     "send": "Gửi",
-    "responseTime": "Thời gian phản hồi trung bình: 2-5 phút"
+    "responseTime": "Thời gian phản hồi trung bình: 2-5 phút",
+    "selectTitle": "Bạn cần hỗ trợ gì?",
+    "selectPrompt": "Chọn kênh hỗ trợ phù hợp với bạn",
+    "supportOption": "Nhân viên chăm sóc khách hàng",
+    "supportOptionDesc": "Trò chuyện trực tiếp với nhân viên hỗ trợ",
+    "aiOption": "AI tư vấn",
+    "aiOptionDesc": "Được tư vấn ngay lập tức bởi trí tuệ nhân tạo",
+    "aiTitle": "AI tư vấn",
+    "aiWelcome": "Xin chào! Tôi là AI tư vấn. Bạn cần tìm căn hộ như thế nào?",
+    "aiReply": "Tôi đang xử lý yêu cầu của bạn, vui lòng chờ một chút...",
+    "aiResponseTime": "AI phản hồi trong vài giây",
+    "back": "Quay lại",
+    "sendApartment": "Gửi căn hộ",
+    "sendApartmentMsg": "Tôi muốn hỏi về căn hộ này",
+    "pasteImageHint": "Bạn có thể dán ảnh (Ctrl+V) vào khung chat"
   },
   "Profile": {
     "sidebar": {

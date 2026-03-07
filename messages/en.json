@@ -198,7 +198,21 @@
     "autoReply": "Thank you for contacting us! Our support team will respond shortly.",
     "inputPlaceholder": "Type your message...",
     "send": "Send",
-    "responseTime": "Average response time: 2-5 minutes"
+    "responseTime": "Average response time: 2-5 minutes",
+    "selectTitle": "How can we help?",
+    "selectPrompt": "Choose a support channel that works best for you",
+    "supportOption": "Customer Support Staff",
+    "supportOptionDesc": "Chat directly with a support agent",
+    "aiOption": "AI Advisor",
+    "aiOptionDesc": "Get instant advice from our AI assistant",
+    "aiTitle": "AI Advisor",
+    "aiWelcome": "Hello! I am your AI advisor. What kind of apartment are you looking for?",
+    "aiReply": "I am processing your request, please wait a moment...",
+    "aiResponseTime": "AI responds within seconds",
+    "back": "Back",
+    "sendApartment": "Send apartment",
+    "sendApartmentMsg": "I want to ask about this apartment",
+    "pasteImageHint": "You can paste images (Ctrl+V) into the chat"
   },
   "Profile": {
     "sidebar": {
