@@ -1,22 +1,11 @@
 'use client'
 
+import { BEDROOM_OPTIONS, DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE, FURNISHING_OPTIONS } from '@/constants/apartment'
 import { CITIES, LOCATIONS } from '@/constants/locations'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Checkbox, Divider, Input, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-
-// Constants
-const PRICE_RANGE = { MIN: 1_000_000, MAX: 50_000_000, STEP: 500_000 }
-const AREA_RANGE = { MIN: 10, MAX: 200, STEP: 5 }
-const BEDROOM_OPTIONS = [1, 2, 3, 4, 5]
-const DEBOUNCE_DELAY = 400
-
-const FURNISHING_OPTIONS = [
-     { value: 'unfurnished' as const, label: 'Không nội thất' },
-     { value: 'semi_furnished' as const, label: 'Nội thất cơ bản' },
-     { value: 'fully_furnished' as const, label: 'Đầy đủ nội thất' },
-]
 
 type FurnishingType = typeof FURNISHING_OPTIONS[number]['value']
 
@@ -32,8 +21,8 @@ export default function Filter({ onFilterChange }: FilterProps) {
      const [keyword, setKeyword] = useState('')
      const [city, setCity] = useState<string>()
      const [district, setDistrict] = useState<string>()
-     const [price, setPrice] = useState<[number, number]>([PRICE_RANGE.MIN, PRICE_RANGE.MAX])
-     const [area, setArea] = useState<[number, number]>([AREA_RANGE.MIN, AREA_RANGE.MAX])
+     const [price, setPrice] = useState<[number, number]>([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
+     const [area, setArea] = useState<[number, number]>([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
      const [bedrooms, setBedrooms] = useState<number[]>([])
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
@@ -54,8 +43,8 @@ export default function Filter({ onFilterChange }: FilterProps) {
           setKeyword('')
           setCity(undefined)
           setDistrict(undefined)
-          setPrice([PRICE_RANGE.MIN, PRICE_RANGE.MAX])
-          setArea([AREA_RANGE.MIN, AREA_RANGE.MAX])
+          setPrice([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
+          setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
           setBedrooms([])
           setFurnishing(undefined)
           onFilterChange({})
@@ -164,9 +153,9 @@ export default function Filter({ onFilterChange }: FilterProps) {
                     <Slider
                          range
                          value={price}
-                         min={PRICE_RANGE.MIN}
-                         max={PRICE_RANGE.MAX}
-                         step={PRICE_RANGE.STEP}
+                         min={FILTER_PRICE_RANGE.MIN}
+                         max={FILTER_PRICE_RANGE.MAX}
+                         step={FILTER_PRICE_RANGE.STEP}
                          onChange={v => setPrice(v as [number, number])}
                          onChangeComplete={handlePriceChange}
                          tooltip={{ formatter: v => formatPrice(v!) }}
@@ -186,9 +175,9 @@ export default function Filter({ onFilterChange }: FilterProps) {
                     <Slider
                          range
                          value={area}
-                         min={AREA_RANGE.MIN}
-                         max={AREA_RANGE.MAX}
-                         step={AREA_RANGE.STEP}
+                         min={FILTER_AREA_RANGE.MIN}
+                         max={FILTER_AREA_RANGE.MAX}
+                         step={FILTER_AREA_RANGE.STEP}
                          onChange={v => setArea(v as [number, number])}
                          onChangeComplete={handleAreaChange}
                          tooltip={{ formatter: formatArea }}
