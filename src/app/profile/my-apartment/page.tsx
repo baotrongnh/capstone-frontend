@@ -1,14 +1,15 @@
 'use client';
 
-import { use } from 'react';
-import ProfileLayout from '../../components/profile-layout';
-import MyApartment from '../../components/my-apartment';
+import ProfileLayout from '../components/profile-layout';
+import MyApartment from '../components/my-apartment';
 import { ActorType } from '@/types/auth';
-import { UserApartment, MyApartmentPageProps } from '@/types/profile';
+import { UserApartment } from '@/types/profile';
 import { ApartmentStatus } from '@/types/apartment';
+import { useAuthStore } from '@/stores/auth.store';
 
-export default function MyApartmentPage({ params }: MyApartmentPageProps) {
-    const { id } = use(params);
+export default function MyApartmentPage() {
+    const user = useAuthStore((s) => s.user);
+    const id = user?.id ?? '';
 
     const mockApartment: UserApartment = {
         id: '1',
@@ -49,7 +50,7 @@ export default function MyApartmentPage({ params }: MyApartmentPageProps) {
     };
 
     return (
-        <ProfileLayout userId={id} actorType={ActorType.USER}>
+        <ProfileLayout actorType={ActorType.USER}>
             <MyApartment apartment={mockApartment} />
         </ProfileLayout>
     );

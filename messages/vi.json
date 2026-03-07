@@ -293,9 +293,12 @@
       "thisMonth": "Tháng này",
       "status": {
         "available": "Có sẵn",
+        "occupied": "Đã có người ở",
         "rented": "Đã cho thuê",
         "maintenance": "Bảo trì",
-        "unavailable": "Không khả dụng"
+        "reserved": "Đã đặt trước",
+        "unavailable": "Không khả dụng",
+        "inactive": "Không hoạt động"
       }
     },
     "payment": {

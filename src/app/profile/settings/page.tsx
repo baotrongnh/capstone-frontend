@@ -1,14 +1,11 @@
 'use client';
 
-import { use } from 'react';
-import ProfileLayout from '../../components/profile-layout';
+import ProfileLayout from '../components/profile-layout';
 import { ActorType } from '@/types/auth';
-import { SettingsPageProps } from '@/types/profile';
 import { Form, Input, Switch, Button, Divider, Select } from 'antd';
 import { useTranslations } from 'next-intl';
 
-export default function SettingsPage({ params }: SettingsPageProps) {
-    const { id } = use(params);
+export default function SettingsPage() {
     const [form] = Form.useForm();
     const t = useTranslations('Profile.settings');
 
@@ -18,7 +15,7 @@ export default function SettingsPage({ params }: SettingsPageProps) {
     };
 
     return (
-        <ProfileLayout userId={id} actorType={ActorType.USER}>
+        <ProfileLayout actorType={ActorType.USER}>
             <div className="space-y-6">
                 <div>
                     <h2 className="text-2xl font-bold">{t('title')}</h2>

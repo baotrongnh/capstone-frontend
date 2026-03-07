@@ -18,7 +18,7 @@ import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { startTransition, useEffect, useState } from "react"
-import AuthModal from "../auth-modal"
+import AuthModal from "../modal/auth-modal"
 
 export default function Header() {
   const searchParams = useSearchParams()
@@ -76,7 +76,7 @@ export default function Header() {
       label: t('profile'),
       icon: <User size={16} />,
       onClick: () => {
-        if (user) router.push(ROUTES.PROFILE(user.id))
+        router.push(ROUTES.PROFILE)
       },
     },
     { type: 'divider' },
