@@ -9,18 +9,27 @@ import { Map, MapPin } from 'lucide-react'
 import { use, useState } from 'react'
 import { useAuthStore } from '@/stores/auth.store'
 import ModalLoginRequired from '@/components/modal/modalLoginRequired'
+import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modalBookingSchedule'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, isLoading, isError } = useApartment(id)
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [bookingData, setBookingData] = useState<BookingScheduleData | null>(null)
   const user = useAuthStore(s => s.user)
-  
-  const handleButtonRedirect = (url: string) => {
+
+  const handleButtonRedirect = (onSuccess: () => void) => {
     if (!user) {
       setIsModalLoginRequiredLogin(true)
+      return
     }
-    console.log(url)
+    onSuccess()
+  }
+
+  const handleBookingSubmit = (data: BookingScheduleData) => {
+    setBookingData(data)
+    console.log('Booking data:', { ...data, apartment: apt })
   }
 
   if (isLoading) {
@@ -70,6 +79,11 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         isModalOpen={isModalLoginRequiredOpen}
         setIsModalOpen={setIsModalLoginRequiredLogin}
       />
+      <ModalBookingSchedule
+        open={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onSubmit={handleBookingSubmit}
+      />
       <Breadcrumb
         className='py-4'
         items={[
@@ -100,7 +114,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex md:flex-row md:justify-between md:items-center gap-4'>
           <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName}</h1>
           <div className='space-x-2'>
-            <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }}>
+            <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}>
               Đặt lịch xem căn hộ
             </Button>
             <Button
@@ -108,7 +122,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
               type='primary'
               shape='round'
               style={{ minWidth: 170, height: 40 }}
-              onClick={() => handleButtonRedirect('/')}
+              onClick={() => handleButtonRedirect(() => console.log('Đặt thuê căn hộ'))}
             >
               Đặt thuê căn hộ
             </Button>
