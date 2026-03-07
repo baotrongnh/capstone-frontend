@@ -15,6 +15,7 @@ import {
   User
 } from "lucide-react"
 import { useTranslations } from "next-intl"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { startTransition, useEffect, useState } from "react"
@@ -92,7 +93,14 @@ export default function Header() {
   return (
     <header className="flex justify-center items-center h-22 w-full fixed top-0 left-0 z-50 bg-white shadow-sm">
       <div className="container flex justify-between items-center">
-        <div className="max-w-56">LOGO</div>
+        <div className="max-w-56">
+          <Image
+            alt="Logo"
+            src={'/img/logo.png'}
+            width={100}
+            height={100}
+          />
+        </div>
         <ul className="hidden lg:flex gap-10 font-medium shrink-0">
           <Link href={ROUTES.APARTMENT} className="hover:opacity-75">
             {t('findApartment')}
