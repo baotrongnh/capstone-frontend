@@ -4,6 +4,7 @@ import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Input, Modal, Radio } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/vi'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 dayjs.locale('vi')
@@ -28,6 +29,7 @@ export default function ModalBookingSchedule({
      onClose: () => void
      onSubmit: (data: BookingScheduleData) => void
 }) {
+     const t = useTranslations('BookingModal')
      const [date, setDate] = useState<Dayjs | null>(null)
      const [timeSlot, setTimeSlot] = useState<string>('')
      const [note, setNote] = useState<string>('')
@@ -35,7 +37,7 @@ export default function ModalBookingSchedule({
 
      const handleOk = () => {
           if (!date || !timeSlot) {
-               setErrors({ date: !date ? 'Vui lòng chọn ngày' : undefined, timeSlot: !timeSlot ? 'Vui lòng chọn giờ' : undefined })
+               setErrors({ date: !date ? t('dateRequired') : undefined, timeSlot: !timeSlot ? t('timeRequired') : undefined })
                return
           }
           onSubmit({ date, timeSlot, note })
@@ -58,7 +60,7 @@ export default function ModalBookingSchedule({
                title={
                     <div className='flex items-center gap-2 text-base font-semibold'>
                          <CalendarOutlined className='text-primary' />
-                         Đặt lịch xem căn hộ
+                         {t('title')}
                     </div>
                }
                open={open}
@@ -70,13 +72,13 @@ export default function ModalBookingSchedule({
                     {/* Date */}
                     <div className='space-y-1'>
                          <label className='font-medium text-sm'>
-                              <CalendarOutlined className='mr-1' /> Chọn ngày
+                              <CalendarOutlined className='mr-1' /> {t('dateLabel')}
                          </label>
                          <DatePicker
                               className='w-full'
                               size='large'
                               format='DD/MM/YYYY'
-                              placeholder='Chọn ngày muốn xem căn hộ'
+                              placeholder={t('datePlaceholder')}
                               disabledDate={disabledDate}
                               value={date}
                               onChange={(val) => { setDate(val); setErrors(e => ({ ...e, date: undefined })) }}
@@ -87,7 +89,7 @@ export default function ModalBookingSchedule({
                     {/* Time Slots */}
                     <div className='space-y-1'>
                          <label className='font-medium text-sm'>
-                              <ClockCircleOutlined className='mr-1' /> Chọn giờ
+                              <ClockCircleOutlined className='mr-1' /> {t('timeLabel')}
                          </label>
                          <Radio.Group
                               className='w-full'
@@ -112,10 +114,10 @@ export default function ModalBookingSchedule({
 
                     {/* Note */}
                     <div className='space-y-1'>
-                         <label className='font-medium text-sm'>Ghi chú (tuỳ chọn)</label>
+                         <label className='font-medium text-sm'>{t('noteLabel')}</label>
                          <Input.TextArea
                               rows={3}
-                              placeholder='Ví dụ: Tôi muốn xem phòng tầng cao, hoặc hỏi thêm về chính sách...'
+                              placeholder={t('notePlaceholder')}
                               maxLength={300}
                               showCount
                               value={note}
@@ -125,9 +127,9 @@ export default function ModalBookingSchedule({
 
                     {/* Actions */}
                     <div className='flex justify-end gap-2'>
-                         <Button size='large' shape='round' onClick={handleCancel}>Huỷ</Button>
+                         <Button size='large' shape='round' onClick={handleCancel}>{t('cancel')}</Button>
                          <Button size='large' type='primary' shape='round' style={{ minWidth: 140 }} onClick={handleOk}>
-                              Xác nhận
+                              {t('confirm')}
                          </Button>
                     </div>
                </div>

@@ -11,12 +11,14 @@ import { useApartments } from '@/hooks/query/useApartments'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
+import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
 
 export default function ApartmentList() {
   const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
   const { data, isLoading, isError, refetch } = useApartments(filters)
+  const t = useTranslations('ApartmentListPage')
 
   const updateFilters = useCallback((patch: Partial<ApartmentQueryParams>) => {
     setFilters((prev: ApartmentQueryParams) =>
@@ -44,7 +46,7 @@ export default function ApartmentList() {
         </Button>
       </div>
 
-      <Drawer title="Bộ lọc" placement="left" open={filterOpen} onClose={() => setFilterOpen(false)}>
+      <Drawer title='Bộ lọc' placement="left" open={filterOpen} onClose={() => setFilterOpen(false)}>
         <Filter onFilterChange={updateFilters} />
       </Drawer>
 
@@ -59,7 +61,7 @@ export default function ApartmentList() {
           {!isLoading && !isError && meta && (
             <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6'>
               <span className='text-sm text-gray-600'>
-                Hiển thị <strong>{apartments.length}</strong> / <strong>{meta.total}</strong> căn hộ
+                {t('showing')} {apartments.length} / {meta.total} {t('apartments')}
               </span>
               <Select
                 value={`${filters.sortBy}-${filters.sortOrder}`}
@@ -68,7 +70,7 @@ export default function ApartmentList() {
                   updateFilters({ sortBy, sortOrder } as Partial<ApartmentQueryParams>)
                 }}
                 style={{ width: 200 }}
-                options={APARTMENT_SORT_OPTIONS}
+                options={APARTMENT_SORT_OPTIONS.map(opt => ({ label: t(`sort.${opt.key}`), value: opt.value }))}
               />
             </div>
           )}
@@ -78,8 +80,8 @@ export default function ApartmentList() {
           {isError && (
             <div className='text-center py-20'>
               <Icon icon="lucide:wifi-off" className="text-red-500 mx-auto mb-4" width={40} />
-              <h3 className='text-xl font-semibold mb-2'>Không thể tải dữ liệu</h3>
-              <p className='text-gray-500 mb-6'>Đã xảy ra lỗi. Vui lòng thử lại.</p>
+              <h3 className='text-xl font-semibold mb-2'>Lỗi kết nối</h3>
+              <p className='text-gray-500 mb-6'>Không thể tải dữ liệu, vui lòng thử lại.</p>
               <Button type="primary" onClick={() => refetch()}>Thử lại</Button>
             </div>
           )}
@@ -93,7 +95,7 @@ export default function ApartmentList() {
               <div className='text-center py-20'>
                 <Icon icon="lucide:search-x" className="text-gray-400 mx-auto mb-4" width={64} />
                 <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
-                <p className='text-gray-500 mb-6'>Thử điều chỉnh bộ lọc.</p>
+                <p className='text-gray-500 mb-6'>Thử thay đổi bộ lọc tìm kiếm.</p>
                 <Button onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}>Xóa bộ lọc</Button>
               </div>
             )

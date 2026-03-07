@@ -1,11 +1,15 @@
-import { formatPrice, FURNISHING } from '@/constants/apartment'
+'use client'
+
+import { formatPrice } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { ApartmentItem } from '@/types/apartment'
 import { Icon } from '@iconify/react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function ApartmentCard({ apartment }: { apartment: ApartmentItem }) {
+     const t = useTranslations('ApartmentLabels')
      const imageSrc = apartment.images?.[0] ?? '/images/phongtro.jpg'
 
      return (
@@ -41,7 +45,7 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentItem 
                          </div>
                          <div className='flex items-center gap-2 text-sm text-muted'>
                               <Icon icon="lucide:sofa" width={16} className='shrink-0' />
-                              <span className='line-clamp-1'>{FURNISHING[apartment.furnishingStatus] ?? apartment.furnishingStatus}</span>
+                              <span className='line-clamp-1'>{t(`furnishing.${apartment.furnishingStatus}`)}</span>
                          </div>
                     </div>
 

@@ -16,14 +16,14 @@ export const DEFAULT_APARTMENT_FILTERS: ApartmentQueryParams = {
 }
 
 export const APARTMENT_SORT_OPTIONS = [
-     { label: 'Giá tăng dần', value: 'baseRentPrice-asc' },
-     { label: 'Giá giảm dần', value: 'baseRentPrice-desc' },
-     { label: 'Diện tích tăng dần', value: 'totalArea-asc' },
-     { label: 'Diện tích giảm dần', value: 'totalArea-desc' },
-     { label: 'Mới nhất', value: 'createdAt-desc' },
-     { label: 'Cũ nhất', value: 'createdAt-asc' },
-     { label: 'Số phòng tăng dần', value: 'numberOfBedrooms-asc' },
-     { label: 'Số phòng giảm dần', value: 'numberOfBedrooms-desc' },
+     { key: 'priceAsc', value: 'baseRentPrice-asc' },
+     { key: 'priceDesc', value: 'baseRentPrice-desc' },
+     { key: 'areaAsc', value: 'totalArea-asc' },
+     { key: 'areaDesc', value: 'totalArea-desc' },
+     { key: 'newest', value: 'createdAt-desc' },
+     { key: 'oldest', value: 'createdAt-asc' },
+     { key: 'bedroomsAsc', value: 'numberOfBedrooms-asc' },
+     { key: 'bedroomsDesc', value: 'numberOfBedrooms-desc' },
 ]
 
 export const FURNISHING: Record<string, string> = {
