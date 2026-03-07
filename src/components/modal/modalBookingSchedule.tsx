@@ -65,7 +65,6 @@ export default function ModalBookingSchedule({
                onCancel={handleCancel}
                footer={null}
                width={480}
-               destroyOnClose
           >
                <div className='pt-4 space-y-5'>
                     {/* Date */}

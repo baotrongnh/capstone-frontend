@@ -5,37 +5,22 @@ import ApartmentItemSkeleton from '@/components/apartments/apartment-item-skelet
 import Filter from '@/components/apartments/filter'
 import SimilarApartments from '@/components/apartments/similar-apartments'
 import AppPromoSection from '@/components/sections/app-promo'
+import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartments } from '@/hooks/query/useApartments'
-import { useUserProfile } from '@/hooks/query/useUser'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useCallback, useState } from 'react'
 
-const DEFAULT_FILTERS: ApartmentQueryParams = {
-  page: 1, limit: 10, status: 'available', sortBy: 'createdAt', sortOrder: 'desc'
-}
-
-const SORT_OPTIONS = [
-  { label: 'Giá tăng dần', value: 'baseRentPrice-asc' },
-  { label: 'Giá giảm dần', value: 'baseRentPrice-desc' },
-  { label: 'Diện tích tăng dần', value: 'totalArea-asc' },
-  { label: 'Diện tích giảm dần', value: 'totalArea-desc' },
-  { label: 'Mới nhất', value: 'createdAt-desc' },
-  { label: 'Cũ nhất', value: 'createdAt-asc' },
-  { label: 'Số phòng tăng dần', value: 'numberOfBedrooms-asc' },
-  { label: 'Số phòng giảm dần', value: 'numberOfBedrooms-desc' },
-]
-
 export default function ApartmentList() {
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
   const { data, isLoading, isError, refetch } = useApartments(filters)
 
   const updateFilters = useCallback((patch: Partial<ApartmentQueryParams>) => {
     setFilters((prev: ApartmentQueryParams) =>
-      Object.keys(patch).length === 0 ? DEFAULT_FILTERS : { ...prev, ...patch, page: 1 }
+      Object.keys(patch).length === 0 ? DEFAULT_APARTMENT_FILTERS : { ...prev, ...patch, page: 1 }
     )
   }, [])
 
@@ -83,7 +68,7 @@ export default function ApartmentList() {
                   updateFilters({ sortBy, sortOrder } as Partial<ApartmentQueryParams>)
                 }}
                 style={{ width: 200 }}
-                options={SORT_OPTIONS}
+                options={APARTMENT_SORT_OPTIONS}
               />
             </div>
           )}
@@ -109,7 +94,7 @@ export default function ApartmentList() {
                 <Icon icon="lucide:search-x" className="text-gray-400 mx-auto mb-4" width={64} />
                 <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
                 <p className='text-gray-500 mb-6'>Thử điều chỉnh bộ lọc.</p>
-                <Button onClick={() => setFilters(DEFAULT_FILTERS)}>Xóa bộ lọc</Button>
+                <Button onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}>Xóa bộ lọc</Button>
               </div>
             )
           )}

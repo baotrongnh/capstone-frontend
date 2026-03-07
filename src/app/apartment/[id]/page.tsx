@@ -3,20 +3,19 @@
 import SimilarApartments from '@/components/apartments/similar-apartments'
 import { ROUTES } from '@/constants/routes'
 import { useApartment } from '@/hooks/query/useApartments'
-import { Breadcrumb, Button, Divider, Image, Rate, Result, Spin, Typography } from 'antd'
-import Link from 'next/link'
-import { Map, MapPin } from 'lucide-react'
+import { Breadcrumb, Button, Divider, Image, Rate, Result, Spin, Tag, Typography } from 'antd'
+import { Bath, BedDouble, Building2, CalendarDays, ExternalLink, Map, MapPin, Maximize2, Sofa, Users, Video } from 'lucide-react'
 import { use, useState } from 'react'
 import { useAuthStore } from '@/stores/auth.store'
 import ModalLoginRequired from '@/components/modal/modalLoginRequired'
 import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modalBookingSchedule'
+import { APARTMENT_STATUS, FURNISHING, ROOM_TYPE, formatPrice } from '@/constants/apartment'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, isLoading, isError } = useApartment(id)
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
-  const [bookingData, setBookingData] = useState<BookingScheduleData | null>(null)
   const user = useAuthStore(s => s.user)
 
   const handleButtonRedirect = (onSuccess: () => void) => {
@@ -27,15 +26,10 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
     onSuccess()
   }
 
-  const handleBookingSubmit = (data: BookingScheduleData) => {
-    setBookingData(data)
-    console.log('Booking data:', { ...data, apartment: apt })
-  }
-
   if (isLoading) {
     return (
       <div className='container h-screen flex items-center justify-center'>
-        <Spin size="large">
+        <Spin size='large'>
           <div className='p-10 text-gray-400'>Đang tải thông tin căn hộ...</div>
         </Spin>
       </div>
@@ -45,17 +39,21 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   if (isError || !data) {
     return (
       <div className='container h-screen flex items-center justify-center'>
-        <Result status="404" title="Không tìm thấy căn hộ" subTitle="Căn hộ không tồn tại hoặc đã bị xóa." />
+        <Result status='404' title='Không tìm thấy căn hộ' subTitle='Căn hộ không tồn tại hoặc đã bị xóa.' />
       </div>
     )
   }
 
   const apt = data.data
-  const fallbackImages = ['/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg', '/img/auth/phongtro.jpg']
-  const images = apt?.images && apt.images.length > 0 ? apt.images : fallbackImages
 
+  const handleBookingSubmit = (bookingData: BookingScheduleData) => {
+    console.log('Booking data:', { ...bookingData, apartment: apt })
+  }
+
+  const images = apt?.images?.length ? apt.images : []
   const location = [apt?.district, apt?.city].filter(Boolean).join(', ')
   const fullAddress = [apt?.address, apt?.ward, apt?.district, apt?.city].filter(Boolean).join(', ')
+  const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {
     if (apt?.latitude && apt?.longitude) {
@@ -65,69 +63,81 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
     }
   }
 
-  const activities = [
-    'Dhanmondi là một khu vực cư trú thượng hạng tại 8 Dhaka, Bangladesh.',
-    'Dhanmondi cũng là trung tâm văn hóa của thành phố Dhaka.',
-    'Hồ Dhanmondi và Rabindra Sarobor những địa điểm không gian xanh rất thư giãn.',
-    'Khu đây cũng nổi tiếng với nhiều nhà hàng, trường học và cửa hàng.',
-    'Một số đô thị Hồi giáo Dhanmondi sẵn gần quanh sành cho các hoạt động.',
-  ]
-
   return (
     <div className='container px-4 sm:px-6 lg:px-8'>
-      <ModalLoginRequired
-        isModalOpen={isModalLoginRequiredOpen}
-        setIsModalOpen={setIsModalLoginRequiredLogin}
-      />
-      <ModalBookingSchedule
-        open={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        onSubmit={handleBookingSubmit}
-      />
+      <ModalLoginRequired isModalOpen={isModalLoginRequiredOpen} setIsModalOpen={setIsModalLoginRequiredLogin} />
+      <ModalBookingSchedule open={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} onSubmit={handleBookingSubmit} />
+
       <Breadcrumb
         className='py-4'
         items={[
           { title: 'Trang chủ', href: ROUTES.HOME },
           { title: 'Danh sách căn hộ', href: ROUTES.APARTMENT },
-          { title: apt?.buildingName }
+          { title: apt?.buildingName || apt?.apartmentNumber },
         ]}
       />
 
       {/* Gallery */}
-      <div className='w-full grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 md:gap-4 mt-5'>
-        <div className='col-span-2 md:col-span-3 row-span-2 overflow-hidden rounded-lg h-62.5 md:h-100'>
-          <Image height='100%' width='100%' alt='main' src={images[0]} style={{ objectFit: 'cover' }} />
-        </div>
-        <div className='overflow-hidden rounded-lg h-30 md:h-48.75'>
-          <Image height='100%' width='100%' alt='side1' src={images[1]} style={{ objectFit: 'cover' }} />
-        </div>
-        <div className='relative overflow-hidden rounded-lg h-30 md:h-48.75'>
-          <Image height='100%' width='100%' alt='side2' src={images[2]} style={{ objectFit: 'cover' }} />
-          <div className='bg-primary text-center p-3 absolute bottom-0 w-full'>
-            <Link href={ROUTES.HOME} className='underline font-semibold text-white'>Xem thêm</Link>
+      {images.length > 0 ? (
+        <div className='w-full grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 md:gap-4 mt-5'>
+          <div className='col-span-2 md:col-span-3 row-span-2 overflow-hidden rounded-lg h-64 md:h-96'>
+            <Image height='100%' width='100%' alt='main' src={images[0]} style={{ objectFit: 'cover' }} />
           </div>
+          {images[1] && (
+            <div className='overflow-hidden rounded-lg h-30 md:h-46.25'>
+              <Image height='100%' width='100%' alt='side1' src={images[1]} style={{ objectFit: 'cover' }} />
+            </div>
+          )}
+          {images[2] && (
+            <div className='relative overflow-hidden rounded-lg h-30 md:h-46.25'>
+              <Image height='100%' width='100%' alt='side2' src={images[2]} style={{ objectFit: 'cover' }} />
+              {images.length > 3 && (
+                <div className='bg-black/50 text-center p-3 absolute bottom-0 w-full'>
+                  <span className='font-semibold text-white'>+{images.length - 3} ảnh</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <div className='w-full rounded-lg bg-gray-100 h-64 md:h-96 mt-5 flex items-center justify-center text-gray-400'>
+          Chưa có ảnh
+        </div>
+      )}
 
       {/* Header */}
       <div className='pt-6 md:pt-10'>
-        <div className='flex md:flex-row md:justify-between md:items-center gap-4'>
-          <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName}</h1>
-          <div className='space-x-2'>
-            <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}>
-              Đặt lịch xem căn hộ
-            </Button>
-            <Button
-              size='middle'
-              type='primary'
-              shape='round'
-              style={{ minWidth: 170, height: 40 }}
-              onClick={() => handleButtonRedirect(() => console.log('Đặt thuê căn hộ'))}
-            >
-              Đặt thuê căn hộ
-            </Button>
+        <div className='flex flex-col md:flex-row md:justify-between md:items-start gap-4'>
+          <div>
+            <div className='flex items-center gap-2 flex-wrap'>
+              <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName || apt?.apartmentNumber}</h1>
+              {status && <Tag color={status.color}>{status.label}</Tag>}
+              {apt?.apartmentType && <Tag>{apt.apartmentType}</Tag>}
+            </div>
+            <p className='text-gray-500 text-sm mt-1'>
+              Mã căn: {apt?.apartmentNumber}
+              {apt?.floorNumber ? ` · Tầng ${apt.floorNumber}` : ''}
+            </p>
+          </div>
+          <div className='flex flex-col md:items-end gap-1'>
+            <p className='text-2xl font-bold text-primary'>
+              {formatPrice(apt?.baseRentPrice)}
+              <span className='text-sm font-normal text-gray-500'>/tháng</span>
+            </p>
+            {apt?.depositAmount && (
+              <p className='text-sm text-gray-500'>Đặt cọc: {formatPrice(apt.depositAmount)}</p>
+            )}
+            <div className='flex flex-wrap gap-2 mt-2'>
+              <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}>
+                Đặt lịch xem căn hộ
+              </Button>
+              <Button size='middle' type='primary' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => console.log('Đặt thuê căn hộ'))}>
+                Đặt thuê căn hộ
+              </Button>
+            </div>
           </div>
         </div>
+
         <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
           <span className='text-muted flex items-center gap-1 text-sm md:text-base'>
             <MapPin size={16} className='shrink-0' />
@@ -141,57 +151,195 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      {/* Description */}
-      <div className='mt-6 md:mt-7 space-y-3'>
-        <h2 className='font-semibold text-lg md:text-xl'>Mô tả</h2>
-        <Typography.Paragraph className='text-justify text-sm md:text-base'>
-          {apt?.description || 'Chưa có mô tả.'}
-        </Typography.Paragraph>
+      {/* Specs */}
+      <div className='mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3'>
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <BedDouble size={18} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>Phòng ngủ</p>
+            <p className='font-semibold'>{apt?.numberOfBedrooms}</p>
+          </div>
+        </div>
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Bath size={18} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>Phòng tắm</p>
+            <p className='font-semibold'>{apt?.numberOfBathrooms}</p>
+          </div>
+        </div>
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Maximize2 size={18} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>Tổng diện tích</p>
+            <p className='font-semibold'>{apt?.totalArea} m²</p>
+          </div>
+        </div>
+        {apt?.usableArea && (
+          <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+            <Maximize2 size={18} className='text-primary shrink-0' />
+            <div>
+              <p className='text-xs text-gray-500'>DT sử dụng</p>
+              <p className='font-semibold'>{apt.usableArea} m²</p>
+            </div>
+          </div>
+        )}
+        {apt?.floorNumber && (
+          <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+            <Building2 size={18} className='text-primary shrink-0' />
+            <div>
+              <p className='text-xs text-gray-500'>Tầng</p>
+              <p className='font-semibold'>{apt.floorNumber}</p>
+            </div>
+          </div>
+        )}
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Sofa size={18} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>Nội thất</p>
+            <p className='font-semibold text-xs'>{FURNISHING[apt?.furnishingStatus ?? ''] || apt?.furnishingStatus}</p>
+          </div>
+        </div>
+        {apt?.yearBuilt && (
+          <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+            <CalendarDays size={18} className='text-primary shrink-0' />
+            <div>
+              <p className='text-xs text-gray-500'>Năm xây</p>
+              <p className='font-semibold'>{apt.yearBuilt}</p>
+            </div>
+          </div>
+        )}
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Users size={18} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>Xem đồng thời</p>
+            <p className='font-semibold'>{apt?.maxConcurrentViewings} lượt</p>
+          </div>
+        </div>
       </div>
 
-      {/* Activities */}
-      <div className='mt-8 md:mt-10'>
-        <div className='flex items-center gap-2 mb-3 md:mb-4'>
-          <Map className='text-gray-700 shrink-0' size={20} />
-          <h2 className='font-semibold text-lg md:text-xl'>Hoạt Động</h2>
+      {/* Description */}
+      {apt?.description && (
+        <div className='mt-6 md:mt-8 space-y-3'>
+          <h2 className='font-semibold text-lg md:text-xl'>Mô tả</h2>
+          <Typography.Paragraph className='text-justify text-sm md:text-base'>
+            {apt.description}
+          </Typography.Paragraph>
         </div>
-        <div className='bg-white rounded-lg p-4 md:p-6 border border-gray-100'>
-          <p className='font-medium mb-2 md:mb-3 text-sm md:text-base'>Bạn Có Thể Làm Gì?</p>
-          <ul className='space-y-2 text-xs md:text-sm text-gray-700'>
-            {activities.map((activity, index) => (
-              <li key={index} className='flex gap-2'><span>•</span><span>{activity}</span></li>
+      )}
+
+      {/* Video Tour */}
+      {apt?.videoTourUrl && (
+        <div className='mt-8 md:mt-10'>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>Video tour</h2>
+          <a
+            href={apt.videoTourUrl}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg px-5 py-3 border border-gray-200'
+          >
+            <Video size={20} className='text-primary' />
+            <span className='text-sm font-medium'>Xem video căn hộ</span>
+            <ExternalLink size={14} className='text-gray-400' />
+          </a>
+        </div>
+      )}
+
+      {/* Amenities */}
+      {apt?.amenities && apt.amenities.length > 0 && (
+        <div className='mt-8 md:mt-10'>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>Tiện ích</h2>
+          <div className='flex flex-wrap gap-2'>
+            {apt.amenities.map((item, i) => (
+              <Tag key={i} className='px-3 py-1 text-sm'>{item}</Tag>
             ))}
-          </ul>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Partner */}
+      {apt?.partner && (
+        <div className='mt-8 md:mt-10'>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>Đơn vị cho thuê</h2>
+          <div className='bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4'>
+            <div className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0'>
+              <Building2 size={20} className='text-primary' />
+            </div>
+            <div>
+              <p className='font-semibold'>{apt.partner.companyName}</p>
+              <p className='text-sm text-gray-500'>{apt.partner.fullName}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rooms */}
+      {apt?.rooms && apt.rooms.length > 0 && (
+        <div className='mt-8 md:mt-10'>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>Danh sách phòng</h2>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
+            {apt.rooms.map((room) => (
+              <div key={room.id} className='border border-gray-100 rounded-lg p-4 bg-white'>
+                <div className='flex justify-between items-center mb-2'>
+                  <span className='font-medium'>
+                    {ROOM_TYPE[room.roomType] || room.roomType}
+                    {room.roomNumber ? ` · ${room.roomNumber}` : ''}
+                  </span>
+                  <Tag color={APARTMENT_STATUS[room.status]?.color || 'default'}>
+                    {APARTMENT_STATUS[room.status]?.label || room.status}
+                  </Tag>
+                </div>
+                <div className='flex flex-wrap gap-1 mb-2'>
+                  {room.area && <span className='text-xs bg-gray-100 px-2 py-0.5 rounded'>{room.area} m²</span>}
+                  {room.maxOccupancy > 1 && <span className='text-xs bg-gray-100 px-2 py-0.5 rounded'>{room.maxOccupancy} người</span>}
+                  {room.hasAirConditioning && <span className='text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded'>Điều hoà</span>}
+                  {room.hasWindow && <span className='text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded'>Cửa sổ</span>}
+                  {room.hasPrivateBathroom && <span className='text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded'>WC riêng</span>}
+                </div>
+                {room.rentPrice && (
+                  <p className='text-sm font-semibold text-primary'>{formatPrice(room.rentPrice)}/tháng</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Location */}
       <div className='mt-8 md:mt-10 mb-8 md:mb-10'>
         <div className='flex items-center gap-2 mb-3 md:mb-4'>
           <Map className='text-gray-700 shrink-0' size={20} />
-          <h2 className='font-semibold text-lg md:text-xl'>Tìm Đường Đi</h2>
+          <h2 className='font-semibold text-lg md:text-xl'>Vị trí</h2>
         </div>
         {fullAddress && (
           <p className='text-sm md:text-base text-gray-600 mb-3'>
             <strong>Địa chỉ:</strong> {fullAddress}
           </p>
         )}
-        <div className='relative w-full h-75 md:h-100 lg:h-125 bg-gray-200 rounded-lg overflow-hidden'>
-          <div className='absolute inset-0 flex items-center justify-center bg-gray-300'>
-            <div className='text-center'>
-              <Map size={48} className='mx-auto mb-2 text-gray-500' />
-              <p className='text-gray-600'>Map Component Here</p>
-              {apt?.latitude && apt?.longitude && (
-                <p className='text-xs text-gray-500 mt-2'>Lat: {apt.latitude}, Long: {apt.longitude}</p>
-              )}
-            </div>
+        {apt?.latitude && apt?.longitude ? (
+          <div className='relative w-full h-64 sm:h-80 md:h-96 lg:h-120 rounded-lg overflow-hidden'>
+            <iframe
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(apt.longitude) - 0.005},${Number(apt.latitude) - 0.005},${Number(apt.longitude) + 0.005},${Number(apt.latitude) + 0.005}&layer=mapnik&marker=${apt.latitude},${apt.longitude}`}
+              className='w-full h-full border-0'
+              loading='lazy'
+            />
+            <button
+              onClick={handleFindDirection}
+              className='absolute top-3 right-3 bg-white text-sm font-medium px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 hover:bg-gray-50 transition-colors cursor-pointer border-0 z-10'
+            >
+              <MapPin size={14} className='text-primary' />
+              Mở Google Maps
+            </button>
           </div>
-          <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-            <Button type='primary' size='large' icon={<Map size={16} />} onClick={handleFindDirection}>
-              Tìm Đường Đi
-            </Button>
-          </div>
-        </div>
+        ) : (
+          <button
+            className='w-full h-48 rounded-lg bg-gray-100 flex flex-col items-center justify-center gap-2 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer border-0'
+            onClick={handleFindDirection}
+          >
+            <MapPin size={32} />
+            <span className='text-sm'>Tìm kiếm trên Google Maps</span>
+            <span className='text-xs text-gray-400'>{fullAddress}</span>
+          </button>
+        )}
       </div>
 
       <SimilarApartments />
