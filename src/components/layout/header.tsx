@@ -20,7 +20,7 @@ const NAV_LINKS = (t: (k: string) => string) => [
   { href: '/', label: t('yourApartment') },
   { href: '/', label: t('bills') },
   { href: '/', label: t('support') },
-  { href: ROUTES.CONTACT, label: t('contact') },
+  { href: '/', label: t('contact') },
 ]
 
 export default function Header() {
@@ -87,7 +87,7 @@ export default function Header() {
           {langBtn}
           <MessageSquareText strokeWidth={1.4} />
           <BellRing strokeWidth={1.4} />
-          <Button shape="round" type="primary">{t('becomePartner')}</Button>
+          <Link href={ROUTES.CONTACT}><Button shape="round" type="primary">{t('becomePartner')}</Button></Link>
           {isLoggedIn ? (
             <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
               <div className="flex items-center cursor-pointer gap-2">

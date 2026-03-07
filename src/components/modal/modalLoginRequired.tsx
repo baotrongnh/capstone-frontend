@@ -19,6 +19,7 @@ export default function ModalLoginRequired({ isModalOpen, setIsModalOpen }: { is
                open={isModalOpen}
                onOk={handleOk}
                onCancel={handleCancel}
+               centered
           >
                <p>Vui lòng đăng nhập để thực hiện chức năng này</p>
           </Modal>
