@@ -10,8 +10,11 @@ import { useAuthStore } from '@/stores/auth.store'
 import ModalLoginRequired from '@/components/modal/modalLoginRequired'
 import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modalBookingSchedule'
 import { APARTMENT_STATUS, FURNISHING, ROOM_TYPE, formatPrice } from '@/constants/apartment'
+import { useTranslations } from 'next-intl'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
+  const t = useTranslations('ApartmentDetailPage')
+  const tLabels = useTranslations('ApartmentLabels')
   const { id } = use(params)
   const { data, isLoading, isError } = useApartment(id)
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
@@ -39,7 +42,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   if (isError || !data) {
     return (
       <div className='container h-screen flex items-center justify-center'>
-        <Result status='404' title='Không tìm thấy căn hộ' subTitle='Căn hộ không tồn tại hoặc đã bị xóa.' />
+        <Result status='404' title={t('notFoundTitle')} subTitle={t('notFoundDesc')} />
       </div>
     )
   }
@@ -71,8 +74,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       <Breadcrumb
         className='py-4'
         items={[
-          { title: 'Trang chủ', href: ROUTES.HOME },
-          { title: 'Danh sách căn hộ', href: ROUTES.APARTMENT },
+          { title: t('breadcrumbHome'), href: ROUTES.HOME },
+          { title: t('breadcrumbList'), href: ROUTES.APARTMENT },
           { title: apt?.buildingName || apt?.apartmentNumber },
         ]}
       />
@@ -93,7 +96,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
               <Image height='100%' width='100%' alt='side2' src={images[2]} style={{ objectFit: 'cover' }} />
               {images.length > 3 && (
                 <div className='bg-black/50 text-center p-3 absolute bottom-0 w-full'>
-                  <span className='font-semibold text-white'>+{images.length - 3} ảnh</span>
+                  <span className='font-semibold text-white'>{t('morePhotos', { count: images.length - 3 })}</span>
                 </div>
               )}
             </div>
@@ -101,7 +104,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         </div>
       ) : (
         <div className='w-full rounded-lg bg-gray-100 h-64 md:h-96 mt-5 flex items-center justify-center text-gray-400'>
-          Chưa có ảnh
+          {t('noPhotos')}
         </div>
       )}
 
@@ -111,28 +114,28 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <div>
             <div className='flex items-center gap-2 flex-wrap'>
               <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName || apt?.apartmentNumber}</h1>
-              {status && <Tag color={status.color}>{status.label}</Tag>}
+              {status && <Tag color={status.color}>{tLabels(`status.${apt?.status}`)}</Tag>}
               {apt?.apartmentType && <Tag>{apt.apartmentType}</Tag>}
             </div>
             <p className='text-gray-500 text-sm mt-1'>
-              Mã căn: {apt?.apartmentNumber}
-              {apt?.floorNumber ? ` · Tầng ${apt.floorNumber}` : ''}
+              {t('unitCode')}: {apt?.apartmentNumber}
+              {apt?.floorNumber ? ` · ${t('floorLabel')} ${apt.floorNumber}` : ''}
             </p>
           </div>
           <div className='flex flex-col md:items-end gap-1'>
             <p className='text-2xl font-bold text-primary'>
               {formatPrice(apt?.baseRentPrice)}
-              <span className='text-sm font-normal text-gray-500'>/tháng</span>
+              <span className='text-sm font-normal text-gray-500'>{t('perMonth')}</span>
             </p>
             {apt?.depositAmount && (
-              <p className='text-sm text-gray-500'>Đặt cọc: {formatPrice(apt.depositAmount)}</p>
+              <p className='text-sm text-gray-500'>{t('deposit')}: {formatPrice(apt.depositAmount)}</p>
             )}
             <div className='flex flex-wrap gap-2 mt-2'>
               <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}>
-                Đặt lịch xem căn hộ
+                {t('scheduleBtn')}
               </Button>
-              <Button size='middle' type='primary' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => console.log('Đặt thuê căn hộ'))}>
-                Đặt thuê căn hộ
+              <Button size='middle' type='primary' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => console.log('rent'))}>
+                {t('rentBtn')}
               </Button>
             </div>
           </div>
@@ -141,12 +144,12 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
           <span className='text-muted flex items-center gap-1 text-sm md:text-base'>
             <MapPin size={16} className='shrink-0' />
-            <span className='line-clamp-1'>{location || 'Chưa có địa chỉ'}</span>
+            <span className='line-clamp-1'>{location || t('noAddress')}</span>
           </span>
           <Divider orientation='vertical' className='hidden sm:block' />
           <span className='text-muted flex gap-1 items-center text-sm md:text-base'>
             <Rate disabled value={0} size='small' />
-            (Chưa có đánh giá)
+            ({t('noReview')})
           </span>
         </div>
       </div>
@@ -156,21 +159,21 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
           <BedDouble size={18} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>Phòng ngủ</p>
+            <p className='text-xs text-gray-500'>{t('specs.bedrooms')}</p>
             <p className='font-semibold'>{apt?.numberOfBedrooms}</p>
           </div>
         </div>
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
           <Bath size={18} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>Phòng tắm</p>
+            <p className='text-xs text-gray-500'>{t('specs.bathrooms')}</p>
             <p className='font-semibold'>{apt?.numberOfBathrooms}</p>
           </div>
         </div>
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
           <Maximize2 size={18} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>Tổng diện tích</p>
+            <p className='text-xs text-gray-500'>{t('specs.totalArea')}</p>
             <p className='font-semibold'>{apt?.totalArea} m²</p>
           </div>
         </div>
@@ -178,7 +181,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
             <Maximize2 size={18} className='text-primary shrink-0' />
             <div>
-              <p className='text-xs text-gray-500'>DT sử dụng</p>
+              <p className='text-xs text-gray-500'>{t('specs.usableArea')}</p>
               <p className='font-semibold'>{apt.usableArea} m²</p>
             </div>
           </div>
@@ -187,7 +190,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
             <Building2 size={18} className='text-primary shrink-0' />
             <div>
-              <p className='text-xs text-gray-500'>Tầng</p>
+              <p className='text-xs text-gray-500'>{t('specs.floor')}</p>
               <p className='font-semibold'>{apt.floorNumber}</p>
             </div>
           </div>
@@ -195,15 +198,15 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
           <Sofa size={18} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>Nội thất</p>
-            <p className='font-semibold text-xs'>{FURNISHING[apt?.furnishingStatus ?? ''] || apt?.furnishingStatus}</p>
+            <p className='text-xs text-gray-500'>{t('specs.furnishing')}</p>
+            <p className='font-semibold text-xs'>{tLabels(`furnishing.${apt?.furnishingStatus ?? ''}`) || apt?.furnishingStatus}</p>
           </div>
         </div>
         {apt?.yearBuilt && (
           <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
             <CalendarDays size={18} className='text-primary shrink-0' />
             <div>
-              <p className='text-xs text-gray-500'>Năm xây</p>
+              <p className='text-xs text-gray-500'>{t('specs.yearBuilt')}</p>
               <p className='font-semibold'>{apt.yearBuilt}</p>
             </div>
           </div>
@@ -211,8 +214,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
           <Users size={18} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>Xem đồng thời</p>
-            <p className='font-semibold'>{apt?.maxConcurrentViewings} lượt</p>
+            <p className='text-xs text-gray-500'>{t('specs.concurrentViews')}</p>
+            <p className='font-semibold'>{apt?.maxConcurrentViewings} {t('specs.concurrentViewsUnit')}</p>
           </div>
         </div>
       </div>
@@ -220,7 +223,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Description */}
       {apt?.description && (
         <div className='mt-6 md:mt-8 space-y-3'>
-          <h2 className='font-semibold text-lg md:text-xl'>Mô tả</h2>
+          <h2 className='font-semibold text-lg md:text-xl'>{t('descriptionTitle')}</h2>
           <Typography.Paragraph className='text-justify text-sm md:text-base'>
             {apt.description}
           </Typography.Paragraph>
@@ -230,7 +233,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Video Tour */}
       {apt?.videoTourUrl && (
         <div className='mt-8 md:mt-10'>
-          <h2 className='font-semibold text-lg md:text-xl mb-3'>Video tour</h2>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>{t('videoTourTitle')}</h2>
           <a
             href={apt.videoTourUrl}
             target='_blank'
@@ -238,7 +241,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
             className='inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg px-5 py-3 border border-gray-200'
           >
             <Video size={20} className='text-primary' />
-            <span className='text-sm font-medium'>Xem video căn hộ</span>
+            <span className='text-sm font-medium'>{t('watchVideo')}</span>
             <ExternalLink size={14} className='text-gray-400' />
           </a>
         </div>
@@ -247,7 +250,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Amenities */}
       {apt?.amenities && apt.amenities.length > 0 && (
         <div className='mt-8 md:mt-10'>
-          <h2 className='font-semibold text-lg md:text-xl mb-3'>Tiện ích</h2>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>{t('amenitiesTitle')}</h2>
           <div className='flex flex-wrap gap-2'>
             {apt.amenities.map((item, i) => (
               <Tag key={i} className='px-3 py-1 text-sm'>{item}</Tag>
@@ -259,7 +262,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Partner */}
       {apt?.partner && (
         <div className='mt-8 md:mt-10'>
-          <h2 className='font-semibold text-lg md:text-xl mb-3'>Đơn vị cho thuê</h2>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>{t('partnerTitle')}</h2>
           <div className='bg-gray-50 rounded-lg p-4 border border-gray-100 flex items-center gap-4'>
             <div className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0'>
               <Building2 size={20} className='text-primary' />
@@ -275,28 +278,28 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Rooms */}
       {apt?.rooms && apt.rooms.length > 0 && (
         <div className='mt-8 md:mt-10'>
-          <h2 className='font-semibold text-lg md:text-xl mb-3'>Danh sách phòng</h2>
+          <h2 className='font-semibold text-lg md:text-xl mb-3'>{t('roomsTitle')}</h2>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {apt.rooms.map((room) => (
               <div key={room.id} className='border border-gray-100 rounded-lg p-4 bg-white'>
                 <div className='flex justify-between items-center mb-2'>
                   <span className='font-medium'>
-                    {ROOM_TYPE[room.roomType] || room.roomType}
+                    {tLabels(`roomType.${room.roomType}`) || room.roomType}
                     {room.roomNumber ? ` · ${room.roomNumber}` : ''}
                   </span>
                   <Tag color={APARTMENT_STATUS[room.status]?.color || 'default'}>
-                    {APARTMENT_STATUS[room.status]?.label || room.status}
+                    {tLabels(`status.${room.status}`) || room.status}
                   </Tag>
                 </div>
                 <div className='flex flex-wrap gap-1 mb-2'>
                   {room.area && <span className='text-xs bg-gray-100 px-2 py-0.5 rounded'>{room.area} m²</span>}
-                  {room.maxOccupancy > 1 && <span className='text-xs bg-gray-100 px-2 py-0.5 rounded'>{room.maxOccupancy} người</span>}
-                  {room.hasAirConditioning && <span className='text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded'>Điều hoà</span>}
-                  {room.hasWindow && <span className='text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded'>Cửa sổ</span>}
-                  {room.hasPrivateBathroom && <span className='text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded'>WC riêng</span>}
+                  {room.maxOccupancy > 1 && <span className='text-xs bg-gray-100 px-2 py-0.5 rounded'>{room.maxOccupancy} {t('room.occupancyUnit')}</span>}
+                  {room.hasAirConditioning && <span className='text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded'>{t('room.airCon')}</span>}
+                  {room.hasWindow && <span className='text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded'>{t('room.window')}</span>}
+                  {room.hasPrivateBathroom && <span className='text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded'>{t('room.privateBath')}</span>}
                 </div>
                 {room.rentPrice && (
-                  <p className='text-sm font-semibold text-primary'>{formatPrice(room.rentPrice)}/tháng</p>
+                  <p className='text-sm font-semibold text-primary'>{formatPrice(room.rentPrice)}{t('room.perMonth')}</p>
                 )}
               </div>
             ))}
@@ -308,11 +311,11 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       <div className='mt-8 md:mt-10 mb-8 md:mb-10'>
         <div className='flex items-center gap-2 mb-3 md:mb-4'>
           <Map className='text-gray-700 shrink-0' size={20} />
-          <h2 className='font-semibold text-lg md:text-xl'>Vị trí</h2>
+          <h2 className='font-semibold text-lg md:text-xl'>{t('location.title')}</h2>
         </div>
         {fullAddress && (
           <p className='text-sm md:text-base text-gray-600 mb-3'>
-            <strong>Địa chỉ:</strong> {fullAddress}
+            <strong>{t('location.address')}:</strong> {fullAddress}
           </p>
         )}
         {apt?.latitude && apt?.longitude ? (
@@ -327,7 +330,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
               className='absolute top-3 right-3 bg-white text-sm font-medium px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 hover:bg-gray-50 transition-colors cursor-pointer border-0 z-10'
             >
               <MapPin size={14} className='text-primary' />
-              Mở Google Maps
+              {t('location.openGoogleMaps')}
             </button>
           </div>
         ) : (
@@ -336,7 +339,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
             onClick={handleFindDirection}
           >
             <MapPin size={32} />
-            <span className='text-sm'>Tìm kiếm trên Google Maps</span>
+            <span className='text-sm'>{t('location.searchOnMaps')}</span>
             <span className='text-xs text-gray-400'>{fullAddress}</span>
           </button>
         )}

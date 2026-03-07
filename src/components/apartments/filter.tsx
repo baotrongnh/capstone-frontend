@@ -5,6 +5,7 @@ import { CITIES, LOCATIONS } from '@/constants/locations'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Checkbox, Divider, Input, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 type FurnishingType = typeof FURNISHING_OPTIONS[number]['value']
@@ -18,6 +19,7 @@ interface FilterProps {
 }
 
 export default function Filter({ onFilterChange }: FilterProps) {
+     const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
      const [city, setCity] = useState<string>()
      const [district, setDistrict] = useState<string>()
@@ -97,18 +99,18 @@ export default function Filter({ onFilterChange }: FilterProps) {
           <div className="space-y-5 p-2 h-screen overflow-scroll sticky">
                {/* Header */}
                <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-lg">Bộ lọc</h3>
+                    <h3 className="font-bold text-lg">{t('title')}</h3>
                     <button
                          onClick={resetAll}
                          className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1"
                     >
-                         <X size={12} /> Xóa lọc
+                         <X size={12} /> {t('clearFilter')}
                     </button>
                </div>
 
                {/* Keyword Search */}
                <Input
-                    placeholder="Tìm kiếm..."
+                    placeholder={t('searchPlaceholder')}
                     prefix={<Search size={14} className="text-gray-400" />}
                     value={keyword}
                     onChange={e => setKeyword(e.target.value)}
@@ -119,9 +121,9 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
                {/* Location */}
                <div className="space-y-2">
-                    <Label>Khu vực</Label>
+                    <Label>{t('locationLabel')}</Label>
                     <Select
-                         placeholder="Thành phố"
+                         placeholder={t('cityPlaceholder')}
                          className="w-full"
                          value={city}
                          options={CITIES.map(c => ({ label: c, value: c }))}
@@ -130,7 +132,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                     />
                     <div className=''></div>
                     <Select
-                         placeholder="Quận / Huyện"
+                         placeholder={t('districtPlaceholder')}
                          className="w-full"
                          value={district}
                          options={districtOptions}
@@ -145,7 +147,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                {/* Price Range */}
                <div>
                     <Label>
-                         Giá thuê{' '}
+                         {t('priceLabel')}{' '}
                          <span className="font-normal text-gray-400">
                               ({formatPrice(price[0])} – {formatPrice(price[1])})
                          </span>
@@ -167,7 +169,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                {/* Area Range */}
                <div>
                     <Label>
-                         Diện tích{' '}
+                         {t('areaLabel')}{' '}
                          <span className="font-normal text-gray-400">
                               ({area[0]} – {area[1]} m²)
                          </span>
@@ -188,7 +190,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
                {/* Bedrooms */}
                <div>
-                    <Label>Phòng ngủ</Label>
+                    <Label>{t('bedroomsLabel')}</Label>
                     <div className="flex gap-2 mt-2">
                          {BEDROOM_OPTIONS.map(num => {
                               const isSelected = bedrooms.includes(num)
@@ -215,14 +217,14 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
                {/* Furnishing Status */}
                <div className="space-y-2">
-                    <Label>Nội thất</Label>
+                    <Label>{t('furnishingLabel')}</Label>
                     {FURNISHING_OPTIONS.map(option => (
                          <Checkbox
                               key={option.value}
                               checked={furnishing === option.value}
                               onChange={e => handleFurnishingChange(option.value, e.target.checked)}
                          >
-                              <span className="text-sm">{option.label}</span>
+                              <span className="text-sm">{t(`furnishingOptions.${option.value}`)}</span>
                          </Checkbox>
                     ))}
                </div>
