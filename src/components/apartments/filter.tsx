@@ -15,7 +15,7 @@ const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + ' tr'
 const formatArea = (area?: number) => area ? `${area} m²` : ''
 
 interface FilterProps {
-     onFilterChange: (filters: Partial<ApartmentQueryParams>) => void
+     onFilterChange: (filters: Partial<ApartmentQueryParams> | null) => void
 }
 
 export default function Filter({ onFilterChange }: FilterProps) {
@@ -49,7 +49,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
           setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
           setBedrooms([])
           setFurnishing(undefined)
-          onFilterChange({})
+          onFilterChange(null)
      }
 
      const handleCityChange = (value?: string) => {
