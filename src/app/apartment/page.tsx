@@ -5,42 +5,46 @@ import ApartmentItemSkeleton from '@/components/apartments/apartment-item-skelet
 import Filter from '@/components/apartments/filter'
 import SimilarApartments from '@/components/apartments/similar-apartments'
 import AppPromoSection from '@/components/sections/app-promo'
+import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartments } from '@/hooks/query/useApartments'
-import { useUserProfile } from '@/hooks/query/useUser'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
-import { useCallback, useState } from 'react'
-
-const DEFAULT_FILTERS: ApartmentQueryParams = {
-  page: 1, limit: 10, status: 'available', sortBy: 'createdAt', sortOrder: 'desc'
-}
-
-const SORT_OPTIONS = [
-  { label: 'Giá tăng dần', value: 'baseRentPrice-asc' },
-  { label: 'Giá giảm dần', value: 'baseRentPrice-desc' },
-  { label: 'Diện tích tăng dần', value: 'totalArea-asc' },
-  { label: 'Diện tích giảm dần', value: 'totalArea-desc' },
-  { label: 'Mới nhất', value: 'createdAt-desc' },
-  { label: 'Cũ nhất', value: 'createdAt-asc' },
-  { label: 'Số phòng tăng dần', value: 'numberOfBedrooms-asc' },
-  { label: 'Số phòng giảm dần', value: 'numberOfBedrooms-desc' },
-]
+import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 export default function ApartmentList() {
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
   const { data, isLoading, isError, refetch } = useApartments(filters)
-
-  const updateFilters = useCallback((patch: Partial<ApartmentQueryParams>) => {
-    setFilters((prev: ApartmentQueryParams) =>
-      Object.keys(patch).length === 0 ? DEFAULT_FILTERS : { ...prev, ...patch, page: 1 }
-    )
-  }, [])
+  const t = useTranslations('ApartmentListPage')
 
   const apartments = data?.data ?? []
   const meta = data?.meta
+
+  function updateFilters(patch: Partial<ApartmentQueryParams> | null) {
+    if (!patch) {
+      setFilters(DEFAULT_APARTMENT_FILTERS)
+    } else {
+      setFilters(prev => ({ ...prev, ...patch, page: 1 }))
+    }
+  }
+
+  function handleSortChange(val: string) {
+    const [sortBy, sortOrder] = val.split('-') as [ApartmentQueryParams['sortBy'], ApartmentQueryParams['sortOrder']]
+    setFilters(prev => ({ ...prev, sortBy, sortOrder }))
+  }
+
+  function handlePageChange(page: number, pageSize: number) {
+    setFilters(prev => ({ ...prev, page, limit: pageSize }))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const sortOptions = APARTMENT_SORT_OPTIONS.map(opt => ({
+    label: t(`sort.${opt.key}`),
+    value: opt.value,
+  }))
 
   return (
     <div className='container'>
@@ -52,83 +56,92 @@ export default function ApartmentList() {
         ]}
       />
 
-      {/* Mobile Filter */}
+      {/* Mobile Filter Button */}
       <div className='lg:hidden mb-4'>
         <Button icon={<Icon icon="lucide:filter" width={18} />} onClick={() => setFilterOpen(true)}>
           Bộ lọc
         </Button>
       </div>
 
-      <Drawer title="Bộ lọc" placement="left" open={filterOpen} onClose={() => setFilterOpen(false)}>
+      <Drawer title='Bộ lọc' placement="left" open={filterOpen} onClose={() => setFilterOpen(false)}>
         <Filter onFilterChange={updateFilters} />
       </Drawer>
 
       <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 mt-5'>
+
+        {/* Sidebar Filter (desktop) */}
         <div className='hidden lg:block'>
           <div className='sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2'>
             <Filter onFilterChange={updateFilters} />
           </div>
         </div>
 
+        {/* Main Content */}
         <div className='lg:col-span-4 lg:pl-7'>
+
+          {/* Sort & Count Bar */}
           {!isLoading && !isError && meta && (
             <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6'>
               <span className='text-sm text-gray-600'>
-                Hiển thị <strong>{apartments.length}</strong> / <strong>{meta.total}</strong> căn hộ
+                {t('showing')} {apartments.length} / {meta.total} {t('apartments')}
               </span>
               <Select
                 value={`${filters.sortBy}-${filters.sortOrder}`}
-                onChange={(val: string) => {
-                  const [sortBy, sortOrder] = val.split('-')
-                  updateFilters({ sortBy, sortOrder } as Partial<ApartmentQueryParams>)
-                }}
+                onChange={handleSortChange}
                 style={{ width: 200 }}
-                options={SORT_OPTIONS}
+                options={sortOptions}
               />
             </div>
           )}
 
+          {/* Loading */}
           {isLoading && <ApartmentItemSkeleton />}
 
+          {/* Error */}
           {isError && (
             <div className='text-center py-20'>
               <Icon icon="lucide:wifi-off" className="text-red-500 mx-auto mb-4" width={40} />
-              <h3 className='text-xl font-semibold mb-2'>Không thể tải dữ liệu</h3>
-              <p className='text-gray-500 mb-6'>Đã xảy ra lỗi. Vui lòng thử lại.</p>
+              <h3 className='text-xl font-semibold mb-2'>Lỗi kết nối</h3>
+              <p className='text-gray-500 mb-6'>Không thể tải dữ liệu, vui lòng thử lại.</p>
               <Button type="primary" onClick={() => refetch()}>Thử lại</Button>
             </div>
           )}
 
-          {!isLoading && !isError && (
-            apartments.length > 0 ? (
-              <div className='space-y-6'>
-                {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} />)}
-              </div>
-            ) : (
-              <div className='text-center py-20'>
-                <Icon icon="lucide:search-x" className="text-gray-400 mx-auto mb-4" width={64} />
-                <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
-                <p className='text-gray-500 mb-6'>Thử điều chỉnh bộ lọc.</p>
-                <Button onClick={() => setFilters(DEFAULT_FILTERS)}>Xóa bộ lọc</Button>
-              </div>
-            )
+          {/* Apartment List */}
+          {!isLoading && !isError && apartments.length > 0 && (
+            <div className='space-y-6'>
+              {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} />)}
+            </div>
           )}
 
-          {meta?.totalPages && meta?.totalPages > 1 && (
+          {/* Empty State */}
+          {!isLoading && !isError && apartments.length === 0 && (
+            <div className='text-center py-20'>
+              <Icon icon="lucide:search-x" className="text-gray-400 mx-auto mb-4" width={64} />
+              <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
+              <p className='text-gray-500 mb-6'>Thử thay đổi bộ lọc tìm kiếm.</p>
+              <Button
+                onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}
+              >
+                Xóa bộ lọc
+              </Button>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {(meta?.totalPages ?? 0) > 1 && (
             <Pagination
               className='flex justify-center mt-8'
-              current={meta.page}
-              total={meta.total}
-              pageSize={meta.limit}
-              onChange={(page: number, pageSize: number) => {
-                setFilters((prev: ApartmentQueryParams) => ({ ...prev, page, limit: pageSize }))
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              current={meta?.page ?? 1}
+              total={meta?.total ?? 0}
+              pageSize={meta?.limit ?? 10}
+              onChange={handlePageChange}
               showSizeChanger
               pageSizeOptions={['10', '20', '30', '50']}
-              showTotal={(total: number, range: [number, number]) => `${range[0]}-${range[1]} / ${total}`}
+              showTotal={(total, range) => `${range[0]}-${range[1]} / ${total}`}
             />
           )}
+
         </div>
       </div>
 

@@ -26,7 +26,6 @@
     "heroSubtitle": "Nền tảng giải quyết những cần thiết liên quan đến tìm kiếm, dọn dẹp và tiện ích",
     "exploreTitle": "Khám phá căn hộ theo khu vực",
     "exploreSubtitle": "Có nhiều lựa chọn đa dạng tại các khu vực khác nhau trên cả nước.",
-
     "searchForm": {
       "roomType": "Loại căn hộ",
       "roomTypePlaceholder": "Tất cả loại",
@@ -38,7 +37,6 @@
       "pricePlaceholder": "VNĐ / tháng",
       "submit": "Tìm kiếm"
     },
-
     "cities": {
       "all": "Tất cả",
       "hanoi": "Hà Nội",
@@ -49,7 +47,6 @@
       "hcm": "TP. Hồ Chí Minh",
       "hatay": "Hà Tây"
     },
-
     "highlightCity": {
       "name": "Thành Phố Hồ Chí Minh",
       "description": "Thành phố năng động với nhiều lựa chọn căn hộ cho thuê ở đa dạng khu vực, mức giá và diện tích. Vị trí thuận tiện di chuyển, gần các tiện ích thiết yếu, đáp ứng tốt nhu cầu sinh hoạt và làm việc hằng ngày của người thuê.",
@@ -61,7 +58,6 @@
         "manyChoices": "Nhiều lựa chọn"
       }
     },
-
     "services": {
       "title": "Dịch vụ nổi bật của chúng tôi",
       "subtitle": "Chúng tôi cung cấp các dịch vụ toàn diện để đáp ứng mọi nhu cầu của bạn.",
@@ -202,7 +198,21 @@
     "autoReply": "Cảm ơn bạn đã liên hệ! Nhân viên hỗ trợ sẽ phản hồi trong giây lát.",
     "inputPlaceholder": "Nhập tin nhắn của bạn...",
     "send": "Gửi",
-    "responseTime": "Thời gian phản hồi trung bình: 2-5 phút"
+    "responseTime": "Thời gian phản hồi trung bình: 2-5 phút",
+    "selectTitle": "Bạn cần hỗ trợ gì?",
+    "selectPrompt": "Chọn kênh hỗ trợ phù hợp với bạn",
+    "supportOption": "Nhân viên chăm sóc khách hàng",
+    "supportOptionDesc": "Trò chuyện trực tiếp với nhân viên hỗ trợ",
+    "aiOption": "AI tư vấn",
+    "aiOptionDesc": "Được tư vấn ngay lập tức bởi trí tuệ nhân tạo",
+    "aiTitle": "AI tư vấn",
+    "aiWelcome": "Xin chào! Tôi là AI tư vấn. Bạn cần tìm căn hộ như thế nào?",
+    "aiReply": "Tôi đang xử lý yêu cầu của bạn, vui lòng chờ một chút...",
+    "aiResponseTime": "AI phản hồi trong vài giây",
+    "back": "Quay lại",
+    "sendApartment": "Gửi căn hộ",
+    "sendApartmentMsg": "Tôi muốn hỏi về căn hộ này",
+    "pasteImageHint": "Bạn có thể dán ảnh (Ctrl+V) vào khung chat"
   },
   "Profile": {
     "sidebar": {
@@ -364,6 +374,129 @@
         "asiaHoChiMinh": "Asia/Hồ Chí Minh",
         "americaNewYork": "America/New York"
       }
+    }
+  },
+  "ApartmentListPage": {
+    "breadcrumbHome": "Trang chủ",
+    "breadcrumbList": "Danh sách căn hộ",
+    "filterButton": "Bộ lọc",
+    "filterDrawerTitle": "Bộ lọc",
+    "showing": "Hiển thị",
+    "apartments": "căn hộ",
+    "errorTitle": "Không thể tải dữ liệu",
+    "errorDesc": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "emptyTitle": "Không tìm thấy căn hộ",
+    "emptyDesc": "Thử điều chỉnh bộ lọc.",
+    "clearFilter": "Xóa bộ lọc",
+    "sort": {
+      "priceAsc": "Giá tăng dần",
+      "priceDesc": "Giá giảm dần",
+      "areaAsc": "Diện tích tăng dần",
+      "areaDesc": "Diện tích giảm dần",
+      "newest": "Mới nhất",
+      "oldest": "Cũ nhất",
+      "bedroomsAsc": "Số phòng tăng dần",
+      "bedroomsDesc": "Số phòng giảm dần"
+    }
+  },
+  "ApartmentDetailPage": {
+    "breadcrumbHome": "Trang chủ",
+    "breadcrumbList": "Danh sách căn hộ",
+    "loading": "Đang tải thông tin căn hộ...",
+    "notFoundTitle": "Không tìm thấy căn hộ",
+    "notFoundDesc": "Căn hộ không tồn tại hoặc đã bị xóa.",
+    "morePhotos": "+{count} ảnh",
+    "noPhotos": "Chưa có ảnh",
+    "unitCode": "Mã căn",
+    "floorLabel": "Tầng",
+    "perMonth": "/tháng",
+    "deposit": "Đặt cọc",
+    "scheduleBtn": "Đặt lịch xem căn hộ",
+    "rentBtn": "Đặt thuê căn hộ",
+    "noAddress": "Chưa có địa chỉ",
+    "noReview": "Chưa có đánh giá",
+    "specs": {
+      "bedrooms": "Phòng ngủ",
+      "bathrooms": "Phòng tắm",
+      "totalArea": "Tổng diện tích",
+      "usableArea": "DT sử dụng",
+      "floor": "Tầng",
+      "furnishing": "Nội thất",
+      "yearBuilt": "Năm xây",
+      "concurrentViews": "Xem đồng thời",
+      "concurrentViewsUnit": "lượt"
+    },
+    "descriptionTitle": "Mô tả",
+    "videoTourTitle": "Video tour",
+    "watchVideo": "Xem video căn hộ",
+    "amenitiesTitle": "Tiện ích",
+    "partnerTitle": "Đơn vị cho thuê",
+    "roomsTitle": "Danh sách phòng",
+    "room": {
+      "occupancyUnit": "người",
+      "airCon": "Điều hoà",
+      "window": "Cửa sổ",
+      "privateBath": "WC riêng",
+      "perMonth": "/tháng"
+    },
+    "location": {
+      "title": "Vị trí",
+      "address": "Địa chỉ",
+      "openGoogleMaps": "Mở Google Maps",
+      "searchOnMaps": "Tìm kiếm trên Google Maps"
+    }
+  },
+  "ApartmentFilter": {
+    "title": "Bộ lọc",
+    "clearFilter": "Xóa lọc",
+    "searchPlaceholder": "Tìm kiếm...",
+    "locationLabel": "Khu vực",
+    "cityPlaceholder": "Thành phố",
+    "districtPlaceholder": "Quận / Huyện",
+    "priceLabel": "Giá thuê",
+    "areaLabel": "Diện tích",
+    "bedroomsLabel": "Phòng ngủ",
+    "furnishingLabel": "Nội thất",
+    "furnishingOptions": {
+      "unfurnished": "Không nội thất",
+      "semi_furnished": "Nội thất cơ bản",
+      "fully_furnished": "Đầy đủ nội thất"
+    }
+  },
+  "BookingModal": {
+    "title": "Đặt lịch xem căn hộ",
+    "dateLabel": "Chọn ngày",
+    "datePlaceholder": "Chọn ngày muốn xem căn hộ",
+    "dateRequired": "Vui lòng chọn ngày",
+    "timeLabel": "Chọn giờ",
+    "timeRequired": "Vui lòng chọn giờ",
+    "noteLabel": "Ghi chú (tuỳ chọn)",
+    "notePlaceholder": "Ví dụ: Tôi muốn xem phòng tầng cao, hoặc hỏi thêm về chính sách...",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "ApartmentLabels": {
+    "furnishing": {
+      "fully_furnished": "Đầy đủ nội thất",
+      "semi_furnished": "Nội thất cơ bản",
+      "unfurnished": "Không nội thất"
+    },
+    "status": {
+      "available": "Còn trống",
+      "occupied": "Đã thuê",
+      "maintenance": "Bảo trì",
+      "reserved": "Đã đặt cọc",
+      "inactive": "Không hoạt động"
+    },
+    "roomType": {
+      "bedroom": "Phòng ngủ",
+      "living_room": "Phòng khách",
+      "kitchen": "Bếp",
+      "bathroom": "Phòng tắm",
+      "dining_room": "Phòng ăn",
+      "balcony": "Ban công",
+      "other": "Khác"
     }
   }
 }

@@ -1,68 +1,58 @@
+import { APARTMENT_STATUS, formatPrice, FURNISHING } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import type { ApartmentItem } from '@/types/apartment'
-import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
-import { Divider, Rate } from 'antd'
+import { Tag } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 
+function InfoChip({ icon, children }: { icon: string; children: React.ReactNode }) {
+     return (
+          <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 text-xs font-medium'>
+               <Icon icon={icon} width={13} className='shrink-0' />
+               {children}
+          </span>
+     )
+}
+
 export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
+     const statusConfig = APARTMENT_STATUS[apartment.status] ?? { label: apartment.status, color: 'default' }
+     const imageSrc = apartment.images?.[0] ?? '/images/phongtro.jpg'
 
      return (
           <Link href={`${ROUTES.APARTMENT}/${apartment?.id}`} className='flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md duration-150 overflow-hidden'>
                <Image
-                    src='/images/phongtro.jpg'
+                    src={imageSrc}
                     width={500}
                     height={500}
-                    alt='phongtro'
+                    alt={apartment.buildingName ?? apartment.apartmentNumber}
                     className='w-full md:w-33 aspect-square object-cover'
                     priority
                />
                <div className='p-3 flex-1'>
-                    <div className='flex flex-wrap items-center gap-2'>
-                         <span className='bg-secondary py-1 px-3 md:px-5 rounded-full text-[10px] md:text-[12px]/5 text-white font-bold'>
-                              KHU DÂN CƯ
-                         </span>
-
-                         <Divider vertical className='hidden md:block' />
-
-                         <div className='flex items-center gap-1'>
-                              <Rate
-                                   disabled
-                                   defaultValue={2}
-                                   size='small'
-                                   style={{ color: '#FFA432' }}
-                              />
-                              <span className='text-muted text-xs md:text-sm'>(584 người xem)</span>
-                         </div>
+                    <div className='flex flex-wrap items-center gap-2 mb-1'>
+                         <Tag color={statusConfig.color}>{statusConfig.label}</Tag>
+                         {apartment.apartmentType && (
+                              <Tag>{apartment.apartmentType}</Tag>
+                         )}
                     </div>
 
-                    <h1 className='font-semibold text-base md:text-lg lg:text-xl text-[#1c2b38] pt-1.5 pb-2.5 line-clamp-2'>
-                         {apartment?.buildingName}
+                    <h1 className='font-semibold text-base md:text-lg lg:text-xl text-[#1c2b38] line-clamp-2 mb-2'>
+                         {apartment.buildingName ?? apartment.apartmentNumber}
                     </h1>
 
-                    <div className='flex flex-col md:flex-row md:items-center gap-2 md:gap-0'>
-                         <span className='flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:clock" width={14} className='md:w-4 md:h-4 shrink-0' />
-                              Loại hình: Căn hộ
-                         </span>
-                         <Divider vertical className='hidden md:block' />
-                         <span className='flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:car" width={14} className='md:w-4 md:h-4 shrink-0' />
-                              Cơ sở nhà để xe
-                         </span>
-                         <Divider vertical className='hidden lg:block' />
-                         <span className='hidden lg:flex items-center gap-1 text-xs md:text-sm text-muted'>
-                              <Icon icon="lucide:users" width={14} className='md:w-4 md:h-4 shrink-0' />
-                              An toàn cho các bé gái và gia đình lưu trú
-                         </span>
+                    <div className='flex flex-wrap gap-2'>
+                         <InfoChip icon="lucide:map-pin">{apartment.district}, {apartment.city}</InfoChip>
+                         <InfoChip icon="lucide:maximize-2">{apartment.totalArea} m²</InfoChip>
+                         <InfoChip icon="lucide:bed-double">{apartment.numberOfBedrooms} PN · {apartment.numberOfBathrooms} WC</InfoChip>
+                         <InfoChip icon="lucide:sofa">{FURNISHING[apartment.furnishingStatus] ?? apartment.furnishingStatus}</InfoChip>
                     </div>
                </div>
 
                <div className='flex md:flex-col justify-between md:justify-center items-center md:items-end p-3 md:p-4 bg-gray-50 md:bg-transparent border-t md:border-t-0'>
                     <div className='flex md:flex-col items-baseline md:items-end gap-1'>
                          <p className='font-bold text-[#0C4A6E] text-lg md:text-xl'>
-                              {formatVND(apartment.baseRentPrice)}
+                              {formatPrice(apartment.baseRentPrice)}
                          </p>
                          <p className='text-muted font-light text-sm md:text-base'>
                               /tháng
@@ -72,3 +62,5 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
           </Link>
      )
 }
+
+
