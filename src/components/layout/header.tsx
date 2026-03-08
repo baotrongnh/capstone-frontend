@@ -54,14 +54,6 @@ export default function Header() {
   const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
 
   const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'profile',
-      label: t('profile'),
-      icon: <User size={16} />,
-      onClick: () => {
-        router.push(ROUTES.PROFILE)
-      },
-    },
     { key: 'profile', label: t('profile'), icon: <User size={16} />, onClick: () => user && router.push(ROUTES.PROFILE) },
     { type: 'divider' },
     { key: 'logout', label: t('logout'), icon: <LogOut size={16} />, danger: true, onClick: () => logoutApi() },
