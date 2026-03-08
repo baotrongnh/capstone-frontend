@@ -34,7 +34,7 @@ export default function ContractLayout() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { data, isLoading, error } = useGetContracts();
-  const contractsList: ContractDetail[] = data?.data ?? [];
+  const contractsList: ContractDetail[] = (data as any)?.data ?? [];
 
   console.log("DATA", data);
 

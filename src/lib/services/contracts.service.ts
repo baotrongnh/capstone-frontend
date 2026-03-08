@@ -7,7 +7,9 @@ export type GetContractsResponse =
 
 export const contractsService = {
   get: async (): Promise<GetContractsResponse> => {
-    const { data } = await apiClient.get(endpoints.contracts);
+    const { data } = await apiClient.get<GetContractsResponse>(
+      endpoints.contracts,
+    );
     return data;
   },
 };
