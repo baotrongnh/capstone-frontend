@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { useState, useRef, useMemo } from "react";
 import { MailOutlined, StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
-import ModalContact from "../modal/modalUser";
 import { Button, Image } from "antd";
 import ModalReservation from "../modal/modalReservation";
 import {
@@ -12,11 +11,15 @@ import {
   ApartmentItem,
   ApartmentQueryParams,
 } from "@/types/apartment";
+import { useAuthStore } from "@/stores/auth.store";
+import AuthModal from "../auth-modal";
+import ModalLeaveInformation from "../modal/modalLeaveInformation";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
@@ -29,6 +32,8 @@ export default function PropertiesSection() {
     }),
     [],
   );
+
+  const user = useAuthStore((s) => s.user);
 
   const { data: apartments } = useApartments(params);
 
@@ -72,7 +77,11 @@ export default function PropertiesSection() {
 
   const handleReservation = (apartmentId: string | number) => {
     setSelectedApartmentId(apartmentId);
-    setModalReservation(true);
+    if (user) {
+      setModalReservation(true);
+    } else {
+      setOpenLogin(true);
+    }
   };
   return (
     <div className="bg-white relative ">
@@ -188,7 +197,7 @@ export default function PropertiesSection() {
             →
           </button>
         </div>
-        <ModalContact
+        <ModalLeaveInformation
           open={isModalOpen}
           setOpen={setIsModalOpen}
           apartmentId={selectedApartmentId}
@@ -197,7 +206,9 @@ export default function PropertiesSection() {
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}
+          userId={user?.id}
         />
+        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
       </div>
     </div>
   );

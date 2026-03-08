@@ -14,9 +14,9 @@ import {
 } from "@ant-design/icons";
 import banner9 from "../../../public/img/banner9.jpg";
 
-import ModalUser from "../modal/modalUser";
+import ModalUser from "../modal/modalLeaveInformation";
 import { useRouter } from "next/navigation";
-import ModalContact from "../modal/modalUser";
+import ModalContact from "../modal/modalLeaveInformation";
 export default function HeroSection() {
   const t = useTranslations("HomePage");
   const [form] = Form.useForm();

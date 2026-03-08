@@ -7,7 +7,7 @@ import { Button, Form, Input, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "@/utils/uploadFile";
 
-export default function Contact() {
+export default function PartnerContact() {
   const [form] = useForm();
 
   const handleRegister = async () => {
@@ -17,7 +17,7 @@ export default function Contact() {
       const currentImage = data.images || [];
 
       const newImageFiles = currentImage.filter(
-        (file: any) => file.originFileObj,
+        (file: { originFileObj: File }) => file.originFileObj,
       );
 
       const uploadedImages = await Promise.all(
@@ -53,7 +53,7 @@ export default function Contact() {
       <div
         className="relative bottom-2 h-100 md:h-125 bg-cover bg-center bg-no-repeat flex items-center justify-center"
         style={{
-          backgroundImage: `url(${bg.src})`,
+          backgroundImage: `url(${bg})`,
           filter: "brightness(1.1) contrast(1.15)",
         }}
       >

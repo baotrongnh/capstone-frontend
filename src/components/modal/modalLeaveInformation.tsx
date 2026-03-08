@@ -23,7 +23,7 @@ import {
 import { QueryClient } from "@tanstack/react-query";
 import { useCreateViewRequest } from "@/hooks/query/useViewRequest";
 
-export default function ModalContact(props?: {
+export default function ModalLeaveInformation(props?: {
   open?: boolean;
   setOpen?: (open: boolean) => void;
   apartmentId?: string | number | null;

@@ -26,7 +26,6 @@
     "heroSubtitle": "Platform solving everything related to finding, moving and more",
     "exploreTitle": "Explore apartments by area",
     "exploreSubtitle": "Many options to choose from different areas across the country",
-
     "searchForm": {
       "roomType": "Room Type",
       "roomTypePlaceholder": "All types",
@@ -38,7 +37,6 @@
       "pricePlaceholder": "VND / month",
       "submit": "Search"
     },
-
     "cities": {
       "all": "All",
       "hanoi": "Hanoi",
@@ -49,7 +47,6 @@
       "hcm": "Ho Chi Minh City",
       "hatay": "Ha Tay"
     },
-
     "highlightCity": {
       "name": "Ho Chi Minh City",
       "description": "A dynamic city with many rental apartment options in diverse areas, prices and sizes. Convenient location for travel, close to essential utilities, meeting the daily living and working needs of tenants.",
@@ -61,7 +58,6 @@
         "manyChoices": "Many Choices"
       }
     },
-
     "services": {
       "title": "Our Featured Services",
       "subtitle": "We provide comprehensive services to meet all your needs.",
@@ -202,7 +198,21 @@
     "autoReply": "Thank you for contacting us! Our support team will respond shortly.",
     "inputPlaceholder": "Type your message...",
     "send": "Send",
-    "responseTime": "Average response time: 2-5 minutes"
+    "responseTime": "Average response time: 2-5 minutes",
+    "selectTitle": "How can we help?",
+    "selectPrompt": "Choose a support channel that works best for you",
+    "supportOption": "Customer Support Staff",
+    "supportOptionDesc": "Chat directly with a support agent",
+    "aiOption": "AI Advisor",
+    "aiOptionDesc": "Get instant advice from our AI assistant",
+    "aiTitle": "AI Advisor",
+    "aiWelcome": "Hello! I am your AI advisor. What kind of apartment are you looking for?",
+    "aiReply": "I am processing your request, please wait a moment...",
+    "aiResponseTime": "AI responds within seconds",
+    "back": "Back",
+    "sendApartment": "Send apartment",
+    "sendApartmentMsg": "I want to ask about this apartment",
+    "pasteImageHint": "You can paste images (Ctrl+V) into the chat"
   },
   "Profile": {
     "sidebar": {
@@ -362,6 +372,129 @@
         "asiaHoChiMinh": "Asia/Ho Chi Minh",
         "americaNewYork": "America/New York"
       }
+    }
+  },
+  "ApartmentListPage": {
+    "breadcrumbHome": "Home",
+    "breadcrumbList": "Apartment List",
+    "filterButton": "Filter",
+    "filterDrawerTitle": "Filter",
+    "showing": "Showing",
+    "apartments": "apartments",
+    "errorTitle": "Unable to Load Data",
+    "errorDesc": "An error occurred. Please try again.",
+    "retry": "Retry",
+    "emptyTitle": "No Apartments Found",
+    "emptyDesc": "Try adjusting the filters.",
+    "clearFilter": "Clear Filters",
+    "sort": {
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "areaAsc": "Area: Small to Large",
+      "areaDesc": "Area: Large to Small",
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "bedroomsAsc": "Bedrooms: Low to High",
+      "bedroomsDesc": "Bedrooms: High to Low"
+    }
+  },
+  "ApartmentDetailPage": {
+    "breadcrumbHome": "Home",
+    "breadcrumbList": "Apartment List",
+    "loading": "Loading apartment information...",
+    "notFoundTitle": "Apartment Not Found",
+    "notFoundDesc": "This apartment does not exist or has been removed.",
+    "morePhotos": "+{count} photos",
+    "noPhotos": "No photos yet",
+    "unitCode": "Unit code",
+    "floorLabel": "Floor",
+    "perMonth": "/month",
+    "deposit": "Deposit",
+    "scheduleBtn": "Schedule a Viewing",
+    "rentBtn": "Rent This Apartment",
+    "noAddress": "No address",
+    "noReview": "No reviews yet",
+    "specs": {
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "totalArea": "Total Area",
+      "usableArea": "Usable Area",
+      "floor": "Floor",
+      "furnishing": "Furnishing",
+      "yearBuilt": "Year Built",
+      "concurrentViews": "Concurrent Views",
+      "concurrentViewsUnit": "slots"
+    },
+    "descriptionTitle": "Description",
+    "videoTourTitle": "Video Tour",
+    "watchVideo": "Watch Apartment Video",
+    "amenitiesTitle": "Amenities",
+    "partnerTitle": "Rental Partner",
+    "roomsTitle": "Room List",
+    "room": {
+      "occupancyUnit": "people",
+      "airCon": "A/C",
+      "window": "Window",
+      "privateBath": "Private Bath",
+      "perMonth": "/month"
+    },
+    "location": {
+      "title": "Location",
+      "address": "Address",
+      "openGoogleMaps": "Open Google Maps",
+      "searchOnMaps": "Search on Google Maps"
+    }
+  },
+  "ApartmentFilter": {
+    "title": "Filter",
+    "clearFilter": "Clear",
+    "searchPlaceholder": "Search...",
+    "locationLabel": "Location",
+    "cityPlaceholder": "City",
+    "districtPlaceholder": "District",
+    "priceLabel": "Rent Price",
+    "areaLabel": "Area",
+    "bedroomsLabel": "Bedrooms",
+    "furnishingLabel": "Furnishing",
+    "furnishingOptions": {
+      "unfurnished": "Unfurnished",
+      "semi_furnished": "Basic Furnished",
+      "fully_furnished": "Fully Furnished"
+    }
+  },
+  "BookingModal": {
+    "title": "Schedule a Viewing",
+    "dateLabel": "Select Date",
+    "datePlaceholder": "Select your preferred viewing date",
+    "dateRequired": "Please select a date",
+    "timeLabel": "Select Time",
+    "timeRequired": "Please select a time slot",
+    "noteLabel": "Note (optional)",
+    "notePlaceholder": "E.g. I’d like to see a high-floor room or ask about policies...",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "ApartmentLabels": {
+    "furnishing": {
+      "fully_furnished": "Fully Furnished",
+      "semi_furnished": "Basic Furnished",
+      "unfurnished": "Unfurnished"
+    },
+    "status": {
+      "available": "Available",
+      "occupied": "Occupied",
+      "maintenance": "Maintenance",
+      "reserved": "Reserved",
+      "inactive": "Inactive"
+    },
+    "roomType": {
+      "bedroom": "Bedroom",
+      "living_room": "Living Room",
+      "kitchen": "Kitchen",
+      "bathroom": "Bathroom",
+      "dining_room": "Dining Room",
+      "balcony": "Balcony",
+      "other": "Other"
     }
   }
 }

@@ -409,6 +409,42 @@ paths:
       security: *ref_2
       summary: Get my profile
       tags: *ref_3
+  /api/v1/users/profile/identity-card:
+    patch:
+      operationId: UsersController_updateIdentityCard
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIdentityCardDto'
+      responses:
+        '200':
+          description: Identity card image updated
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/UserUpdatedDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+        '404':
+          description: User not found
+      security: *ref_2
+      summary: Update identity card image (profileImageUrl)
+      tags: *ref_3
   /api/v1/users/{id}:
     get:
       operationId: UsersController_findOne
@@ -517,6 +553,43 @@ paths:
           description: User not found
       security: *ref_2
       summary: Delete user (soft delete)
+      tags: *ref_3
+  /api/v1/users/{id}/verify:
+    patch:
+      operationId: UsersController_verifyUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User verified successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/UserVerifiedDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+        '404':
+          description: User not found
+        '409':
+          description: User is already verified
+      security: *ref_2
+      summary: Verify user identity (staff confirms user info)
       tags: *ref_3
   /api/v1/apartments/search:
     get:
@@ -4580,6 +4653,153 @@ paths:
         - JWT-auth: []
       summary: Bulk assign policy to apartments
       tags: *ref_29
+  /api/v1/reservations:
+    post:
+      description: >-
+        User must be verified (isVerified = true). Apartment must be available.
+        Sets apartment status to reserved.
+      operationId: ReservationsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationDto'
+      responses:
+        '201':
+          description: Reservation created successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/ReservationResponseDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+        '400':
+          description: User not verified or invalid data
+        '404':
+          description: User or apartment not found
+        '409':
+          description: Apartment not available or duplicate reservation
+      security: &ref_30
+        - JWT-auth: []
+      summary: Create a reservation
+      tags: &ref_31
+        - Reservations
+    get:
+      operationId: ReservationsController_findMyReservations
+      parameters: []
+      responses:
+        '200':
+          description: List of user reservations
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReservationResponseDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+      security: *ref_30
+      summary: Get my reservations
+      tags: *ref_31
+  /api/v1/reservations/{id}:
+    get:
+      operationId: ReservationsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/ReservationResponseDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+        '404':
+          description: Reservation not found
+      security: *ref_30
+      summary: Get reservation by ID
+      tags: *ref_31
+  /api/v1/reservations/{id}/cancel:
+    patch:
+      description: Cancels the reservation and sets apartment status back to available.
+      operationId: ReservationsController_cancel
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reservation cancelled
+          content:
+            application/json:
+              schema:
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/ReservationResponseDto'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        example: '2026-02-26T10:21:00.000Z'
+        '400':
+          description: Reservation already cancelled or expired
+        '404':
+          description: Reservation not found
+      security: *ref_30
+      summary: Cancel a reservation
+      tags: *ref_31
 info:
   title: IntelliRentOps API
   description: Property Rental Management Platform API Documentation
@@ -4969,6 +5189,51 @@ components:
         - createdAt
         - updatedAt
         - contractMemberships
+    UserUpdatedDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          example: user@example.com
+        phone:
+          type: string
+          example: '0901234567'
+        fullName:
+          type: string
+          example: Nguyen Van A
+        dateOfBirth:
+          format: date-time
+          type: string
+          nullable: true
+        profileImageUrl:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        isVerified:
+          type: boolean
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - email
+        - phone
+        - fullName
+        - isActive
+        - isVerified
+        - updatedAt
+    UpdateIdentityCardDto:
+      type: object
+      properties:
+        profileImageUrl:
+          type: string
+          example: https://example.com/identity-card.jpg
+          description: URL of the identity card image (profileImageUrl)
+      required:
+        - profileImageUrl
     UserCreatedDto:
       type: object
       properties:
@@ -5050,42 +5315,6 @@ components:
         - phone
         - fullName
         - password
-    UserUpdatedDto:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-          example: user@example.com
-        phone:
-          type: string
-          example: '0901234567'
-        fullName:
-          type: string
-          example: Nguyen Van A
-        dateOfBirth:
-          format: date-time
-          type: string
-          nullable: true
-        profileImageUrl:
-          type: string
-          nullable: true
-        isActive:
-          type: boolean
-        isVerified:
-          type: boolean
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - id
-        - email
-        - phone
-        - fullName
-        - isActive
-        - isVerified
-        - updatedAt
     UpdateUserDto:
       type: object
       properties:
@@ -5136,6 +5365,32 @@ components:
         isVerified:
           type: boolean
           description: Whether the user email is verified
+    UserVerifiedDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          example: user@example.com
+        fullName:
+          type: string
+          example: Nguyen Van A
+        profileImageUrl:
+          type: string
+          nullable: true
+        isVerified:
+          type: boolean
+          example: true
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - email
+        - fullName
+        - isVerified
+        - updatedAt
     UserDeletedDto:
       type: object
       properties:
@@ -5523,13 +5778,13 @@ components:
           example: 2
         furnishingStatus:
           type: string
-          enum: &ref_30
+          enum: &ref_32
             - unfurnished
             - semi_furnished
             - fully_furnished
           default: unfurnished
         amenities:
-          example: &ref_31
+          example: &ref_33
             - air_conditioning
             - wifi
             - parking
@@ -5550,7 +5805,7 @@ components:
           type: string
           example: Modern apartment with city view
         images:
-          example: &ref_32
+          example: &ref_34
             - https://example.com/img1.jpg
           description: Array of image URLs
           type: array
@@ -5620,10 +5875,10 @@ components:
           example: 2
         furnishingStatus:
           type: string
-          enum: *ref_30
+          enum: *ref_32
           default: unfurnished
         amenities:
-          example: *ref_31
+          example: *ref_33
           description: List of amenities
           type: array
           items:
@@ -5640,7 +5895,7 @@ components:
           type: string
           example: Modern apartment with city view
         images:
-          example: *ref_32
+          example: *ref_34
           description: Array of image URLs
           type: array
           items:
@@ -5892,7 +6147,7 @@ components:
           description: Day of month for payment (1-31)
         paymentMethod:
           type: string
-          enum: &ref_33
+          enum: &ref_35
             - bank_transfer
             - cash
             - e_wallet
@@ -5902,14 +6157,14 @@ components:
           default: bank_transfer
         utilitiesIncluded:
           type: object
-          example: &ref_34
+          example: &ref_36
             electricity: true
             water: true
             internet: false
           description: Utilities included in rent
         utilitiesCharges:
           type: object
-          example: &ref_35
+          example: &ref_37
             electricity: 3500
             water: 15000
           description: Per-unit utility charges if not included
@@ -5957,15 +6212,15 @@ components:
           description: Day of month for payment (1-31)
         paymentMethod:
           type: string
-          enum: *ref_33
+          enum: *ref_35
           default: bank_transfer
         utilitiesIncluded:
           type: object
-          example: *ref_34
+          example: *ref_36
           description: Utilities included in rent
         utilitiesCharges:
           type: object
-          example: *ref_35
+          example: *ref_37
           description: Per-unit utility charges if not included
         contractTerms:
           type: string
@@ -7246,7 +7501,7 @@ components:
           example: Smart Lock - Front Door
         deviceType:
           type: string
-          enum: &ref_36
+          enum: &ref_38
             - smart_lock
             - thermostat
             - light
@@ -7304,7 +7559,7 @@ components:
           example: Smart Lock - Front Door
         deviceType:
           type: string
-          enum: *ref_36
+          enum: *ref_38
         brand:
           type: string
           example: Tuya
@@ -7503,7 +7758,7 @@ components:
           example: EL-2026-001
         meterType:
           type: string
-          enum: &ref_37
+          enum: &ref_39
             - electricity
             - water
             - gas
@@ -7545,7 +7800,7 @@ components:
           example: EL-2026-001
         meterType:
           type: string
-          enum: *ref_37
+          enum: *ref_39
         brand:
           type: string
           example: Schneider
@@ -7794,7 +8049,7 @@ components:
           example: Check AC unit reported by tenant
         taskType:
           type: string
-          enum: &ref_38
+          enum: &ref_40
             - followup
             - maintenance
             - inspection
@@ -7803,7 +8058,7 @@ components:
             - general
         priority:
           type: string
-          enum: &ref_39
+          enum: &ref_41
             - low
             - medium
             - high
@@ -7850,10 +8105,10 @@ components:
           example: Check AC unit reported by tenant
         taskType:
           type: string
-          enum: *ref_38
+          enum: *ref_40
         priority:
           type: string
-          enum: *ref_39
+          enum: *ref_41
           default: medium
         assignedToStaffId:
           type: string
@@ -8035,7 +8290,7 @@ components:
       properties:
         propertyType:
           type: string
-          enum: &ref_40
+          enum: &ref_42
             - apartment
             - house
             - condo
@@ -8066,7 +8321,7 @@ components:
           type: string
           example: Căn hộ mới, full nội thất...
         amenities:
-          example: &ref_41
+          example: &ref_43
             - parking
             - gym
             - pool
@@ -8082,7 +8337,7 @@ components:
       properties:
         propertyType:
           type: string
-          enum: *ref_40
+          enum: *ref_42
           default: apartment
         address:
           type: string
@@ -8109,7 +8364,7 @@ components:
           type: string
           example: Căn hộ mới, full nội thất...
         amenities:
-          example: *ref_41
+          example: *ref_43
           type: array
           items:
             type: string
@@ -8485,7 +8740,7 @@ components:
       properties:
         policyType:
           type: string
-          enum: &ref_42
+          enum: &ref_44
             - rental_rules
             - building_regulations
             - pet_policy
@@ -8544,7 +8799,7 @@ components:
       properties:
         policyType:
           type: string
-          enum: *ref_42
+          enum: *ref_44
           example: building_regulations
           description: Loại chính sách căn hộ
         title:
@@ -8655,7 +8910,7 @@ components:
       properties:
         documentType:
           type: string
-          enum: &ref_43
+          enum: &ref_45
             - contract_template
             - addendum
             - disclosure
@@ -8699,7 +8954,7 @@ components:
           type: boolean
           default: false
         tags:
-          example: &ref_44
+          example: &ref_46
             - contract
             - template
           type: array
@@ -8717,7 +8972,7 @@ components:
       properties:
         documentType:
           type: string
-          enum: *ref_43
+          enum: *ref_45
         title:
           type: string
           example: Mẫu hợp đồng thuê nhà
@@ -8755,7 +9010,7 @@ components:
           type: boolean
           default: false
         tags:
-          example: *ref_44
+          example: *ref_46
           type: array
           items:
             type: string
@@ -9307,3 +9562,95 @@ components:
           type: string
           example: Updated notes
           description: Additional notes
+    ReservationApartmentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        apartmentNumber:
+          type: string
+          example: A101
+        address:
+          type: string
+          example: 123 Nguyen Hue, Q1
+        baseRentPrice:
+          type: string
+          example: '15000000.00'
+      required:
+        - id
+        - apartmentNumber
+        - address
+        - baseRentPrice
+    ReservationResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        apartmentId:
+          type: string
+        desiredStartDate:
+          format: date-time
+          type: string
+        desiredEndDate:
+          format: date-time
+          type: string
+        numberOfOccupants:
+          type: number
+          nullable: true
+        specialRequests:
+          type: string
+          nullable: true
+        status:
+          type: string
+          example: pending
+        expiresAt:
+          format: date-time
+          type: string
+          nullable: true
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        apartment:
+          $ref: '#/components/schemas/ReservationApartmentDto'
+      required:
+        - id
+        - userId
+        - apartmentId
+        - desiredStartDate
+        - desiredEndDate
+        - status
+        - createdAt
+        - updatedAt
+        - apartment
+    CreateReservationDto:
+      type: object
+      properties:
+        apartmentId:
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+          description: Apartment ID to reserve
+        desiredStartDate:
+          type: string
+          example: '2026-04-01'
+          description: Desired move-in / start date (ISO format)
+        desiredEndDate:
+          type: string
+          example: '2027-04-01'
+          description: Desired end date (ISO format)
+        numberOfOccupants:
+          type: number
+          example: 2
+          description: Number of occupants
+        specialRequests:
+          type: string
+          example: Need parking spot
+          description: Any special requests
+      required:
+        - apartmentId
+        - desiredStartDate
+        - desiredEndDate

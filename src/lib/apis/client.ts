@@ -1,4 +1,5 @@
 import axios from "axios"
+import { endpoints } from "./endpoints"
 
 export const apiClient = axios.create({
      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -25,21 +26,21 @@ apiClient.interceptors.response.use(undefined, async (error) => {
 
           const refreshToken = localStorage.getItem('refreshToken')
           if (!refreshToken) {
+               const redirectUrl = `/?openAuthModal=true&redirect=${encodeURIComponent(window.location.pathname)}`
                localStorage.clear()
-               window.location.href = '/'
+               window.location.href = redirectUrl
                return Promise.reject(error)
           }
 
           try {
-               const { data } = await axios.post(
-                    `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}/auth/refresh`,
+               const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoints.auth}/refresh`,
                     { refreshToken }
                )
-
+               //debug (nhbt):
+               console.log('REFRESH NEW TOKEN: ', data)
                const newTokens = data.data.tokens
                localStorage.setItem('accessToken', newTokens.accessToken)
                localStorage.setItem('refreshToken', newTokens.refreshToken)
-
                originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`
                return apiClient(originalRequest)
           } catch {

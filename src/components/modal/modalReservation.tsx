@@ -38,6 +38,8 @@ import { useApartment } from "@/hooks/query/useApartments";
 import { ApartmentItem } from "@/types/apartment";
 import ModalWaitingVerify from "./modalWaitingVerify";
 import { useCreateReservations } from "@/hooks/query/useReservations";
+import AuthModal from "../auth-modal";
+import { ROUTES } from "@/constants/routes";
 
 const { Title, Text } = Typography;
 
@@ -45,61 +47,31 @@ interface ModalReservationProps {
   open: boolean;
   onClose: () => void;
   apartmentId?: string | number | null;
+  userId?: string | number | null;
 }
 
 export default function ModalReservation({
   open,
   onClose,
   apartmentId,
+  userId,
 }: ModalReservationProps) {
   const [frontImage, setFrontImage] = useState<any>(null);
   const [backImage, setBackImage] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
   const canSubmit = frontImage && backImage;
   const [formVerify] = useForm();
   const [formReservations] = useForm();
 
-  const user = useAuthStore((s) => s.user);
-
-  const { data: profile } = useUserProfile(!!user && open);
+  const { data: profile } = useUserProfile(!!userId && open);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
   const { mutateAsync: createReservation } = useCreateReservations();
 
-  console.log("ID", apartment);
-
   const { mutateAsync: updateUserCardImages, error } =
     useUpdateUserCardImages();
-
-  if (!user) return null;
-
-  const handleVerify = async () => {
-    try {
-      setSubmitting(true);
-
-      const values = await formVerify.validateFields();
-      const fileList = values.profileImageUrl || [];
-
-      const file = fileList[0]?.originFileObj;
-      if (!file) return;
-
-      const uploaded = await uploadFile(file);
-
-      const payload = {
-        profileImageUrl: uploaded.url,
-      };
-
-      await updateUserCardImages(payload.profileImageUrl);
-
-      formVerify.resetFields();
-      onClose();
-    } catch (error) {
-      console.error("Error updating card image:", error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   const handleReservations = async () => {
     const values = await formReservations.validateFields();
@@ -121,115 +93,17 @@ export default function ModalReservation({
     }
   };
 
-  const needUpload = profile?.isVerified === false && !profile?.profileImageUrl;
+  const needVerify = profile?.isVerified === false && !profile?.profileImageUrl;
   const waitingVerify =
     profile?.isVerified === false && profile?.profileImageUrl;
   const verified = profile?.isVerified === true;
 
+  if (needVerify) {
+    window.location.href = ROUTES.PROFILE(profile?.id);
+  }
+
   return (
     <>
-      {needUpload && (
-        <>
-          <Modal
-            open={open}
-            onCancel={onClose}
-            footer={null}
-            centered
-            width={540}
-          >
-            <div className="space-y-6">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                  <IdcardOutlined className="text-2xl text-blue-600" />
-                </div>
-                <Title level={2} className="mb-1 text-center">
-                  Xác thực danh tính
-                </Title>
-                <Text type="secondary" className="text-center text-sm">
-                  Hoàn thành xác thực để mở khóa đầy đủ tính năng
-                </Text>
-              </div>
-
-              <Alert
-                icon={<SafetyOutlined />}
-                message="Thông tin của bạn được mã hóa và bảo mật tuyệt đối"
-                description="Chúng tôi không bao giờ chia sẻ dữ liệu cá nhân của bạn với bên thứ ba"
-                type="info"
-                showIcon
-                style={{ borderRadius: "8px" }}
-              />
-
-              <Form form={formVerify} layout="vertical" className="space-y-4">
-                <Form.Item
-                  label={
-                    <span className="font-semibold flex mt-2 items-center gap-2">
-                      <IdcardOutlined className="text-base" />
-                      Ảnh CCCD
-                    </span>
-                  }
-                  name="profileImageUrl"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) =>
-                    Array.isArray(e) ? e : e && e.fileList
-                  }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng tải lên ảnh CCCD",
-                    },
-                  ]}
-                  className="mb-0"
-                >
-                  <Upload
-                    beforeUpload={() => false}
-                    listType="picture"
-                    accept="image/*"
-                    className="w-full"
-                  >
-                    <Button
-                      icon={<UploadOutlined />}
-                      className="w-full h-12"
-                      style={{
-                        borderColor: "#d9d9d9",
-                        color: "#1890ff",
-                      }}
-                    >
-                      Chọn ảnh từ thiết bị
-                    </Button>
-                  </Upload>
-                </Form.Item>
-
-                <Text type="secondary" className="text-xs">
-                  Hỗ trợ các định dạng: JPG, PNG (Dung lượng tối đa: 5MB)
-                </Text>
-              </Form>
-
-              <div className="flex gap-3 pt-4">
-                <Button onClick={onClose} className="flex-1 h-10 font-medium">
-                  Huỷ
-                </Button>
-                <Button
-                  onClick={handleVerify}
-                  type="primary"
-                  loading={submitting}
-                  disabled={submitting}
-                  className="flex-1 h-10 font-medium"
-                  style={{ borderRadius: "6px" }}
-                >
-                  {submitting ? "Đang gửi..." : "Xác nhận & Gửi"}
-                </Button>
-              </div>
-            </div>
-          </Modal>
-        </>
-      )}
-
-      {waitingVerify && (
-        <>
-          <ModalWaitingVerify open={open} onClose={onClose} />
-        </>
-      )}
-
       {verified && (
         <>
           <Modal
@@ -410,6 +284,19 @@ export default function ModalReservation({
               </div>
             </div>
           </Modal>
+        </>
+      )}
+      {!userId && (
+        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
+      )}
+
+      {userId && (
+        <>
+          {waitingVerify && (
+            <>
+              <ModalWaitingVerify open={open} onClose={onClose} />
+            </>
+          )}
         </>
       )}
     </>

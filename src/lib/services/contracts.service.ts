@@ -1,9 +1,11 @@
+import { paths } from "@/types/api";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
-import type { GetContractsResponse } from "@/types/contracts"; // Import your nice type
+
+export type GetContractsResponse =
+  paths["/api/v1/contracts"]["get"]["responses"]["200"]["content"]["application/json"];
 
 export const contractsService = {
-  // Change the return type from ContractListResponse to your GetContractsResponse
   get: async (): Promise<GetContractsResponse> => {
     const { data } = await apiClient.get(endpoints.contracts);
     return data;
