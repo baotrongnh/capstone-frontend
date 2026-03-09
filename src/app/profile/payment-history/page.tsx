@@ -1,13 +1,11 @@
 'use client';
 
-import { use } from 'react';
-import ProfileLayout from '../../components/profile-layout';
-import PaymentHistoryComponent from '../../components/payment-history';
+import ProfileLayout from '../components/profile-layout';
+import PaymentHistoryComponent from '../components/payment-history';
 import { ActorType } from '@/types/auth';
-import { PaymentHistory, PaymentType, PaymentStatus, PaymentHistoryPageProps } from '@/types/profile';
+import { PaymentHistory, PaymentType, PaymentStatus } from '@/types/profile';
 
-export default function PaymentHistoryPage({ params }: PaymentHistoryPageProps) {
-    const { id } = use(params);
+export default function PaymentHistoryPage() {
 
     // TODO: Fetch payment history from API
     const mockPayments: PaymentHistory[] = [
@@ -88,7 +86,7 @@ export default function PaymentHistoryPage({ params }: PaymentHistoryPageProps) 
     ];
 
     return (
-        <ProfileLayout userId={id} actorType={ActorType.USER}>
+        <ProfileLayout actorType={ActorType.USER}>
             <PaymentHistoryComponent payments={mockPayments} />
         </ProfileLayout>
     );

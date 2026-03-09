@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useLogout } from '@/hooks/query/useAuth';
 
 export default function ProfileLayout({
-    userId,
     actorType = ActorType.USER,
     children
 }: ProfileLayoutProps) {
@@ -22,7 +21,6 @@ export default function ProfileLayout({
                     <div className="lg:col-span-3">
                         <div className="sticky top-8">
                             <ProfileSidebar
-                                userId={userId}
                                 actorType={actorType}
                                 onLogout={() => logout()}
                             />
