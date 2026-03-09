@@ -30,6 +30,8 @@ export type UserDetail = {
     fullName: string;
     dateOfBirth: string;
     nationalId: string;
+    nationalIdFrontImageUrl: string;
+    nationalIdBackImageUrl: string;
     passportNumber: string;
     profileImageUrl: string;
     emergencyContactName: string;
@@ -49,6 +51,8 @@ export type UpdateUserDto = {
     password?: string;
     dateOfBirth?: string;
     nationalId?: string;
+    nationalIdFrontImageUrl?: string;
+    nationalIdBackImageUrl?: string;
     passportNumber?: string;
     profileImageUrl?: string;
     emergencyContactName?: string;
