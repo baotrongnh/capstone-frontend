@@ -49,7 +49,7 @@ const getNavigationItems = (
       key: "my-contracts",
       label: t("sidebar.myContracts"),
       icon: <WalletOutlined />,
-      path: `/profile/${userId}/contracts`,
+      path: `/profile/${userId}/my-contracts`,
       roles: [ActorType.USER],
     },
     {
@@ -76,6 +76,7 @@ const getNavigationItems = (
       path: `/profile/${userId}/dashboard`,
       roles: [ActorType.PARTNER],
     },
+
     {
       key: "my-properties",
       label: t("sidebar.myProperties"),

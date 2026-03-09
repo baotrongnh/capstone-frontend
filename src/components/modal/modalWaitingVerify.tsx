@@ -4,7 +4,6 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import { Button, Modal } from "antd";
-import React from "react";
 
 interface ModalWaitingVerifyProps {
   open: boolean;

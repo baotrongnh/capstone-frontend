@@ -28,20 +28,14 @@ import {
   CheckCircleFilled,
   SyncOutlined,
 } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { uploadFile } from "@/utils/uploadFile";
 import { useUpdateUserCardImages, useUserProfile } from "@/hooks/query/useUser";
-import { useAuthStore } from "@/stores/auth.store";
-import { UserProfile } from "@/types/profile";
 import { useApartment } from "@/hooks/query/useApartments";
-import { ApartmentItem } from "@/types/apartment";
 import ModalWaitingVerify from "./modalWaitingVerify";
 import { useCreateReservations } from "@/hooks/query/useReservations";
 import AuthModal from "../auth-modal";
 import { ROUTES } from "@/constants/routes";
-
-const { Title, Text } = Typography;
 
 interface ModalReservationProps {
   open: boolean;
@@ -56,12 +50,7 @@ export default function ModalReservation({
   apartmentId,
   userId,
 }: ModalReservationProps) {
-  const [frontImage, setFrontImage] = useState<any>(null);
-  const [backImage, setBackImage] = useState<any>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
-  const canSubmit = frontImage && backImage;
-  const [formVerify] = useForm();
   const [formReservations] = useForm();
 
   const { data: profile } = useUserProfile(!!userId && open);
@@ -69,9 +58,6 @@ export default function ModalReservation({
   const { data: apartment } = useApartment(apartmentId as string | number);
 
   const { mutateAsync: createReservation } = useCreateReservations();
-
-  const { mutateAsync: updateUserCardImages, error } =
-    useUpdateUserCardImages();
 
   const handleReservations = async () => {
     const values = await formReservations.validateFields();
