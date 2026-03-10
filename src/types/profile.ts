@@ -114,13 +114,11 @@ export type PaymentHistory = {
 // ========== Component Props Types ==========
 
 export type ProfileSidebarProps = {
-  userId: string;
   actorType: ActorType;
   onLogout: () => void;
 };
 
 export type ProfileLayoutProps = {
-  userId: string;
   actorType?: ActorType;
   children: React.ReactNode;
 };
@@ -143,27 +141,6 @@ export type PaymentHistoryProps = {
 };
 
 // ========== Page Props Types ==========
-
-export type ProfilePageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export type AccountPageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export type MyApartmentPageProps = {
-  params: Promise<{ id: string }>;
-};
-
 export type MyContractsPageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export type PaymentHistoryPageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export type SettingsPageProps = {
   params: Promise<{ id: string }>;
 };

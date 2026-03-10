@@ -17,7 +17,6 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 
 const getNavigationItems = (
-  userId: string,
   actorType: ActorType,
   t: (key: string) => string,
 ): ProfileNavItem[] => {
@@ -28,35 +27,28 @@ const getNavigationItems = (
       key: "account",
       label: t("sidebar.myInformation"),
       icon: <UserOutlined />,
-      path: `/profile/${userId}/account`,
+      path: "/profile/account",
       roles: [ActorType.USER],
     },
     {
       key: "my-apartment",
       label: t("sidebar.myApartment"),
       icon: <HomeOutlined />,
-      path: `/profile/${userId}/my-apartment`,
+      path: "/profile/my-apartment",
       roles: [ActorType.USER],
     },
     {
       key: "payment-history",
       label: t("sidebar.paymentHistory"),
       icon: <WalletOutlined />,
-      path: `/profile/${userId}/payment-history`,
-      roles: [ActorType.USER],
-    },
-    {
-      key: "my-contracts",
-      label: t("sidebar.myContracts"),
-      icon: <WalletOutlined />,
-      path: `/profile/${userId}/my-contracts`,
+      path: "/profile/payment-history",
       roles: [ActorType.USER],
     },
     {
       key: "settings",
       label: t("sidebar.settings"),
       icon: <SettingOutlined />,
-      path: `/profile/${userId}/settings`,
+      path: "/profile/settings",
       roles: [ActorType.PARTNER],
     },
   ];
@@ -66,43 +58,42 @@ const getNavigationItems = (
       key: "account",
       label: t("sidebar.accountInformation"),
       icon: <UserOutlined />,
-      path: `/profile/${userId}/account`,
+      path: "/profile/account",
       roles: [ActorType.PARTNER],
     },
     {
       key: "partner-dashboard",
       label: t("sidebar.partnerDashboard"),
       icon: <DashboardOutlined />,
-      path: `/profile/${userId}/dashboard`,
+      path: "/profile/dashboard",
       roles: [ActorType.PARTNER],
     },
-
     {
       key: "my-properties",
       label: t("sidebar.myProperties"),
       icon: <HomeOutlined />,
-      path: `/profile/${userId}/my-properties`,
+      path: "/profile/my-properties",
       roles: [ActorType.PARTNER],
     },
     {
       key: "bookings",
       label: t("sidebar.bookings"),
       icon: <CalendarOutlined />,
-      path: `/profile/${userId}/bookings`,
+      path: "/profile/bookings",
       roles: [ActorType.PARTNER],
     },
     {
       key: "revenue",
       label: t("sidebar.revenue"),
       icon: <WalletOutlined />,
-      path: `/profile/${userId}/revenue`,
+      path: "/profile/revenue",
       roles: [ActorType.PARTNER],
     },
     {
       key: "settings",
       label: t("sidebar.settings"),
       icon: <SettingOutlined />,
-      path: `/profile/${userId}/settings`,
+      path: "/profile/settings",
       roles: [ActorType.PARTNER],
     },
   ];
@@ -122,7 +113,6 @@ const getNavigationItems = (
 };
 
 export default function ProfileSidebar({
-  userId,
   actorType,
   onLogout,
 }: ProfileSidebarProps) {
@@ -131,8 +121,8 @@ export default function ProfileSidebar({
   const t = useTranslations("Profile");
 
   const navigationItems = useMemo(
-    () => getNavigationItems(userId, actorType, t),
-    [userId, actorType, t],
+    () => getNavigationItems(actorType, t),
+    [actorType, t],
   );
 
   const menuItems = navigationItems.map((item) => ({

@@ -37,6 +37,9 @@ export default async function RootLayout({
                 colorPrimary: "#3b82f6",
                 colorInfo: "#3b82f6",
                 colorTextBase: "#0f172a",
+                colorLink: "#0f172a",
+                colorLinkHover: "#0f172a",
+                colorLinkActive: "#0f172a",
               },
             }}
           >

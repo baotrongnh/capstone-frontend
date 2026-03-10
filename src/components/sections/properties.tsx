@@ -12,8 +12,8 @@ import {
   ApartmentQueryParams,
 } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
-import AuthModal from "../auth-modal";
 import ModalLeaveInformation from "../modal/modalLeaveInformation";
+import AuthModal from "../modal/auth-modal";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const scrollContainerRef = useRef<HTMLDivElement>(null);

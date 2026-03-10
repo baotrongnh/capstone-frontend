@@ -34,8 +34,9 @@ import { useUpdateUserCardImages, useUserProfile } from "@/hooks/query/useUser";
 import { useApartment } from "@/hooks/query/useApartments";
 import ModalWaitingVerify from "./modalWaitingVerify";
 import { useCreateReservations } from "@/hooks/query/useReservations";
-import AuthModal from "../auth-modal";
+
 import { ROUTES } from "@/constants/routes";
+import AuthModal from "./auth-modal";
 
 interface ModalReservationProps {
   open: boolean;
@@ -85,7 +86,8 @@ export default function ModalReservation({
   const verified = profile?.isVerified === true;
 
   if (needVerify) {
-    window.location.href = ROUTES.PROFILE(profile?.id);
+    window.location.href = ROUTES.PROFILE;
+    console.log("aaaa", ROUTES.PROFILE);
   }
 
   return (
