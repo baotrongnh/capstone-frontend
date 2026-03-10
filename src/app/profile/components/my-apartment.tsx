@@ -247,7 +247,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                                 value={totalUtilityCost}
                                 precision={2}
                                 prefix={<DollarOutlined />}
-                                valueStyle={{ color: '#7c3aed', fontWeight: 'bold' }}
+                                styles={{ content: { color: '#7c3aed', fontWeight: 'bold' } }}
                             />
                         </Col>
                         <Col xs={24} sm={8}>
@@ -256,7 +256,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                                 value={apartment.baseRentPrice}
                                 precision={2}
                                 prefix={<DollarOutlined />}
-                                valueStyle={{ color: '#059669' }}
+                                styles={{ content: { color: '#059669' } }}
                             />
                         </Col>
                         <Col xs={24} sm={8}>
@@ -265,7 +265,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                                 value={apartment.baseRentPrice + totalUtilityCost}
                                 precision={2}
                                 prefix={<DollarOutlined />}
-                                valueStyle={{ color: '#dc2626', fontWeight: 'bold', fontSize: '1.5rem' }}
+                                styles={{ content: { color: '#dc2626', fontWeight: 'bold', fontSize: '1.5rem' } }}
                             />
                         </Col>
                     </Row>

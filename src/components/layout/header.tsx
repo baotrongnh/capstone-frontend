@@ -13,7 +13,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { startTransition, useEffect, useState } from "react"
-import AuthModal from "../auth-modal"
+import AuthModal from "../modal/auth-modal"
 
 const NAV_LINKS = (t: (k: string) => string) => [
   { href: ROUTES.APARTMENT, label: t('findApartment') },
@@ -54,7 +54,7 @@ export default function Header() {
   const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
 
   const userMenuItems: MenuProps['items'] = [
-    { key: 'profile', label: t('profile'), icon: <User size={16} />, onClick: () => user && router.push(ROUTES.PROFILE(user.id)) },
+    { key: 'profile', label: t('profile'), icon: <User size={16} />, onClick: () => user && router.push(ROUTES.PROFILE) },
     { type: 'divider' },
     { key: 'logout', label: t('logout'), icon: <LogOut size={16} />, danger: true, onClick: () => logoutApi() },
   ]
@@ -146,7 +146,7 @@ export default function Header() {
                 <Avatar icon={<User />} />
                 <span className="font-medium">{user.fullName}</span>
               </div>
-              <button onClick={() => { router.push(ROUTES.PROFILE(user.id)); setDrawerOpen(false) }}
+              <button onClick={() => { router.push(ROUTES.PROFILE); setDrawerOpen(false) }}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-sm">
                 <User size={16} /> {t('profile')}
               </button>

@@ -303,9 +303,12 @@
       "thisMonth": "This Month",
       "status": {
         "available": "Available",
+        "occupied": "Occupied",
         "rented": "Rented",
         "maintenance": "Maintenance",
-        "unavailable": "Unavailable"
+        "reserved": "Reserved",
+        "unavailable": "Unavailable",
+        "inactive": "Inactive"
       }
     },
     "payment": {
