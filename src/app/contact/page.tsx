@@ -1,13 +1,14 @@
 "use client";
 import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
-import bg from "../../../public/img/banner8.jpg";
+import bg from "../../../public/img/banner10.jpg";
 import { useForm } from "antd/es/form/Form";
 import { Button, Form, Input, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "@/utils/uploadFile";
+import Image from "next/image";
 
-export default function Contact() {
+export default function PartnerContact() {
   const [form] = useForm();
 
   const handleRegister = async () => {
@@ -17,7 +18,7 @@ export default function Contact() {
       const currentImage = data.images || [];
 
       const newImageFiles = currentImage.filter(
-        (file: any) => file.originFileObj,
+        (file: { originFileObj: File }) => file.originFileObj,
       );
 
       const uploadedImages = await Promise.all(
@@ -50,20 +51,24 @@ export default function Contact() {
 
   return (
     <>
-      <div
-        className="relative bottom-2 h-100 md:h-125 bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{
-          backgroundImage: `url(${bg.src})`,
-          filter: "brightness(1.1) contrast(1.15)",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bottom-7 h-130 w-full overflow-hidden">
+        <Image
+          src={bg}
+          alt="banner"
+          fill
+          priority
+          quality={100}
+          sizes="100vw"
+          className="object-cover filter brightness-110 contrast-120 saturate-125 sharpness-100"
+        />
 
-        <div className="relative z-10 text-center text-white max-w-3xl px-4">
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center text-white px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Liên hệ với chúng tôi
           </h1>
-          <p className="text-base md:text-lg leading-relaxed">
+          <p className="text-base md:text-lg max-w-2xl">
             Liên hệ với chúng tôi để hợp tác vận hành, quản lý và cho thuê căn
             hộ một cách chuyên nghiệp, minh bạch và hiệu quả.
           </p>
@@ -148,7 +153,7 @@ export default function Contact() {
                   name="role"
                   rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
                 >
-                  <Select placeholder="Chọn vai trò">
+                  <Select placeholder="Chọn vai trò" className="h-11">
                     <Select.Option value="owner">Chủ căn hộ</Select.Option>
                     <Select.Option value="partner">Đối tác</Select.Option>
                     <Select.Option value="tenant">Người thuê</Select.Option>
