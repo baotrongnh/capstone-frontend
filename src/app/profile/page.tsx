@@ -1,17 +1,15 @@
 'use client';
 
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ProfilePageProps } from '@/types/profile';
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-    const { id } = use(params);
+export default function ProfilePage() {
     const router = useRouter();
 
     useEffect(() => {
         // Redirect to account page
-        router.replace(`/profile/${id}/account`);
-    }, [id, router]);
+        router.replace('/profile/account');
+    }, [router]);
 
     return (
         <div className="flex items-center justify-center min-h-screen">

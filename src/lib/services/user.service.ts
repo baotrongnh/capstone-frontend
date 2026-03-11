@@ -3,18 +3,53 @@ import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
 export const userService = {
-    getProfile: async (): Promise<UserDetail> => {
-        const { data } = await apiClient.get(`${endpoints.users}/profile`);
-        return data.data;
-    },
+  getProfile: async (): Promise<UserDetail> => {
+    const { data } = await apiClient.get(`${endpoints.users}/profile`);
+    return data.data;
+  },
 
-    getById: async (id: string): Promise<UserDetail> => {
-        const { data } = await apiClient.get(`${endpoints.users}/${id}`);
-        return data.data;
-    },
+  getById: async (id: string): Promise<UserDetail> => {
+    const { data } = await apiClient.get(`${endpoints.users}/${id}`);
+    return data.data;
+  },
 
-    update: async (id: string, userData: UpdateUserDto): Promise<UpdateUserResponse> => {
-        const { data } = await apiClient.patch(`${endpoints.users}/${id}`, userData);
-        return data.data;
-    },
+  update: async (
+    id: string,
+    userData: UpdateUserDto,
+  ): Promise<UpdateUserResponse> => {
+    const { data } = await apiClient.patch(
+      `${endpoints.users}/${id}`,
+      userData,
+    );
+    return data.data;
+  },
+
+  updateCardImages: async (
+    profileImageUrl: string,
+  ): Promise<UpdateUserResponse> => {
+    const payload = {
+      profileImageUrl,
+    };
+    const { data } = await apiClient.patch(
+      `${endpoints.users}/profile/identity-card`,
+      payload,
+    );
+    return data.data;
+  },
+
+  uploadIdentityCard: async (data: {
+    front: File;
+    back?: File;
+  }): Promise<void> => {
+    const formData = new FormData();
+    formData.append('identityCardFront', data.front);
+    if (data.back) {
+      formData.append('identityCardBack', data.back);
+    }
+    await apiClient.patch(
+      `${endpoints.users}/profile/identity-card`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+  },
 };
