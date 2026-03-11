@@ -8,7 +8,7 @@ import { Bath, BedDouble, Building2, CalendarDays, ExternalLink, Map, MapPin, Ma
 import { use, useState } from 'react'
 import { useAuthStore } from '@/stores/auth.store'
 import ModalLoginRequired from '@/components/modal/modalLoginRequired'
-import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modalBookingSchedule'
+import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modal-booking-schedule'
 import { APARTMENT_STATUS, FURNISHING, ROOM_TYPE, formatPrice } from '@/constants/apartment'
 import { useTranslations } from 'next-intl'
 
