@@ -1,6 +1,6 @@
 'use client'
 
-import { APP_NAME, DEFAULT_LOCALE } from "@/constants"
+import { APP_NAME } from "@/constants"
 import { ROUTES } from "@/constants/routes"
 import { useLogout } from "@/hooks/query/useAuth"
 import { useAuthStore } from "@/stores/auth.store"
@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react"
 import type { MenuProps } from "antd"
 import { Avatar, Button, Drawer, Dropdown } from "antd"
 import { BellRing, ChevronDown, LogOut, Menu, MessageSquareText, User } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -20,7 +20,7 @@ const NAV_LINKS = (t: (k: string) => string) => [
   { href: '/', label: t('yourApartment') },
   { href: '/', label: t('bills') },
   { href: '/', label: t('support') },
-  { href: ROUTES.CONTACT, label: t('contact') },
+  { href: '/', label: t('contact') },
 ]
 
 export default function Header() {
@@ -33,12 +33,7 @@ export default function Header() {
   const [authOpen, setAuthOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const [locale, setLocale] = useState(() => {
-    if (typeof window === 'undefined') return DEFAULT_LOCALE
-    const cookie = document.cookie.split('; ').find(r => r.startsWith(`${APP_NAME}_LOCALE=`))?.split('=')[1]
-    if (!cookie) document.cookie = `${APP_NAME}_LOCALE=${DEFAULT_LOCALE}; path=/`
-    return cookie ?? DEFAULT_LOCALE
-  })
+  const locale = useLocale()
 
   useEffect(() => {
     if (searchParams.get('openAuthModal') === 'true') startTransition(() => setAuthOpen(true))
@@ -46,7 +41,6 @@ export default function Header() {
 
   function toggleLanguage() {
     const next = locale === 'vi' ? 'en' : 'vi'
-    setLocale(next)
     document.cookie = `${APP_NAME}_LOCALE=${next}; path=/`
     router.refresh()
   }
@@ -87,7 +81,7 @@ export default function Header() {
           {langBtn}
           <MessageSquareText strokeWidth={1.4} />
           <BellRing strokeWidth={1.4} />
-          <Button shape="round" type="primary">{t('becomePartner')}</Button>
+          <Link href={ROUTES.CONTACT}><Button shape="round" type="primary">{t('becomePartner')}</Button></Link>
           {isLoggedIn ? (
             <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
               <div className="flex items-center cursor-pointer gap-2">
