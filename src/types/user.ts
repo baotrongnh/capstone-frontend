@@ -23,6 +23,13 @@ export type ContractMembership = {
   rentalContract: RentalContractSummary;
 };
 
+export type UserIdentity = {
+  passportNumber?: string;
+  identityCardFrontUrl?: string;
+  identityCardBackUrl?: string;
+  isVerified: boolean;
+};
+
 export type UserDetail = {
   id: string;
   email: string;
@@ -40,6 +47,7 @@ export type UserDetail = {
   createdAt: string;
   updatedAt: string;
   contractMemberships: ContractMembership[];
+  identity?: UserIdentity;
 };
 
 export type UpdateUserDto = {

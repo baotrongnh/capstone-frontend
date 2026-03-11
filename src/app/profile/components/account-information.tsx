@@ -18,10 +18,12 @@ function isPartnerDetail(profile: UserDetail | PartnerDetail, actorType: ActorTy
 export default function AccountInformation({ profile, actorType, onUpdate, loading: externalLoading }: AccountInformationProps) {
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
         'profileImageUrl' in profile ? profile.profileImageUrl : undefined
     );
     const identity = !('companyName' in profile) ? (profile as UserDetail).identity : undefined;
+    const isPartner = isPartnerDetail(profile, actorType);
     const [cccdModalOpen, setCccdModalOpen] = useState(false);
     const { message } = App.useApp();
     const t = useTranslations('Profile.account');
@@ -50,6 +52,45 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
         return false;
     };
 
+    const handleValuesChange = (_: unknown, allValues: Record<string, unknown>) => {
+        const initVals = isPartner
+            ? {
+                fullName: profile.fullName,
+                phone: profile.phone,
+                companyName: (profile as PartnerDetail).companyName,
+                taxCode: (profile as PartnerDetail).taxCode,
+                nationalId: (profile as PartnerDetail).nationalId,
+                bankAccountNumber: (profile as PartnerDetail).bankAccountNumber,
+                bankName: (profile as PartnerDetail).bankName,
+                address: (profile as PartnerDetail).address,
+            }
+            : {
+                fullName: profile.fullName,
+                phone: profile.phone,
+                dateOfBirth: (profile as UserDetail).dateOfBirth
+                    ? dayjs((profile as UserDetail).dateOfBirth).format('YYYY-MM-DD')
+                    : undefined,
+                passportNumber: identity?.passportNumber,
+                emergencyContactName: (profile as UserDetail).emergencyContactName,
+                emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
+            };
+
+        const changed = Object.keys(initVals).some((key) => {
+            const initial = initVals[key as keyof typeof initVals];
+            let current = allValues[key];
+            if (dayjs.isDayjs(current)) {
+                current = current.format('YYYY-MM-DD');
+            }
+            return (initial ?? '') !== (current ?? '');
+        });
+        setHasChanges(changed);
+    };
+
+    const handleCancel = () => {
+        form.resetFields();
+        setHasChanges(false);
+    };
+
     if (externalLoading) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -57,8 +98,6 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             </div>
         );
     }
-
-    const isPartner = isPartnerDetail(profile, actorType);
 
     return (
         <div className="space-y-6">
@@ -115,6 +154,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
                     }}
                     onFinish={handleSubmit}
+                    onValuesChange={handleValuesChange}
                     className="space-y-4"
                 >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -177,10 +217,12 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        <Button size="large" onClick={() => form.resetFields()}>
-                            {t('cancel')}
-                        </Button>
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting}>
+                        {hasChanges && (
+                            <Button size="large" onClick={handleCancel}>
+                                {t('cancel')}
+                            </Button>
+                        )}
+                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
                             {t('saveChanges')}
                         </Button>
                     </div>
@@ -204,6 +246,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         address: (profile as PartnerDetail).address,
                     }}
                     onFinish={handleSubmit}
+                    onValuesChange={handleValuesChange}
                     className="space-y-4"
                 >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,10 +323,12 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        <Button size="large" onClick={() => form.resetFields()}>
-                            {t('cancel')}
-                        </Button>
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting}>
+                        {hasChanges && (
+                            <Button size="large" onClick={handleCancel}>
+                                {t('cancel')}
+                            </Button>
+                        )}
+                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
                             {t('saveChanges')}
                         </Button>
                     </div>

@@ -36,4 +36,20 @@ export const userService = {
     );
     return data.data;
   },
+
+  uploadIdentityCard: async (data: {
+    front: File;
+    back?: File;
+  }): Promise<void> => {
+    const formData = new FormData();
+    formData.append('identityCardFront', data.front);
+    if (data.back) {
+      formData.append('identityCardBack', data.back);
+    }
+    await apiClient.patch(
+      `${endpoints.users}/profile/identity-card`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+  },
 };
