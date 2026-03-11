@@ -1,23 +1,21 @@
 "use client";
 import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
-import bg from "../../../public/img/banner8.jpg";
+import bg from "../../../public/img/banner10.jpg";
 import { useForm } from "antd/es/form/Form";
 import { Button, Form, Input, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "@/utils/uploadFile";
+import Image from "next/image";
 
-export default function Contact() {
+export default function PartnerContact() {
   const [form] = useForm();
-
   const handleRegister = async () => {
     try {
       const data = await form.validateFields();
-
       const currentImage = data.images || [];
-
       const newImageFiles = currentImage.filter(
-        (file: any) => file.originFileObj,
+        (file: { originFileObj: File }) => file.originFileObj,
       );
 
       const uploadedImages = await Promise.all(
@@ -26,7 +24,6 @@ export default function Contact() {
           return { imageUrl: uploaded.url };
         }),
       );
-
       const payload = {
         fullname: data.fullName,
         phone: data.phone,
@@ -50,20 +47,24 @@ export default function Contact() {
 
   return (
     <>
-      <div
-        className="relative bottom-2 h-100 md:h-125 bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{
-          backgroundImage: `url(${bg.src})`,
-          filter: "brightness(1.1) contrast(1.15)",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bottom-7 h-130 w-full overflow-hidden">
+        <Image
+          src={bg}
+          alt="banner"
+          fill
+          priority
+          quality={100}
+          sizes="100vw"
+          className="object-cover filter brightness-110 contrast-120 saturate-125 sharpness-100"
+        />
 
-        <div className="relative z-10 text-center text-white max-w-3xl px-4">
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center text-white px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Liên hệ với chúng tôi
           </h1>
-          <p className="text-base md:text-lg leading-relaxed">
+          <p className="text-base md:text-lg max-w-2xl">
             Liên hệ với chúng tôi để hợp tác vận hành, quản lý và cho thuê căn
             hộ một cách chuyên nghiệp, minh bạch và hiệu quả.
           </p>
@@ -73,7 +74,7 @@ export default function Contact() {
         form={form}
         layout="vertical"
         className="
-    [&_.ant-form-item]:mb-4
+    [&_.ant-form-item]:mb-1
     [&_.ant-form-item-label>label]:font-medium
     [&_.ant-form-item-label>label]:text-gray-700
     [&_.ant-input]:h-11
@@ -94,7 +95,7 @@ export default function Contact() {
                 Hợp tác vận hành căn hộ thông minh. Quản lý bất động sản chuyên
                 nghiệp, minh bạch và tối ưu doanh thu cho chủ sở hữu.
               </p>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed text-justify">
                 Quản lý đặt phòng, hợp đồng, điện nước và thiết bị smart trên
                 một nền tảng duy nhất. Nếu bạn là chủ sở hữu căn hộ hoặc tòa nhà
                 cho thuê, hãy kết nối với chúng tôi để bắt đầu mô hình vận hành
@@ -107,8 +108,9 @@ export default function Contact() {
                 Thông Tin Người Liên Hệ
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Form.Item
+                  className="mb-2!"
                   label="Họ và tên"
                   name="fullName"
                   rules={[
@@ -119,6 +121,7 @@ export default function Contact() {
                 </Form.Item>
 
                 <Form.Item
+                  className="mb-2!"
                   label="Số điện thoại"
                   name="phone"
                   rules={[
@@ -133,6 +136,7 @@ export default function Contact() {
                 </Form.Item>
 
                 <Form.Item
+                  className="mb-2!"
                   label="Email"
                   name="email"
                   rules={[
@@ -144,11 +148,12 @@ export default function Contact() {
                 </Form.Item>
 
                 <Form.Item
+                  className="mb-2!"
                   label="Vai trò"
                   name="role"
                   rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
                 >
-                  <Select placeholder="Chọn vai trò">
+                  <Select placeholder="Chọn vai trò" className="h-11">
                     <Select.Option value="owner">Chủ căn hộ</Select.Option>
                     <Select.Option value="partner">Đối tác</Select.Option>
                     <Select.Option value="tenant">Người thuê</Select.Option>
@@ -167,7 +172,7 @@ export default function Contact() {
               Thông Tin Căn Hộ
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 ">
               <Form.Item
                 label="Địa chỉ căn hộ"
                 name="address"
@@ -200,11 +205,15 @@ export default function Contact() {
                   },
                 ]}
               >
-                <Select className="h-10" placeholder="Chọn loại hình">
-                  <Select.Option value="apartment">Căn hộ</Select.Option>
-                  <Select.Option value="house">Nhà phố</Select.Option>
-                  <Select.Option value="villa">Villa</Select.Option>
-                </Select>
+                <Select
+                  className="h-10"
+                  placeholder="Chọn loại hình"
+                  options={[
+                    { value: "apartment", label: "Căn hộ" },
+                    { value: "house", label: "Nhà phố" },
+                    { value: "villa", label: "Villa" },
+                  ]}
+                />
               </Form.Item>
 
               <Form.Item
@@ -217,10 +226,14 @@ export default function Contact() {
                   },
                 ]}
               >
-                <Select className="h-10" placeholder="Chọn tình trạng">
-                  <Select.Option value="renting">Đang cho thuê</Select.Option>
-                  <Select.Option value="idle">Chưa vận hành</Select.Option>
-                </Select>
+                <Select
+                  className="h-10"
+                  placeholder="Chọn tình trạng"
+                  options={[
+                    { value: "renting", label: "Đang cho thuê" },
+                    { value: "idle", label: "Chưa vận hành" },
+                  ]}
+                />
               </Form.Item>
 
               <Form.Item
@@ -275,20 +288,18 @@ export default function Contact() {
               </Upload>
             </Form.Item>
 
-            <div className="flex justify-center mt-6">
-              <Button
-                type="primary"
-                onClick={handleRegister}
-                className="
-        h-12! px-12!
+            <Button
+              type="primary"
+              onClick={handleRegister}
+              className="
+        h-12! px-12! w-full!
         bg-primary hover:bg-blue-600
         text-white font-semibold text-base
         rounded-lg
       "
-              >
-                Đăng ký hợp tác
-              </Button>
-            </div>
+            >
+              Đăng ký hợp tác
+            </Button>
           </div>
         </div>
       </Form>

@@ -1,19 +1,46 @@
 "use client";
 
-import { useApartments } from "@/hooks/query/useApartments";
-import { ApartmentItem } from "@/types/apartment";
-import { StarFilled } from "@ant-design/icons";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { useRef } from "react";
+import { useState, useRef, useMemo } from "react";
+import { MailOutlined, StarFilled } from "@ant-design/icons";
+import { useApartments } from "@/hooks/query/useApartments";
+import { Button, Image } from "antd";
+import ModalReservation from "../modal/modalReservation";
+import {
+  ApartmenList,
+  ApartmentItem,
+  ApartmentQueryParams,
+} from "@/types/apartment";
+import { useAuthStore } from "@/stores/auth.store";
+import ModalLeaveInformation from "../modal/modalLeaveInformation";
+import AuthModal from "../modal/auth-modal";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { data: apartments } = useApartments();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalReservation, setModalReservation] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const [selectedApartmentId, setSelectedApartmentId] = useState<
+    string | number | null
+  >(null);
+
+  const params = useMemo<ApartmentQueryParams>(
+    () => ({
+      status: "available",
+      sortBy: "baseRentPrice",
+      sortOrder: "asc",
+    }),
+    [],
+  );
+
+  const user = useAuthStore((s) => s.user);
+
+  const { data: apartments } = useApartments(params);
 
   if (!apartments) {
     return <div>Loading...</div>;
   }
+  console.log("Fetched apartments data:", apartments);
 
   const apartmentsList = Array.isArray(apartments)
     ? apartments
@@ -26,8 +53,8 @@ export default function PropertiesSection() {
   }
 
   const handleDetail = (id: string | number) => {
-    // Implement navigation to apartment detail page
     console.log("Navigate to apartment detail with ID:", id);
+    window.location.href = `/apartment/${id}`;
   };
 
   const handleScroll = (direction: "left" | "right") => {
@@ -44,6 +71,20 @@ export default function PropertiesSection() {
     }
   };
 
+  const handleOpenModalContact = (apartmentId: string | number) => {
+    setSelectedApartmentId(apartmentId);
+    setIsModalOpen(true);
+  };
+
+  const handleReservation = (apartmentId: string | number) => {
+    setSelectedApartmentId(apartmentId);
+    if (user) {
+      setModalReservation(true);
+    } else {
+      setOpenLogin(true);
+    }
+  };
+
   return (
     <div className="bg-white relative ">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,66 +98,10 @@ export default function PropertiesSection() {
               msOverflowStyle: "none",
             }}
           >
-            {/* {properties.map((property) => (
-              <div
-                key={property.id}
-                className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
-              >
-                <div className="h-40 overflow-hidden">
-                  <img
-                    src={property.image}
-                    alt={property.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="p-3">
-                  <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                    {property.name}
-                  </h4>
-
-                  <div className="space-y-1 text-xs text-gray-500 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span>{property.area}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.amenities}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.description}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between  w-full  border-t border-gray-200 ">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <StarFilled
-                          key={i}
-                          className="text-[11px]  text-yellow-400!"
-                        />
-                      ))}
-                    </div>
-                    <p className="text-xl font-semibold text-[#A3D5FF]">
-                      {property.price} vnđ
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between space-y-1 text-xs text-gray-500 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span>758 đánh giá</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>{property.period}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
             {apartmentsList.map((apartment: ApartmentItem) => (
               <div
                 key={apartment.id}
                 className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
-                onClick={() => handleDetail(apartment.id)}
               >
                 <div className="h-40 overflow-hidden relative">
                   <Image
@@ -125,60 +110,86 @@ export default function PropertiesSection() {
                       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
                     }
                     alt={apartment.buildingName ?? "Apartment"}
-                    fill
                     className="object-cover"
                   />
                 </div>
 
                 <div className="p-3">
-                  <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                    {apartment.buildingName} – {apartment.apartmentNumber}
-                  </h4>
+                  <div onClick={() => handleDetail(apartment.id)}>
+                    <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
+                      {apartment.buildingName} – {apartment.apartmentNumber}
+                    </h4>
 
-                  <div className="space-y-1 text-xs text-gray-500 mb-2">
-                    <div>{apartment.totalArea} m²</div>
-                    <div>
-                      {apartment.district}, {apartment.city}
+                    <div className="space-y-1 text-xs text-gray-500 mb-2">
+                      <div>{apartment.totalArea} m²</div>
+                      <div>
+                        {apartment.district}, {apartment.city}
+                      </div>
+                      <div>
+                        {apartment.numberOfBedrooms} PN ·{" "}
+                        {apartment.numberOfBathrooms} WC
+                      </div>
+                      <div>Tầng {apartment.floorNumber}</div>
+                      <div>
+                        Nội thất:{" "}
+                        {apartment.furnishingStatus === "fully_furnished" &&
+                          "Đầy đủ"}
+                        {apartment.furnishingStatus === "semi_furnished" &&
+                          "Bán đạo"}
+                        {apartment.furnishingStatus === "unfurnished" &&
+                          "Không"}
+                      </div>
+                      <div>
+                        Cọc:{" "}
+                        {Number(apartment.depositAmount).toLocaleString(
+                          "vi-VN",
+                        )}{" "}
+                        ₫
+                      </div>
                     </div>
-                    <div>
-                      {apartment.numberOfBedrooms} PN ·{" "}
-                      {apartment.numberOfBathrooms} WC
+
+                    <div className="flex justify-between w-full border-t border-gray-200 pt-2">
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <StarFilled
+                            key={i}
+                            className="text-[11px] text-yellow-400!"
+                          />
+                        ))}
+                      </div>
+
+                      <p className="text-xl font-semibold text-[#A3D5FF]">
+                        {Number(apartment.baseRentPrice).toLocaleString(
+                          "vi-VN",
+                        )}{" "}
+                        ₫
+                      </p>
                     </div>
-                    <div>Tầng {apartment.floorNumber}</div>
-                    <div>
-                      Nội thất:{" "}
-                      {apartment.furnishingStatus === "fully_furnished" &&
-                        "Đầy đủ"}
-                      {apartment.furnishingStatus === "semi_furnished" &&
-                        "Bán đạo"}
-                      {apartment.furnishingStatus === "unfurnished" && "Không"}
-                    </div>
-                    <div>
-                      Cọc:{" "}
-                      {Number(apartment.depositAmount).toLocaleString("vi-VN")}{" "}
-                      ₫
+
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>758 đánh giá</span>
+                      <span>/tháng</span>
                     </div>
                   </div>
+                  <div className="flex mt-3 gap-2">
+                    <Button
+                      size="middle"
+                      shape="round"
+                      style={{ minWidth: 110, height: 30 }}
+                      onClick={() => handleOpenModalContact(apartment.id)}
+                    >
+                      Đặt lịch xem
+                    </Button>
 
-                  <div className="flex justify-between w-full border-t border-gray-200 pt-2">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <StarFilled
-                          key={i}
-                          className="text-[11px] text-yellow-400!"
-                        />
-                      ))}
-                    </div>
-
-                    <p className="text-xl font-semibold text-[#A3D5FF]">
-                      {Number(apartment.baseRentPrice).toLocaleString("vi-VN")}{" "}
-                      ₫
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>758 đánh giá</span>
-                    <span>/tháng</span>
+                    <Button
+                      size="middle"
+                      shape="round"
+                      type="primary"
+                      onClick={() => handleReservation(apartment.id)}
+                      style={{ minWidth: 110, height: 30 }}
+                    >
+                      Đặt thuê
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -198,6 +209,18 @@ export default function PropertiesSection() {
             →
           </button>
         </div>
+        <ModalLeaveInformation
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          apartmentId={selectedApartmentId}
+        />
+        <ModalReservation
+          open={modalReservation}
+          onClose={() => setModalReservation(false)}
+          apartmentId={selectedApartmentId}
+          userId={user?.id}
+        />
+        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
       </div>
     </div>
   );

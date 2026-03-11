@@ -219,6 +219,7 @@
       "myInformation": "My Information",
       "accountInformation": "Account Information",
       "myApartment": "My Apartment",
+      "myContracts": "My Contracts",
       "paymentHistory": "Payment History",
       "settings": "Settings",
       "partnerDashboard": "Partner Dashboard",
@@ -279,6 +280,9 @@
       "cccdFrontUploadSuccess": "Front image uploaded successfully",
       "cccdBackUploadSuccess": "Back image uploaded successfully",
       "cccdUploadFailed": "Image upload failed. Please try again.",
+      "cccdFrontRequired": "Please upload the front side of your ID card.",
+      "cccdUploadSuccess": "ID card uploaded and verified successfully.",
+      "cccdUploadSubmit": "Upload ID Card",
       "verified": "Verified",
       "pendingVerification": "Pending Verification"
     },

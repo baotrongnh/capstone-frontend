@@ -4,7 +4,7 @@ import { authService } from '@/lib/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
 import { ROLE_PRIORITY } from '@/constants/roles'
 import { ActorType, ApiErrorResponse, UserInfo } from '@/types/auth'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
 import { useState } from 'react'
 
@@ -19,10 +19,12 @@ const resolveEffectiveRole = (user: UserInfo): UserInfo => {
 export const useLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
     const setAuth = useAuthStore((s) => s.setAuth)
+    const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: authService.login,
         onSuccess: (data) => {
+            queryClient.clear()
             setAuth(resolveEffectiveRole(data.user), data.tokens)
             message.success('Login successful!')
             onSuccess?.()
@@ -38,10 +40,12 @@ export const useLogin = (onSuccess?: () => void) => {
 export const useRegister = (onSuccess?: () => void) => {
     const { message } = App.useApp()
     const setAuth = useAuthStore((s) => s.setAuth)
+    const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: authService.register,
         onSuccess: (data) => {
+            queryClient.clear()
             setAuth(resolveEffectiveRole(data.user), data.tokens)
             message.success('Registration successful!')
             onSuccess?.()
@@ -74,6 +78,7 @@ export const useRefreshToken = () => {
 export const useLogout = (onSuccess?: () => void) => {
     const { message } = App.useApp()
     const logoutStore = useAuthStore((s) => s.logout)
+    const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: () => {
@@ -82,12 +87,14 @@ export const useLogout = (onSuccess?: () => void) => {
         },
         onSuccess: () => {
             logoutStore()
+            queryClient.clear()
             message.success('Logout successful!')
             onSuccess?.()
         },
         onError: () => {
             // Clear local state even if API call fails
             logoutStore()
+            queryClient.clear()
         }
     })
 }
@@ -95,6 +102,7 @@ export const useLogout = (onSuccess?: () => void) => {
 export const useGoogleLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
     const setAuth = useAuthStore((s) => s.setAuth)
+    const queryClient = useQueryClient()
     const [loading, setLoading] = useState(false)
 
     const login = async () => {
@@ -133,6 +141,7 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
             })
 
             const data = await authService.googleLogin(accessToken)
+            queryClient.clear()
             setAuth(data.user, data.tokens)
             message.success('Login successful!')
             onSuccess?.()

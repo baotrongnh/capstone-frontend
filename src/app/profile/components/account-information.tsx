@@ -1,7 +1,7 @@
 'use client';
 
 import { Form, Input, Button, Avatar, DatePicker, Spin, Upload, App, Tag } from 'antd';
-import { UserOutlined, CameraOutlined, InboxOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, CameraOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { ActorType } from '@/types/auth';
 import { UserDetail, UpdateUserDto } from '@/types/user';
@@ -9,7 +9,7 @@ import { PartnerDetail } from '@/types/partner';
 import { AccountInformationProps } from '@/types/profile';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { uploadFile } from '@/utils/uploadFile';
+import ModalIdentityCard from '@/components/modal/modalIdentityCard';
 
 function isPartnerDetail(profile: UserDetail | PartnerDetail, actorType: ActorType): profile is PartnerDetail {
     return actorType === ActorType.PARTNER;
@@ -21,14 +21,8 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
         'profileImageUrl' in profile ? profile.profileImageUrl : undefined
     );
-    const [cccdFrontUrl, setCccdFrontUrl] = useState<string | undefined>(
-        'nationalIdFrontImageUrl' in profile ? (profile as UserDetail).nationalIdFrontImageUrl || undefined : undefined
-    );
-    const [cccdBackUrl, setCccdBackUrl] = useState<string | undefined>(
-        'nationalIdBackImageUrl' in profile ? (profile as UserDetail).nationalIdBackImageUrl || undefined : undefined
-    );
-    const [cccdFrontLoading, setCccdFrontLoading] = useState(false);
-    const [cccdBackLoading, setCccdBackLoading] = useState(false);
+    const identity = !('companyName' in profile) ? (profile as UserDetail).identity : undefined;
+    const [cccdModalOpen, setCccdModalOpen] = useState(false);
     const { message } = App.useApp();
     const t = useTranslations('Profile.account');
 
@@ -53,36 +47,6 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             if (typeof result === 'string') setAvatarUrl(result);
         };
         reader.readAsDataURL(file);
-        return false;
-    };
-
-    const handleCccdFrontUpload = async (file: File) => {
-        setCccdFrontLoading(true);
-        try {
-            const { url } = await uploadFile(file);
-            setCccdFrontUrl(url);
-            form.setFieldValue('nationalIdFrontImageUrl', url);
-            message.success(t('cccdFrontUploadSuccess'));
-        } catch {
-            message.error(t('cccdUploadFailed'));
-        } finally {
-            setCccdFrontLoading(false);
-        }
-        return false;
-    };
-
-    const handleCccdBackUpload = async (file: File) => {
-        setCccdBackLoading(true);
-        try {
-            const { url } = await uploadFile(file);
-            setCccdBackUrl(url);
-            form.setFieldValue('nationalIdBackImageUrl', url);
-            message.success(t('cccdBackUploadSuccess'));
-        } catch {
-            message.error(t('cccdUploadFailed'));
-        } finally {
-            setCccdBackLoading(false);
-        }
         return false;
     };
 
@@ -146,10 +110,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         email: profile.email,
                         phone: profile.phone,
                         dateOfBirth: (profile as UserDetail).dateOfBirth ? dayjs((profile as UserDetail).dateOfBirth) : undefined,
-                        nationalId: (profile as UserDetail).nationalId,
-                        nationalIdFrontImageUrl: (profile as UserDetail).nationalIdFrontImageUrl,
-                        nationalIdBackImageUrl: (profile as UserDetail).nationalIdBackImageUrl,
-                        passportNumber: (profile as UserDetail).passportNumber,
+                        passportNumber: identity?.passportNumber,
                         emergencyContactName: (profile as UserDetail).emergencyContactName,
                         emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
                     }}
@@ -198,118 +159,21 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
 
                     {/* ── CCCD / Identity Verification ── */}
-                    <div className="border border-gray-200 rounded-xl p-5 space-y-4 bg-gray-50">
-                        <div className="flex items-center justify-between">
+                    <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
                             <div>
                                 <h3 className="font-semibold text-base">{t('cccdTitle')}</h3>
                                 <p className="text-xs text-muted mt-0.5">{t('cccdSubtitle')}</p>
                             </div>
-                            {(profile as UserDetail).isVerified &&
-                                (profile as UserDetail).nationalIdFrontImageUrl &&
-                                (profile as UserDetail).nationalIdBackImageUrl ? (
+                            {identity?.isVerified ? (
                                 <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>
                             ) : (
                                 <Tag icon={<ClockCircleOutlined />} color="warning">{t('pendingVerification')}</Tag>
                             )}
                         </div>
-
-                        <Form.Item
-                            label={<span className="font-medium">{t('nationalId')}</span>}
-                            name="nationalId"
-                            rules={[
-                                { pattern: /^\d{9}(\d{3})?$/, message: t('nationalIdInvalid') },
-                            ]}
-                        >
-                            <Input size="large" placeholder={t('nationalIdPlaceholder')} maxLength={12} />
-                        </Form.Item>
-
-                        {/* Hidden fields to carry uploaded URLs */}
-                        <Form.Item name="nationalIdFrontImageUrl" hidden><Input /></Form.Item>
-                        <Form.Item name="nationalIdBackImageUrl" hidden><Input /></Form.Item>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Front face */}
-                            <div>
-                                <p className="text-sm font-medium mb-2 text-center">{t('cccdFront')}</p>
-                                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                                    <Upload
-                                        accept="image/*"
-                                        showUploadList={false}
-                                        beforeUpload={handleCccdFrontUpload}
-                                        disabled={cccdFrontLoading}
-                                        style={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%' }}
-                                    >
-                                        <div className={`relative flex items-center justify-center w-full h-full rounded-xl border-2 border-dashed cursor-pointer overflow-hidden transition-colors ${cccdFrontUrl ? 'border-transparent' : 'border-gray-300 bg-gray-100 hover:border-primary hover:bg-blue-50'}`}>
-                                            {cccdFrontUrl ? (
-                                                <>
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
-                                                        src={cccdFrontUrl}
-                                                        alt={t('cccdFront')}
-                                                        className="absolute inset-0 w-full h-full object-cover rounded-xl"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                                                        <p className="text-white text-sm font-semibold">{t('cccdReplaceImage')}</p>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div className="flex flex-col items-center gap-2 text-center px-4">
-                                                    <InboxOutlined className="text-4xl text-gray-400" />
-                                                    <p className="text-sm font-medium text-gray-600">{t('cccdUploadText')}</p>
-                                                    <p className="text-xs text-gray-400">{t('cccdUploadHint')}</p>
-                                                </div>
-                                            )}
-                                            {cccdFrontLoading && (
-                                                <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-xl">
-                                                    <Spin />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </Upload>
-                                </div>
-                            </div>
-
-                            {/* Back face */}
-                            <div>
-                                <p className="text-sm font-medium mb-2 text-center">{t('cccdBack')}</p>
-                                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                                    <Upload
-                                        accept="image/*"
-                                        showUploadList={false}
-                                        beforeUpload={handleCccdBackUpload}
-                                        disabled={cccdBackLoading}
-                                        style={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%' }}
-                                    >
-                                        <div className={`relative flex items-center justify-center w-full h-full rounded-xl border-2 border-dashed cursor-pointer overflow-hidden transition-colors ${cccdBackUrl ? 'border-transparent' : 'border-gray-300 bg-gray-100 hover:border-primary hover:bg-blue-50'}`}>
-                                            {cccdBackUrl ? (
-                                                <>
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
-                                                        src={cccdBackUrl}
-                                                        alt={t('cccdBack')}
-                                                        className="absolute inset-0 w-full h-full object-cover rounded-xl"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                                                        <p className="text-white text-sm font-semibold">{t('cccdReplaceImage')}</p>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div className="flex flex-col items-center gap-2 text-center px-4">
-                                                    <InboxOutlined className="text-4xl text-gray-400" />
-                                                    <p className="text-sm font-medium text-gray-600">{t('cccdUploadText')}</p>
-                                                    <p className="text-xs text-gray-400">{t('cccdUploadHint')}</p>
-                                                </div>
-                                            )}
-                                            {cccdBackLoading && (
-                                                <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-xl">
-                                                    <Spin />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </Upload>
-                                </div>
-                            </div>
-                        </div>
+                        <Button type="primary" onClick={() => setCccdModalOpen(true)}>
+                            {t('cccdUploadSubmit')}
+                        </Button>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
@@ -425,6 +289,11 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
                 </Form>
             )}
+            <ModalIdentityCard
+                open={cccdModalOpen}
+                onClose={() => setCccdModalOpen(false)}
+                identity={identity}
+            />
         </div>
     );
 }
