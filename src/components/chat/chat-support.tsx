@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
 import { useApartment } from '@/hooks/query/useApartments'
@@ -15,8 +15,8 @@ import { ChatWindow } from './chat-window'
 import { ChatMode, ChatMessage, STORAGE_KEY } from '@/types/chat'
 
 export default function ChatSupport() {
-     const t = useTranslations('Chat')
-     const pathname = usePathname()
+  const t = useTranslations("Chat");
+  const pathname = usePathname();
 
      const user = useAuthStore(s => s.user)
      const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -26,56 +26,86 @@ export default function ChatSupport() {
      )
      const [messages, setMessages] = useState<ChatMessage[]>([])
 
-     // Detect current apartment page
-     const apartmentIdMatch = pathname.match(/^\/apartment\/([^/]+)$/)
-     const currentApartmentId = apartmentIdMatch?.[1] ?? ''
-     const { data: aptData } = useApartment(currentApartmentId)
-     const currentApartment = aptData?.data
+  // Detect current apartment page
+  const apartmentIdMatch = pathname.match(/^\/apartment\/([^/]+)$/);
+  const currentApartmentId = apartmentIdMatch?.[1] ?? "";
+  const { data: aptData } = useApartment(currentApartmentId);
+  const currentApartment = aptData?.data;
 
-     const accentColor = mode === 'ai' ? '#7c3aed' : '#3b82f6'
+  const accentColor = mode === "ai" ? "#7c3aed" : "#3b82f6";
 
-     function pushMessage(msg: ChatMessage) {
-          setMessages(prev => [...prev, msg])
-     }
+  function pushMessage(msg: ChatMessage) {
+    setMessages((prev) => [...prev, msg]);
+  }
 
-     function autoReply(content: string) {
-          setTimeout(() => pushMessage({ id: Date.now(), content, sender: 'support', timestamp: new Date() }), 1000)
-     }
+  function autoReply(content: string) {
+    setTimeout(
+      () =>
+        pushMessage({
+          id: Date.now(),
+          content,
+          sender: "support",
+          timestamp: new Date(),
+        }),
+      1000,
+    );
+  }
 
-     function selectMode(selected: 'support' | 'ai') {
-          setMode(selected)
-          localStorage.setItem(STORAGE_KEY, selected)
-          pushMessage({
-               id: Date.now(),
-               content: selected === 'ai' ? t('aiWelcome') : t('welcomeMessage'),
-               sender: 'support',
-               timestamp: new Date(),
-          })
-     }
+  function selectMode(selected: "support" | "ai") {
+    setMode(selected);
+    localStorage.setItem(STORAGE_KEY, selected);
+    pushMessage({
+      id: Date.now(),
+      content: selected === "ai" ? t("aiWelcome") : t("welcomeMessage"),
+      sender: "support",
+      timestamp: new Date(),
+    });
+  }
 
-     function handleBack() {
-          setMode(null)
-          setMessages([])
-          localStorage.removeItem(STORAGE_KEY)
-     }
+  function handleBack() {
+    setMode(null);
+    setMessages([]);
+    localStorage.removeItem(STORAGE_KEY);
+  }
 
-     function handleSend(content: string, images?: string[]) {
-          pushMessage({ id: Date.now(), content, images, sender: 'user', timestamp: new Date() })
-          autoReply(mode === 'ai' ? t('aiReply') : t('autoReply'))
-     }
+  function handleSend(content: string, images?: string[]) {
+    pushMessage({
+      id: Date.now(),
+      content,
+      images,
+      sender: "user",
+      timestamp: new Date(),
+    });
+    autoReply(mode === "ai" ? t("aiReply") : t("autoReply"));
+  }
 
-     function handleSendApartment() {
-          if (!currentApartment) return
-          pushMessage({ id: Date.now(), content: '', apartmentId: String(currentApartment.id), sender: 'user', timestamp: new Date() })
-          autoReply(t('autoReply'))
-     }
+  function handleSendApartment() {
+    if (!currentApartment) return;
+    pushMessage({
+      id: Date.now(),
+      content: "",
+      apartmentId: String(currentApartment.id),
+      sender: "user",
+      timestamp: new Date(),
+    });
+    autoReply(t("autoReply"));
+  }
 
-     const title = (
-          <Space>
-               <Avatar style={{ backgroundColor: accentColor }} icon={mode === 'ai' ? <RobotOutlined /> : <CustomerServiceOutlined />} />
-               <span>{mode === 'ai' ? t('aiTitle') : mode === 'support' ? t('title') : t('selectTitle')}</span>
-          </Space>
-     )
+  const title = (
+    <Space>
+      <Avatar
+        style={{ backgroundColor: accentColor }}
+        icon={mode === "ai" ? <RobotOutlined /> : <CustomerServiceOutlined />}
+      />
+      <span>
+        {mode === "ai"
+          ? t("aiTitle")
+          : mode === "support"
+            ? t("title")
+            : t("selectTitle")}
+      </span>
+    </Space>
+  );
 
      return (
           <>
@@ -95,24 +125,27 @@ export default function ChatSupport() {
                <ChatWindow open={open} title={title} onClose={() => setOpen(false)}>
                     {!mode && <ChatModeSelect onSelect={selectMode} />}
 
-                    {mode && (
-                         <div className="flex flex-col h-full">
-                              <div className="px-4 pt-2 pb-1">
-                                   <button onClick={handleBack} className="text-xs text-gray-400 hover:text-gray-600">
-                                        &larr; {t('back')}
-                                   </button>
-                              </div>
-                              <ChatMessages messages={messages} />
-                              <Divider className="my-0" />
-                              <ChatInput
-                                   onSend={handleSend}
-                                   currentApartment={currentApartment}
-                                   onSendApartment={handleSendApartment}
-                                   accentColor={accentColor}
-                              />
-                         </div>
-                    )}
-               </ChatWindow>
-          </>
-     )
+        {mode && (
+          <div className="flex flex-col h-full">
+            <div className="px-4 pt-2 pb-1">
+              <button
+                onClick={handleBack}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                &larr; {t("back")}
+              </button>
+            </div>
+            <ChatMessages messages={messages} />
+            <Divider className="my-0" />
+            <ChatInput
+              onSend={handleSend}
+              currentApartment={currentApartment}
+              onSendApartment={handleSendApartment}
+              accentColor={accentColor}
+            />
+          </div>
+        )}
+      </ChatWindow>
+    </>
+  );
 }
