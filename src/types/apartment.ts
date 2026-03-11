@@ -1,3 +1,4 @@
+import { FURNISHING_OPTIONS } from "@/constants/apartment";
 import { ApartmentListResponse } from "@/lib/services/apartment.service";
 
 // Enums
@@ -45,6 +46,8 @@ export enum DeviceStatus {
      INACTIVE = 'inactive',
      OFFLINE = 'offline'
 }
+
+export type FurnishingType = typeof FURNISHING_OPTIONS[number]['value']
 
 export type ApartmentItem = NonNullable<ApartmentListResponse['data']>[number]
 export type ApartmenList = ApartmentItem[]

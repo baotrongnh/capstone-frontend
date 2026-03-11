@@ -17,8 +17,8 @@ import AuthModal from "../modal/auth-modal"
 
 const NAV_LINKS = (t: (k: string) => string) => [
   { href: ROUTES.APARTMENT, label: t('findApartment') },
-  { href: '/', label: t('yourApartment') },
-  { href: '/', label: t('bills') },
+  // { href: '/', label: t('yourApartment') },
+  // { href: '/', label: t('bills') },
   { href: '/', label: t('support') },
   { href: '/', label: t('contact') },
 ]
