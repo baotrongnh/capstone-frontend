@@ -1,18 +1,14 @@
 'use client'
 
-import { BEDROOM_OPTIONS, DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE, FURNISHING_OPTIONS } from '@/constants/apartment'
-import { CITIES, LOCATIONS } from '@/constants/locations'
-import { ApartmentQueryParams } from '@/types/apartment'
-import { Checkbox, Divider, Input, Select, Slider } from 'antd'
+import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE, FURNISHING_OPTIONS } from '@/constants/apartment'
+import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
+import { Province } from '@/lib/services/provinces.service'
+import { ApartmentQueryParams, FurnishingType } from '@/types/apartment'
+import { formatArea, formatPrice, normalizeText } from '@/utils/format'
+import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-
-type FurnishingType = typeof FURNISHING_OPTIONS[number]['value']
-
-// Helper functions
-const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + ' tr'
-const formatArea = (area?: number) => area ? `${area} m²` : ''
 
 interface FilterProps {
      onFilterChange: (filters: Partial<ApartmentQueryParams> | null) => void
@@ -21,14 +17,21 @@ interface FilterProps {
 export default function Filter({ onFilterChange }: FilterProps) {
      const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
-     const [city, setCity] = useState<string>()
+
+     // Location
+     const [afterMerge, setAfterMerge] = useState(false)
+     const [selectedProvince, setSelectedProvince] = useState<Province | null>(null)
      const [district, setDistrict] = useState<string>()
-     const [price, setPrice] = useState<[number, number]>([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
+
+     // Other filters
+     const [price, setPrice] = useState([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
      const [area, setArea] = useState<[number, number]>([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
-     const [bedrooms, setBedrooms] = useState<number[]>([])
+     const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
-     // Debounce keyword search
+     const { data: provinces = [], isLoading: loadingProvinces } = useProvinces(afterMerge)
+     const { data: districts = [], isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
+
      useEffect(() => {
           const timer = setTimeout(() => {
                onFilterChange({ keyword: keyword || undefined })
@@ -36,26 +39,23 @@ export default function Filter({ onFilterChange }: FilterProps) {
           return () => clearTimeout(timer)
      }, [keyword, onFilterChange])
 
-     // Get district options based on selected city
-     const districtOptions = city
-          ? LOCATIONS[city]?.map(d => ({ label: d, value: d })) || []
-          : []
-
      const resetAll = () => {
           setKeyword('')
-          setCity(undefined)
+          setSelectedProvince(null)
           setDistrict(undefined)
           setPrice([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
           setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
-          setBedrooms([])
+          setBedrooms(null)
           setFurnishing(undefined)
+          setAfterMerge(false)
           onFilterChange(null)
      }
 
-     const handleCityChange = (value?: string) => {
-          setCity(value)
+     const handleProvinceChange = (code?: number) => {
+          const province = code != null ? (provinces.find(p => p.code === code) ?? null) : null
+          setSelectedProvince(province)
           setDistrict(undefined)
-          onFilterChange({ city: value, district: undefined })
+          onFilterChange({ city: province?.name ?? undefined, district: undefined })
      }
 
      const handleDistrictChange = (value?: string) => {
@@ -63,40 +63,19 @@ export default function Filter({ onFilterChange }: FilterProps) {
           onFilterChange({ district: value })
      }
 
-     const handlePriceChange = (values: number[]) => {
-          onFilterChange({ minPrice: values[0], maxPrice: values[1] })
-     }
-
-     const handleAreaChange = (values: number[]) => {
-          onFilterChange({ minArea: values[0], maxArea: values[1] })
-     }
-
-     const handleBedroomToggle = (num: number) => {
-          const isSelected = bedrooms.includes(num)
-          const updated = isSelected
-               ? bedrooms.filter(b => b !== num)
-               : [...bedrooms, num]
-
-          setBedrooms(updated)
-
-          if (updated.length > 0) {
-               onFilterChange({
-                    minBedrooms: Math.min(...updated),
-                    maxBedrooms: Math.max(...updated),
-               })
-          } else {
-               onFilterChange({ minBedrooms: undefined, maxBedrooms: undefined })
-          }
+     const handleBedroomsChange = (value: number | null) => {
+          setBedrooms(value)
+          onFilterChange({ minBedrooms: value ?? undefined, maxBedrooms: value ?? undefined })
      }
 
      const handleFurnishingChange = (value: FurnishingType, checked: boolean) => {
-          const newValue = checked ? value : undefined
-          setFurnishing(newValue)
-          onFilterChange({ furnishingStatus: newValue })
+          const next = checked ? value : undefined
+          setFurnishing(next)
+          onFilterChange({ furnishingStatus: next })
      }
 
      return (
-          <div className="space-y-5 p-2 h-screen overflow-scroll sticky">
+          <div className="space-y-5 p-2 h-screen sticky">
                {/* Header */}
                <div className="flex items-center justify-between">
                     <h3 className="font-bold text-lg">{t('title')}</h3>
@@ -120,32 +99,62 @@ export default function Filter({ onFilterChange }: FilterProps) {
                <Divider className="my-0!" />
 
                {/* Location */}
-               <div className="space-y-2">
+               <div>
                     <Label>{t('locationLabel')}</Label>
+
+                    <Checkbox
+                         checked={afterMerge}
+                         onChange={e => {
+                              setAfterMerge(e.target.checked)
+                              setSelectedProvince(null)
+                              setDistrict(undefined)
+                              onFilterChange({ city: undefined, district: undefined })
+                         }}
+                    >
+                         Địa chỉ sau sáp nhập
+                    </Checkbox>
+
                     <Select
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
-                         value={city}
-                         options={CITIES.map(c => ({ label: c, value: c }))}
-                         onChange={handleCityChange}
+                         value={selectedProvince?.code}
+                         options={provinces.map(p => ({ label: p.name, value: p.code }))}
+                         onChange={handleProvinceChange}
+                         loading={loadingProvinces}
+                         showSearch={{
+                              filterOption: (input, option) =>
+                                   normalizeText((option?.label ?? '')
+                                        .toLowerCase())
+                                        .includes(input.toLowerCase())
+                         }}
+                         style={{ marginTop: 15 }}
                          allowClear
+                         onClear={() => handleProvinceChange(undefined)}
                     />
-                    <div className=''></div>
+
                     <Select
                          placeholder={t('districtPlaceholder')}
                          className="w-full"
                          value={district}
-                         options={districtOptions}
+                         options={districts.map(d => ({ label: d.name, value: d.name }))}
                          onChange={handleDistrictChange}
-                         disabled={!city}
+                         disabled={!selectedProvince}
+                         loading={loadingDistricts}
+                         showSearch={{
+                              filterOption: (input, option) =>
+                                   normalizeText((option?.label ?? '')
+                                        .toLowerCase())
+                                        .includes(input.toLowerCase())
+                         }}
                          allowClear
+                         style={{ marginTop: 15 }}
                     />
                </div>
 
                <Divider className="my-0!" />
 
                {/* Price Range */}
-               <div>
+               <div className='pt-5'>
                     <Label>
                          {t('priceLabel')}{' '}
                          <span className="font-normal text-gray-400">
@@ -159,7 +168,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                          max={FILTER_PRICE_RANGE.MAX}
                          step={FILTER_PRICE_RANGE.STEP}
                          onChange={v => setPrice(v as [number, number])}
-                         onChangeComplete={handlePriceChange}
+                         onChangeComplete={v => onFilterChange({ minPrice: v[0], maxPrice: v[1] })}
                          tooltip={{ formatter: v => formatPrice(v!) }}
                     />
                </div>
@@ -167,7 +176,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                <Divider className="my-0!" />
 
                {/* Area Range */}
-               <div>
+               <div className='pt-5'>
                     <Label>
                          {t('areaLabel')}{' '}
                          <span className="font-normal text-gray-400">
@@ -181,7 +190,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                          max={FILTER_AREA_RANGE.MAX}
                          step={FILTER_AREA_RANGE.STEP}
                          onChange={v => setArea(v as [number, number])}
-                         onChangeComplete={handleAreaChange}
+                         onChangeComplete={v => onFilterChange({ minArea: v[0], maxArea: v[1] })}
                          tooltip={{ formatter: formatArea }}
                     />
                </div>
@@ -189,28 +198,18 @@ export default function Filter({ onFilterChange }: FilterProps) {
                <Divider className="my-0!" />
 
                {/* Bedrooms */}
-               <div>
+               <div className='pt-5'>
                     <Label>{t('bedroomsLabel')}</Label>
-                    <div className="flex gap-2 mt-2">
-                         {BEDROOM_OPTIONS.map(num => {
-                              const isSelected = bedrooms.includes(num)
-                              return (
-                                   <button
-                                        key={num}
-                                        onClick={() => handleBedroomToggle(num)}
-                                        className={`
-                                             flex-1 h-9 rounded-md border text-sm font-medium transition-all
-                                             ${isSelected
-                                                  ? 'bg-primary text-white border-primary'
-                                                  : 'border-gray-200 hover:border-primary'
-                                             }
-                                        `}
-                                   >
-                                        {num}
-                                   </button>
-                              )
-                         })}
-                    </div>
+                    <InputNumber
+                         className="mt-1"
+                         min={0}
+                         max={20}
+                         value={bedrooms}
+                         onChange={handleBedroomsChange}
+                         placeholder="Nhập số phòng ngủ"
+                         controls
+                         style={{ width: '100%' }}
+                    />
                </div>
 
                <Divider className="my-0!" />

@@ -4,3 +4,14 @@ export const formatVND = (value: number | string, showVND = false) => {
      const formatted = num.toLocaleString('en-US')
      return showVND ? `${formatted} VNĐ` : formatted
 }
+
+export function normalizeText(text: string) {
+     return text
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/đ/g, "d")
+          .toLowerCase();
+}
+
+export const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + ' tr'
+export const formatArea = (area?: number) => area ? `${area} m²` : ''
