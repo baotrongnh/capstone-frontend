@@ -70,21 +70,6 @@ export default function ModalLeaveInformation(props?: {
 
   return (
     <>
-      {!props?.open && (
-        <FloatButton
-          icon={<MailOutlined />}
-          type="primary"
-          style={{
-            right: 90,
-            bottom: 24,
-            width: 56,
-            height: 56,
-          }}
-          onClick={() => setOpen(true)}
-          tooltip={<div>Liên hệ với chúng tôi</div>}
-        />
-      )}
-
       <ConfigProvider
         theme={{
           token: {

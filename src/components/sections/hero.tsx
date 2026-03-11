@@ -2,7 +2,7 @@
 
 import { Button, Form, Image, Input } from "antd";
 import { useTranslations } from "next-intl";
-import { use, useState } from "react";
+import { useState } from "react";
 import {
   EnvironmentOutlined,
   UserOutlined,
@@ -14,9 +14,7 @@ import {
 } from "@ant-design/icons";
 import banner9 from "../../../public/img/banner9.jpg";
 
-import ModalUser from "../modal/modalLeaveInformation";
 import { useRouter } from "next/navigation";
-import ModalContact from "../modal/modalLeaveInformation";
 export default function HeroSection() {
   const t = useTranslations("HomePage");
   const [form] = Form.useForm();
@@ -58,13 +56,7 @@ export default function HeroSection() {
       <div className="absolute top-0 left-0 w-full z-1">
         <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
       </div>
-      {/* <Button
-        type="primary"
-        onClick={() => setOpen(true)}
-        className="fixed top-4 left-4 z-10"
-      >
-        Liên hệ
-      </Button> */}
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-2 relative">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 uppercase">
