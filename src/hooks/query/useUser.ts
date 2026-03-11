@@ -53,3 +53,14 @@ export const useUpdateUserCardImages = () => {
     },
   });
 };
+
+export const useUpdateIdentityCard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { front: File; back?: File }) =>
+      userService.uploadIdentityCard(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+    },
+  });
+};
