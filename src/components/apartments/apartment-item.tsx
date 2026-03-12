@@ -37,7 +37,7 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                          )}
                     </div>
 
-                    <h1 className='font-semibold text-base md:text-lg lg:text-xl text-[#1c2b38] line-clamp-2 mb-2'>
+                    <h1 className='font-bold text-base md:text-lg lg:text-xl text-primary line-clamp-2 mb-2'>
                          {apartment.buildingName ?? apartment.apartmentNumber}
                     </h1>
 

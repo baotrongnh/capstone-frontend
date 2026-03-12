@@ -253,7 +253,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/profile/identity-card": {
+    "/api/v1/users/profile/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my identity information */
+        get: operations["UsersController_getProfileIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/profile/verify-identity": {
         parameters: {
             query?: never;
             header?: never;
@@ -262,12 +279,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        /**
+         * Verify identity card via AI (front + back)
+         * @description Upload front and back identity card images. AI will extract information from both sides and store extracted data. Images are NOT saved.
+         */
+        post: operations["UsersController_verifyIdentityCard"];
         delete?: never;
         options?: never;
         head?: never;
-        /** Update identity card image (profileImageUrl) */
-        patch: operations["UsersController_updateIdentityCard"];
+        patch?: never;
         trace?: never;
     };
     "/api/v1/users/{id}": {
@@ -287,6 +307,23 @@ export interface paths {
         head?: never;
         /** Update user */
         patch: operations["UsersController_update"];
+        trace?: never;
+    };
+    "/api/v1/users/{id}/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user identity by user ID */
+        get: operations["UsersController_findIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/users/{id}/verify": {
@@ -1932,19 +1969,64 @@ export interface components {
              */
             newPassword: string;
         };
+        UserIdentityDetailDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example 012345678901 */
+            nationalId?: Record<string, never> | null;
+            /** @example A12345678 */
+            passportNumber?: Record<string, never> | null;
+            /** @example Nguyen Van A */
+            name?: Record<string, never> | null;
+            /** @example 01/01/1990 */
+            dob?: Record<string, never> | null;
+            /** @example M */
+            sex?: Record<string, never> | null;
+            /** @example Việt Nam */
+            nationality?: Record<string, never> | null;
+            /** @example Kinh */
+            ethnicity?: Record<string, never> | null;
+            /** @example Ha Noi */
+            home?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao, Hoan Kiem, Ha Noi */
+            address?: Record<string, never> | null;
+            /** @example Ha Noi */
+            province?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            district?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            ward?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao */
+            street?: Record<string, never> | null;
+            /** @example Sẹo 2cm trán phải */
+            features?: Record<string, never> | null;
+            /** @example 01/01/2020 */
+            issueDate?: Record<string, never> | null;
+            /** @example 01/01/2030 */
+            doe?: Record<string, never> | null;
+            /** @example false */
+            isVerified: boolean;
+            /** @example 2026-03-10T10:30:00.000Z */
+            verifiedAt?: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         UserListItemDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
             /** @example 1990-05-15T00:00:00.000Z */
             dateOfBirth?: Record<string, never> | null;
             /** @example https://example.com/avatar.jpg */
             profileImageUrl?: Record<string, never> | null;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
@@ -1984,69 +2066,56 @@ export interface components {
             rentalContract: components["schemas"]["ContractSummaryDto"];
         };
         UserDetailDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
-            /** @example 012345678901 */
-            nationalId?: Record<string, never> | null;
-            /** @example A12345678 */
-            passportNumber?: Record<string, never> | null;
-            profileImageUrl?: string | null;
-            emergencyContactName?: string | null;
-            emergencyContactPhone?: string | null;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example Tran Thi B */
+            emergencyContactName?: Record<string, never> | null;
+            /** @example 0987654321 */
+            emergencyContactPhone?: Record<string, never> | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
-            /** Format: date-time */
-            lastLoginAt?: string | null;
+            /** @example 2026-03-10T10:30:00.000Z */
+            lastLoginAt?: Record<string, never> | null;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            contractMemberships: components["schemas"]["ContractMembershipDto"][];
-        };
-        UserUpdatedDto: {
-            id: string;
-            /** @example user@example.com */
-            email: string;
-            /** @example 0901234567 */
-            phone: string;
-            /** @example Nguyen Van A */
-            fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
-            profileImageUrl?: string | null;
-            isActive: boolean;
-            isVerified: boolean;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateIdentityCardDto: {
-            /**
-             * @description URL of the identity card image (profileImageUrl)
-             * @example https://example.com/identity-card.jpg
-             */
-            profileImageUrl: string;
+            contractMemberships?: components["schemas"]["ContractMembershipDto"][] | null;
         };
         UserCreatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
             /** Format: date-time */
             createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         CreateUserDto: {
             /**
@@ -2099,6 +2168,30 @@ export interface components {
              * @example 0909876543
              */
             emergencyContactPhone?: string;
+        };
+        UserUpdatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example 0901234567 */
+            phone?: Record<string, never> | null;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example Tran Thi B */
+            emergencyContactName?: Record<string, never> | null;
+            /** @example 0987654321 */
+            emergencyContactPhone?: Record<string, never> | null;
+            /** @example true */
+            isActive: boolean;
+            /** @example false */
+            isVerified: boolean;
+            /** Format: date-time */
+            updatedAt: string;
         };
         UpdateUserDto: {
             /**
@@ -2160,23 +2253,29 @@ export interface components {
             isVerified?: boolean;
         };
         UserVerifiedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example Nguyen Van A */
             fullName: string;
-            profileImageUrl?: string | null;
             /** @example true */
             isVerified: boolean;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** Format: date-time */
             updatedAt: string;
         };
         UserDeletedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
+            /** @example Nguyen Van A */
+            fullName: string;
             /** @example false */
             isActive: boolean;
+            /** Format: date-time */
+            updatedAt: string;
         };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
@@ -4913,6 +5012,8 @@ export interface operations {
             query?: {
                 /** @description Search by email, name, or phone */
                 search?: string;
+                page?: number;
+                limit?: number;
             };
             header?: never;
             path?: never;
@@ -4920,7 +5021,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of users */
+            /** @description Paginated list of users */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -4935,6 +5036,14 @@ export interface operations {
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
+                            /** @example 25 */
+                            total?: number;
+                            /** @example 1 */
+                            page?: number;
+                            /** @example 10 */
+                            limit?: number;
+                            /** @example 3 */
+                            totalPages?: number;
                         };
                     };
                 };
@@ -4991,41 +5100,25 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description User profile */
+            /** @description User/Staff/Operator/Admin profile */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["UserDetailDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
+                content?: never;
             };
         };
     };
-    UsersController_updateIdentityCard: {
+    UsersController_getProfileIdentity: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateIdentityCardDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Identity card image updated */
+            /** @description User identity information */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -5036,13 +5129,61 @@ export interface operations {
                         statusCode?: number;
                         /** @example Success */
                         message?: string;
-                        data?: components["schemas"]["UserUpdatedDto"];
+                        data?: components["schemas"]["UserIdentityDetailDto"];
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
                         };
                     };
                 };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_verifyIdentityCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload front and back identity card images for AI to extract information. Images are NOT stored. */
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Front image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardFront: string;
+                    /**
+                     * Format: binary
+                     * @description Back image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardBack: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Identity card verified and info extracted from both sides */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid image files or unsupported format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description User not found */
             404: {
@@ -5158,6 +5299,45 @@ export interface operations {
                         /** @example Success */
                         message?: string;
                         data?: components["schemas"]["UserUpdatedDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_findIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User identity information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityDetailDto"];
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
