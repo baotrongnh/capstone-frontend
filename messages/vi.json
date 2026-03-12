@@ -267,6 +267,7 @@
       "contractEndDate": "Ngày kết thúc hợp đồng",
       "cancel": "Hủy",
       "saveChanges": "Lưu thay đổi",
+      "edit": "Chỉnh sửa",
       "updateSuccess": "Cập nhật hồ sơ thành công",
       "updateFailed": "Cập nhật hồ sơ thất bại",
       "nationalIdInvalid": "Vui lòng nhập số CCCD hợp lệ (9 hoặc 12 chữ số)",

@@ -267,6 +267,7 @@
       "contractEndDate": "Contract End Date",
       "cancel": "Cancel",
       "saveChanges": "Save Changes",
+      "edit": "Edit",
       "updateSuccess": "Profile updated successfully",
       "updateFailed": "Failed to update profile",
       "nationalIdInvalid": "Please enter a valid 9 or 12-digit national ID number",

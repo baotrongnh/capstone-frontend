@@ -26,7 +26,9 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     );
     const identity = !('companyName' in profile) ? (profile as UserDetail).identity : undefined;
     const isPartner = isPartnerDetail(profile, actorType);
+    const [localProfile, setLocalProfile] = useState<UserDetail | PartnerDetail>(profile);
     const [cccdModalOpen, setCccdModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const { message } = App.useApp();
     const t = useTranslations('Profile.account');
 
@@ -35,6 +37,9 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             setSubmitting(true);
             if (onUpdate) {
                 await onUpdate(values);
+                setLocalProfile(prev => ({ ...prev, ...values }));
+                setIsEditing(false);
+                setHasChanges(false);
                 message.success(t('updateSuccess'));
             }
         } catch {
@@ -63,20 +68,20 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const handleValuesChange = (_: unknown, allValues: Record<string, unknown>) => {
         const initVals = isPartner
             ? {
-                fullName: profile.fullName,
-                phone: profile.phone,
-                companyName: (profile as PartnerDetail).companyName,
-                taxCode: (profile as PartnerDetail).taxCode,
-                nationalId: (profile as PartnerDetail).nationalId,
-                bankAccountNumber: (profile as PartnerDetail).bankAccountNumber,
-                bankName: (profile as PartnerDetail).bankName,
-                address: (profile as PartnerDetail).address,
+                fullName: localProfile.fullName,
+                phone: localProfile.phone,
+                companyName: (localProfile as PartnerDetail).companyName,
+                taxCode: (localProfile as PartnerDetail).taxCode,
+                nationalId: (localProfile as PartnerDetail).nationalId,
+                bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
+                bankName: (localProfile as PartnerDetail).bankName,
+                address: (localProfile as PartnerDetail).address,
             }
             : {
-                fullName: profile.fullName,
-                phone: profile.phone,
-                emergencyContactName: (profile as UserDetail).emergencyContactName,
-                emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
+                fullName: localProfile.fullName,
+                phone: localProfile.phone,
+                emergencyContactName: (localProfile as UserDetail).emergencyContactName,
+                emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
             };
 
         const changed = Object.keys(initVals).some((key) => {
@@ -90,6 +95,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const handleCancel = () => {
         form.resetFields();
         setHasChanges(false);
+        setIsEditing(false);
     };
 
     if (externalLoading) {
@@ -132,13 +138,13 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                             className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
                             disabled={avatarUploading}
                         >
-                            <CameraOutlined style={{color: 'white'}} />
+                            <CameraOutlined style={{ color: 'white' }} />
                         </button>
                     </Upload>
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold">{profile.fullName}</h3>
-                    <p className="text-sm text-muted">{profile.email}</p>
+                    <h3 className="text-xl font-semibold">{localProfile.fullName}</h3>
+                    <p className="text-sm text-muted">{localProfile.email}</p>
                     {actorType !== ActorType.USER && (
                         <p className="text-xs text-muted mt-1">
                             {t('accountType')}: <span className="font-medium uppercase">{actorType}</span>
@@ -166,33 +172,47 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Form.Item
                             label={t('fullName')}
-                            name="fullName"
-                            rules={[{ required: true, message: t('fullNameRequired') }]}
+                            name={isEditing ? 'fullName' : undefined}
+                            rules={isEditing ? [{ required: true, message: t('fullNameRequired') }] : undefined}
                         >
-                            <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
+                            }
+                        </Form.Item>
+
+                        <Form.Item label={t('emailAddress')}>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
                         </Form.Item>
 
                         <Form.Item
-                            label={t('emailAddress')}
-                            name="email"
-                            rules={[
-                                { required: true, message: t('emailRequired') },
-                                { type: 'email', message: t('emailInvalid') },
-                            ]}
+                            label={t('phoneNumber')}
+                            name={isEditing ? 'phone' : undefined}
                         >
-                            <Input size="large" placeholder={t('emailPlaceholder')} disabled />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('phoneNumber')} name="phone">
-                            <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                        <Form.Item
+                            label={t('emergencyContactName')}
+                            name={isEditing ? 'emergencyContactName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('emergencyContactNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactName || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('emergencyContactName')} name="emergencyContactName">
-                            <Input size="large" placeholder={t('emergencyContactNamePlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('emergencyContactPhone')} name="emergencyContactPhone">
-                            <Input size="large" placeholder={t('emergencyContactPhonePlaceholder')} />
+                        <Form.Item
+                            label={t('emergencyContactPhone')}
+                            name={isEditing ? 'emergencyContactPhone' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('emergencyContactPhonePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactPhone || '—'}</span>
+                            }
                         </Form.Item>
                     </div>
 
@@ -293,14 +313,28 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     )}
 
                     <div className="flex justify-end gap-3 pt-4">
-                        {hasChanges && (
-                            <Button size="large" onClick={handleCancel}>
-                                {t('cancel')}
+                        {isEditing ? (
+                            <>
+                                <Button size="large" onClick={handleCancel}>
+                                    {t('cancel')}
+                                </Button>
+                                <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
+                                    {t('saveChanges')}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button type="primary" size="large" onClick={() => {
+                                form.setFieldsValue({
+                                    fullName: localProfile.fullName,
+                                    phone: localProfile.phone,
+                                    emergencyContactName: (localProfile as UserDetail).emergencyContactName,
+                                    emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
+                                });
+                                setIsEditing(true);
+                            }}>
+                                {t('edit')}
                             </Button>
                         )}
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
-                            {t('saveChanges')}
-                        </Button>
                     </div>
                 </Form>
             )}
@@ -328,50 +362,88 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Form.Item
                             label={t('fullName')}
-                            name="fullName"
-                            rules={[{ required: true, message: t('fullNameRequired') }]}
+                            name={isEditing ? 'fullName' : undefined}
+                            rules={isEditing ? [{ required: true, message: t('fullNameRequired') }] : undefined}
                         >
-                            <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
+                            }
+                        </Form.Item>
+
+                        <Form.Item label={t('emailAddress')}>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
                         </Form.Item>
 
                         <Form.Item
-                            label={t('emailAddress')}
-                            name="email"
-                            rules={[
-                                { required: true, message: t('emailRequired') },
-                                { type: 'email', message: t('emailInvalid') },
-                            ]}
+                            label={t('phoneNumber')}
+                            name={isEditing ? 'phone' : undefined}
                         >
-                            <Input size="large" placeholder={t('emailPlaceholder')} disabled />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('phoneNumber')} name="phone">
-                            <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                        <Form.Item
+                            label={t('companyName')}
+                            name={isEditing ? 'companyName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('companyNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).companyName || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('companyName')} name="companyName">
-                            <Input size="large" placeholder={t('companyNamePlaceholder')} />
+                        <Form.Item
+                            label={t('taxCode')}
+                            name={isEditing ? 'taxCode' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('taxCodePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).taxCode || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('taxCode')} name="taxCode">
-                            <Input size="large" placeholder={t('taxCodePlaceholder')} />
+                        <Form.Item
+                            label={t('nationalId')}
+                            name={isEditing ? 'nationalId' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('nationalIdPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).nationalId || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('nationalId')} name="nationalId">
-                            <Input size="large" placeholder={t('nationalIdPlaceholder')} />
+                        <Form.Item
+                            label={t('bankAccountNumber')}
+                            name={isEditing ? 'bankAccountNumber' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('bankAccountNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankAccountNumber || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('bankAccountNumber')} name="bankAccountNumber">
-                            <Input size="large" placeholder={t('bankAccountNumberPlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('bankName')} name="bankName">
-                            <Input size="large" placeholder={t('bankNamePlaceholder')} />
+                        <Form.Item
+                            label={t('bankName')}
+                            name={isEditing ? 'bankName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('bankNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankName || '—'}</span>
+                            }
                         </Form.Item>
                     </div>
 
-                    <Form.Item label={t('address')} name="address">
-                        <Input.TextArea rows={3} size="large" placeholder={t('addressPlaceholder')} />
+                    <Form.Item
+                        label={t('address')}
+                        name={isEditing ? 'address' : undefined}
+                    >
+                        {isEditing
+                            ? <Input.TextArea rows={3} size="large" placeholder={t('addressPlaceholder')} />
+                            : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200 whitespace-pre-wrap">{(localProfile as PartnerDetail).address || '—'}</span>
+                        }
                     </Form.Item>
 
                     {/* Read-only contract info */}
@@ -399,14 +471,32 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        {hasChanges && (
-                            <Button size="large" onClick={handleCancel}>
-                                {t('cancel')}
+                        {isEditing ? (
+                            <>
+                                <Button size="large" onClick={handleCancel}>
+                                    {t('cancel')}
+                                </Button>
+                                <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
+                                    {t('saveChanges')}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button type="primary" size="large" onClick={() => {
+                                form.setFieldsValue({
+                                    fullName: localProfile.fullName,
+                                    phone: localProfile.phone,
+                                    companyName: (localProfile as PartnerDetail).companyName,
+                                    taxCode: (localProfile as PartnerDetail).taxCode,
+                                    nationalId: (localProfile as PartnerDetail).nationalId,
+                                    bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
+                                    bankName: (localProfile as PartnerDetail).bankName,
+                                    address: (localProfile as PartnerDetail).address,
+                                });
+                                setIsEditing(true);
+                            }}>
+                                {t('edit')}
                             </Button>
                         )}
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
-                            {t('saveChanges')}
-                        </Button>
                     </div>
                 </Form>
             )}
