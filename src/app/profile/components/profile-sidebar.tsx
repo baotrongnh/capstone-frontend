@@ -36,11 +36,11 @@ const getNavigationItems = (
       roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
-      key: "payment-history",
-      label: t("sidebar.paymentHistory"),
-      icon: <WalletOutlined />,
-      path: "/profile/payment-history",
-      roles: [ActorType.USER, ActorType.PARTNER],
+      key: "my-properties",
+      label: t("sidebar.myProperties"),
+      icon: <ApartmentOutlined />,
+      path: "/profile/my-properties",
+      roles: [ActorType.PARTNER],
     },
     {
       key: "bills",
@@ -50,11 +50,11 @@ const getNavigationItems = (
       roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
-      key: "my-properties",
-      label: t("sidebar.myProperties"),
-      icon: <ApartmentOutlined />,
-      path: "/profile/my-properties",
-      roles: [ActorType.PARTNER],
+      key: "payment-history",
+      label: t("sidebar.paymentHistory"),
+      icon: <WalletOutlined />,
+      path: "/profile/payment-history",
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "settings",
