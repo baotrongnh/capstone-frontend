@@ -1,6 +1,6 @@
 "use client"
 
-import { ActorType, AuthFormProps, LoginDto, RegisterDto } from "@/types/auth";
+import { AuthFormProps, LoginDto, RegisterDto } from "@/types/auth";
 import { Button, Divider, Form, Input, message } from "antd";
 import Image from "next/image";
 import { useState } from "react";
@@ -28,7 +28,7 @@ export default function AuthForm({
   const handleFinish = async (values: LoginDto & RegisterDto) => {
     if (mode === "login") {
       if (onSubmit) {
-        await onSubmit({ ...values, actorType: ActorType.USER });
+        await onSubmit({ identifier: values.identifier, password: values.password });
       }
     } else {
       if (onRegister) {

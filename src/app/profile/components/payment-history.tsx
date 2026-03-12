@@ -119,7 +119,7 @@ export default function PaymentHistoryComponent({
             align: 'right',
             render: (amount: number) => (
                 <span className="font-semibold text-sm whitespace-nowrap">
-                    ${amount.toLocaleString()}
+                    ${amount.toLocaleString('vi-VN')}
                 </span>
             )
         },

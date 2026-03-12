@@ -5,10 +5,10 @@ import {
   UserOutlined,
   HomeOutlined,
   WalletOutlined,
-  CalendarOutlined,
   SettingOutlined,
   LogoutOutlined,
-  DashboardOutlined,
+  FileTextOutlined,
+  ApartmentOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ActorType } from "@/types/auth";
@@ -20,73 +20,40 @@ const getNavigationItems = (
   actorType: ActorType,
   t: (key: string) => string,
 ): ProfileNavItem[] => {
-  const baseItems: ProfileNavItem[] = [];
-
-  const userItems: ProfileNavItem[] = [
+  const items: ProfileNavItem[] = [
     {
       key: "account",
       label: t("sidebar.myInformation"),
       icon: <UserOutlined />,
       path: "/profile/account",
-      roles: [ActorType.USER],
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "my-apartment",
       label: t("sidebar.myApartment"),
       icon: <HomeOutlined />,
       path: "/profile/my-apartment",
-      roles: [ActorType.USER],
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "payment-history",
       label: t("sidebar.paymentHistory"),
       icon: <WalletOutlined />,
       path: "/profile/payment-history",
-      roles: [ActorType.USER],
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
-      key: "settings",
-      label: t("sidebar.settings"),
-      icon: <SettingOutlined />,
-      path: "/profile/settings",
-      roles: [ActorType.PARTNER],
-    },
-  ];
-
-  const partnerItems: ProfileNavItem[] = [
-    {
-      key: "account",
-      label: t("sidebar.accountInformation"),
-      icon: <UserOutlined />,
-      path: "/profile/account",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "partner-dashboard",
-      label: t("sidebar.partnerDashboard"),
-      icon: <DashboardOutlined />,
-      path: "/profile/dashboard",
-      roles: [ActorType.PARTNER],
+      key: "bills",
+      label: t("sidebar.myBills"),
+      icon: <FileTextOutlined />,
+      path: "/profile/bills",
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "my-properties",
       label: t("sidebar.myProperties"),
-      icon: <HomeOutlined />,
+      icon: <ApartmentOutlined />,
       path: "/profile/my-properties",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "bookings",
-      label: t("sidebar.bookings"),
-      icon: <CalendarOutlined />,
-      path: "/profile/bookings",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "revenue",
-      label: t("sidebar.revenue"),
-      icon: <WalletOutlined />,
-      path: "/profile/revenue",
       roles: [ActorType.PARTNER],
     },
     {
@@ -94,22 +61,11 @@ const getNavigationItems = (
       label: t("sidebar.settings"),
       icon: <SettingOutlined />,
       path: "/profile/settings",
-      roles: [ActorType.PARTNER],
+      roles: [ActorType.USER, ActorType.PARTNER],
     },
   ];
 
-  let roleSpecificItems: ProfileNavItem[] = [];
-
-  switch (actorType) {
-    case ActorType.USER:
-      roleSpecificItems = userItems;
-      break;
-    case ActorType.PARTNER:
-      roleSpecificItems = partnerItems;
-      break;
-  }
-
-  return [...roleSpecificItems, ...baseItems];
+  return items.filter((item) => item.roles.includes(actorType));
 };
 
 export default function ProfileSidebar({
@@ -145,7 +101,7 @@ export default function ProfileSidebar({
           selectedKeys={[activeKey]}
           items={menuItems}
           className="border-0 p-0 m-0"
-          style={{borderRight: 0}}
+          style={{ borderRight: 0 }}
         />
       </div>
 
