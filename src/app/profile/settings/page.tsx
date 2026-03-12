@@ -37,7 +37,7 @@ export default function SettingsPage() {
                         timezone: 'UTC'
                     }}
                 >
-                    <Divider orientationMargin={0}>{t('notifications')}</Divider>
+                    <Divider style={{margin: 0}} >{t('notifications')}</Divider>
 
                     <Form.Item
                         name="emailNotifications"
@@ -63,7 +63,7 @@ export default function SettingsPage() {
                         <Switch />
                     </Form.Item>
 
-                    <Divider orientationMargin={0}>{t('preferences')}</Divider>
+                    <Divider style={{margin: 0}} >{t('preferences')}</Divider>
 
                     <Form.Item name="language" label={t('language')}>
                         <Select size="large">
@@ -87,7 +87,7 @@ export default function SettingsPage() {
                         </Select>
                     </Form.Item>
 
-                    <Divider orientationMargin={0}>{t('security')}</Divider>
+                    <Divider style={{margin: 0}}>{t('security')}</Divider>
 
                     <Form.Item
                         name="currentPassword"

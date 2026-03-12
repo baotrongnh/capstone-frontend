@@ -1,4 +1,4 @@
-import { UpdateUserDto, UpdateUserResponse, UserDetail } from "@/types/user";
+import { AiVerification, UpdateUserDto, UpdateUserResponse, UserDetail, UserIdentity } from "@/types/user";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
@@ -51,5 +51,20 @@ export const userService = {
       formData,
       { headers: { 'Content-Type': 'multipart/form-data' } },
     );
+  },
+
+  verifyIdentity: async (data: {
+    identityCardFront: File;
+    identityCardBack: File;
+  }): Promise<UserDetail & { identity: UserIdentity; aiVerification: AiVerification }> => {
+    const formData = new FormData();
+    formData.append('identityCardFront', data.identityCardFront);
+    formData.append('identityCardBack', data.identityCardBack);
+    const { data: res } = await apiClient.post(
+      `${endpoints.users}/profile/verify-identity`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+    return res.data;
   },
 };

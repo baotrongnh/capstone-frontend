@@ -24,10 +24,38 @@ export type ContractMembership = {
 };
 
 export type UserIdentity = {
-  passportNumber?: string;
-  identityCardFrontUrl?: string;
-  identityCardBackUrl?: string;
+  id: string;
+  userId: string;
+  nationalId: string | null;
+  passportNumber: string | null;
+  name: string | null;
+  dob: string | null;
+  sex: string | null;
+  nationality: string | null;
+  ethnicity: string | null;
+  home: string | null;
+  address: string | null;
+  province: string | null;
+  district: string | null;
+  ward: string | null;
+  street: string | null;
+  features: string | null;
+  issueDate: string | null;
+  doe: string | null;
   isVerified: boolean;
+  verifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiVerificationResult = {
+  success: boolean;
+  extractedInfo: Record<string, unknown> | null;
+};
+
+export type AiVerification = {
+  front: AiVerificationResult;
+  back: AiVerificationResult;
 };
 
 export type UserDetail = {
@@ -48,6 +76,7 @@ export type UserDetail = {
   updatedAt: string;
   contractMemberships: ContractMembership[];
   identity?: UserIdentity;
+  aiVerification?: AiVerification;
 };
 
 export type UpdateUserDto = {
@@ -55,9 +84,6 @@ export type UpdateUserDto = {
   phone?: string;
   fullName?: string;
   password?: string;
-  dateOfBirth?: string;
-  nationalId?: string;
-  passportNumber?: string;
   profileImageUrl?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
@@ -76,3 +102,9 @@ export type UpdateUserResponse = {
   isVerified: boolean;
   updatedAt: string;
 };
+
+export type ModalIdentityCardProps = {
+  open: boolean;
+  onClose: () => void;
+  identity?: UserIdentity;
+}

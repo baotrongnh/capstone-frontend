@@ -1,7 +1,8 @@
 'use client';
 
-import { Form, Input, Button, Avatar, DatePicker, Spin, Upload, App, Tag } from 'antd';
-import { UserOutlined, CameraOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from 'antd';
+import { uploadFile } from '@/utils/uploadFile';
+import { UserOutlined, CameraOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { ActorType } from '@/types/auth';
 import { UserDetail, UpdateUserDto } from '@/types/user';
@@ -19,12 +20,15 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+    const [avatarUploading, setAvatarUploading] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
         'profileImageUrl' in profile ? profile.profileImageUrl : undefined
     );
     const identity = !('companyName' in profile) ? (profile as UserDetail).identity : undefined;
     const isPartner = isPartnerDetail(profile, actorType);
+    const [localProfile, setLocalProfile] = useState<UserDetail | PartnerDetail>(profile);
     const [cccdModalOpen, setCccdModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const { message } = App.useApp();
     const t = useTranslations('Profile.account');
 
@@ -33,6 +37,9 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             setSubmitting(true);
             if (onUpdate) {
                 await onUpdate(values);
+                setLocalProfile(prev => ({ ...prev, ...values }));
+                setIsEditing(false);
+                setHasChanges(false);
                 message.success(t('updateSuccess'));
             }
         } catch {
@@ -42,45 +49,44 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
         }
     };
 
-    const handleAvatarUpload = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const result = e.target?.result;
-            if (typeof result === 'string') setAvatarUrl(result);
-        };
-        reader.readAsDataURL(file);
+    const handleAvatarUpload = async (file: File) => {
+        try {
+            setAvatarUploading(true);
+            const { url } = await uploadFile(file);
+            setAvatarUrl(url);
+            if (onUpdate) {
+                await onUpdate({ profileImageUrl: url });
+            }
+        } catch {
+            message.error(t('updateFailed'));
+        } finally {
+            setAvatarUploading(false);
+        }
         return false;
     };
 
     const handleValuesChange = (_: unknown, allValues: Record<string, unknown>) => {
         const initVals = isPartner
             ? {
-                fullName: profile.fullName,
-                phone: profile.phone,
-                companyName: (profile as PartnerDetail).companyName,
-                taxCode: (profile as PartnerDetail).taxCode,
-                nationalId: (profile as PartnerDetail).nationalId,
-                bankAccountNumber: (profile as PartnerDetail).bankAccountNumber,
-                bankName: (profile as PartnerDetail).bankName,
-                address: (profile as PartnerDetail).address,
+                fullName: localProfile.fullName,
+                phone: localProfile.phone,
+                companyName: (localProfile as PartnerDetail).companyName,
+                taxCode: (localProfile as PartnerDetail).taxCode,
+                nationalId: (localProfile as PartnerDetail).nationalId,
+                bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
+                bankName: (localProfile as PartnerDetail).bankName,
+                address: (localProfile as PartnerDetail).address,
             }
             : {
-                fullName: profile.fullName,
-                phone: profile.phone,
-                dateOfBirth: (profile as UserDetail).dateOfBirth
-                    ? dayjs((profile as UserDetail).dateOfBirth).format('YYYY-MM-DD')
-                    : undefined,
-                passportNumber: identity?.passportNumber,
-                emergencyContactName: (profile as UserDetail).emergencyContactName,
-                emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
+                fullName: localProfile.fullName,
+                phone: localProfile.phone,
+                emergencyContactName: (localProfile as UserDetail).emergencyContactName,
+                emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
             };
 
         const changed = Object.keys(initVals).some((key) => {
             const initial = initVals[key as keyof typeof initVals];
-            let current = allValues[key];
-            if (dayjs.isDayjs(current)) {
-                current = current.format('YYYY-MM-DD');
-            }
+            const current = allValues[key];
             return (initial ?? '') !== (current ?? '');
         });
         setHasChanges(changed);
@@ -89,6 +95,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const handleCancel = () => {
         form.resetFields();
         setHasChanges(false);
+        setIsEditing(false);
     };
 
     if (externalLoading) {
@@ -111,26 +118,33 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             </div>
 
             <div className="flex items-center gap-6 pb-6 border-b border-muted">
-                <div className="relative">
-                    <Avatar
-                        size={100}
-                        src={avatarUrl}
-                        icon={<UserOutlined />}
-                        className="bg-primary"
-                    />
+                <div className="relative w-25 h-25">
+                    <Spin spinning={avatarUploading}>
+                        <Avatar
+                            size={100}
+                            src={avatarUrl}
+                            icon={<UserOutlined />}
+                            className="bg-primary"
+                        />
+                    </Spin>
                     <Upload
                         accept="image/*"
                         showUploadList={false}
                         beforeUpload={handleAvatarUpload}
+                        disabled={avatarUploading}
+                        className="absolute inset-0"
                     >
-                        <button className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors">
-                            <CameraOutlined className="text-muted" />
+                        <button
+                            className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
+                            disabled={avatarUploading}
+                        >
+                            <CameraOutlined style={{ color: 'white' }} />
                         </button>
                     </Upload>
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold">{profile.fullName}</h3>
-                    <p className="text-sm text-muted">{profile.email}</p>
+                    <h3 className="text-xl font-semibold">{localProfile.fullName}</h3>
+                    <p className="text-sm text-muted">{localProfile.email}</p>
                     {actorType !== ActorType.USER && (
                         <p className="text-xs text-muted mt-1">
                             {t('accountType')}: <span className="font-medium uppercase">{actorType}</span>
@@ -148,8 +162,6 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         fullName: profile.fullName,
                         email: profile.email,
                         phone: profile.phone,
-                        dateOfBirth: (profile as UserDetail).dateOfBirth ? dayjs((profile as UserDetail).dateOfBirth) : undefined,
-                        passportNumber: identity?.passportNumber,
                         emergencyContactName: (profile as UserDetail).emergencyContactName,
                         emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
                     }}
@@ -160,41 +172,47 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Form.Item
                             label={t('fullName')}
-                            name="fullName"
-                            rules={[{ required: true, message: t('fullNameRequired') }]}
+                            name={isEditing ? 'fullName' : undefined}
+                            rules={isEditing ? [{ required: true, message: t('fullNameRequired') }] : undefined}
                         >
-                            <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
+                            }
+                        </Form.Item>
+
+                        <Form.Item label={t('emailAddress')}>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
                         </Form.Item>
 
                         <Form.Item
-                            label={t('emailAddress')}
-                            name="email"
-                            rules={[
-                                { required: true, message: t('emailRequired') },
-                                { type: 'email', message: t('emailInvalid') },
-                            ]}
+                            label={t('phoneNumber')}
+                            name={isEditing ? 'phone' : undefined}
                         >
-                            <Input size="large" placeholder={t('emailPlaceholder')} disabled />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('phoneNumber')} name="phone">
-                            <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                        <Form.Item
+                            label={t('emergencyContactName')}
+                            name={isEditing ? 'emergencyContactName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('emergencyContactNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactName || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('dateOfBirth')} name="dateOfBirth">
-                            <DatePicker size="large" className="w-full" format="DD/MM/YYYY" />
-                        </Form.Item>
-
-                        <Form.Item label={t('passportNumber')} name="passportNumber">
-                            <Input size="large" placeholder={t('passportNumberPlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('emergencyContactName')} name="emergencyContactName">
-                            <Input size="large" placeholder={t('emergencyContactNamePlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('emergencyContactPhone')} name="emergencyContactPhone">
-                            <Input size="large" placeholder={t('emergencyContactPhonePlaceholder')} />
+                        <Form.Item
+                            label={t('emergencyContactPhone')}
+                            name={isEditing ? 'emergencyContactPhone' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('emergencyContactPhonePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactPhone || '—'}</span>
+                            }
                         </Form.Item>
                     </div>
 
@@ -205,26 +223,118 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                                 <h3 className="font-semibold text-base">{t('cccdTitle')}</h3>
                                 <p className="text-xs text-muted mt-0.5">{t('cccdSubtitle')}</p>
                             </div>
-                            {identity?.isVerified ? (
-                                <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>
-                            ) : (
-                                <Tag icon={<ClockCircleOutlined />} color="warning">{t('pendingVerification')}</Tag>
-                            )}
+                            {identity?.isVerified && <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>}
                         </div>
-                        <Button type="primary" onClick={() => setCccdModalOpen(true)}>
-                            {t('cccdUploadSubmit')}
-                        </Button>
+                        {!identity?.isVerified &&
+                            <Button type="primary" onClick={() => setCccdModalOpen(true)}>
+                                {t('cccdUploadSubmit')}
+                            </Button>}
                     </div>
 
+                    {/* ── Extracted Identity Info ── */}
+                    {identity && (identity.nationalId || identity.name || identity.sex || identity.nationality) && (
+                        <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+                            <h4 className="font-semibold text-sm text-gray-700">{t('identityInfoTitle')}</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                                {identity.nationalId && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('nationalId')}</p>
+                                        <p className="font-medium text-sm">{identity.nationalId}</p>
+                                    </div>
+                                )}
+                                {identity.name && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idName')}</p>
+                                        <p className="font-medium text-sm">{identity.name}</p>
+                                    </div>
+                                )}
+                                {identity.dob && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idDob')}</p>
+                                        <p className="font-medium text-sm">{identity.dob}</p>
+                                    </div>
+                                )}
+                                {identity.sex && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idSex')}</p>
+                                        <p className="font-medium text-sm">{identity.sex}</p>
+                                    </div>
+                                )}
+                                {identity.nationality && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idNationality')}</p>
+                                        <p className="font-medium text-sm">{identity.nationality}</p>
+                                    </div>
+                                )}
+                                {identity.ethnicity && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idEthnicity')}</p>
+                                        <p className="font-medium text-sm">{identity.ethnicity}</p>
+                                    </div>
+                                )}
+                                {identity.home && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idHome')}</p>
+                                        <p className="font-medium text-sm">{identity.home}</p>
+                                    </div>
+                                )}
+                                {identity.address && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idAddress')}</p>
+                                        <p className="font-medium text-sm">{identity.address}</p>
+                                    </div>
+                                )}
+                                {identity.features && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idFeatures')}</p>
+                                        <p className="font-medium text-sm">{identity.features}</p>
+                                    </div>
+                                )}
+                                {identity.issueDate && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idIssueDate')}</p>
+                                        <p className="font-medium text-sm">{identity.issueDate}</p>
+                                    </div>
+                                )}
+                                {identity.doe && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idExpiry')}</p>
+                                        <p className="font-medium text-sm">{identity.doe}</p>
+                                    </div>
+                                )}
+                                {identity.verifiedAt && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idVerifiedAt')}</p>
+                                        <p className="font-medium text-sm">{dayjs(identity.verifiedAt).format('DD/MM/YYYY HH:mm')}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     <div className="flex justify-end gap-3 pt-4">
-                        {hasChanges && (
-                            <Button size="large" onClick={handleCancel}>
-                                {t('cancel')}
+                        {isEditing ? (
+                            <>
+                                <Button size="large" onClick={handleCancel}>
+                                    {t('cancel')}
+                                </Button>
+                                <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
+                                    {t('saveChanges')}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button type="primary" size="large" onClick={() => {
+                                form.setFieldsValue({
+                                    fullName: localProfile.fullName,
+                                    phone: localProfile.phone,
+                                    emergencyContactName: (localProfile as UserDetail).emergencyContactName,
+                                    emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
+                                });
+                                setIsEditing(true);
+                            }}>
+                                {t('edit')}
                             </Button>
                         )}
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
-                            {t('saveChanges')}
-                        </Button>
                     </div>
                 </Form>
             )}
@@ -252,50 +362,88 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Form.Item
                             label={t('fullName')}
-                            name="fullName"
-                            rules={[{ required: true, message: t('fullNameRequired') }]}
+                            name={isEditing ? 'fullName' : undefined}
+                            rules={isEditing ? [{ required: true, message: t('fullNameRequired') }] : undefined}
                         >
-                            <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
+                            }
+                        </Form.Item>
+
+                        <Form.Item label={t('emailAddress')}>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
                         </Form.Item>
 
                         <Form.Item
-                            label={t('emailAddress')}
-                            name="email"
-                            rules={[
-                                { required: true, message: t('emailRequired') },
-                                { type: 'email', message: t('emailInvalid') },
-                            ]}
+                            label={t('phoneNumber')}
+                            name={isEditing ? 'phone' : undefined}
                         >
-                            <Input size="large" placeholder={t('emailPlaceholder')} disabled />
+                            {isEditing
+                                ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('phoneNumber')} name="phone">
-                            <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
+                        <Form.Item
+                            label={t('companyName')}
+                            name={isEditing ? 'companyName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('companyNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).companyName || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('companyName')} name="companyName">
-                            <Input size="large" placeholder={t('companyNamePlaceholder')} />
+                        <Form.Item
+                            label={t('taxCode')}
+                            name={isEditing ? 'taxCode' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('taxCodePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).taxCode || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('taxCode')} name="taxCode">
-                            <Input size="large" placeholder={t('taxCodePlaceholder')} />
+                        <Form.Item
+                            label={t('nationalId')}
+                            name={isEditing ? 'nationalId' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('nationalIdPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).nationalId || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('nationalId')} name="nationalId">
-                            <Input size="large" placeholder={t('nationalIdPlaceholder')} />
+                        <Form.Item
+                            label={t('bankAccountNumber')}
+                            name={isEditing ? 'bankAccountNumber' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('bankAccountNumberPlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankAccountNumber || '—'}</span>
+                            }
                         </Form.Item>
 
-                        <Form.Item label={t('bankAccountNumber')} name="bankAccountNumber">
-                            <Input size="large" placeholder={t('bankAccountNumberPlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('bankName')} name="bankName">
-                            <Input size="large" placeholder={t('bankNamePlaceholder')} />
+                        <Form.Item
+                            label={t('bankName')}
+                            name={isEditing ? 'bankName' : undefined}
+                        >
+                            {isEditing
+                                ? <Input size="large" placeholder={t('bankNamePlaceholder')} />
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankName || '—'}</span>
+                            }
                         </Form.Item>
                     </div>
 
-                    <Form.Item label={t('address')} name="address">
-                        <Input.TextArea rows={3} size="large" placeholder={t('addressPlaceholder')} />
+                    <Form.Item
+                        label={t('address')}
+                        name={isEditing ? 'address' : undefined}
+                    >
+                        {isEditing
+                            ? <Input.TextArea rows={3} size="large" placeholder={t('addressPlaceholder')} />
+                            : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200 whitespace-pre-wrap">{(localProfile as PartnerDetail).address || '—'}</span>
+                        }
                     </Form.Item>
 
                     {/* Read-only contract info */}
@@ -323,14 +471,32 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        {hasChanges && (
-                            <Button size="large" onClick={handleCancel}>
-                                {t('cancel')}
+                        {isEditing ? (
+                            <>
+                                <Button size="large" onClick={handleCancel}>
+                                    {t('cancel')}
+                                </Button>
+                                <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
+                                    {t('saveChanges')}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button type="primary" size="large" onClick={() => {
+                                form.setFieldsValue({
+                                    fullName: localProfile.fullName,
+                                    phone: localProfile.phone,
+                                    companyName: (localProfile as PartnerDetail).companyName,
+                                    taxCode: (localProfile as PartnerDetail).taxCode,
+                                    nationalId: (localProfile as PartnerDetail).nationalId,
+                                    bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
+                                    bankName: (localProfile as PartnerDetail).bankName,
+                                    address: (localProfile as PartnerDetail).address,
+                                });
+                                setIsEditing(true);
+                            }}>
+                                {t('edit')}
                             </Button>
                         )}
-                        <Button type="primary" size="large" htmlType="submit" loading={submitting} disabled={!hasChanges}>
-                            {t('saveChanges')}
-                        </Button>
                     </div>
                 </Form>
             )}

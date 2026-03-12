@@ -5,12 +5,12 @@ import { ProfileLayoutProps } from "@/types/profile";
 import ProfileSidebar from "./profile-sidebar";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/query/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
 
-export default function ProfileLayout({
-  actorType = ActorType.USER,
-  children,
-}: ProfileLayoutProps) {
+export default function ProfileLayout({ children }: ProfileLayoutProps) {
   const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+  const actorType = user?.actorType ?? ActorType.USER;
   const { mutate: logout } = useLogout(() => router.push("/"));
 
   return (
@@ -19,7 +19,7 @@ export default function ProfileLayout({
         <div className="grid grid-cols-1 lg:grid-cols-14 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-3">
-            <div className="sticky top-8">
+            <div className="sticky top-25">
               <ProfileSidebar actorType={actorType} onLogout={() => logout()} />
             </div>
           </div>

@@ -111,6 +111,54 @@ export type PaymentHistory = {
   invoiceUrl?: string;
 };
 
+// ========== Bill Types ==========
+
+export enum BillStatus {
+  UPCOMING = "upcoming",
+  PENDING = "pending",
+  OVERDUE = "overdue",
+  PAID = "paid",
+}
+
+export type Bill = {
+  id: string;
+  billNumber: string;
+  apartmentId: string;
+  apartmentName: string;
+  billType: PaymentType;
+  amount: number;
+  dueDate: string;
+  issueDate: string;
+  status: BillStatus;
+  description?: string;
+  paymentUrl?: string;
+};
+
+// ========== Partner Property Types ==========
+
+export type PartnerProperty = {
+  id: string;
+  buildingName: string;
+  apartmentNumber: string;
+  address: string;
+  city: string;
+  district: string;
+  totalArea: string;
+  numberOfBedrooms: number;
+  numberOfBathrooms: number;
+  status: ApartmentStatus;
+  images: string[] | null;
+  baseRentPrice: number;
+  currentTenant?: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+  };
+  contractEndDate?: string;
+  monthlyRevenue?: number;
+};
+
 // ========== Component Props Types ==========
 
 export type ProfileSidebarProps = {
@@ -137,6 +185,16 @@ export type MyApartmentProps = {
 
 export type PaymentHistoryProps = {
   payments?: PaymentHistory[];
+  loading?: boolean;
+};
+
+export type BillsProps = {
+  bills?: Bill[];
+  loading?: boolean;
+};
+
+export type MyPropertiesProps = {
+  properties?: PartnerProperty[];
   loading?: boolean;
 };
 
