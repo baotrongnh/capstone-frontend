@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, Upload, Button, Tag, App } from 'antd';
+import { Modal, Upload, Button, Tag, App, Alert } from 'antd';
 import { InboxOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -23,16 +23,19 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
     const [frontUrl, setFrontUrl] = useState<string | undefined>(undefined);
     const [backUrl, setBackUrl] = useState<string | undefined>(undefined);
     const [submitting, setSubmitting] = useState(false);
+    const [aiErrorSides, setAiErrorSides] = useState<{ front: boolean; back: boolean } | null>(null);
 
     const handleFrontUpload = (file: File) => {
         setFrontFile(file);
         setFrontUrl(URL.createObjectURL(file));
+        setAiErrorSides(prev => prev ? { ...prev, front: false } : null);
         return false;
     };
 
     const handleBackUpload = (file: File) => {
         setBackFile(file);
         setBackUrl(URL.createObjectURL(file));
+        setAiErrorSides(prev => prev ? { ...prev, back: false } : null);
         return false;
     };
 
@@ -46,8 +49,14 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
             return;
         }
         setSubmitting(true);
+        setAiErrorSides(null);
         try {
-            await verifyIdentity({ identityCardFront: frontFile, identityCardBack: backFile });
+            const result = await verifyIdentity({ identityCardFront: frontFile, identityCardBack: backFile });
+            const { front, back } = result.aiVerification;
+            if (!front.success || !back.success) {
+                setAiErrorSides({ front: !front.success, back: !back.success });
+                return;
+            }
             message.success(t('cccdUploadSuccess'));
             setFrontFile(null);
             setBackFile(null);
@@ -64,6 +73,7 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
         setBackFile(null);
         setFrontUrl(undefined);
         setBackUrl(undefined);
+        setAiErrorSides(null);
         onClose();
     };
 
@@ -74,11 +84,6 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
             title={
                 <div className="flex items-center gap-3">
                     <span className="font-semibold text-base">{t('cccdTitle')}</span>
-                    {identity?.isVerified ? (
-                        <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>
-                    ) : (
-                        <Tag icon={<ClockCircleOutlined />} color="warning">{t('pendingVerification')}</Tag>
-                    )}
                 </div>
             }
             footer={[
@@ -93,13 +98,33 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
                     loading={submitting}
                     disabled={!frontFile || !backFile}
                 >
-                    {t('cccdUploadSubmit')}
+                    {submitting ? t('cccdAiVerifying') : t('cccdUploadSubmit')}
                 </Button>,
             ]}
             width={720}
             centered
         >
             <p className="text-sm text-gray-500 mb-4">{t('cccdSubtitle')}</p>
+            {aiErrorSides && (
+                <Alert
+                    type="error"
+                    showIcon
+                    className="mb-4"
+                    title={t('cccdAiCheckFailedTitle')}
+                    description={
+                        <div>
+                            <p>
+                                {aiErrorSides.front && aiErrorSides.back
+                                    ? t('cccdAiBothFailed')
+                                    : aiErrorSides.front
+                                        ? t('cccdAiFrontFailed')
+                                        : t('cccdAiBackFailed')}
+                            </p>
+                            <p className="mt-1">{t('cccdAiRetryHint')}</p>
+                        </div>
+                    }
+                />
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Front */}
                 <div>

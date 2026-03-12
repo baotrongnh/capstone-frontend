@@ -1,7 +1,8 @@
 'use client';
 
-import { Form, Input, Button, Avatar, DatePicker, Spin, Upload, App, Tag } from 'antd';
-import { UserOutlined, CameraOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from 'antd';
+import { uploadFile } from '@/utils/uploadFile';
+import { UserOutlined, CameraOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { ActorType } from '@/types/auth';
 import { UserDetail, UpdateUserDto } from '@/types/user';
@@ -19,6 +20,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
     const [form] = Form.useForm();
     const [submitting, setSubmitting] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+    const [avatarUploading, setAvatarUploading] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
         'profileImageUrl' in profile ? profile.profileImageUrl : undefined
     );
@@ -42,13 +44,19 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
         }
     };
 
-    const handleAvatarUpload = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const result = e.target?.result;
-            if (typeof result === 'string') setAvatarUrl(result);
-        };
-        reader.readAsDataURL(file);
+    const handleAvatarUpload = async (file: File) => {
+        try {
+            setAvatarUploading(true);
+            const { url } = await uploadFile(file);
+            setAvatarUrl(url);
+            if (onUpdate) {
+                await onUpdate({ profileImageUrl: url });
+            }
+        } catch {
+            message.error(t('updateFailed'));
+        } finally {
+            setAvatarUploading(false);
+        }
         return false;
     };
 
@@ -67,20 +75,13 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             : {
                 fullName: profile.fullName,
                 phone: profile.phone,
-                dateOfBirth: (profile as UserDetail).dateOfBirth
-                    ? dayjs((profile as UserDetail).dateOfBirth).format('YYYY-MM-DD')
-                    : undefined,
-                passportNumber: identity?.passportNumber,
                 emergencyContactName: (profile as UserDetail).emergencyContactName,
                 emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
             };
 
         const changed = Object.keys(initVals).some((key) => {
             const initial = initVals[key as keyof typeof initVals];
-            let current = allValues[key];
-            if (dayjs.isDayjs(current)) {
-                current = current.format('YYYY-MM-DD');
-            }
+            const current = allValues[key];
             return (initial ?? '') !== (current ?? '');
         });
         setHasChanges(changed);
@@ -112,18 +113,24 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
 
             <div className="flex items-center gap-6 pb-6 border-b border-muted">
                 <div className="relative">
-                    <Avatar
-                        size={100}
-                        src={avatarUrl}
-                        icon={<UserOutlined />}
-                        className="bg-primary"
-                    />
+                    <Spin spinning={avatarUploading}>
+                        <Avatar
+                            size={100}
+                            src={avatarUrl}
+                            icon={<UserOutlined />}
+                            className="bg-primary"
+                        />
+                    </Spin>
                     <Upload
                         accept="image/*"
                         showUploadList={false}
                         beforeUpload={handleAvatarUpload}
+                        disabled={avatarUploading}
                     >
-                        <button className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors">
+                        <button
+                            className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            disabled={avatarUploading}
+                        >
                             <CameraOutlined className="text-muted" />
                         </button>
                     </Upload>
@@ -148,8 +155,6 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         fullName: profile.fullName,
                         email: profile.email,
                         phone: profile.phone,
-                        dateOfBirth: (profile as UserDetail).dateOfBirth ? dayjs((profile as UserDetail).dateOfBirth) : undefined,
-                        passportNumber: identity?.passportNumber,
                         emergencyContactName: (profile as UserDetail).emergencyContactName,
                         emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
                     }}
@@ -179,14 +184,6 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
 
                         <Form.Item label={t('phoneNumber')} name="phone">
                             <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
-                        </Form.Item>
-
-                        <Form.Item label={t('dateOfBirth')} name="dateOfBirth">
-                            <DatePicker size="large" className="w-full" format="DD/MM/YYYY" />
-                        </Form.Item>
-
-                        <Form.Item label={t('passportNumber')} name="passportNumber">
-                            <Input size="large" placeholder={t('passportNumberPlaceholder')} />
                         </Form.Item>
 
                         <Form.Item label={t('emergencyContactName')} name="emergencyContactName">

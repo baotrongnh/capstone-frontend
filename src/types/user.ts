@@ -84,9 +84,6 @@ export type UpdateUserDto = {
   phone?: string;
   fullName?: string;
   password?: string;
-  dateOfBirth?: string;
-  nationalId?: string;
-  passportNumber?: string;
   profileImageUrl?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
