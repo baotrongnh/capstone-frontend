@@ -412,6 +412,71 @@
         "asiaHoChiMinh": "Asia/Ho Chi Minh",
         "americaNewYork": "America/New York"
       }
+    },
+    "bills": {
+      "title": "My Bills",
+      "subtitle": "View and pay your upcoming and pending bills",
+      "noBills": "No bills found",
+      "noResults": "No bills match your filter",
+      "billNumber": "Bill No.",
+      "type": "Type",
+      "apartment": "Apartment",
+      "description": "Description",
+      "issueDate": "Issue Date",
+      "dueDate": "Due Date",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "payNow": "Pay Now",
+      "all": "All",
+      "overdueAlert": "{count} bill(s) are overdue!",
+      "pendingAlert": "{count} bill(s) are pending payment",
+      "totalDueDesc": "Total amount due:",
+      "totalItems": "Total {total} bills",
+      "types": {
+        "rent": "Rent",
+        "electricity": "Electricity",
+        "water": "Water",
+        "maintenance": "Maintenance",
+        "deposit": "Deposit",
+        "other": "Other"
+      },
+      "statuses": {
+        "upcoming": "Upcoming",
+        "pending": "Pending",
+        "overdue": "Overdue",
+        "paid": "Paid"
+      }
+    },
+    "properties": {
+      "title": "My Properties",
+      "subtitle": "Manage all your listed properties",
+      "addProperty": "Add Property",
+      "noProperties": "You have no properties listed yet",
+      "noResults": "No properties match your search",
+      "searchPlaceholder": "Search by name or address...",
+      "allStatuses": "All Statuses",
+      "loading": "Loading...",
+      "view": "View",
+      "edit": "Edit",
+      "beds": "beds",
+      "baths": "baths",
+      "vacant": "Vacant",
+      "contractEnds": "Contract ends",
+      "stats": {
+        "total": "Total Properties",
+        "available": "Available",
+        "occupied": "Occupied",
+        "monthlyRevenue": "Monthly Revenue"
+      },
+      "status": {
+        "available": "Available",
+        "occupied": "Occupied",
+        "maintenance": "Maintenance",
+        "reserved": "Reserved",
+        "inactive": "Inactive"
+      }
     }
   },
   "ApartmentListPage": {

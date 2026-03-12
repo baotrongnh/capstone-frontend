@@ -412,6 +412,71 @@
         "asiaHoChiMinh": "Asia/Hồ Chí Minh",
         "americaNewYork": "America/New York"
       }
+    },
+    "bills": {
+      "title": "Hóa đơn của tôi",
+      "subtitle": "Xem và thanh toán các hóa đơn sắp tới và đang chờ xử lý",
+      "noBills": "Không tìm thấy hóa đơn",
+      "noResults": "Không có hóa đơn nào phù hợp với bộ lọc",
+      "billNumber": "Số hóa đơn",
+      "type": "Loại",
+      "apartment": "Căn hộ",
+      "description": "Mô tả",
+      "issueDate": "Ngày phát hành",
+      "dueDate": "Ngày đến hạn",
+      "amount": "Số tiền",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "view": "Xem",
+      "payNow": "Thanh toán ngay",
+      "all": "Tất cả",
+      "overdueAlert": "{count} hóa đơn đã quá hạn!",
+      "pendingAlert": "{count} hóa đơn đang chờ thanh toán",
+      "totalDueDesc": "Tổng số tiền cần thanh toán:",
+      "totalItems": "Tổng cộng {total} hóa đơn",
+      "types": {
+        "rent": "Tiền thuê",
+        "electricity": "Điện",
+        "water": "Nước",
+        "maintenance": "Bảo trì",
+        "deposit": "Đặt cọc",
+        "other": "Khác"
+      },
+      "statuses": {
+        "upcoming": "Sắp tới",
+        "pending": "Chờ thanh toán",
+        "overdue": "Quá hạn",
+        "paid": "Đã thanh toán"
+      }
+    },
+    "properties": {
+      "title": "Bất động sản của tôi",
+      "subtitle": "Quản lý tất cả bất động sản đã đăng của bạn",
+      "addProperty": "Thêm bất động sản",
+      "noProperties": "Bạn chưa có bất động sản nào",
+      "noResults": "Không có bất động sản nào phù hợp với tìm kiếm",
+      "searchPlaceholder": "Tìm theo tên hoặc địa chỉ...",
+      "allStatuses": "Tất cả trạng thái",
+      "loading": "Đang tải...",
+      "view": "Xem",
+      "edit": "Chỉnh sửa",
+      "beds": "phòng ngủ",
+      "baths": "phòng tắm",
+      "vacant": "Trống",
+      "contractEnds": "Hợp đồng kết thúc",
+      "stats": {
+        "total": "Tổng bất động sản",
+        "available": "Còn trống",
+        "occupied": "Đã cho thuê",
+        "monthlyRevenue": "Doanh thu tháng"
+      },
+      "status": {
+        "available": "Còn trống",
+        "occupied": "Đã có người ở",
+        "maintenance": "Bảo trì",
+        "reserved": "Đã đặt trước",
+        "inactive": "Không hoạt động"
+      }
     }
   },
   "ApartmentListPage": {
