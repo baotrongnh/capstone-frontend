@@ -5,7 +5,7 @@ import { InboxOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-de
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { UserIdentity } from '@/types/user';
-import { useUpdateIdentityCard } from '@/hooks/query/useUser';
+import { useVerifyIdentity } from '@/hooks/query/useUser';
 
 interface ModalIdentityCardProps {
     open: boolean;
@@ -16,12 +16,12 @@ interface ModalIdentityCardProps {
 export default function ModalIdentityCard({ open, onClose, identity }: ModalIdentityCardProps) {
     const t = useTranslations('Profile.account');
     const { message } = App.useApp();
-    const { mutateAsync: updateIdentityCard } = useUpdateIdentityCard();
+    const { mutateAsync: verifyIdentity } = useVerifyIdentity();
 
     const [frontFile, setFrontFile] = useState<File | null>(null);
     const [backFile, setBackFile] = useState<File | null>(null);
-    const [frontUrl, setFrontUrl] = useState<string | undefined>(identity?.identityCardFrontUrl);
-    const [backUrl, setBackUrl] = useState<string | undefined>(identity?.identityCardBackUrl);
+    const [frontUrl, setFrontUrl] = useState<string | undefined>(undefined);
+    const [backUrl, setBackUrl] = useState<string | undefined>(undefined);
     const [submitting, setSubmitting] = useState(false);
 
     const handleFrontUpload = (file: File) => {
@@ -41,9 +41,13 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
             message.warning(t('cccdFrontRequired'));
             return;
         }
+        if (!backFile) {
+            message.warning(t('cccdBackRequired'));
+            return;
+        }
         setSubmitting(true);
         try {
-            await updateIdentityCard({ front: frontFile, back: backFile ?? undefined });
+            await verifyIdentity({ identityCardFront: frontFile, identityCardBack: backFile });
             message.success(t('cccdUploadSuccess'));
             setFrontFile(null);
             setBackFile(null);
@@ -58,8 +62,8 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
     const handleClose = () => {
         setFrontFile(null);
         setBackFile(null);
-        setFrontUrl(identity?.identityCardFrontUrl);
-        setBackUrl(identity?.identityCardBackUrl);
+        setFrontUrl(undefined);
+        setBackUrl(undefined);
         onClose();
     };
 
@@ -87,7 +91,7 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
                     size="large"
                     onClick={handleSubmit}
                     loading={submitting}
-                    disabled={!frontFile}
+                    disabled={!frontFile || !backFile}
                 >
                     {t('cccdUploadSubmit')}
                 </Button>,

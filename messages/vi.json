@@ -281,6 +281,7 @@
       "cccdBackUploadSuccess": "Tải lên ảnh mặt sau thành công",
       "cccdUploadFailed": "Tải ảnh thất bại. Vui lòng thử lại.",
       "cccdFrontRequired": "Vui lòng tải lên mặt trước của CCCD.",
+      "cccdBackRequired": "Vui lòng tải lên mặt sau của CCCD.",
       "cccdUploadSuccess": "Tải lên và xác minh CCCD thành công.",
       "cccdUploadSubmit": "Tải lên CCCD",
       "verified": "Đã xác minh",

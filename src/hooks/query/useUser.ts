@@ -64,3 +64,14 @@ export const useUpdateIdentityCard = () => {
     },
   });
 };
+
+export const useVerifyIdentity = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { identityCardFront: File; identityCardBack: File }) =>
+      userService.verifyIdentity(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+    },
+  });
+};

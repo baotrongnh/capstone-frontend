@@ -281,6 +281,7 @@
       "cccdBackUploadSuccess": "Back image uploaded successfully",
       "cccdUploadFailed": "Image upload failed. Please try again.",
       "cccdFrontRequired": "Please upload the front side of your ID card.",
+      "cccdBackRequired": "Please upload the back side of your ID card.",
       "cccdUploadSuccess": "ID card uploaded and verified successfully.",
       "cccdUploadSubmit": "Upload ID Card",
       "verified": "Verified",
