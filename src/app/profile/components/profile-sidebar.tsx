@@ -138,17 +138,18 @@ export default function ProfileSidebar({
   }, [pathname, navigationItems]);
 
   return (
-    <div className="h-full flex flex-col shadow-sm">
-      <div className="flex-1 overflow-y-auto">
+    <div className="h-full flex flex-col shadow-sm bg-white">
+      <div className="flex-1 overflow-y-auto p-2">
         <Menu
           mode="inline"
           selectedKeys={[activeKey]}
           items={menuItems}
-          className="border-0"
+          className="border-0 p-0 m-0"
+          style={{borderRight: 0}}
         />
       </div>
 
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 p-4 bg-white ">
         <button
           onClick={onLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"

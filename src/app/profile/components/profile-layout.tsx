@@ -19,7 +19,7 @@ export default function ProfileLayout({
         <div className="grid grid-cols-1 lg:grid-cols-14 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-3">
-            <div className="sticky top-8">
+            <div className="sticky top-25">
               <ProfileSidebar actorType={actorType} onLogout={() => logout()} />
             </div>
           </div>
