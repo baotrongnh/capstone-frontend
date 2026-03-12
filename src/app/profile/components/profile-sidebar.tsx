@@ -43,6 +43,13 @@ const getNavigationItems = (
       roles: [ActorType.PARTNER],
     },
     {
+      key: "contracts",
+      label: t("sidebar.myContracts"),
+      icon: <FileTextOutlined />,
+      path: "/profile/contracts",
+      roles: [ActorType.USER, ActorType.PARTNER],
+    },
+    {
       key: "bills",
       label: t("sidebar.myBills"),
       icon: <FileTextOutlined />,
