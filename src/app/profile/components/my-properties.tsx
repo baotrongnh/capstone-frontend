@@ -110,7 +110,7 @@ export default function MyPropertiesComponent({ properties = [], loading = false
                         <Statistic
                             title={t('stats.available')}
                             value={stats.available}
-                            valueStyle={{ color: '#16a34a' }}
+                            styles={{ content: { color: '#16a34a' } }}
                         />
                     </Card>
                 </Col>
@@ -119,7 +119,7 @@ export default function MyPropertiesComponent({ properties = [], loading = false
                         <Statistic
                             title={t('stats.occupied')}
                             value={stats.occupied}
-                            valueStyle={{ color: '#2563eb' }}
+                            styles={{ content: { color: '#2563eb' } }}
                         />
                     </Card>
                 </Col>
@@ -130,7 +130,7 @@ export default function MyPropertiesComponent({ properties = [], loading = false
                             value={stats.totalRevenue}
                             prefix={<DollarOutlined />}
                             precision={0}
-                            valueStyle={{ color: '#7c3aed' }}
+                            styles={{ content: { color: '#7c3aed' } }}
                         />
                     </Card>
                 </Col>
