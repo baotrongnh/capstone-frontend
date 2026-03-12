@@ -253,6 +253,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/profile/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my identity information */
+        get: operations["UsersController_getProfileIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/profile/verify-identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify identity card via AI (front + back)
+         * @description Upload front and back identity card images. AI will extract information from both sides and store extracted data. Images are NOT saved.
+         */
+        post: operations["UsersController_verifyIdentityCard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{id}": {
         parameters: {
             query?: never;
@@ -270,6 +307,40 @@ export interface paths {
         head?: never;
         /** Update user */
         patch: operations["UsersController_update"];
+        trace?: never;
+    };
+    "/api/v1/users/{id}/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user identity by user ID */
+        get: operations["UsersController_findIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Verify user identity (staff confirms user info) */
+        patch: operations["UsersController_verifyUser"];
         trace?: never;
     };
     "/api/v1/apartments/search": {
@@ -1715,6 +1786,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my reservations */
+        get: operations["ReservationsController_findMyReservations"];
+        put?: never;
+        /**
+         * Create a reservation
+         * @description User must be verified (isVerified = true). Apartment must be available. Sets apartment status to reserved.
+         */
+        post: operations["ReservationsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reservations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get reservation by ID */
+        get: operations["ReservationsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reservations/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Cancel a reservation
+         * @description Cancels the reservation and sets apartment status back to available.
+         */
+        patch: operations["ReservationsController_cancel"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1840,19 +1969,64 @@ export interface components {
              */
             newPassword: string;
         };
+        UserIdentityDetailDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example 012345678901 */
+            nationalId?: Record<string, never> | null;
+            /** @example A12345678 */
+            passportNumber?: Record<string, never> | null;
+            /** @example Nguyen Van A */
+            name?: Record<string, never> | null;
+            /** @example 01/01/1990 */
+            dob?: Record<string, never> | null;
+            /** @example M */
+            sex?: Record<string, never> | null;
+            /** @example Việt Nam */
+            nationality?: Record<string, never> | null;
+            /** @example Kinh */
+            ethnicity?: Record<string, never> | null;
+            /** @example Ha Noi */
+            home?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao, Hoan Kiem, Ha Noi */
+            address?: Record<string, never> | null;
+            /** @example Ha Noi */
+            province?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            district?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            ward?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao */
+            street?: Record<string, never> | null;
+            /** @example Sẹo 2cm trán phải */
+            features?: Record<string, never> | null;
+            /** @example 01/01/2020 */
+            issueDate?: Record<string, never> | null;
+            /** @example 01/01/2030 */
+            doe?: Record<string, never> | null;
+            /** @example false */
+            isVerified: boolean;
+            /** @example 2026-03-10T10:30:00.000Z */
+            verifiedAt?: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         UserListItemDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
             /** @example 1990-05-15T00:00:00.000Z */
             dateOfBirth?: Record<string, never> | null;
             /** @example https://example.com/avatar.jpg */
             profileImageUrl?: Record<string, never> | null;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
@@ -1892,46 +2066,56 @@ export interface components {
             rentalContract: components["schemas"]["ContractSummaryDto"];
         };
         UserDetailDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
-            /** @example 012345678901 */
-            nationalId?: Record<string, never> | null;
-            /** @example A12345678 */
-            passportNumber?: Record<string, never> | null;
-            profileImageUrl?: string | null;
-            emergencyContactName?: string | null;
-            emergencyContactPhone?: string | null;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example Tran Thi B */
+            emergencyContactName?: Record<string, never> | null;
+            /** @example 0987654321 */
+            emergencyContactPhone?: Record<string, never> | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
-            /** Format: date-time */
-            lastLoginAt?: string | null;
+            /** @example 2026-03-10T10:30:00.000Z */
+            lastLoginAt?: Record<string, never> | null;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            contractMemberships: components["schemas"]["ContractMembershipDto"][];
+            contractMemberships?: components["schemas"]["ContractMembershipDto"][] | null;
         };
         UserCreatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
             /** Format: date-time */
             createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         CreateUserDto: {
             /**
@@ -1986,17 +2170,25 @@ export interface components {
             emergencyContactPhone?: string;
         };
         UserUpdatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: Record<string, never> | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
-            profileImageUrl?: string | null;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            /** @example Tran Thi B */
+            emergencyContactName?: Record<string, never> | null;
+            /** @example 0987654321 */
+            emergencyContactPhone?: Record<string, never> | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
             /** Format: date-time */
             updatedAt: string;
@@ -2060,12 +2252,30 @@ export interface components {
             /** @description Whether the user email is verified */
             isVerified?: boolean;
         };
-        UserDeletedDto: {
+        UserVerifiedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example true */
+            isVerified: boolean;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UserDeletedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example Nguyen Van A */
+            fullName: string;
             /** @example false */
             isActive: boolean;
+            /** Format: date-time */
+            updatedAt: string;
         };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
@@ -4369,6 +4579,62 @@ export interface components {
              */
             notes?: string;
         };
+        ReservationApartmentDto: {
+            id: string;
+            /** @example A101 */
+            apartmentNumber: string;
+            /** @example 123 Nguyen Hue, Q1 */
+            address: string;
+            /** @example 15000000.00 */
+            baseRentPrice: string;
+        };
+        ReservationResponseDto: {
+            id: string;
+            userId: string;
+            apartmentId: string;
+            /** Format: date-time */
+            desiredStartDate: string;
+            /** Format: date-time */
+            desiredEndDate: string;
+            numberOfOccupants?: number | null;
+            specialRequests?: string | null;
+            /** @example pending */
+            status: string;
+            /** Format: date-time */
+            expiresAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            apartment: components["schemas"]["ReservationApartmentDto"];
+        };
+        CreateReservationDto: {
+            /**
+             * @description Apartment ID to reserve
+             * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+             */
+            apartmentId: string;
+            /**
+             * @description Desired move-in / start date (ISO format)
+             * @example 2026-04-01
+             */
+            desiredStartDate: string;
+            /**
+             * @description Desired end date (ISO format)
+             * @example 2027-04-01
+             */
+            desiredEndDate: string;
+            /**
+             * @description Number of occupants
+             * @example 2
+             */
+            numberOfOccupants?: number;
+            /**
+             * @description Any special requests
+             * @example Need parking spot
+             */
+            specialRequests?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -4746,6 +5012,8 @@ export interface operations {
             query?: {
                 /** @description Search by email, name, or phone */
                 search?: string;
+                page?: number;
+                limit?: number;
             };
             header?: never;
             path?: never;
@@ -4753,7 +5021,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of users */
+            /** @description Paginated list of users */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -4768,6 +5036,14 @@ export interface operations {
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
+                            /** @example 25 */
+                            total?: number;
+                            /** @example 1 */
+                            page?: number;
+                            /** @example 10 */
+                            limit?: number;
+                            /** @example 3 */
+                            totalPages?: number;
                         };
                     };
                 };
@@ -4824,7 +5100,25 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description User profile */
+            /** @description User/Staff/Operator/Admin profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_getProfileIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User identity information */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -4835,13 +5129,68 @@ export interface operations {
                         statusCode?: number;
                         /** @example Success */
                         message?: string;
-                        data?: components["schemas"]["UserDetailDto"];
+                        data?: components["schemas"]["UserIdentityDetailDto"];
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
                         };
                     };
                 };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_verifyIdentityCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload front and back identity card images for AI to extract information. Images are NOT stored. */
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Front image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardFront: string;
+                    /**
+                     * Format: binary
+                     * @description Back image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardBack: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Identity card verified and info extracted from both sides */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid image files or unsupported format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -4959,6 +5308,91 @@ export interface operations {
             };
             /** @description User not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_findIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User identity information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_verifyUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User verified successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserVerifiedDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User is already verified */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8821,6 +9255,176 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_findMyReservations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of user reservations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    ReservationsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateReservationDto"];
+            };
+        };
+        responses: {
+            /** @description Reservation created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not verified or invalid data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User or apartment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Apartment not available or duplicate reservation */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reservation details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Reservation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reservation cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Reservation already cancelled or expired */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Reservation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
