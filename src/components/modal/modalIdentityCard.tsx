@@ -1,19 +1,13 @@
 'use client';
 
-import { Modal, Upload, Button, Tag, App, Alert } from 'antd';
-import { InboxOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { UserIdentity } from '@/types/user';
 import { useVerifyIdentity } from '@/hooks/query/useUser';
+import { ModalIdentityCardProps } from '@/types/user';
+import { InboxOutlined } from '@ant-design/icons';
+import { Alert, App, Button, Modal, Upload } from 'antd';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
-interface ModalIdentityCardProps {
-    open: boolean;
-    onClose: () => void;
-    identity?: UserIdentity;
-}
-
-export default function ModalIdentityCard({ open, onClose, identity }: ModalIdentityCardProps) {
+export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardProps) {
     const t = useTranslations('Profile.account');
     const { message } = App.useApp();
     const { mutateAsync: verifyIdentity } = useVerifyIdentity();

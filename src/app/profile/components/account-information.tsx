@@ -112,7 +112,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
             </div>
 
             <div className="flex items-center gap-6 pb-6 border-b border-muted">
-                <div className="relative">
+                <div className="relative w-25 h-25">
                     <Spin spinning={avatarUploading}>
                         <Avatar
                             size={100}
@@ -126,12 +126,13 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         showUploadList={false}
                         beforeUpload={handleAvatarUpload}
                         disabled={avatarUploading}
+                        className="absolute inset-0"
                     >
                         <button
-                            className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
                             disabled={avatarUploading}
                         >
-                            <CameraOutlined className="text-muted" />
+                            <CameraOutlined style={{color: 'white'}} />
                         </button>
                     </Upload>
                 </div>

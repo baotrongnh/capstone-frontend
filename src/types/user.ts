@@ -102,3 +102,9 @@ export type UpdateUserResponse = {
   isVerified: boolean;
   updatedAt: string;
 };
+
+export type ModalIdentityCardProps = {
+  open: boolean;
+  onClose: () => void;
+  identity?: UserIdentity;
+}
