@@ -205,16 +205,94 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                                 <h3 className="font-semibold text-base">{t('cccdTitle')}</h3>
                                 <p className="text-xs text-muted mt-0.5">{t('cccdSubtitle')}</p>
                             </div>
-                            {identity?.isVerified ? (
-                                <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>
-                            ) : (
-                                <Tag icon={<ClockCircleOutlined />} color="warning">{t('pendingVerification')}</Tag>
-                            )}
+                            {identity?.isVerified && <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>}
                         </div>
-                        <Button type="primary" onClick={() => setCccdModalOpen(true)}>
-                            {t('cccdUploadSubmit')}
-                        </Button>
+                        {!identity?.isVerified &&
+                            <Button type="primary" onClick={() => setCccdModalOpen(true)}>
+                                {t('cccdUploadSubmit')}
+                            </Button>}
                     </div>
+
+                    {/* ── Extracted Identity Info ── */}
+                    {identity && (identity.nationalId || identity.name || identity.sex || identity.nationality) && (
+                        <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+                            <h4 className="font-semibold text-sm text-gray-700">{t('identityInfoTitle')}</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                                {identity.nationalId && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('nationalId')}</p>
+                                        <p className="font-medium text-sm">{identity.nationalId}</p>
+                                    </div>
+                                )}
+                                {identity.name && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idName')}</p>
+                                        <p className="font-medium text-sm">{identity.name}</p>
+                                    </div>
+                                )}
+                                {identity.dob && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idDob')}</p>
+                                        <p className="font-medium text-sm">{identity.dob}</p>
+                                    </div>
+                                )}
+                                {identity.sex && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idSex')}</p>
+                                        <p className="font-medium text-sm">{identity.sex}</p>
+                                    </div>
+                                )}
+                                {identity.nationality && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idNationality')}</p>
+                                        <p className="font-medium text-sm">{identity.nationality}</p>
+                                    </div>
+                                )}
+                                {identity.ethnicity && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idEthnicity')}</p>
+                                        <p className="font-medium text-sm">{identity.ethnicity}</p>
+                                    </div>
+                                )}
+                                {identity.home && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idHome')}</p>
+                                        <p className="font-medium text-sm">{identity.home}</p>
+                                    </div>
+                                )}
+                                {identity.address && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idAddress')}</p>
+                                        <p className="font-medium text-sm">{identity.address}</p>
+                                    </div>
+                                )}
+                                {identity.features && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idFeatures')}</p>
+                                        <p className="font-medium text-sm">{identity.features}</p>
+                                    </div>
+                                )}
+                                {identity.issueDate && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idIssueDate')}</p>
+                                        <p className="font-medium text-sm">{identity.issueDate}</p>
+                                    </div>
+                                )}
+                                {identity.doe && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idExpiry')}</p>
+                                        <p className="font-medium text-sm">{identity.doe}</p>
+                                    </div>
+                                )}
+                                {identity.verifiedAt && (
+                                    <div>
+                                        <p className="text-xs text-muted mb-0.5">{t('idVerifiedAt')}</p>
+                                        <p className="font-medium text-sm">{dayjs(identity.verifiedAt).format('DD/MM/YYYY HH:mm')}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-3 pt-4">
                         {hasChanges && (
