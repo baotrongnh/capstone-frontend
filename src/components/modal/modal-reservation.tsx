@@ -32,7 +32,7 @@ import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { useUpdateUserCardImages, useUserProfile } from "@/hooks/query/useUser";
 import { useApartment } from "@/hooks/query/useApartments";
-import ModalWaitingVerify from "./modalWaitingVerify";
+import ModalWaitingVerify from "./modal-waiting-verify";
 import { useCreateReservations } from "@/hooks/query/useReservations";
 
 import { ROUTES } from "@/constants/routes";
@@ -57,6 +57,9 @@ export default function ModalReservation({
   const { data: profile } = useUserProfile(!!userId && open);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
+
+  console.log("first", apartmentId);
+  console.log("apt", apartment);
 
   const { mutateAsync: createReservation } = useCreateReservations();
 

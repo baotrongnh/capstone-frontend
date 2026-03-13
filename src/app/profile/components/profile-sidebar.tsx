@@ -9,6 +9,7 @@ import {
   LogoutOutlined,
   FileTextOutlined,
   ApartmentOutlined,
+  ContactsOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ActorType } from "@/types/auth";
@@ -45,7 +46,7 @@ const getNavigationItems = (
     {
       key: "contracts",
       label: t("sidebar.myContracts"),
-      icon: <FileTextOutlined />,
+      icon: <ContactsOutlined />,
       path: "/profile/contracts",
       roles: [ActorType.USER, ActorType.PARTNER],
     },

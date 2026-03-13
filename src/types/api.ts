@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Health Check */
+        /** Health Check Backend */
         get: operations["AppController_healthCheck"];
         put?: never;
         post?: never;
@@ -352,7 +352,7 @@ export interface paths {
         };
         /**
          * Search apartments
-         * @description Public endpoint to search available apartments with filters
+         * @description Public endpoint to search apartments with filters. If status is not provided, all statuses are returned.
          */
         get: operations["ApartmentsController_search"];
         put?: never;
@@ -451,6 +451,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contracts/pdf/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * View contract PDF (public with token)
+         * @description View contract PDF using a signed token. Token is valid for 5 minutes.
+         */
+        get: operations["ContractsController_viewPdfPublic"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contracts/{id}": {
         parameters: {
             query?: never;
@@ -467,6 +487,26 @@ export interface paths {
         head?: never;
         /** Update contract */
         patch: operations["ContractsController_update"];
+        trace?: never;
+    };
+    "/api/v1/contracts/{id}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download contract PDF
+         * @description Download the generated PDF document for a contract.
+         */
+        get: operations["ContractsController_downloadPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/contracts/{id}/activate": {
@@ -1118,6 +1158,44 @@ export interface paths {
         get: operations["PartnersController_getMyProfile"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update own partner profile */
+        patch: operations["PartnersController_updateProfile"];
+        trace?: never;
+    };
+    "/api/v1/partners/profile/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get own identity information */
+        get: operations["PartnersController_getProfileIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/partners/profile/verify-identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify identity card via AI (front + back)
+         * @description Upload front and back identity card images. AI will extract information from both sides and store extracted data. Images are NOT saved.
+         */
+        post: operations["PartnersController_verifyIdentityCard"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2284,16 +2362,30 @@ export interface components {
             buildingName?: string | null;
             /** @example R1-801 */
             apartmentNumber: string;
-            /** @example STANDARD */
-            apartmentType?: string | null;
             /** @example 8 */
             floorNumber?: number | null;
             /** @example 92 Nguyễn Hữu Cảnh */
             address: string;
-            /** @example Hồ Chí Minh */
-            city: string;
-            /** @example Quận Bình Thạnh */
-            district: string;
+            /**
+             * @description Tỉnh/Thành phố (sau sáp nhập)
+             * @example Hồ Chí Minh
+             */
+            city?: string | null;
+            /**
+             * @description Quận/Huyện (sau sáp nhập)
+             * @example Quận Bình Thạnh
+             */
+            district?: string | null;
+            /**
+             * @description Tỉnh/Thành phố (trước sáp nhập)
+             * @example Thành phố Hồ Chí Minh
+             */
+            oldCity?: string | null;
+            /**
+             * @description Quận/Huyện (trước sáp nhập)
+             * @example Quận 9
+             */
+            oldDistrict?: string | null;
             /** @example 55 */
             totalArea: string;
             /** @example 1 */
@@ -2353,8 +2445,6 @@ export interface components {
             buildingName?: string | null;
             /** @example R1-801 */
             apartmentNumber: string;
-            /** @example STANDARD */
-            apartmentType?: string | null;
             /** @example 2 */
             maxConcurrentViewings: number;
             /** @example 8 */
@@ -2367,6 +2457,21 @@ export interface components {
             district: string;
             /** @example Phường 22 */
             ward?: string | null;
+            /**
+             * @description Tỉnh/Thành phố (trước sáp nhập)
+             * @example Thành phố Hồ Chí Minh
+             */
+            oldCity?: string | null;
+            /**
+             * @description Quận/Huyện (trước sáp nhập)
+             * @example Quận 9
+             */
+            oldDistrict?: string | null;
+            /**
+             * @description Phường/Xã (trước sáp nhập)
+             * @example Phường Long Thạnh Mỹ
+             */
+            oldWard?: string | null;
             /** @example 10.788 */
             latitude?: string | null;
             /** @example 106.7195 */
@@ -2446,6 +2551,21 @@ export interface components {
             district: string;
             /** @example Ward 22 */
             ward?: string;
+            /**
+             * @description Tỉnh/Thành phố (trước sáp nhập)
+             * @example Thành phố Hồ Chí Minh
+             */
+            oldCity?: string;
+            /**
+             * @description Quận/Huyện (trước sáp nhập)
+             * @example Quận 9
+             */
+            oldDistrict?: string;
+            /**
+             * @description Phường/Xã (trước sáp nhập)
+             * @example Phường Long Thạnh Mỹ
+             */
+            oldWard?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2520,6 +2640,21 @@ export interface components {
             district?: string;
             /** @example Ward 22 */
             ward?: string;
+            /**
+             * @description Tỉnh/Thành phố (trước sáp nhập)
+             * @example Thành phố Hồ Chí Minh
+             */
+            oldCity?: string;
+            /**
+             * @description Quận/Huyện (trước sáp nhập)
+             * @example Quận 9
+             */
+            oldDistrict?: string;
+            /**
+             * @description Phường/Xã (trước sáp nhập)
+             * @example Phường Long Thạnh Mỹ
+             */
+            oldWard?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2615,6 +2750,10 @@ export interface components {
             monthlyRent: string;
             /** Format: date-time */
             createdAt: string;
+            /** @example true */
+            hasPdf: boolean;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            pdfUrl?: string | null;
             apartment: components["schemas"]["ContractApartmentDto"];
         };
         ContractMemberUserDto: {
@@ -2664,6 +2803,10 @@ export interface components {
             /** Format: date-time */
             signedDate?: string | null;
             contractDocumentUrl?: string | null;
+            /** @example true */
+            hasPdf: boolean;
+            /** @example /contracts/9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf/pdf */
+            pdfUrl: string;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -3750,6 +3893,68 @@ export interface components {
             paymentTerms?: string | null;
             isVerified: boolean;
             isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdatePartnerProfileDto: {
+            /** @example Nguyễn Văn A */
+            fullName?: string;
+            /** @example 0901234567 */
+            phone?: string;
+            /** @example partner@company.com */
+            email?: string;
+            /** @example Công ty TNHH ABC */
+            companyName?: string;
+            /** @example 0123456789 */
+            taxCode?: string;
+            /** @example 9704 0000 1234 5678 */
+            bankAccountNumber?: string;
+            /** @example Vietcombank */
+            bankName?: string;
+            /** @example 123 Nguyễn Huệ, Q1, TP.HCM */
+            address?: string;
+        };
+        PartnerIdentityDetailDto: {
+            id: string;
+            partnerId: string;
+            /** @example 012345678901 */
+            nationalId?: Record<string, never> | null;
+            /** @example A12345678 */
+            passportNumber?: Record<string, never> | null;
+            /** @example Nguyen Van A */
+            name?: Record<string, never> | null;
+            /** @example 01/01/1990 */
+            dob?: Record<string, never> | null;
+            /** @example M */
+            sex?: Record<string, never> | null;
+            /** @example Việt Nam */
+            nationality?: Record<string, never> | null;
+            /** @example Kinh */
+            ethnicity?: Record<string, never> | null;
+            /** @example Ha Noi */
+            home?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao, Hoan Kiem, Ha Noi */
+            address?: Record<string, never> | null;
+            /** @example Ha Noi */
+            province?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            district?: Record<string, never> | null;
+            /** @example Hoan Kiem */
+            ward?: Record<string, never> | null;
+            /** @example 123 Tran Hung Dao */
+            street?: Record<string, never> | null;
+            /** @example Sẹo 2cm trán phải */
+            features?: Record<string, never> | null;
+            /** @example 01/01/2020 */
+            issueDate?: Record<string, never> | null;
+            /** @example 01/01/2030 */
+            doe?: Record<string, never> | null;
+            /** @example false */
+            isVerified: boolean;
+            /** @example 2026-03-10T10:30:00.000Z */
+            verifiedAt?: Record<string, never> | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -5405,6 +5610,8 @@ export interface operations {
             query?: {
                 city?: string;
                 district?: string;
+                /** @description Address type to search: new (post-merger), old (pre-merger), both (default: both) */
+                addressType?: "new" | "old" | "both";
                 keyword?: string;
                 /** @description Minimum bedrooms */
                 minBedrooms?: number;
@@ -5419,6 +5626,7 @@ export interface operations {
                 /** @description Maximum area m² */
                 maxArea?: number;
                 furnishingStatus?: "unfurnished" | "semi_furnished" | "fully_furnished";
+                /** @description Apartment status filter. If omitted, returns apartments of all statuses. */
                 status?: "available" | "occupied" | "maintenance" | "reserved" | "inactive";
                 page?: number;
                 limit?: number;
@@ -5752,6 +5960,41 @@ export interface operations {
             };
         };
     };
+    ContractsController_viewPdfPublic: {
+        parameters: {
+            query: {
+                /** @description Signed PDF token */
+                token: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contract PDF file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract or PDF not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ContractsController_findOne: {
         parameters: {
             query?: never;
@@ -5826,6 +6069,33 @@ export interface operations {
                 };
             };
             /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_downloadPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contract PDF file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract or PDF not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7583,6 +7853,146 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    PartnersController_updateProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePartnerProfileDto"];
+            };
+        };
+        responses: {
+            /** @description Updated partner profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Partner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Email or tax code already in use */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PartnersController_getProfileIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Partner identity information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerIdentityDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Partner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PartnersController_verifyIdentityCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload front and back identity card images for AI to extract information. Images are NOT stored. */
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Front image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardFront: string;
+                    /**
+                     * Format: binary
+                     * @description Back image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardBack: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Identity card verified and info extracted from both sides */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid image files or unsupported format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Partner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description National ID already used by another account */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

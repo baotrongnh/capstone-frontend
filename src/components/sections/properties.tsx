@@ -2,31 +2,38 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useRef, useMemo } from "react";
-import { MailOutlined, StarFilled } from "@ant-design/icons";
+import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
-import ModalReservation from "../modal/modalReservation";
 import {
   ApartmenList,
   ApartmentItem,
   ApartmentQueryParams,
 } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
-import ModalLeaveInformation from "../modal/modalLeaveInformation";
-import AuthModal from "../modal/auth-modal";
+import ModalLeaveInformation from "../modal/modal-leave-information";
+import ModalBookingSchedule, {
+  BookingScheduleData,
+} from "../modal/modal-booking-schedule";
+import ModalLoginRequired from "../modal/modalLoginRequired";
+import ModalReservation from "../modal/modal-reservation";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
-  const [openLogin, setOpenLogin] = useState(false);
+  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
+    useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
 
   const params = useMemo<ApartmentQueryParams>(
     () => ({
-      status: "available",
+      addressType: "new",
       sortBy: "baseRentPrice",
       sortOrder: "asc",
     }),
@@ -71,9 +78,16 @@ export default function PropertiesSection() {
     }
   };
 
-  const handleOpenModalContact = (apartmentId: string | number) => {
-    setSelectedApartmentId(apartmentId);
-    setIsModalOpen(true);
+  const handleButtonRedirect = () => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true);
+    } else {
+      setIsBookingModalOpen(true);
+    }
+  };
+
+  const handleBookingSubmit = (bookingData: BookingScheduleData) => {
+    console.log("Booking data:", bookingData);
   };
 
   const handleReservation = (apartmentId: string | number) => {
@@ -81,7 +95,7 @@ export default function PropertiesSection() {
     if (user) {
       setModalReservation(true);
     } else {
-      setOpenLogin(true);
+      setIsModalLoginRequiredLogin(true);
     }
   };
 
@@ -167,7 +181,7 @@ export default function PropertiesSection() {
                     </div>
 
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>758 đánh giá</span>
+                      <span>{0} đánh giá</span>
                       <span>/tháng</span>
                     </div>
                   </div>
@@ -176,7 +190,7 @@ export default function PropertiesSection() {
                       size="middle"
                       shape="round"
                       style={{ minWidth: 110, height: 30 }}
-                      onClick={() => handleOpenModalContact(apartment.id)}
+                      onClick={() => handleButtonRedirect()}
                     >
                       Đặt lịch xem
                     </Button>
@@ -220,7 +234,17 @@ export default function PropertiesSection() {
           apartmentId={selectedApartmentId}
           userId={user?.id}
         />
-        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
+
+        <ModalBookingSchedule
+          open={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          onSubmit={handleBookingSubmit}
+        />
+
+        <ModalLoginRequired
+          isModalOpen={isModalLoginRequiredOpen}
+          setIsModalOpen={setIsModalLoginRequiredLogin}
+        />
       </div>
     </div>
   );
