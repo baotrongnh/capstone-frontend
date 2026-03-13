@@ -10,7 +10,7 @@ export const useProvinces = (afterMerge: boolean) =>
 
 export const useDistricts = (provinceCode: number | undefined, afterMerge: boolean) =>
      useQuery({
-          queryKey: ['districts', provinceCode, afterMerge],
+          queryKey: afterMerge ? ['districts', provinceCode, afterMerge] : ['wards', provinceCode, afterMerge],
           queryFn: () => provincesService.getDistricts(provinceCode!, afterMerge),
           enabled: !!provinceCode,
           staleTime: Infinity,

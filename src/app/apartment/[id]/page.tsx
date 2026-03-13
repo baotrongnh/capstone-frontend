@@ -1,16 +1,17 @@
 'use client'
 
 import SimilarApartments from '@/components/apartments/similar-apartments'
+import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modal-booking-schedule'
+import ModalLoginRequired from '@/components/modal/modalLoginRequired'
+import { APARTMENT_STATUS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartment } from '@/hooks/query/useApartments'
+import { useAuthStore } from '@/stores/auth.store'
+import { formatVND } from '@/utils/format'
 import { Breadcrumb, Button, Divider, Image, Rate, Result, Spin, Tag, Typography } from 'antd'
 import { Bath, BedDouble, Building2, CalendarDays, ExternalLink, Map, MapPin, Maximize2, Sofa, Users, Video } from 'lucide-react'
-import { use, useState } from 'react'
-import { useAuthStore } from '@/stores/auth.store'
-import ModalLoginRequired from '@/components/modal/modalLoginRequired'
-import ModalBookingSchedule, { type BookingScheduleData } from '@/components/modal/modal-booking-schedule'
-import { APARTMENT_STATUS, FURNISHING, ROOM_TYPE, formatPrice } from '@/constants/apartment'
 import { useTranslations } from 'next-intl'
+import { use, useState } from 'react'
 
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const t = useTranslations('ApartmentDetailPage')
@@ -113,28 +114,38 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex flex-col md:flex-row md:justify-between md:items-start gap-4'>
           <div>
             <div className='flex items-center gap-2 flex-wrap'>
-              <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold'>{apt?.buildingName || apt?.apartmentNumber}</h1>
+              <h1 className='text-xl md:text-2xl lg:text-3xl font-semibold text-primary'>{apt?.buildingName}</h1>
               {status && <Tag color={status.color}>{tLabels(`status.${apt?.status}`)}</Tag>}
-              {apt?.apartmentType && <Tag>{apt.apartmentType}</Tag>}
             </div>
-            <p className='text-gray-500 text-sm mt-1'>
+            <p className='text-muted text-sm mt-1'>
               {t('unitCode')}: {apt?.apartmentNumber}
               {apt?.floorNumber ? ` · ${t('floorLabel')} ${apt.floorNumber}` : ''}
             </p>
           </div>
           <div className='flex flex-col md:items-end gap-1'>
             <p className='text-2xl font-bold text-primary'>
-              {formatPrice(apt?.baseRentPrice)}
-              <span className='text-sm font-normal text-gray-500'>{t('perMonth')}</span>
+              {formatVND(apt?.baseRentPrice || 0)}
+              <span className='text-sm font-normal text-muted'>{t('perMonth')}</span>
             </p>
             {apt?.depositAmount && (
-              <p className='text-sm text-gray-500'>{t('deposit')}: {formatPrice(apt.depositAmount)}</p>
+              <p className='text-sm text-muted'>{t('deposit')}: {formatVND(apt.depositAmount)}</p>
             )}
             <div className='flex flex-wrap gap-2 mt-2'>
-              <Button size='middle' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}>
+              <Button
+                size='middle'
+                shape='round'
+                style={{ minWidth: 170, height: 40 }}
+                onClick={() => handleButtonRedirect(() => setIsBookingModalOpen(true))}
+              >
                 {t('scheduleBtn')}
               </Button>
-              <Button size='middle' type='primary' shape='round' style={{ minWidth: 170, height: 40 }} onClick={() => handleButtonRedirect(() => console.log('rent'))}>
+              <Button
+                size='middle'
+                type='primary'
+                shape='round'
+                style={{ minWidth: 170, height: 40 }}
+                onClick={() => handleButtonRedirect(() => console.log('rent'))}
+              >
                 {t('rentBtn')}
               </Button>
             </div>
@@ -157,21 +168,21 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       {/* Specs */}
       <div className='mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3'>
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-          <BedDouble size={18} className='text-primary shrink-0' />
+          <BedDouble size={22} className='text-primary shrink-0' />
           <div>
             <p className='text-xs text-gray-500'>{t('specs.bedrooms')}</p>
             <p className='font-semibold'>{apt?.numberOfBedrooms}</p>
           </div>
         </div>
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-          <Bath size={18} className='text-primary shrink-0' />
+          <Bath size={22} className='text-primary shrink-0' />
           <div>
             <p className='text-xs text-gray-500'>{t('specs.bathrooms')}</p>
             <p className='font-semibold'>{apt?.numberOfBathrooms}</p>
           </div>
         </div>
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-          <Maximize2 size={18} className='text-primary shrink-0' />
+          <Maximize2 size={22} className='text-primary shrink-0' />
           <div>
             <p className='text-xs text-gray-500'>{t('specs.totalArea')}</p>
             <p className='font-semibold'>{apt?.totalArea} m²</p>
@@ -179,42 +190,38 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         </div>
         {apt?.usableArea && (
           <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-            <Maximize2 size={18} className='text-primary shrink-0' />
+            <Maximize2 size={22} className='text-primary shrink-0' />
             <div>
-              <p className='text-xs text-gray-500'>{t('specs.usableArea')}</p>
+              <p className='text-xs text-muted'>{t('specs.usableArea')}</p>
               <p className='font-semibold'>{apt.usableArea} m²</p>
             </div>
           </div>
         )}
-        {apt?.floorNumber && (
-          <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-            <Building2 size={18} className='text-primary shrink-0' />
-            <div>
-              <p className='text-xs text-gray-500'>{t('specs.floor')}</p>
-              <p className='font-semibold'>{apt.floorNumber}</p>
-            </div>
-          </div>
-        )}
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-          <Sofa size={18} className='text-primary shrink-0' />
+          <Building2 size={22} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-gray-500'>{t('specs.floor')}</p>
+            <p className='font-semibold'>{apt?.floorNumber || 'Chưa có thông tin'}</p>
+          </div>
+        </div>
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Sofa size={22} className='text-primary shrink-0' />
           <div>
             <p className='text-xs text-gray-500'>{t('specs.furnishing')}</p>
             <p className='font-semibold text-xs'>{tLabels(`furnishing.${apt?.furnishingStatus ?? ''}`) || apt?.furnishingStatus}</p>
           </div>
         </div>
-        {apt?.yearBuilt && (
-          <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-            <CalendarDays size={18} className='text-primary shrink-0' />
-            <div>
-              <p className='text-xs text-gray-500'>{t('specs.yearBuilt')}</p>
-              <p className='font-semibold'>{apt.yearBuilt}</p>
-            </div>
-          </div>
-        )}
         <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
-          <Users size={18} className='text-primary shrink-0' />
+          <CalendarDays size={22} className='text-primary shrink-0' />
           <div>
-            <p className='text-xs text-gray-500'>{t('specs.concurrentViews')}</p>
+            <p className='text-xs text-gray-500'>{t('specs.yearBuilt')}</p>
+            <p className='font-semibold'>{apt?.yearBuilt || 'Chưa có thông tin'}</p>
+          </div>
+        </div>
+        <div className='flex items-center gap-2 bg-gray-50 rounded-lg p-3'>
+          <Users size={22} className='text-primary shrink-0' />
+          <div>
+            <p className='text-xs text-muted'>{t('specs.concurrentViews')}</p>
             <p className='font-semibold'>{apt?.maxConcurrentViewings} {t('specs.concurrentViewsUnit')}</p>
           </div>
         </div>
@@ -299,7 +306,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
                   {room.hasPrivateBathroom && <span className='text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded'>{t('room.privateBath')}</span>}
                 </div>
                 {room.rentPrice && (
-                  <p className='text-sm font-semibold text-primary'>{formatPrice(room.rentPrice)}{t('room.perMonth')}</p>
+                  <p className='text-sm font-semibold text-primary'>{formatVND(room.rentPrice)}{t('room.perMonth')}</p>
                 )}
               </div>
             ))}
