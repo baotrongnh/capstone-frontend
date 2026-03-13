@@ -1,10 +1,12 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { DownloadOutlined } from "@ant-design/icons";
 import { Card, Button } from "antd";
 import { FileText, Eye, User, MapPin, Calendar, Wallet } from "lucide-react";
 
 interface ContractCardProps {
   contract: ContractWithMembers;
   onView: () => void;
+  onDownload: () => void;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -47,7 +49,11 @@ const StatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-export const ContractCard = ({ contract, onView }: ContractCardProps) => {
+export const ContractCard = ({
+  contract,
+  onView,
+  onDownload,
+}: ContractCardProps) => {
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
   );
@@ -136,9 +142,7 @@ export const ContractCard = ({ contract, onView }: ContractCardProps) => {
         </div>
       </div>
 
-      {/* Footer / Action Section */}
       <div className="mt-4 pt-4 border-t border-gray-100">
-        {/* Highlighted Price Box: Gom trên 1 dòng duy nhất, căn lề 2 bên đều nhau */}
         <div className="flex justify-between items-center bg-gray-50 px-4 py-3.5 rounded-xl mb-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600 font-medium">Giá thuê</span>
@@ -155,11 +159,21 @@ export const ContractCard = ({ contract, onView }: ContractCardProps) => {
           type="primary"
           block
           size="large"
+          style={{ marginBottom: 10 }}
           onClick={onView}
           className="flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
         >
           <Eye size={18} />
           <span className="font-medium">Xem & Ký hợp đồng</span>
+        </Button>
+        <Button
+          block
+          size="large"
+          onClick={onDownload}
+          className="flex items-center justify-center gap-2 h-11 rounded-xl shadow-sm shadow-blue-200 border-none "
+        >
+          <DownloadOutlined size={18} />
+          <span className="font-medium">Tải hợp đồng</span>
         </Button>
       </div>
     </Card>

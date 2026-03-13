@@ -46,6 +46,31 @@ export default function ContractLayout() {
     setShowDetailModal(true);
   };
 
+  const handleDownloadContract = async (contractId: string) => {
+    const contract = contractsList.find((c) => c.id === contractId);
+    if (!contract?.pdfUrl) {
+      alert("Không tìm thấy file PDF để tải");
+      return;
+    }
+
+    try {
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${contract.pdfUrl}`;
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${contract.contractNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      alert("Lỗi khi tải file PDF");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 min-h-[50vh]">
@@ -130,7 +155,6 @@ export default function ContractLayout() {
         ))}
       </div>
 
-      {/* Filter & Count */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <Text strong className="whitespace-nowrap text-gray-700">
@@ -158,13 +182,13 @@ export default function ContractLayout() {
         </Text>
       </div>
 
-      {/* Contract Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredContracts.map((contract: ContractWithMembers) => (
           <ContractCard
             key={contract.id}
             contract={contract}
             onView={() => handleViewContract(contract.id)}
+            onDownload={() => handleDownloadContract(contract.id)}
           />
         ))}
       </div>
