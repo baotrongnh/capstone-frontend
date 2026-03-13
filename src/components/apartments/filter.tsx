@@ -10,8 +10,6 @@ import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
-
-
 type FurnishingStatusOption = NonNullable<ApartmentQueryParams['furnishingStatus']>
 
 const FURNISHING_TRANSLATION_KEY: Record<FurnishingStatusOption, string> = {
@@ -36,8 +34,8 @@ export default function Filter({ onFilterChange }:
      const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
-     const { data: provinces = [], isLoading: loadingProvinces } = useProvinces(afterMerge)
-     const { data: districts = [], isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
+     const { data: provinces, isLoading: loadingProvinces } = useProvinces(afterMerge)
+     const { data: secondaryAddress, isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
 
      useEffect(() => {
           const timer = setTimeout(() => {
@@ -59,7 +57,7 @@ export default function Filter({ onFilterChange }:
      }
 
      const handleProvinceChange = (code?: number) => {
-          const province = code != null ? (provinces.find(p => p.code === code) ?? null) : null
+          const province = code != null ? (provinces?.find(p => p.code === code) ?? null) : null
           setSelectedProvince(province)
           setDistrict(undefined)
           onFilterChange({ city: province?.name ?? undefined, district: undefined })
@@ -127,7 +125,7 @@ export default function Filter({ onFilterChange }:
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
                          value={selectedProvince?.code}
-                         options={provinces.map(p => ({ label: p.name, value: p.code }))}
+                         options={provinces?.map(p => ({ label: p.name, value: p.code }))}
                          onChange={handleProvinceChange}
                          loading={loadingProvinces}
                          showSearch={{
@@ -142,10 +140,10 @@ export default function Filter({ onFilterChange }:
                     />
 
                     <Select
-                         placeholder={t('districtPlaceholder')}
+                         placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
                          className="w-full"
                          value={district}
-                         options={districts.map(d => ({ label: d.name, value: d.name }))}
+                         options={secondaryAddress?.map(d => ({ label: d.name, value: d.name }))}
                          onChange={handleDistrictChange}
                          disabled={!selectedProvince}
                          loading={loadingDistricts}
