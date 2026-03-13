@@ -1,7 +1,7 @@
 'use client'
 
 import { useApartment } from '@/hooks/query/useApartments'
-import { formatPrice } from '@/constants/apartment'
+import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -30,7 +30,7 @@ export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
                <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-gray-800 mb-0.5 truncate">{apt.buildingName}</p>
                     <p className="text-xs text-gray-500 mb-0.5">Phòng {apt.apartmentNumber}</p>
-                    <p className="text-xs font-medium text-blue-600 mb-0">{formatPrice(apt.baseRentPrice)}/tháng</p>
+                    <p className="text-xs font-medium text-blue-600 mb-0">{formatVND(apt.baseRentPrice)}/tháng</p>
                     <p className="text-xs text-gray-400 truncate">{[apt.district, apt.city].filter(Boolean).join(', ')}</p>
                </div>
           </button>

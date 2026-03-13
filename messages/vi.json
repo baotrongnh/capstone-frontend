@@ -415,7 +415,8 @@
       "oldest": "Cũ nhất",
       "bedroomsAsc": "Số phòng tăng dần",
       "bedroomsDesc": "Số phòng giảm dần"
-    }
+    },
+    "month": "tháng"
   },
   "ApartmentDetailPage": {
     "breadcrumbHome": "Trang chủ",
