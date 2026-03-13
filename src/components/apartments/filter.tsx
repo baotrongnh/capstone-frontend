@@ -30,7 +30,7 @@ export default function Filter({ onFilterChange }:
 
      // Other filters
      const [price, setPrice] = useState([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
-     const [area, setArea] = useState<[number, number]>([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
+     const [area, setArea] = useState([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
      const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
@@ -56,11 +56,11 @@ export default function Filter({ onFilterChange }:
           onFilterChange(null)
      }
 
-     const handleProvinceChange = (code?: number) => {
-          const province = code != null ? (provinces?.find(p => p.code === code) ?? null) : null
+     const handleProvinceChange = (code?: string | number) => {
+          const province = (provinces?.find(p => p.code === code) ?? null)
           setSelectedProvince(province)
           setDistrict(undefined)
-          onFilterChange({ city: province?.name ?? undefined, district: undefined })
+          onFilterChange({ city: province?.code.toString() ?? undefined, district: undefined })
      }
 
      const handleDistrictChange = (value?: string) => {
@@ -143,7 +143,7 @@ export default function Filter({ onFilterChange }:
                          placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
                          className="w-full"
                          value={district}
-                         options={secondaryAddress?.map(d => ({ label: d.name, value: d.name }))}
+                         options={secondaryAddress?.map(d => ({ label: d.name, value: d.code }))}
                          onChange={handleDistrictChange}
                          disabled={!selectedProvince}
                          loading={loadingDistricts}
