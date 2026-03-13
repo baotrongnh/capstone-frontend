@@ -112,7 +112,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                     <Descriptions.Item label={t('bathrooms')} span={1}>{apartment.numberOfBathrooms}</Descriptions.Item>
                     <Descriptions.Item label={t('rentPrice')} span={3}>
                         <span className="text-lg font-semibold text-blue-600">
-                            ${apartment.baseRentPrice.toLocaleString()}{t('perMonth')}
+                            ${apartment.baseRentPrice.toLocaleString('vi-VN')}{t('perMonth')}
                         </span>
                     </Descriptions.Item>
                 </Descriptions>
