@@ -1,8 +1,8 @@
 'use client'
 
-import { formatPrice } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { ApartmentItem } from '@/types/apartment'
+import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -52,7 +52,7 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentItem 
                     {/* Price */}
                     <div className='pt-3 border-t border-gray-100'>
                          <div className='flex items-baseline gap-1'>
-                              <span className='text-xl font-bold text-primary'>{formatPrice(apartment.baseRentPrice)}</span>
+                              <span className='text-xl font-bold text-primary'>{formatVND(apartment.baseRentPrice)}</span>
                               <span className='text-sm text-muted'>/tháng</span>
                          </div>
                     </div>

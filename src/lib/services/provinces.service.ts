@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE = process.env.NEXT_PUBLIC_PROVINCES_API_URL! // https://provinces.open-api.vn/api
+const BASE = process.env.NEXT_PUBLIC_PROVINCES_API_URL
 
 export interface Province {
      code: number
@@ -25,5 +25,5 @@ export const provincesService = {
           return axios
                .get<{ districts: District[] }>(url)
                .then(r => r.data.districts ?? [])
-     },
+     }
 }

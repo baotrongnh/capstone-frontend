@@ -501,7 +501,8 @@
       "oldest": "Cũ nhất",
       "bedroomsAsc": "Số phòng tăng dần",
       "bedroomsDesc": "Số phòng giảm dần"
-    }
+    },
+    "month": "tháng"
   },
   "ApartmentDetailPage": {
     "breadcrumbHome": "Trang chủ",
@@ -557,6 +558,7 @@
     "locationLabel": "Khu vực",
     "cityPlaceholder": "Thành phố",
     "districtPlaceholder": "Quận / Huyện",
+    "wardPlaceholder": "Phường",
     "priceLabel": "Giá thuê",
     "areaLabel": "Diện tích",
     "bedroomsLabel": "Phòng ngủ",
