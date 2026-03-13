@@ -4,7 +4,6 @@ import ProfileLayout from '../components/profile-layout';
 import MyApartment from '../components/my-apartment';
 import { ActorType } from '@/types/auth';
 import { UserApartment } from '@/types/profile';
-import { ApartmentStatus } from '@/types/apartment';
 import { useAuthStore } from '@/stores/auth.store';
 
 export default function MyApartmentPage() {
@@ -21,7 +20,7 @@ export default function MyApartmentPage() {
         totalArea: '75',
         numberOfBedrooms: 2,
         numberOfBathrooms: 2,
-        status: ApartmentStatus.OCCUPIED,
+        status: 'occupied',
         images: [
             'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
             'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
