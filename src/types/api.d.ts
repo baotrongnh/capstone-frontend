@@ -509,6 +509,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contracts/{id}/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload signed contract PDF */
+        post: operations["ContractsController_uploadSignedPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contracts/{id}/activate": {
         parameters: {
             query?: never;
@@ -2355,6 +2372,22 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        WardAddressDto: {
+            /** @example 26728 */
+            wardCode: number;
+            /** @example Xã Châu Pha */
+            wardName?: string | null;
+            /** @example 754 */
+            districtCode?: number | null;
+            /** @example Thị xã Phú Mỹ */
+            districtName?: string | null;
+            /** @example 79 */
+            provinceCode?: number | null;
+            /** @example Thành phố Hồ Chí Minh */
+            provinceName?: string | null;
+            /** @example Xã Châu Pha, Thành phố Hồ Chí Minh */
+            fullAddress?: string | null;
+        };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
             id: string;
@@ -2364,28 +2397,16 @@ export interface components {
             apartmentNumber: string;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
             /**
-             * @description Tỉnh/Thành phố (sau sáp nhập)
-             * @example Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            city?: string | null;
+            newWardCode?: number | null;
             /**
-             * @description Quận/Huyện (sau sáp nhập)
-             * @example Quận Bình Thạnh
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            district?: string | null;
-            /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
-             */
-            oldCity?: string | null;
-            /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
-             */
-            oldDistrict?: string | null;
+            oldWardCode?: number | null;
             /** @example 55 */
             totalArea: string;
             /** @example 1 */
@@ -2402,6 +2423,12 @@ export interface components {
             status: string;
             description?: string | null;
             images?: string[] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ sau sáp nhập (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ trước sáp nhập (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Chuỗi địa chỉ hiển thị theo addressType đang filter (new/old/both) */
+            displayAddress?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -2449,29 +2476,16 @@ export interface components {
             maxConcurrentViewings: number;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
-            /** @example Hồ Chí Minh */
-            city: string;
-            /** @example Quận Bình Thạnh */
-            district: string;
-            /** @example Phường 22 */
-            ward?: string | null;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string | null;
+            newWardCode?: number | null;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string | null;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string | null;
+            oldWardCode?: number | null;
             /** @example 10.788 */
             latitude?: string | null;
             /** @example 106.7195 */
@@ -2543,29 +2557,16 @@ export interface components {
             apartmentNumber: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
-            /** @example Binh Thanh */
-            district: string;
-            /** @example Ward 22 */
-            ward?: string;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string;
+            newWardCode?: number;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string;
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2632,29 +2633,16 @@ export interface components {
             apartmentNumber?: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address?: string;
-            /** @example Ho Chi Minh */
-            city?: string;
-            /** @example Binh Thanh */
-            district?: string;
-            /** @example Ward 22 */
-            ward?: string;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string;
+            newWardCode?: number;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string;
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2731,10 +2719,10 @@ export interface components {
             id: string;
             /** @example A101 */
             apartmentNumber: string;
-            /** @example 123 Nguyen Hue, Q1 */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
         };
         ContractListMemberUserDto: {
             id: string;
@@ -2821,6 +2809,12 @@ export interface components {
             hasPdf: boolean;
             /** @example /contracts/9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf/pdf */
             pdfUrl: string;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            publicPdfUrl?: string | null;
+            /** @example false */
+            hasLandlordSignature: boolean;
+            /** @example false */
+            hasTenantSignature: boolean;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -2831,6 +2825,23 @@ export interface components {
             updatedAt: string;
             apartment: components["schemas"]["ContractApartmentDto"];
             members: components["schemas"]["ContractMemberDto"][];
+        };
+        UploadContractPdfDto: {
+            /**
+             * Format: binary
+             * @description Signed contract PDF file (required)
+             */
+            contractPdf: string;
+            /**
+             * @description Signed date for the contract (ISO 8601)
+             * @example 2026-03-17T10:30:00.000Z
+             */
+            signedDate?: string;
+            /**
+             * @description URL to the signed contract document
+             * @example https://storage.example.com/contracts/signed/CTR-2026-00001.pdf
+             */
+            contractDocumentUrl?: string;
         };
         CreateContractDto: {
             /** @description Apartment ID to rent */
@@ -5324,7 +5335,19 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -5622,8 +5645,8 @@ export interface operations {
     ApartmentsController_search: {
         parameters: {
             query?: {
-                city?: string;
-                district?: string;
+                /** @description Ward code filter. Uses newWardCode when addressType=new, oldWardCode when addressType=old, both when addressType=both */
+                wardCode?: number;
                 /** @description Address type to search: new (post-merger), old (pre-merger), both (default: both) */
                 addressType?: "new" | "old" | "both";
                 keyword?: string;
@@ -6111,6 +6134,64 @@ export interface operations {
             };
             /** @description Contract or PDF not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_uploadSignedPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Upload a signed contract PDF file */
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadContractPdfDto"];
+            };
+        };
+        responses: {
+            /** @description Signed contract PDF uploaded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or missing PDF file */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract PDF already uploaded */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
