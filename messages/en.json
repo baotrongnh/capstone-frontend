@@ -12,7 +12,15 @@
     "logout": "Logout",
     "addressTypeLabel": "Address Mode",
     "addressTypeNew": "Post-merger",
-    "addressTypeOld": "Pre-merger"
+    "addressTypeOld": "Pre-merger",
+    "notifications": "Notifications",
+    "viewAllNotifications": "View all notifications",
+    "notificationSample1": "Your apartment viewing schedule has been confirmed.",
+    "notificationSample2": "Get 10% off your first rental booking this month.",
+    "notificationSample3": "The system has updated the new booking policy.",
+    "notificationTime1": "Just now",
+    "notificationTime2": "5 minutes ago",
+    "notificationTime3": "1 hour ago"
   },
   "HomePage": {
     "title": "Hello world!",

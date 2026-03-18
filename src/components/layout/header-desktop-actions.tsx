@@ -3,9 +3,10 @@
 import { ROUTES } from "@/constants/routes"
 import type { MenuProps } from "antd"
 import { Avatar, Button, Dropdown } from "antd"
-import { BellRing, ChevronDown, MessageSquareText, User } from "lucide-react"
+import { ChevronDown, MessageSquareText, User } from "lucide-react"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import NotificationDropdown from "./notification-dropdown"
 
 type HeaderDesktopActionsProps = {
      isLoggedIn: boolean
@@ -33,7 +34,7 @@ export default function HeaderDesktopActions({
                {langButton}
                {!isLoggedIn && guestAddressTypeButton}
                {isLoggedIn && <MessageSquareText strokeWidth={1.4} />}
-               {isLoggedIn && <BellRing strokeWidth={1.4} />}
+               {isLoggedIn && <NotificationDropdown />}
 
                <Link href={ROUTES.CONTACT}>
                     <Button shape="round" type="primary">{becomePartnerLabel}</Button>

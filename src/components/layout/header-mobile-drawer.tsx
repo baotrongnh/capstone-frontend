@@ -2,9 +2,10 @@
 
 import { ROUTES } from "@/constants/routes"
 import { Avatar, Button, Drawer } from "antd"
-import { BellRing, LogOut, MessageSquareText, User } from "lucide-react"
+import { LogOut, MessageSquareText, User } from "lucide-react"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import NotificationDropdown from "./notification-dropdown"
 
 type NavLink = {
      href: string
@@ -63,7 +64,7 @@ export default function HeaderMobileDrawer({
                     {langButton}
                     {!isLoggedIn && guestAddressTypeButton}
                     {isLoggedIn && <MessageSquareText strokeWidth={1.4} size={20} />}
-                    {isLoggedIn && <BellRing strokeWidth={1.4} size={20} />}
+                    {isLoggedIn && <NotificationDropdown iconSize={20} />}
                </div>
 
                <div className="flex flex-col gap-2">

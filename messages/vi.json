@@ -12,7 +12,15 @@
     "logout": "Đăng xuất",
     "addressTypeLabel": "Chế độ địa chỉ",
     "addressTypeNew": "Sau sáp nhập",
-    "addressTypeOld": "Trước sáp nhập"
+    "addressTypeOld": "Trước sáp nhập",
+    "notifications": "Thông báo",
+    "viewAllNotifications": "Xem tất cả thông báo",
+    "notificationSample1": "Lịch xem căn hộ của bạn đã được xác nhận.",
+    "notificationSample2": "Giảm giá 10% cho đơn đặt thuê đầu tiên trong tháng này.",
+    "notificationSample3": "Hệ thống vừa cập nhật chính sách đặt lịch mới.",
+    "notificationTime1": "Vừa xong",
+    "notificationTime2": "5 phút trước",
+    "notificationTime3": "1 giờ trước"
   },
   "HomePage": {
     "title": "Xin chào",
