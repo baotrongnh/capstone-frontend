@@ -7,29 +7,38 @@ import SimilarApartments from '@/components/apartments/similar-apartments'
 import AppPromoSection from '@/components/sections/app-promo'
 import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useApartments } from '@/hooks/query/useApartments'
 import { ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+
+type ApartmentFilterPatch = Partial<Omit<ApartmentQueryParams, 'addressType'>>
 
 export default function ApartmentList() {
-  const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
+  const { addressType } = useAddressTypePreference()
+  const [filters, setFilters] = useState<ApartmentQueryParams>(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
-  const { data, isLoading, isError, refetch } = useApartments(filters)
+  const queryFilters = useMemo<ApartmentQueryParams>(
+    () => ({ ...filters, addressType }),
+    [filters, addressType],
+  )
+  const { data, isLoading, isError, refetch } = useApartments(queryFilters)
   const t = useTranslations('ApartmentListPage')
 
   const apartments = data?.data ?? []
   const meta = data?.meta
 
-  function updateFilters(patch: Partial<ApartmentQueryParams> | null) {
+  const updateFilters = useCallback((patch: ApartmentFilterPatch | null) => {
     if (!patch) {
       setFilters(DEFAULT_APARTMENT_FILTERS)
-    } else {
-      setFilters(prev => ({ ...prev, ...patch, page: 1 }))
+      return
     }
-  }
+
+    setFilters(prev => ({ ...prev, ...patch, page: 1 }))
+  }, [])
 
   function handleSortChange(val: string) {
     const [sortBy, sortOrder] = val.split('-') as [ApartmentQueryParams['sortBy'], ApartmentQueryParams['sortOrder']]
@@ -110,7 +119,7 @@ export default function ApartmentList() {
           {/* Apartment List */}
           {!isLoading && !isError && apartments.length > 0 && (
             <div className='space-y-6'>
-              {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} />)}
+              {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} addressType={addressType} />)}
             </div>
           )}
 

@@ -2355,6 +2355,22 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        WardAddressDto: {
+            /** @example 26728 */
+            wardCode: number;
+            /** @example Xã Châu Pha */
+            wardName?: string | null;
+            /** @example 754 */
+            districtCode?: number | null;
+            /** @example Thị xã Phú Mỹ */
+            districtName?: string | null;
+            /** @example 79 */
+            provinceCode?: number | null;
+            /** @example Thành phố Hồ Chí Minh */
+            provinceName?: string | null;
+            /** @example Xã Châu Pha, Thành phố Hồ Chí Minh */
+            fullAddress?: string | null;
+        };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
             id: string;
@@ -2364,28 +2380,16 @@ export interface components {
             apartmentNumber: string;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
             /**
-             * @description Tỉnh/Thành phố (sau sáp nhập)
-             * @example Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            city?: string | null;
+            newWardCode?: number | null;
             /**
-             * @description Quận/Huyện (sau sáp nhập)
-             * @example Quận Bình Thạnh
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            district?: string | null;
-            /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
-             */
-            oldCity?: string | null;
-            /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
-             */
-            oldDistrict?: string | null;
+            oldWardCode?: number | null;
             /** @example 55 */
             totalArea: string;
             /** @example 1 */
@@ -2402,6 +2406,12 @@ export interface components {
             status: string;
             description?: string | null;
             images?: string[] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ sau sáp nhập (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ trước sáp nhập (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Chuỗi địa chỉ hiển thị theo addressType đang filter (new/old/both) */
+            displayAddress?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -2449,29 +2459,16 @@ export interface components {
             maxConcurrentViewings: number;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
-            /** @example Hồ Chí Minh */
-            city: string;
-            /** @example Quận Bình Thạnh */
-            district: string;
-            /** @example Phường 22 */
-            ward?: string | null;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string | null;
+            newWardCode?: number | null;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string | null;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string | null;
+            oldWardCode?: number | null;
             /** @example 10.788 */
             latitude?: string | null;
             /** @example 106.7195 */
@@ -2543,29 +2540,16 @@ export interface components {
             apartmentNumber: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
-            /** @example Binh Thanh */
-            district: string;
-            /** @example Ward 22 */
-            ward?: string;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string;
+            newWardCode?: number;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string;
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2632,29 +2616,16 @@ export interface components {
             apartmentNumber?: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address?: string;
-            /** @example Ho Chi Minh */
-            city?: string;
-            /** @example Binh Thanh */
-            district?: string;
-            /** @example Ward 22 */
-            ward?: string;
             /**
-             * @description Tỉnh/Thành phố (trước sáp nhập)
-             * @example Thành phố Hồ Chí Minh
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
              */
-            oldCity?: string;
+            newWardCode?: number;
             /**
-             * @description Quận/Huyện (trước sáp nhập)
-             * @example Quận 9
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
              */
-            oldDistrict?: string;
-            /**
-             * @description Phường/Xã (trước sáp nhập)
-             * @example Phường Long Thạnh Mỹ
-             */
-            oldWard?: string;
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2731,10 +2702,10 @@ export interface components {
             id: string;
             /** @example A101 */
             apartmentNumber: string;
-            /** @example 123 Nguyen Hue, Q1 */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
         };
         ContractListMemberUserDto: {
             id: string;
@@ -5622,8 +5593,8 @@ export interface operations {
     ApartmentsController_search: {
         parameters: {
             query?: {
-                city?: string;
-                district?: string;
+                /** @description Ward code filter. Uses newWardCode when addressType=new, oldWardCode when addressType=old, both when addressType=both */
+                wardCode?: number;
                 /** @description Address type to search: new (post-merger), old (pre-merger), both (default: both) */
                 addressType?: "new" | "old" | "both";
                 keyword?: string;

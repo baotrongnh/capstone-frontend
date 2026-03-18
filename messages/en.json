@@ -557,6 +557,8 @@
     "locationLabel": "Location",
     "cityPlaceholder": "City",
     "districtPlaceholder": "District",
+    "wardPlaceholder": "Ward",
+    "afterMergeLabel": "Post-merger address",
     "priceLabel": "Rent Price",
     "areaLabel": "Area",
     "bedroomsLabel": "Bedrooms",
