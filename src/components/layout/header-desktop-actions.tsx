@@ -33,7 +33,7 @@ export default function HeaderDesktopActions({
           <div className="hidden lg:flex items-center gap-5">
                {langButton}
                {!isLoggedIn && guestAddressTypeButton}
-               {isLoggedIn && <MessageSquareText strokeWidth={1.4} />}
+               {/* {isLoggedIn && <MessageSquareText strokeWidth={1.4} />} */}
                {isLoggedIn && <NotificationDropdown />}
 
                <Link href={ROUTES.CONTACT}>
