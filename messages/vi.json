@@ -9,7 +9,10 @@
     "language": "Ngôn ngữ",
     "login": "Đăng nhập",
     "profile": "Trang cá nhân",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "addressTypeLabel": "Chế độ địa chỉ",
+    "addressTypeNew": "Sau sáp nhập",
+    "addressTypeOld": "Trước sáp nhập"
   },
   "HomePage": {
     "title": "Xin chào",

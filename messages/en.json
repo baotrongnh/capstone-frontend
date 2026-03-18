@@ -9,7 +9,10 @@
     "language": "Language",
     "login": "Login",
     "profile": "My Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "addressTypeLabel": "Address Mode",
+    "addressTypeNew": "Post-merger",
+    "addressTypeOld": "Pre-merger"
   },
   "HomePage": {
     "title": "Hello world!",
