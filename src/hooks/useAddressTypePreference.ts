@@ -7,7 +7,7 @@ export type AddressTypePreference = Extract<NonNullable<ApartmentQueryParams['ad
 
 const STORAGE_KEY = 'apartment-address-type'
 const SYNC_EVENT = 'apartment-address-type-change'
-const DEFAULT_ADDRESS_TYPE: AddressTypePreference = 'old'
+const DEFAULT_ADDRESS_TYPE: AddressTypePreference = 'new'
 
 function getAddressTypeFromStorage(): AddressTypePreference {
      if (typeof window === 'undefined') {
@@ -15,7 +15,7 @@ function getAddressTypeFromStorage(): AddressTypePreference {
      }
 
      const saved = window.localStorage.getItem(STORAGE_KEY)
-     return saved === 'new' ? 'new' : DEFAULT_ADDRESS_TYPE
+     return saved === 'old' ? 'old' : DEFAULT_ADDRESS_TYPE
 }
 
 export function useAddressTypePreference() {
