@@ -1,24 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useState, useRef, useMemo } from "react";
 import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
-import {
-  ApartmenList,
-  ApartmentItem,
-  ApartmentQueryParams,
-} from "@/types/apartment";
+import { ApartmentItem, ApartmentQueryParams } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
 import ModalLeaveInformation from "../modal/modal-leave-information";
 import ModalBookingSchedule, {
   BookingScheduleData,
 } from "../modal/modal-booking-schedule";
-import ModalLoginRequired from "../modal/modal-login-required";
-import ModalReservation from "../modal/modal-reservation";
+import ModalLoginRequired from "../modal/modalLoginRequired";
+import ModalBooking from "../modal/modal-booking";
 export default function PropertiesSection() {
-  const t = useTranslations("HomePage");
+  const router = useRouter();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,7 +58,7 @@ export default function PropertiesSection() {
 
   const handleDetail = (id: string | number) => {
     console.log("Navigate to apartment detail with ID:", id);
-    window.location.href = `/apartment/${id}`;
+    router.push(`/apartment/${id}`);
   };
 
   const handleScroll = (direction: "left" | "right") => {
@@ -240,7 +236,7 @@ export default function PropertiesSection() {
           setOpen={setIsModalOpen}
           apartmentId={selectedApartmentId}
         />
-        <ModalReservation
+        <ModalBooking
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}
