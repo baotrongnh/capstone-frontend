@@ -2,39 +2,43 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useRef, useMemo } from "react";
-import { MailOutlined, StarFilled } from "@ant-design/icons";
-import { useAddressTypePreference } from "@/hooks/useAddressTypePreference";
+import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
-import ModalReservation from "../modal/modalReservation";
-import { getApartmentDisplayAddress } from "@/utils/apartment-address";
 import {
   ApartmenList,
   ApartmentItem,
   ApartmentQueryParams,
 } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
-import ModalLeaveInformation from "../modal/modalLeaveInformation";
-import AuthModal from "../modal/auth-modal";
+import ModalLeaveInformation from "../modal/modal-leave-information";
+import ModalBookingSchedule, {
+  BookingScheduleData,
+} from "../modal/modal-booking-schedule";
+import ModalLoginRequired from "../modal/modalLoginRequired";
+import ModalReservation from "../modal/modal-reservation";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
-  const { addressType } = useAddressTypePreference();
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
-  const [openLogin, setOpenLogin] = useState(false);
+  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
+    useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
 
   const params = useMemo<ApartmentQueryParams>(
     () => ({
-      status: "available",
-      addressType,
+      addressType: "new",
       sortBy: "baseRentPrice",
       sortOrder: "asc",
+      status: "available",
     }),
-    [addressType],
+    [],
   );
 
   const user = useAuthStore((s) => s.user);
@@ -75,9 +79,16 @@ export default function PropertiesSection() {
     }
   };
 
-  const handleOpenModalContact = (apartmentId: string | number) => {
-    setSelectedApartmentId(apartmentId);
-    setIsModalOpen(true);
+  const handleButtonRedirect = () => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true);
+    } else {
+      setIsBookingModalOpen(true);
+    }
+  };
+
+  const handleBookingSubmit = (bookingData: BookingScheduleData) => {
+    console.log("Booking data:", bookingData);
   };
 
   const handleReservation = (apartmentId: string | number) => {
@@ -85,7 +96,7 @@ export default function PropertiesSection() {
     if (user) {
       setModalReservation(true);
     } else {
-      setOpenLogin(true);
+      setIsModalLoginRequiredLogin(true);
     }
   };
 
@@ -102,102 +113,113 @@ export default function PropertiesSection() {
               msOverflowStyle: "none",
             }}
           >
-            {apartmentsList.map((apartment: ApartmentItem) => (
-              <div
-                key={apartment.id}
-                className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
-              >
-                <div className="h-40 overflow-hidden relative">
-                  <Image
-                    src={
-                      apartment.images?.[0] ??
-                      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
-                    }
-                    alt={apartment.buildingName ?? "Apartment"}
-                    className="object-cover"
-                  />
-                </div>
+            {apartmentsList.map(
+              (
+                apartment: ApartmentItem & {
+                  newAddress?: {
+                    wardName?: string;
+                    provinceName?: string;
+                    fullAddress?: string;
+                  };
+                },
+              ) => (
+                <div
+                  key={apartment.id}
+                  className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
+                >
+                  <div className="h-40 overflow-hidden relative">
+                    <Image
+                      src={
+                        apartment.images?.[0] ??
+                        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
+                      }
+                      alt={apartment.buildingName ?? "Apartment"}
+                      className="object-cover"
+                    />
+                  </div>
 
-                <div className="p-3">
-                  <div onClick={() => handleDetail(apartment.id)}>
-                    <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                      {apartment.buildingName} – {apartment.apartmentNumber}
-                    </h4>
+                  <div className="p-3">
+                    <div onClick={() => handleDetail(apartment.id)}>
+                      <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
+                        {apartment.buildingName} – {apartment.apartmentNumber}
+                      </h4>
 
-                    <div className="space-y-1 text-xs text-gray-500 mb-2">
-                      <div>{apartment.totalArea} m²</div>
-                      <div>
-                        {getApartmentDisplayAddress(apartment, addressType) || "Chưa có địa chỉ"}
+                      <div className="space-y-1 text-xs text-gray-500 mb-2">
+                        <div>{apartment.totalArea} m²</div>
+                        <div>
+                          {apartment.newAddress?.wardName},{" "}
+                          {apartment.newAddress?.provinceName}
+                        </div>
+                        <div>
+                          {apartment.numberOfBedrooms} PN ·{" "}
+                          {apartment.numberOfBathrooms} WC
+                        </div>
+                        <div>Tầng {apartment.floorNumber}</div>
+                        <div>
+                          Nội thất:{" "}
+                          {apartment.furnishingStatus === "fully_furnished" &&
+                            "Đầy đủ"}
+                          {apartment.furnishingStatus === "semi_furnished" &&
+                            "Bán đạo"}
+                          {apartment.furnishingStatus === "unfurnished" &&
+                            "Không"}
+                        </div>
+                        <div>
+                          Cọc:{" "}
+                          {Number(apartment.depositAmount).toLocaleString(
+                            "vi-VN",
+                          )}{" "}
+                          ₫
+                        </div>
                       </div>
-                      <div>
-                        {apartment.numberOfBedrooms} PN ·{" "}
-                        {apartment.numberOfBathrooms} WC
+
+                      <div className="flex justify-between w-full border-t border-gray-200 pt-2">
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <StarFilled
+                              key={i}
+                              className="text-[11px] text-yellow-400!"
+                            />
+                          ))}
+                        </div>
+
+                        <p className="text-xl font-semibold text-[#A3D5FF]">
+                          {Number(apartment.baseRentPrice).toLocaleString(
+                            "vi-VN",
+                          )}{" "}
+                          ₫
+                        </p>
                       </div>
-                      <div>Tầng {apartment.floorNumber}</div>
-                      <div>
-                        Nội thất:{" "}
-                        {apartment.furnishingStatus === "fully_furnished" &&
-                          "Đầy đủ"}
-                        {apartment.furnishingStatus === "semi_furnished" &&
-                          "Bán đạo"}
-                        {apartment.furnishingStatus === "unfurnished" &&
-                          "Không"}
-                      </div>
-                      <div>
-                        Cọc:{" "}
-                        {Number(apartment.depositAmount).toLocaleString(
-                          "vi-VN",
-                        )}{" "}
-                        ₫
+
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>{0} đánh giá</span>
+                        <span>/tháng</span>
                       </div>
                     </div>
+                    <div className="flex mt-3 gap-2">
+                      <Button
+                        size="middle"
+                        shape="round"
+                        style={{ minWidth: 110, height: 30 }}
+                        onClick={() => handleButtonRedirect()}
+                      >
+                        Đặt lịch xem
+                      </Button>
 
-                    <div className="flex justify-between w-full border-t border-gray-200 pt-2">
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <StarFilled
-                            key={i}
-                            className="text-[11px] text-yellow-400!"
-                          />
-                        ))}
-                      </div>
-
-                      <p className="text-xl font-semibold text-[#A3D5FF]">
-                        {Number(apartment.baseRentPrice).toLocaleString(
-                          "vi-VN",
-                        )}{" "}
-                        ₫
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>758 đánh giá</span>
-                      <span>/tháng</span>
+                      <Button
+                        size="middle"
+                        shape="round"
+                        type="primary"
+                        onClick={() => handleReservation(apartment.id)}
+                        style={{ minWidth: 110, height: 30 }}
+                      >
+                        Đặt thuê
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex mt-3 gap-2">
-                    <Button
-                      size="middle"
-                      shape="round"
-                      style={{ minWidth: 110, height: 30 }}
-                      onClick={() => handleOpenModalContact(apartment.id)}
-                    >
-                      Đặt lịch xem
-                    </Button>
-
-                    <Button
-                      size="middle"
-                      shape="round"
-                      type="primary"
-                      onClick={() => handleReservation(apartment.id)}
-                      style={{ minWidth: 110, height: 30 }}
-                    >
-                      Đặt thuê
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
 
           <button
@@ -224,7 +246,17 @@ export default function PropertiesSection() {
           apartmentId={selectedApartmentId}
           userId={user?.id}
         />
-        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
+
+        <ModalBookingSchedule
+          open={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          onSubmit={handleBookingSubmit}
+        />
+
+        <ModalLoginRequired
+          isModalOpen={isModalLoginRequiredOpen}
+          setIsModalOpen={setIsModalLoginRequiredLogin}
+        />
       </div>
     </div>
   );
