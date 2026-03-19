@@ -2,6 +2,7 @@ import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { Modal, Button, Select, message, Divider, Space, Tag } from "antd";
 import React, { useState } from "react";
 import { X, AlertCircle, FileText, Home } from "lucide-react";
+import { useCancelContract } from "@/hooks/query/useContracts";
 
 interface ModalContractProps {
   showModalCancelContract: boolean;
@@ -50,6 +51,10 @@ export default function ModalCancelContract({
   const [reason, setReason] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { mutateAsync: cancelContract } = useCancelContract(
+    selectContract?.id ?? "",
+  );
+
   const handleCancel = () => {
     setReason("");
     cancel();
@@ -63,7 +68,7 @@ export default function ModalCancelContract({
 
     setIsLoading(true);
     try {
-      message.success("Hủy hợp đồng thành công!");
+      await cancelContract(reason);
       handleCancel();
     } catch (error) {
       message.error("Lỗi khi hủy hợp đồng");
@@ -89,7 +94,6 @@ export default function ModalCancelContract({
       width={600}
       centered
       footer={null}
-      bodyStyle={{ padding: "0" }}
     >
       {selectContract && (
         <div className="bg-white">

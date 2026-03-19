@@ -3,30 +3,26 @@
 import { APP_NAME } from "@/constants"
 import { IMG_URL, ROUTES } from "@/constants/routes"
 import { useLogout } from "@/hooks/query/useAuth"
+import { useAddressTypePreference } from "@/hooks/useAddressTypePreference"
 import { useAuthStore } from "@/stores/auth.store"
 import { Icon } from "@iconify/react"
 import type { MenuProps } from "antd"
-import { Avatar, Button, Drawer, Dropdown } from "antd"
-import { BellRing, ChevronDown, LogOut, Menu, MessageSquareText, User } from "lucide-react"
+import { Button } from "antd"
+import { Check, LogOut, MapPin, Menu, User } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { startTransition, useEffect, useState } from "react"
 import AuthModal from "../modal/auth-modal"
-
-const NAV_LINKS = (t: (k: string) => string) => [
-  { href: ROUTES.APARTMENT, label: t('findApartment') },
-  // { href: '/', label: t('yourApartment') },
-  // { href: '/', label: t('bills') },
-  { href: '/', label: t('support') },
-  { href: '/', label: t('contact') },
-]
+import HeaderDesktopActions from "./header-desktop-actions"
+import HeaderMobileDrawer from "./header-mobile-drawer"
 
 export default function Header() {
   const searchParams = useSearchParams()
   const t = useTranslations('Header')
   const router = useRouter()
+  const { addressType, setAddressType } = useAddressTypePreference()
   const { user, isAuthenticated, isHydrated } = useAuthStore()
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
 
@@ -34,9 +30,25 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const locale = useLocale()
+  const navLinks = [
+    { href: ROUTES.APARTMENT, label: t('findApartment') },
+    // { href: '/', label: t('yourApartment') },
+    // { href: '/', label: t('bills') },
+    { href: '/', label: t('support') },
+    { href: '/', label: t('contact') },
+  ]
+  const isLoggedIn = Boolean(isHydrated && isAuthenticated && user)
+  const userFullName = user?.fullName || ''
+  const becomePartnerLabel = t('becomePartner')
+  const loginLabel = t('login')
+  const profileLabel = t('profile')
+  const logoutLabel = t('logout')
+  const currentAddressTypeLabel = addressType === 'new' ? t('addressTypeNew') : t('addressTypeOld')
 
   useEffect(() => {
-    if (searchParams.get('openAuthModal') === 'true') startTransition(() => setAuthOpen(true))
+    if (searchParams.get('openAuthModal') === 'true') {
+      startTransition(() => setAuthOpen(true))
+    }
   }, [searchParams])
 
   function toggleLanguage() {
@@ -45,15 +57,70 @@ export default function Header() {
     router.refresh()
   }
 
-  const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
+  function openAuth() {
+    setAuthOpen(true)
+    setDrawerOpen(false)
+  }
 
-  const userMenuItems: MenuProps['items'] = [
-    { key: 'profile', label: t('profile'), icon: <User size={16} />, onClick: () => user && router.push(ROUTES.PROFILE) },
-    { type: 'divider' },
-    { key: 'logout', label: t('logout'), icon: <LogOut size={16} />, danger: true, onClick: () => logoutApi() },
+  function goProfile() {
+    router.push(ROUTES.PROFILE)
+    setDrawerOpen(false)
+  }
+
+  function logout() {
+    setDrawerOpen(false)
+    logoutApi()
+  }
+
+  const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
+  const toggleAddressType = () => setAddressType(addressType === 'new' ? 'old' : 'new')
+
+  const addressTypeButton = (
+    <Button
+      shape="round"
+      size="small"
+      icon={<MapPin size={14} />}
+      onClick={toggleAddressType}
+      title={t('addressTypeLabel')}
+    >
+      {currentAddressTypeLabel}
+    </Button>
+  )
+
+  const addressTypeMenuItems: MenuProps['items'] = [
+    {
+      key: 'address-type-new',
+      label: (
+        <div className="flex items-center justify-between min-w-40">
+          <span>{t('addressTypeNew')}</span>
+          {addressType === 'new' && <Check size={14} />}
+        </div>
+      ),
+      onClick: () => setAddressType('new'),
+    },
+    {
+      key: 'address-type-old',
+      label: (
+        <div className="flex items-center justify-between min-w-40">
+          <span>{t('addressTypeOld')}</span>
+          {addressType === 'old' && <Check size={14} />}
+        </div>
+      ),
+      onClick: () => setAddressType('old'),
+    },
   ]
 
-  const isLoggedIn = isHydrated && isAuthenticated && user
+  const userMenuItems: MenuProps['items'] = [
+    { key: 'profile', label: profileLabel, icon: <User size={16} />, onClick: () => goProfile() },
+    {
+      key: 'address-type',
+      label: t('addressTypeLabel'),
+      icon: <MapPin size={16} />,
+      children: addressTypeMenuItems,
+    },
+    { type: 'divider' },
+    { key: 'logout', label: logoutLabel, icon: <LogOut size={16} />, danger: true, onClick: () => logout() },
+  ]
 
   const langBtn = (
     <button onClick={toggleLanguage} className="hover:opacity-75 cursor-pointer">
@@ -71,29 +138,21 @@ export default function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex gap-10 font-medium">
-          {NAV_LINKS(t).map(({ href, label }) => (
+          {navLinks.map(({ href, label }) => (
             <Link key={label} href={href} className="hover:opacity-75">{label}</Link>
           ))}
         </nav>
 
-        {/* Desktop actions */}
-        <div className="hidden lg:flex items-center gap-5">
-          {langBtn}
-          <MessageSquareText strokeWidth={1.4} />
-          <BellRing strokeWidth={1.4} />
-          <Link href={ROUTES.CONTACT}><Button shape="round" type="primary">{t('becomePartner')}</Button></Link>
-          {isLoggedIn ? (
-            <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
-              <div className="flex items-center cursor-pointer gap-2">
-                <span className="font-medium">{user.fullName}</span>
-                <Avatar icon={<User />} />
-                <ChevronDown strokeWidth={1.6} size={15} />
-              </div>
-            </Dropdown>
-          ) : (
-            <Button shape="round" onClick={() => setAuthOpen(true)}>{t('login')}</Button>
-          )}
-        </div>
+        <HeaderDesktopActions
+          isLoggedIn={isLoggedIn}
+          langButton={langBtn}
+          guestAddressTypeButton={addressTypeButton}
+          userMenuItems={userMenuItems}
+          userFullName={userFullName}
+          becomePartnerLabel={becomePartnerLabel}
+          loginLabel={loginLabel}
+          onOpenAuth={openAuth}
+        />
 
         {/* Mobile hamburger */}
         <button className="lg:hidden p-2 text-gray-600" onClick={() => setDrawerOpen(true)}>
@@ -101,59 +160,22 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile drawer */}
-      <Drawer
+      <HeaderMobileDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        placement="right"
-      >
-        <nav className="flex flex-col gap-1 mb-4">
-          {NAV_LINKS(t).map(({ href, label }) => (
-            <Link
-              key={label}
-              href={href}
-              onClick={() => setDrawerOpen(false)}
-              className="px-3 py-2.5 rounded-lg font-medium hover:bg-gray-100"
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-4 px-3 mb-4">
-          {langBtn}
-          <MessageSquareText strokeWidth={1.4} size={20} />
-          <BellRing strokeWidth={1.4} size={20} />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Button
-            shape="round"
-            type="primary"
-            block
-          >
-            {t('becomePartner')}
-          </Button>
-          {isLoggedIn ? (
-            <>
-              <div className="flex items-center gap-3 px-3 py-2">
-                <Avatar icon={<User />} />
-                <span className="font-medium">{user.fullName}</span>
-              </div>
-              <button onClick={() => { router.push(ROUTES.PROFILE); setDrawerOpen(false) }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-sm">
-                <User size={16} /> {t('profile')}
-              </button>
-              <button onClick={() => logoutApi()}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 text-sm">
-                <LogOut size={16} /> {t('logout')}
-              </button>
-            </>
-          ) : (
-            <Button shape="round" block onClick={() => { setAuthOpen(true); setDrawerOpen(false) }}>{t('login')}</Button>
-          )}
-        </div>
-      </Drawer>
+        navLinks={navLinks}
+        isLoggedIn={isLoggedIn}
+        langButton={langBtn}
+        guestAddressTypeButton={addressTypeButton}
+        userFullName={userFullName}
+        becomePartnerLabel={becomePartnerLabel}
+        loginLabel={loginLabel}
+        profileLabel={profileLabel}
+        logoutLabel={logoutLabel}
+        onOpenAuth={openAuth}
+        onProfile={goProfile}
+        onLogout={logout}
+      />
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </header>

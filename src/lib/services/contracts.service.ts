@@ -44,9 +44,10 @@ export const contractsService = {
     );
     return data;
   },
-  cancel: async (id: string) => {
+  cancel: async (id: string, reason: string) => {
     const { data } = await apiClient.patch(
-      `${endpoints.contracts}/${id}/terminate`,
+      `${endpoints.contracts}/${id}/cancel`,
+      { reason },
     );
     return data;
   },

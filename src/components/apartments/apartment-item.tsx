@@ -1,5 +1,7 @@
 import { IMG_URL, ROUTES } from '@/constants/routes'
+import type { AddressTypePreference } from '@/hooks/useAddressTypePreference'
 import type { ApartmentItem } from '@/types/apartment'
+import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -15,9 +17,10 @@ function InfoChip({ icon, children }: { icon: string; children: React.ReactNode 
      )
 }
 
-export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
+export default function ApartmentItem({ apartment, addressType }: { apartment: ApartmentItem; addressType: AddressTypePreference }) {
      const tFurnishing = useTranslations('ApartmentLabels.furnishing')
      const t = useTranslations('ApartmentListPage')
+     const displayAddress = getApartmentDisplayAddress(apartment, addressType)
 
      return (
           <Link
@@ -48,7 +51,7 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                     </h1>
 
                     <div className='flex flex-wrap gap-2'>
-                         <InfoChip icon="lucide:map-pin">{apartment.district}, {apartment.city}</InfoChip>
+                         <InfoChip icon="lucide:map-pin">{displayAddress || 'Chưa có địa chỉ'}</InfoChip>
                          <InfoChip icon="lucide:maximize-2">{apartment.totalArea} m²</InfoChip>
                          <InfoChip icon="lucide:bed-double">{apartment.numberOfBedrooms} PN · {apartment.numberOfBathrooms} WC</InfoChip>
                          <InfoChip icon="lucide:sofa">{tFurnishing(apartment.furnishingStatus)}</InfoChip>
