@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { useState, useRef, useMemo } from "react";
 import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
@@ -13,7 +12,7 @@ import ModalBookingSchedule, {
   BookingScheduleData,
 } from "../modal/modal-booking-schedule";
 import ModalLoginRequired from "../modal/modalLoginRequired";
-import ModalReservation from "../modal/modal-reservation";
+import ModalBooking from "../modal/modal-booking";
 export default function PropertiesSection() {
   const router = useRouter();
 
@@ -237,7 +236,7 @@ export default function PropertiesSection() {
           setOpen={setIsModalOpen}
           apartmentId={selectedApartmentId}
         />
-        <ModalReservation
+        <ModalBooking
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}

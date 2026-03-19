@@ -31,7 +31,7 @@ import ModalWaitingVerify from "./modal-waiting-verify";
 
 import { ROUTES } from "@/constants/routes";
 
-interface ModalReservationProps {
+interface ModalBookingProps {
   open: boolean;
   onClose: () => void;
   apartmentId?: string | number | null;
@@ -48,12 +48,12 @@ const durationOptions = [
   { label: "1 năm", value: 12 },
 ];
 
-export default function ModalReservation({
+export default function ModalBooking({
   open,
   onClose,
   apartmentId,
   userId,
-}: ModalReservationProps) {
+}: ModalBookingProps) {
   const router = useRouter();
   const [formReservations] = useForm();
   const [agreeTerms, setAgreeTerms] = useState(false);
