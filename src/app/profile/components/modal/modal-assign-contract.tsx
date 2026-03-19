@@ -1,9 +1,11 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { contractsService } from "@/lib/services/contracts.service";
 import { Alert, Modal, Button, Checkbox, Divider, message } from "antd";
 import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import { Pen, Check } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
+import { useUploadContractPdf } from "@/hooks/query/useContracts";
 
 interface ModalAssignContractProps {
   showDetailModal: boolean;
@@ -19,13 +21,20 @@ export default function ModalAssignContract({
   const sigRef = useRef<SignatureCanvas | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
   const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
+  const [signedPdfBytes, setSignedPdfBytes] = useState<Uint8Array | null>(null);
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [showSignModal, setShowSignModal] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
+  const { mutateAsync: uploadContractPdf } = useUploadContractPdf(
+    selectedContract?.id || "",
+  );
 
   useEffect(() => {
     if (!showDetailModal) {
       setSignature(null);
       setSignedPdfUrl(null);
+      setSignedPdfBytes(null);
       setAgreePolicy(false);
       setShowSignModal(false);
     }
@@ -110,6 +119,7 @@ export default function ModalAssignContract({
       });
       const url = URL.createObjectURL(blob);
       setSignedPdfUrl(url);
+      setSignedPdfBytes(pdfBytes);
 
       setShowSignModal(false);
       message.success("Ký thành công! Chữ ký đã được nhúng vào hợp đồng.");
@@ -119,6 +129,7 @@ export default function ModalAssignContract({
   const handleRedoSign = () => {
     setSignature(null);
     setSignedPdfUrl(null);
+    setSignedPdfBytes(null);
     if (sigRef.current) {
       sigRef.current.clear();
     }
@@ -132,7 +143,40 @@ export default function ModalAssignContract({
     setShowDetailModal(false);
     setSignature(null);
     setSignedPdfUrl(null);
+    setSignedPdfBytes(null);
     setAgreePolicy(false);
+  };
+
+  const handleSendContract = async (contractId: string) => {
+    if (!signedPdfBytes) {
+      message.error("Không tìm thấy PDF đã ký");
+      return;
+    }
+
+    const blob = new Blob([new Uint8Array(signedPdfBytes)], {
+      type: "application/pdf",
+    });
+
+    const file = new File([blob], `contract-${contractId}.pdf`, {
+      type: "application/pdf",
+    });
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("contractId", contractId);
+
+    const payload = {
+      contractPdf: formData,
+      signedDate: "",
+      contractDocumentUrl: "",
+    };
+
+    try {
+      await uploadContractPdf(payload);
+      setShowSignModal(false);
+    } catch (error) {
+      message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
+    }
   };
 
   return (
@@ -206,7 +250,7 @@ export default function ModalAssignContract({
 
             {selectedContract.status === "draft" && signature && (
               <Alert
-                message="✅ Hợp đồng đã ký"
+                message=" Hợp đồng đã ký"
                 description="Bạn đã ký hợp đồng. Vui lòng gửi để hoàn tất quá trình."
                 type="success"
                 showIcon
@@ -215,15 +259,14 @@ export default function ModalAssignContract({
 
             {selectedContract.status === "active" && (
               <Alert
-                message="✅ Hợp đồng đã được ký"
+                message=" Hợp đồng đã được ký"
                 description="Hợp đồng này đã được ký và đã hoàn tất."
                 type="success"
                 showIcon
               />
             )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 justify-end pt-4 border-t">
+            <div className="flex gap-3 justify-end pt-4 ">
               <Button onClick={handleCloseModal}>Đóng</Button>
               {selectedContract.status === "draft" && !signature && (
                 <Button
@@ -243,9 +286,9 @@ export default function ModalAssignContract({
                   <Button
                     type="primary"
                     danger
+                    loading={isSending}
                     onClick={() => {
-                      message.success("Hợp đồng đã được gửi thành công!");
-                      handleCloseModal();
+                      handleSendContract(selectedContract.id);
                     }}
                     icon={<Check size={16} />}
                   >
@@ -258,7 +301,6 @@ export default function ModalAssignContract({
         )}
       </Modal>
 
-      {/* Signature Modal */}
       <Modal
         title={
           <div className="flex items-center gap-2">
@@ -319,7 +361,7 @@ export default function ModalAssignContract({
           </div>
 
           <div style={{ fontSize: "12px", color: "#666", textAlign: "center" }}>
-            💡 Bạn có thể vẽ lại. Ấn nút "Xóa" để xoá và thử lại.
+            Bạn có thể vẽ lại. Ấn nút "Xóa" để xoá và thử lại.
           </div>
         </div>
       </Modal>

@@ -10,12 +10,12 @@ import {
     EnvironmentOutlined
 } from '@ant-design/icons';
 import { MyApartmentProps } from '@/types/profile';
-import { ApartmentStatus } from '@/types/apartment';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
 export default function MyApartment({ apartment, loading = false }: MyApartmentProps) {
     const t = useTranslations('Profile.apartment');
+    type ApartmentStatusValue = NonNullable<MyApartmentProps['apartment']>['status'];
 
     if (loading) {
         return (
@@ -42,18 +42,18 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
         );
     }
 
-    const getStatusColor = (status: ApartmentStatus) => {
-        const colors: Record<ApartmentStatus, string> = {
-            [ApartmentStatus.AVAILABLE]: 'green',
-            [ApartmentStatus.OCCUPIED]: 'blue',
-            [ApartmentStatus.MAINTENANCE]: 'orange',
-            [ApartmentStatus.RESERVED]: 'purple',
-            [ApartmentStatus.INACTIVE]: 'red'
+    const getStatusColor = (status: ApartmentStatusValue) => {
+        const colors: Record<ApartmentStatusValue, string> = {
+            available: 'green',
+            occupied: 'blue',
+            maintenance: 'orange',
+            reserved: 'purple',
+            inactive: 'red'
         };
         return colors[status];
     };
 
-    const getStatusText = (status: ApartmentStatus) => {
+    const getStatusText = (status: ApartmentStatusValue) => {
         return t(`status.${status}`);
     };
 
@@ -112,7 +112,7 @@ export default function MyApartment({ apartment, loading = false }: MyApartmentP
                     <Descriptions.Item label={t('bathrooms')} span={1}>{apartment.numberOfBathrooms}</Descriptions.Item>
                     <Descriptions.Item label={t('rentPrice')} span={3}>
                         <span className="text-lg font-semibold text-blue-600">
-                            ${apartment.baseRentPrice.toLocaleString()}{t('perMonth')}
+                            ${apartment.baseRentPrice.toLocaleString('vi-VN')}{t('perMonth')}
                         </span>
                     </Descriptions.Item>
                 </Descriptions>

@@ -62,6 +62,8 @@ export const ContractCard = ({
   const endDate = new Date(contract.endDate).toLocaleDateString("vi-VN");
   const monthlyRent = Number(contract.monthlyRent).toLocaleString("vi-VN");
 
+  console.log("first", contract);
+
   return (
     <Card
       hoverable
@@ -77,7 +79,6 @@ export const ContractCard = ({
       style={{ borderRadius: "16px", overflow: "hidden" }}
     >
       <div className="flex-1 flex flex-col gap-4">
-        {/* Header Section: Căn giữa theo chiều dọc (items-center) */}
         <div className="flex justify-between items-center pb-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-11 h-11 bg-blue-50 text-blue-600 rounded-xl">
@@ -93,9 +94,7 @@ export const ContractCard = ({
           <StatusBadge status={contract.status} />
         </div>
 
-        {/* Info Section: Bọc icon vào div có width cố định (w-6) để text luôn thẳng hàng */}
         <div className="flex flex-col gap-4 py-2">
-          {/* Tenant */}
           <div className="flex items-start gap-3">
             <div className="flex justify-center w-6 pt-0.5">
               <User size={18} className="text-gray-400" />
@@ -110,7 +109,6 @@ export const ContractCard = ({
             </div>
           </div>
 
-          {/* Apartment */}
           <div className="flex items-start gap-3">
             <div className="flex justify-center w-6 pt-0.5">
               <MapPin size={18} className="text-gray-400" />
@@ -126,7 +124,6 @@ export const ContractCard = ({
             </div>
           </div>
 
-          {/* Duration */}
           <div className="flex items-start gap-3">
             <div className="flex justify-center w-6 pt-0.5">
               <Calendar size={18} className="text-gray-400" />

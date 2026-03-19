@@ -10,7 +10,7 @@ export function normalizeText(text: string) {
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "")
           .replace(/đ/g, "d")
-          .toLowerCase();
+          .toLowerCase()
 }
 
 export const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + ' tr'

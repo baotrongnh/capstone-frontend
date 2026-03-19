@@ -16,7 +16,6 @@ import {
     StopOutlined,
 } from '@ant-design/icons';
 import { MyPropertiesProps, PartnerProperty } from '@/types/profile';
-import { ApartmentStatus } from '@/types/apartment';
 import Image from 'next/image';
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -26,36 +25,38 @@ const { Option } = Select;
 
 export default function MyPropertiesComponent({ properties = [], loading = false }: MyPropertiesProps) {
     const [search, setSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<ApartmentStatus | 'all'>('all');
+    type ApartmentStatusValue = PartnerProperty['status'];
+    const statusValues: ApartmentStatusValue[] = ['available', 'occupied', 'maintenance', 'reserved', 'inactive'] as ApartmentStatusValue[];
+    const [statusFilter, setStatusFilter] = useState<ApartmentStatusValue | 'all'>('all');
     const t = useTranslations('Profile.properties');
 
-    const getStatusColor = (status: ApartmentStatus) => {
-        const colors: Record<ApartmentStatus, string> = {
-            [ApartmentStatus.AVAILABLE]: 'green',
-            [ApartmentStatus.OCCUPIED]: 'blue',
-            [ApartmentStatus.MAINTENANCE]: 'orange',
-            [ApartmentStatus.RESERVED]: 'purple',
-            [ApartmentStatus.INACTIVE]: 'default',
+    const getStatusColor = (status: ApartmentStatusValue) => {
+        const colors: Record<ApartmentStatusValue, string> = {
+            available: 'green',
+            occupied: 'blue',
+            maintenance: 'orange',
+            reserved: 'purple',
+            inactive: 'default',
         };
         return colors[status];
     };
 
-    const getStatusIcon = (status: ApartmentStatus) => {
-        const icons: Record<ApartmentStatus, React.ReactNode> = {
-            [ApartmentStatus.AVAILABLE]: <CheckCircleOutlined />,
-            [ApartmentStatus.OCCUPIED]: <UserOutlined />,
-            [ApartmentStatus.MAINTENANCE]: <ToolOutlined />,
-            [ApartmentStatus.RESERVED]: <AppstoreOutlined />,
-            [ApartmentStatus.INACTIVE]: <StopOutlined />,
+    const getStatusIcon = (status: ApartmentStatusValue) => {
+        const icons: Record<ApartmentStatusValue, React.ReactNode> = {
+            available: <CheckCircleOutlined />,
+            occupied: <UserOutlined />,
+            maintenance: <ToolOutlined />,
+            reserved: <AppstoreOutlined />,
+            inactive: <StopOutlined />,
         };
         return icons[status];
     };
 
     const stats = useMemo(() => ({
         total: properties.length,
-        available: properties.filter((p) => p.status === ApartmentStatus.AVAILABLE).length,
-        occupied: properties.filter((p) => p.status === ApartmentStatus.OCCUPIED).length,
-        maintenance: properties.filter((p) => p.status === ApartmentStatus.MAINTENANCE).length,
+        available: properties.filter((p) => p.status === 'available').length,
+        occupied: properties.filter((p) => p.status === 'occupied').length,
+        maintenance: properties.filter((p) => p.status === 'maintenance').length,
         totalRevenue: properties
             .filter((p) => p.monthlyRevenue)
             .reduce((s, p) => s + (p.monthlyRevenue ?? 0), 0),
@@ -152,7 +153,7 @@ export default function MyPropertiesComponent({ properties = [], loading = false
                     className="w-40"
                 >
                     <Option value="all">{t('allStatuses')}</Option>
-                    {Object.values(ApartmentStatus).map((s) => (
+                    {statusValues.map((s) => (
                         <Option key={s} value={s}>
                             {t(`status.${s}`)}
                         </Option>
@@ -188,8 +189,8 @@ function PropertyCard({
     t,
 }: {
     property: PartnerProperty;
-    getStatusColor: (s: ApartmentStatus) => string;
-    getStatusIcon: (s: ApartmentStatus) => React.ReactNode;
+    getStatusColor: (s: PartnerProperty['status']) => string;
+    getStatusIcon: (s: PartnerProperty['status']) => React.ReactNode;
     t: (key: string) => string;
 }) {
     const coverImage =

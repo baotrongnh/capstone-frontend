@@ -1,16 +1,14 @@
-import { ApartmentQueryParams } from "@/types/apartment";
+import {
+  ApartmentDetailResponse,
+  ApartmentListResponse,
+  ApartmentSearchQueryParams,
+} from "@/types/apartment";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
-import { paths } from "@/types/api";
-
-export type ApartmentListResponse =
-  paths["/api/v1/apartments/search"]["get"]["responses"]["200"]["content"]["application/json"];
-export type ApartmentDetailResponse =
-  paths["/api/v1/apartments/{id}"]["get"]["responses"]["200"]["content"]["application/json"];
 
 export const apartmentService = {
   getList: async (
-    params?: ApartmentQueryParams,
+    params?: ApartmentSearchQueryParams,
   ): Promise<ApartmentListResponse> => {
     const { data } = await apiClient.get(`${endpoints.apartments}/search`, {
       params,

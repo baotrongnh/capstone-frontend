@@ -26,6 +26,8 @@ export default function ContractLayout() {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
 
+  console.log("AAAA", contractsList);
+
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
     return contractsList.filter(
@@ -55,6 +57,7 @@ export default function ContractLayout() {
 
     try {
       const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${contract.pdfUrl}`;
+
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
 
@@ -120,7 +123,6 @@ export default function ContractLayout() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <Title level={2} style={{ marginBottom: 4, color: "#111827" }}>
           Hợp Đồng Thuê Nhà

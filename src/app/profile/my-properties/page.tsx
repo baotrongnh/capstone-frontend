@@ -3,7 +3,6 @@
 import MyPropertiesComponent from '../components/my-properties';
 import { ActorType } from '@/types/auth';
 import { PartnerProperty } from '@/types/profile';
-import { ApartmentStatus } from '@/types/apartment';
 import { ProfileLayout } from '../components';
 
 export default function MyPropertiesPage() {
@@ -19,7 +18,7 @@ export default function MyPropertiesPage() {
             totalArea: '75',
             numberOfBedrooms: 2,
             numberOfBathrooms: 2,
-            status: ApartmentStatus.OCCUPIED,
+            status: 'occupied',
             images: [
                 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
                 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
@@ -44,7 +43,7 @@ export default function MyPropertiesPage() {
             totalArea: '55',
             numberOfBedrooms: 1,
             numberOfBathrooms: 1,
-            status: ApartmentStatus.AVAILABLE,
+            status: 'available',
             images: [
                 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
             ],
@@ -61,7 +60,7 @@ export default function MyPropertiesPage() {
             totalArea: '110',
             numberOfBedrooms: 3,
             numberOfBathrooms: 2,
-            status: ApartmentStatus.OCCUPIED,
+            status: 'occupied',
             images: [
                 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800',
                 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800',
@@ -87,7 +86,7 @@ export default function MyPropertiesPage() {
             totalArea: '68',
             numberOfBedrooms: 2,
             numberOfBathrooms: 1,
-            status: ApartmentStatus.MAINTENANCE,
+            status: 'maintenance',
             images: null,
             baseRentPrice: 950,
             monthlyRevenue: 0,
@@ -102,7 +101,7 @@ export default function MyPropertiesPage() {
             totalArea: '80',
             numberOfBedrooms: 2,
             numberOfBathrooms: 2,
-            status: ApartmentStatus.RESERVED,
+            status: 'reserved',
             images: [
                 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
             ],

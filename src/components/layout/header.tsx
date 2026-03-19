@@ -1,7 +1,7 @@
 'use client'
 
 import { APP_NAME } from "@/constants"
-import { ROUTES } from "@/constants/routes"
+import { IMG_URL, ROUTES } from "@/constants/routes"
 import { useLogout } from "@/hooks/query/useAuth"
 import { useAuthStore } from "@/stores/auth.store"
 import { Icon } from "@iconify/react"
@@ -66,7 +66,7 @@ export default function Header() {
       <div className="container flex justify-between items-center">
 
         <Link href={ROUTES.HOME}>
-          <Image alt="Logo" src="/img/logo.png" width={100} height={100} />
+          <Image alt="Logo" src={IMG_URL.LOGO} width={100} height={100} />
         </Link>
 
         {/* Desktop nav */}

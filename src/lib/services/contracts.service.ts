@@ -19,4 +19,11 @@ export const contractsService = {
     );
     return data;
   },
+  create: async (id: string, contractData: Object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${id}/upload`,
+      contractData,
+    );
+    return data;
+  },
 };

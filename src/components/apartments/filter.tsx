@@ -1,6 +1,6 @@
 'use client'
 
-import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE, FURNISHING_OPTIONS } from '@/constants/apartment'
+import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
 import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
 import { Province } from '@/lib/services/provinces.service'
 import { ApartmentQueryParams, FurnishingType } from '@/types/apartment'
@@ -10,11 +10,16 @@ import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
-interface FilterProps {
-     onFilterChange: (filters: Partial<ApartmentQueryParams> | null) => void
+type FurnishingStatusOption = NonNullable<ApartmentQueryParams['furnishingStatus']>
+
+const FURNISHING_TRANSLATION_KEY: Record<FurnishingStatusOption, string> = {
+     unfurnished: 'furnishingOptions.unfurnished',
+     semi_furnished: 'furnishingOptions.semi_furnished',
+     fully_furnished: 'furnishingOptions.fully_furnished',
 }
 
-export default function Filter({ onFilterChange }: FilterProps) {
+export default function Filter({ onFilterChange }:
+     { onFilterChange: (filters: ApartmentQueryParams | null) => void }) {
      const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
 
@@ -25,12 +30,12 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
      // Other filters
      const [price, setPrice] = useState([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
-     const [area, setArea] = useState<[number, number]>([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
+     const [area, setArea] = useState([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
      const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
-     const { data: provinces = [], isLoading: loadingProvinces } = useProvinces(afterMerge)
-     const { data: districts = [], isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
+     const { data: provinces, isLoading: loadingProvinces } = useProvinces(afterMerge)
+     const { data: secondaryAddress, isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
 
      useEffect(() => {
           const timer = setTimeout(() => {
@@ -51,11 +56,11 @@ export default function Filter({ onFilterChange }: FilterProps) {
           onFilterChange(null)
      }
 
-     const handleProvinceChange = (code?: number) => {
-          const province = code != null ? (provinces.find(p => p.code === code) ?? null) : null
+     const handleProvinceChange = (code?: string | number) => {
+          const province = (provinces?.find(p => p.code === code) ?? null)
           setSelectedProvince(province)
           setDistrict(undefined)
-          onFilterChange({ city: province?.name ?? undefined, district: undefined })
+          onFilterChange({ city: province?.code.toString() ?? undefined, district: undefined })
      }
 
      const handleDistrictChange = (value?: string) => {
@@ -72,6 +77,13 @@ export default function Filter({ onFilterChange }: FilterProps) {
           const next = checked ? value : undefined
           setFurnishing(next)
           onFilterChange({ furnishingStatus: next })
+     }
+
+     const handleLocationAfterMerge = (checked: boolean) => {
+          setAfterMerge(checked)
+          setSelectedProvince(null)
+          setDistrict(undefined)
+          onFilterChange({ city: undefined, district: undefined, addressType: checked ? 'new' : 'old' })
      }
 
      return (
@@ -104,12 +116,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
                     <Checkbox
                          checked={afterMerge}
-                         onChange={e => {
-                              setAfterMerge(e.target.checked)
-                              setSelectedProvince(null)
-                              setDistrict(undefined)
-                              onFilterChange({ city: undefined, district: undefined })
-                         }}
+                         onChange={e => handleLocationAfterMerge(e.target.checked)}
                     >
                          Địa chỉ sau sáp nhập
                     </Checkbox>
@@ -118,7 +125,7 @@ export default function Filter({ onFilterChange }: FilterProps) {
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
                          value={selectedProvince?.code}
-                         options={provinces.map(p => ({ label: p.name, value: p.code }))}
+                         options={provinces?.map(p => ({ label: p.name, value: p.code }))}
                          onChange={handleProvinceChange}
                          loading={loadingProvinces}
                          showSearch={{
@@ -133,10 +140,10 @@ export default function Filter({ onFilterChange }: FilterProps) {
                     />
 
                     <Select
-                         placeholder={t('districtPlaceholder')}
+                         placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
                          className="w-full"
                          value={district}
-                         options={districts.map(d => ({ label: d.name, value: d.name }))}
+                         options={secondaryAddress?.map(d => ({ label: d.name, value: d.code }))}
                          onChange={handleDistrictChange}
                          disabled={!selectedProvince}
                          loading={loadingDistricts}
@@ -217,13 +224,13 @@ export default function Filter({ onFilterChange }: FilterProps) {
                {/* Furnishing Status */}
                <div className="space-y-2">
                     <Label>{t('furnishingLabel')}</Label>
-                    {FURNISHING_OPTIONS.map(option => (
+                    {(Object.keys(FURNISHING_TRANSLATION_KEY) as FurnishingStatusOption[]).map(option => (
                          <Checkbox
-                              key={option.value}
-                              checked={furnishing === option.value}
-                              onChange={e => handleFurnishingChange(option.value, e.target.checked)}
+                              key={option}
+                              checked={furnishing === option}
+                              onChange={e => handleFurnishingChange(option, e.target.checked)}
                          >
-                              <span className="text-sm">{t(`furnishingOptions.${option.value}`)}</span>
+                              <span className="text-sm">{t(FURNISHING_TRANSLATION_KEY[option])}</span>
                          </Checkbox>
                     ))}
                </div>

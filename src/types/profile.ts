@@ -1,5 +1,4 @@
 import { ActorType } from "./auth";
-import { ApartmentStatus } from "./apartment";
 import { UserDetail, UpdateUserDto } from "./user";
 import { PartnerDetail } from "./partner";
 
@@ -51,6 +50,8 @@ export type MeterReading = {
   unitPrice: number;
   totalCost: number;
 };
+
+export type ApartmentStatus = "available" | "occupied" | "maintenance" | "reserved" | "inactive";
 
 export type UserApartment = {
   id: string;
