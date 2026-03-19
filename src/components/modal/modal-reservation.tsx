@@ -15,25 +15,21 @@ import {
   DatePicker,
   InputNumber,
   Input,
+  Select,
 } from "antd";
 import {
-  UploadOutlined,
-  IdcardOutlined,
-  SafetyOutlined,
   CheckCircleOutlined,
   InfoCircleOutlined,
   HomeOutlined,
   FileTextOutlined,
-  ClockCircleFilled,
-  CheckCircleFilled,
-  SyncOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { useUpdateUserCardImages, useUserProfile } from "@/hooks/query/useUser";
+import { useUserProfile } from "@/hooks/query/useUser";
 import { useApartment } from "@/hooks/query/useApartments";
 import ModalWaitingVerify from "./modal-waiting-verify";
 import { useCreateReservations } from "@/hooks/query/useReservations";
+import dayjs from "dayjs";
 
 import { ROUTES } from "@/constants/routes";
 import AuthModal from "./auth-modal";
@@ -45,6 +41,16 @@ interface ModalReservationProps {
   userId?: string | number | null;
 }
 
+const durationOptions = [
+  { label: "1 tháng", value: 1 },
+  { label: "2 tháng", value: 2 },
+  { label: "3 tháng", value: 3 },
+  { label: "4 tháng", value: 4 },
+  { label: "5 tháng", value: 5 },
+  { label: "6 tháng", value: 6 },
+  { label: "1 năm", value: 12 },
+];
+
 export default function ModalReservation({
   open,
   onClose,
@@ -53,6 +59,7 @@ export default function ModalReservation({
 }: ModalReservationProps) {
   const [openLogin, setOpenLogin] = useState(false);
   const [formReservations] = useForm();
+  const [duration, setDuration] = useState<number | null>(null);
 
   const { data: profile } = useUserProfile(!!userId && open);
 
@@ -77,9 +84,24 @@ export default function ModalReservation({
     try {
       await createReservation(payload);
       formReservations.resetFields();
+      setDuration(null);
       onClose();
     } catch (error) {
       console.error("Error creating reservation:", error);
+    }
+  };
+
+  const handleStartDateChange = () => {
+    formReservations.setFieldValue("desiredEndDate", null);
+    setDuration(null);
+  };
+
+  const handleDurationChange = (value: number) => {
+    setDuration(value);
+    const startDate = formReservations.getFieldValue("desiredStartDate");
+    if (startDate) {
+      const endDate = startDate.add(value, "month");
+      formReservations.setFieldValue("desiredEndDate", endDate);
     }
   };
 
@@ -202,28 +224,38 @@ export default function ModalReservation({
                         className="w-full h-10 rounded-lg"
                         format="DD/MM/YYYY"
                         placeholder="Chọn ngày"
+                        disabledDate={(current) => {
+                          return (
+                            current &&
+                            (current.isBefore(dayjs(), "day") ||
+                              current.isSame(dayjs(), "day"))
+                          );
+                        }}
+                        onChange={handleStartDateChange}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item
-                      name="desiredEndDate"
+                      name="durationMonths"
                       label={
                         <span className="font-medium text-gray-700">
-                          Ngày kết thúc
+                          Thời hạn thuê
                         </span>
                       }
                       rules={[
-                        { required: true, message: "Vui lòng chọn ngày!" },
+                        { required: true, message: "Vui lòng chọn thời hạn!" },
                       ]}
                     >
-                      <DatePicker
+                      <Select
                         className="w-full h-10 rounded-lg"
-                        format="DD/MM/YYYY"
-                        placeholder="Chọn ngày"
+                        placeholder="Chọn thời hạn"
+                        options={durationOptions}
+                        onChange={handleDurationChange}
                       />
                     </Form.Item>
                   </Col>
+
                   <Col span={8}>
                     <Form.Item
                       name="numberOfOccupants"
@@ -247,6 +279,29 @@ export default function ModalReservation({
                 </Row>
 
                 <Form.Item
+                  name="desiredEndDate"
+                  hidden={true}
+                  label={
+                    <span className="font-medium text-gray-700">
+                      Ngày kết thúc
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn thời hạn trước!",
+                    },
+                  ]}
+                >
+                  <DatePicker
+                    className="w-full h-10 rounded-lg"
+                    format="DD/MM/YYYY"
+                    placeholder="Tự động tính toán"
+                    disabled
+                  />
+                </Form.Item>
+
+                <Form.Item
                   name="specialRequests"
                   label={
                     <span className="font-medium text-gray-700">
@@ -268,7 +323,6 @@ export default function ModalReservation({
                 <div className="flex-1 space-y-1">
                   <p className="font-medium m-0">Tiếp theo sẽ thế nào?</p>
                   <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">
-                    <li>Chủ nhà sẽ xét duyệt hồ sơ của bạn trong 24h.</li>
                     <li>Bạn chưa phải thanh toán bất kỳ khoản nào lúc này.</li>
                   </ul>
                 </div>

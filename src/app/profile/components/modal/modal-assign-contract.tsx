@@ -6,6 +6,7 @@ import SignatureCanvas from "react-signature-canvas";
 import { Pen, Check } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
 import { useUploadContractPdf } from "@/hooks/query/useContracts";
+import { ROUTES } from "@/constants/routes";
 
 interface ModalAssignContractProps {
   showDetailModal: boolean;
@@ -29,6 +30,8 @@ export default function ModalAssignContract({
   const { mutateAsync: uploadContractPdf } = useUploadContractPdf(
     selectedContract?.id || "",
   );
+
+  console.log("II", selectedContract?.id);
 
   useEffect(() => {
     if (!showDetailModal) {
@@ -162,18 +165,16 @@ export default function ModalAssignContract({
     });
 
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("contractId", contractId);
-
-    const payload = {
-      contractPdf: formData,
-      signedDate: "",
-      contractDocumentUrl: "",
-    };
+    formData.append("contractPdf", file);
+    formData.append("signedDate", new Date().toISOString());
+    formData.append("contractDocumentUrl", "");
 
     try {
-      await uploadContractPdf(payload);
+      await uploadContractPdf(formData);
       setShowSignModal(false);
+
+      setShowDetailModal(false);
+      window.location.href = `${ROUTES.PROFILE}/bills`;
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
     }

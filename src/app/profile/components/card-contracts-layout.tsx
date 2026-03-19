@@ -1,5 +1,5 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { Card, Button } from "antd";
 import { FileText, Eye, User, MapPin, Calendar, Wallet } from "lucide-react";
 
@@ -7,6 +7,7 @@ interface ContractCardProps {
   contract: ContractWithMembers;
   onView: () => void;
   onDownload: () => void;
+  onCancel: () => void;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -18,18 +19,18 @@ const StatusBadge = ({ status }: { status: string }) => {
       label: "Chưa ký",
     },
     active: {
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      border: "border-blue-200",
+      label: "Đã kích hoạt",
+    },
+    signed: {
       bg: "bg-emerald-50",
       text: "text-emerald-700",
       border: "border-emerald-200",
       label: "Đã ký",
     },
-    inactive: {
-      bg: "bg-gray-50",
-      text: "text-gray-600",
-      border: "border-gray-200",
-      label: "Không hoạt động",
-    },
-    expired: {
+    terminated: {
       bg: "bg-rose-50",
       text: "text-rose-700",
       border: "border-rose-200",
@@ -38,7 +39,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   };
 
   const config =
-    statusMap[status as keyof typeof statusMap] || statusMap.inactive;
+    statusMap[status as keyof typeof statusMap] || statusMap.terminated;
 
   return (
     <span
@@ -53,6 +54,7 @@ export const ContractCard = ({
   contract,
   onView,
   onDownload,
+  onCancel,
 }: ContractCardProps) => {
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
@@ -61,8 +63,6 @@ export const ContractCard = ({
   const startDate = new Date(contract.startDate).toLocaleDateString("vi-VN");
   const endDate = new Date(contract.endDate).toLocaleDateString("vi-VN");
   const monthlyRent = Number(contract.monthlyRent).toLocaleString("vi-VN");
-
-  console.log("first", contract);
 
   return (
     <Card
@@ -118,8 +118,8 @@ export const ContractCard = ({
               <span className="text-sm font-semibold text-gray-800 leading-tight">
                 Phòng {contract.apartment?.apartmentNumber}
               </span>
-              <span className="text-xs text-gray-500 mt-1 line-clamp-1">
-                {contract.apartment?.address}, {contract.apartment?.city}
+              <span className="text-xs text-gray-500 mt-1 line-clamp-2">
+                {contract.apartment.newAddress.fullAddress}
               </span>
             </div>
           </div>
@@ -161,7 +161,28 @@ export const ContractCard = ({
           className="flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
         >
           <Eye size={18} />
-          <span className="font-medium">Xem & Ký hợp đồng</span>
+          {contract.status === "signed" && (
+            <span className="font-medium">Xem hợp đồng</span>
+          )}
+
+          {contract.status === "active" && (
+            <span className="font-medium">Xem hợp đồng</span>
+          )}
+
+          {contract.status === "draft" && (
+            <span className="font-medium">Xem & ký hợp đồng</span>
+          )}
+        </Button>
+
+        <Button
+          block
+          size="large"
+          style={{ marginBottom: 10 }}
+          onClick={onCancel}
+          className="flex items-center text-white! bg-red-500! justify-center gap-2 h-11 rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
+        >
+          <DeleteOutlined size={18} />
+          <span className="font-medium">Hủy hợp đồng</span>
         </Button>
         <Button
           block

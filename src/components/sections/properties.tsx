@@ -36,6 +36,7 @@ export default function PropertiesSection() {
       addressType: "new",
       sortBy: "baseRentPrice",
       sortOrder: "asc",
+      status: "available",
     }),
     [],
   );

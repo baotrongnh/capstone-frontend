@@ -4,14 +4,15 @@ import React, { useState, useMemo } from "react";
 import { Card, Typography, Select, Spin, Empty } from "antd";
 import { Files, FileEdit, FileCheck } from "lucide-react";
 
-import { useGetContracts } from "@/hooks/query/useContracts";
+import { useCancelContract, useGetContracts } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { ContractCard } from "./card-contracts-layout";
 import ModalAssignContract from "./modal/modal-assign-contract";
+import ModalCancelContract from "./modal/modal-cancel-contract";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "draft" | "active";
+type StatusFilter = "all" | "draft" | "active" | "terminated";
 
 export default function ContractLayout() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -19,6 +20,7 @@ export default function ContractLayout() {
     null,
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showModalCancelContract, setShowModalCancelContract] = useState(false);
 
   const { data, isLoading } = useGetContracts();
 
@@ -26,7 +28,9 @@ export default function ContractLayout() {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
 
-  console.log("AAAA", contractsList);
+  const { mutateAsync: useCancelContracts } = useCancelContract(
+    selectedContractId ?? "",
+  );
 
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
@@ -72,6 +76,11 @@ export default function ContractLayout() {
       console.error("Error downloading PDF:", error);
       alert("Lỗi khi tải file PDF");
     }
+  };
+
+  const handleCancelContract = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setShowModalCancelContract(true);
   };
 
   if (isLoading) {
@@ -191,6 +200,7 @@ export default function ContractLayout() {
             contract={contract}
             onView={() => handleViewContract(contract.id)}
             onDownload={() => handleDownloadContract(contract.id)}
+            onCancel={() => handleCancelContract(contract.id)}
           />
         ))}
       </div>
@@ -199,6 +209,12 @@ export default function ContractLayout() {
         selectedContract={selectedContract}
         showDetailModal={showDetailModal}
         setShowDetailModal={setShowDetailModal}
+      />
+
+      <ModalCancelContract
+        showModalCancelContract={showModalCancelContract}
+        cancel={() => setShowModalCancelContract(false)}
+        selectContract={selectedContract}
       />
     </div>
   );

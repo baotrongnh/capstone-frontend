@@ -24,3 +24,17 @@ export const useUploadContractPdf = (contractId: string) => {
     },
   });
 };
+
+export const useCancelContract = (contractId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => contractsService.cancel(contractId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      message.success("Hợp đồng hủy thành công!");
+    },
+    onError: (error) => {
+      console.error("Error uploading PDF:", error);
+    },
+  });
+};
