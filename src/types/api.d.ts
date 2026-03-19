@@ -326,23 +326,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/{id}/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Verify user identity (staff confirms user info) */
-        patch: operations["UsersController_verifyUser"];
-        trace?: never;
-    };
     "/api/v1/apartments/search": {
         parameters: {
             query?: never;
@@ -509,6 +492,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contracts/{id}/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload signed contract PDF */
+        post: operations["ContractsController_uploadSignedPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contracts/{id}/activate": {
         parameters: {
             query?: never;
@@ -541,6 +541,23 @@ export interface paths {
         head?: never;
         /** Terminate contract */
         patch: operations["ContractsController_terminate"];
+        trace?: never;
+    };
+    "/api/v1/contracts/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Cancel contract by user */
+        patch: operations["ContractsController_cancelByUser"];
         trace?: never;
     };
     "/api/v1/invoices": {
@@ -597,6 +614,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/payments/invoice/{invoiceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by invoice ID */
+        get: operations["PaymentsController_findByInvoiceId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/payments/{id}": {
         parameters: {
             query?: never;
@@ -608,6 +642,23 @@ export interface paths {
         get: operations["PaymentsController_findOne"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/payos/create-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create PayOS hosted checkout link from invoice */
+        post: operations["PaymentsController_createPayOSPaymentLink"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2330,19 +2381,6 @@ export interface components {
             /** @description Whether the user email is verified */
             isVerified?: boolean;
         };
-        UserVerifiedDto: {
-            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
-            id: string;
-            /** @example user@example.com */
-            email: string;
-            /** @example Nguyen Van A */
-            fullName: string;
-            /** @example true */
-            isVerified: boolean;
-            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
-            /** Format: date-time */
-            updatedAt: string;
-        };
         UserDeletedDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
@@ -2706,6 +2744,12 @@ export interface components {
             newWardCode?: number | null;
             /** @example 26731 */
             oldWardCode?: number | null;
+            /** @description Resolved address from new ward code (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Resolved address from old ward code (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Display address derived from resolved ward data */
+            displayAddress?: string | null;
         };
         ContractListMemberUserDto: {
             id: string;
@@ -2792,6 +2836,12 @@ export interface components {
             hasPdf: boolean;
             /** @example /contracts/9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf/pdf */
             pdfUrl: string;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            publicPdfUrl?: string | null;
+            /** @example false */
+            hasLandlordSignature: boolean;
+            /** @example false */
+            hasTenantSignature: boolean;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -2802,6 +2852,23 @@ export interface components {
             updatedAt: string;
             apartment: components["schemas"]["ContractApartmentDto"];
             members: components["schemas"]["ContractMemberDto"][];
+        };
+        UploadContractPdfDto: {
+            /**
+             * Format: binary
+             * @description Signed contract PDF file (required)
+             */
+            contractPdf: string;
+            /**
+             * @description Signed date for the contract (ISO 8601)
+             * @example 2026-03-17T10:30:00.000Z
+             */
+            signedDate?: string;
+            /**
+             * @description URL to the signed contract document
+             * @example https://storage.example.com/contracts/signed/CTR-2026-00001.pdf
+             */
+            contractDocumentUrl?: string;
         };
         CreateContractDto: {
             /** @description Apartment ID to rent */
@@ -2913,7 +2980,7 @@ export interface components {
             /** @description Special conditions */
             specialConditions?: string;
             /** @enum {string} */
-            status?: "draft" | "pending" | "active" | "expired" | "terminated" | "renewed";
+            status?: "draft" | "pending" | "signed" | "active" | "expired" | "terminated" | "renewed";
             /** @description Signed date when contract is activated */
             signedDate?: string;
             /** @description URL to signed contract document */
@@ -2924,6 +2991,13 @@ export interface components {
             terminationReason?: string;
             /** @description Early termination fee */
             earlyTerminationFee?: number;
+        };
+        CancelContractDto: {
+            /**
+             * @description Reason provided by user when cancelling contract
+             * @example Khong co nhu cau thue nua
+             */
+            reason: string;
         };
         InvoiceContractApartmentDto: {
             /** @example A101 */
@@ -2945,6 +3019,8 @@ export interface components {
             totalAmount: string;
             /** @example issued */
             status: string;
+            /** @example rent */
+            invoiceType: string;
             /** Format: date-time */
             dueDate: string;
             /** Format: date-time */
@@ -2954,6 +3030,21 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             rentalContract: components["schemas"]["InvoiceContractSummaryDto"];
+        };
+        InvoiceContentItemDto: {
+            /** @example Deposit for contract CTR-2026-00001 */
+            description: string;
+            /** @example 20000000 */
+            amount: number;
+            /** @example 1 */
+            quantity: number;
+            /** @example contractDeposit */
+            itemType: string;
+        };
+        InvoiceContentDto: {
+            title?: string | null;
+            description?: string | null;
+            items: components["schemas"]["InvoiceContentItemDto"][];
         };
         InvoicePaymentSummaryDto: {
             id: string;
@@ -2991,6 +3082,9 @@ export interface components {
             currency: string;
             /** @example issued */
             status: string;
+            /** @example rent */
+            invoiceType: string;
+            invoiceContent?: components["schemas"]["InvoiceContentDto"] | null;
             paymentMethod?: string | null;
             invoiceDocumentUrl?: string | null;
             notes?: string | null;
@@ -3045,6 +3139,12 @@ export interface components {
              */
             billingPeriodEnd: string;
             items: components["schemas"]["InvoiceItemDto"][];
+            /**
+             * @description Invoice type for payment routing and display
+             * @default rent
+             * @enum {string}
+             */
+            invoiceType: "rent" | "deposit" | "contractDeposit" | "utility" | "service" | "penalty" | "other";
             /** @description Additional notes */
             notes?: string;
         };
@@ -3084,6 +3184,50 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             invoice: components["schemas"]["PaymentInvoiceSummaryDto"];
+            /** @description True when this is a synthetic pending row generated from an unpaid invoice without payment records */
+            isSynthetic?: boolean;
+        };
+        PaymentInvoiceItemDto: {
+            /** @example Deposit for contract CTR-2026-00001 */
+            description: string;
+            /** @example 20000000 */
+            amount: number;
+            /** @example 1 */
+            quantity: number;
+            /** @example contractDeposit */
+            itemType: string;
+        };
+        PaymentInvoiceContentDto: {
+            /** @example invoice-123 */
+            invoiceId: string;
+            /** @example INV-202601-00001 */
+            invoiceNumber: string;
+            /** @example contractDeposit */
+            invoiceType: string;
+            /** @example VND */
+            currency: string;
+            /** @example 0 */
+            baseRent: number;
+            /** @example 0 */
+            taxAmount: number;
+            /** @example 20000000 */
+            totalAmount: number;
+            items: components["schemas"]["PaymentInvoiceItemDto"][];
+            /**
+             * @example {
+             *       "title": "Deposit invoice for CTR-2026-00001",
+             *       "description": "Security deposit payment",
+             *       "items": [
+             *         {
+             *           "description": "Deposit for contract CTR-2026-00001",
+             *           "amount": 20000000,
+             *           "quantity": 1,
+             *           "itemType": "contractDeposit"
+             *         }
+             *       ]
+             *     }
+             */
+            content: Record<string, never>;
         };
         PaymentDetailDto: {
             id: string;
@@ -3114,7 +3258,7 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            invoice: Record<string, never>;
+            invoice: components["schemas"]["PaymentInvoiceContentDto"];
             user: Record<string, never>;
         };
         PaymentCreatedDto: {
@@ -3140,6 +3284,44 @@ export interface components {
             transactionReference?: string;
             /** @description Payment notes */
             notes?: string;
+        };
+        PayOSPaymentLinkCreatedDto: {
+            /** @example 9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf */
+            paymentId: string;
+            /** @example invoice-123 */
+            invoiceId: string;
+            /** @example PAYOS-250319123456 */
+            paymentReference: string;
+            /** @example 250319123456 */
+            orderCode: number;
+            /** @example PENDING */
+            status: string;
+            /** @example https://pay.payos.vn/web/4cecc6f4f7af43f09b3d3137ce645a49 */
+            checkoutUrl: string;
+            /** @example 0002010102123858... */
+            qrCode: string;
+            /** @description Unix timestamp (seconds) for link expiry */
+            expiredAt?: number | null;
+            invoice: components["schemas"]["PaymentInvoiceContentDto"];
+        };
+        CreatePayOSPaymentLinkDto: {
+            /** @description Invoice ID to create PayOS payment link for */
+            invoiceId: string;
+            /**
+             * @description Return URL after successful payment
+             * @example https://app.intelliservops.com/payment/success
+             */
+            returnUrl?: string;
+            /**
+             * @description Cancel URL when customer cancels payment
+             * @example https://app.intelliservops.com/payment/cancel
+             */
+            cancelUrl?: string;
+            /**
+             * @description Payment description shown on PayOS
+             * @example Thanh toan hoa don INV-202603-00001
+             */
+            description?: string;
         };
         MaintenanceApartmentDto: {
             /** @example A101 */
@@ -5295,7 +5477,19 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -5537,52 +5731,6 @@ export interface operations {
             };
             /** @description User not found */
             404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    UsersController_verifyUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User verified successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["UserVerifiedDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description User is already verified */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5882,7 +6030,7 @@ export interface operations {
     ContractsController_findAll: {
         parameters: {
             query?: {
-                status?: "draft" | "pending" | "active" | "expired" | "terminated" | "renewed";
+                status?: "draft" | "pending" | "signed" | "active" | "expired" | "terminated" | "renewed";
             };
             header?: never;
             path?: never;
@@ -6089,6 +6237,64 @@ export interface operations {
             };
         };
     };
+    ContractsController_uploadSignedPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Upload a signed contract PDF file */
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadContractPdfDto"];
+            };
+        };
+        responses: {
+            /** @description Signed contract PDF uploaded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or missing PDF file */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract PDF already uploaded */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ContractsController_activate: {
         parameters: {
             query?: never;
@@ -6160,6 +6366,56 @@ export interface operations {
             };
             /** @description Contract not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_cancelByUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelContractDto"];
+            };
+        };
+        responses: {
+            /** @description Contract cancelled by user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract cannot be cancelled */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6319,6 +6575,7 @@ export interface operations {
         parameters: {
             query?: {
                 status?: "pending" | "processing" | "completed" | "failed" | "refunded" | "cancelled";
+                invoiceId?: string;
             };
             header?: never;
             path?: never;
@@ -6388,6 +6645,40 @@ export interface operations {
             };
         };
     };
+    PaymentsController_findByInvoiceId: {
+        parameters: {
+            query?: {
+                status?: "pending" | "processing" | "completed" | "failed" | "refunded" | "cancelled";
+            };
+            header?: never;
+            path: {
+                invoiceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payments of a specific invoice (includes pending synthetic entry if unpaid) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PaymentListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
     PaymentsController_findOne: {
         parameters: {
             query?: never;
@@ -6424,6 +6715,40 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    PaymentsController_createPayOSPaymentLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePayOSPaymentLinkDto"];
+            };
+        };
+        responses: {
+            /** @description PayOS payment link created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PayOSPaymentLinkCreatedDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
