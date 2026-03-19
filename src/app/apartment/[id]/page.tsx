@@ -4,7 +4,7 @@ import SimilarApartments from "@/components/apartments/similar-apartments";
 import ModalBookingSchedule, {
   type BookingScheduleData,
 } from "@/components/modal/modal-booking-schedule";
-import ModalLoginRequired from "@/components/modal/modalLoginRequired";
+import ModalLoginRequired from "@/components/modal/modal-login-required";
 import { APARTMENT_STATUS } from "@/constants/apartment";
 import { ROUTES } from "@/constants/routes";
 import { useApartment } from "@/hooks/query/useApartments";

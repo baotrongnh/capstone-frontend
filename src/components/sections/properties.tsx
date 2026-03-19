@@ -15,7 +15,7 @@ import ModalLeaveInformation from "../modal/modal-leave-information";
 import ModalBookingSchedule, {
   BookingScheduleData,
 } from "../modal/modal-booking-schedule";
-import ModalLoginRequired from "../modal/modalLoginRequired";
+import ModalLoginRequired from "../modal/modal-login-required";
 import ModalReservation from "../modal/modal-reservation";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
