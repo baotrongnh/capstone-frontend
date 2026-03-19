@@ -3,9 +3,11 @@
 import { useTranslations } from "next-intl";
 import { useState, useRef, useMemo } from "react";
 import { MailOutlined, StarFilled } from "@ant-design/icons";
+import { useAddressTypePreference } from "@/hooks/useAddressTypePreference";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
 import ModalReservation from "../modal/modalReservation";
+import { getApartmentDisplayAddress } from "@/utils/apartment-address";
 import {
   ApartmenList,
   ApartmentItem,
@@ -16,6 +18,7 @@ import ModalLeaveInformation from "../modal/modalLeaveInformation";
 import AuthModal from "../modal/auth-modal";
 export default function PropertiesSection() {
   const t = useTranslations("HomePage");
+  const { addressType } = useAddressTypePreference();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
@@ -27,10 +30,11 @@ export default function PropertiesSection() {
   const params = useMemo<ApartmentQueryParams>(
     () => ({
       status: "available",
+      addressType,
       sortBy: "baseRentPrice",
       sortOrder: "asc",
     }),
-    [],
+    [addressType],
   );
 
   const user = useAuthStore((s) => s.user);
@@ -123,7 +127,7 @@ export default function PropertiesSection() {
                     <div className="space-y-1 text-xs text-gray-500 mb-2">
                       <div>{apartment.totalArea} m²</div>
                       <div>
-                        {apartment.district}, {apartment.city}
+                        {getApartmentDisplayAddress(apartment, addressType) || "Chưa có địa chỉ"}
                       </div>
                       <div>
                         {apartment.numberOfBedrooms} PN ·{" "}

@@ -6,7 +6,9 @@ import ModalLoginRequired from '@/components/modal/modalLoginRequired'
 import { APARTMENT_STATUS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartment } from '@/hooks/query/useApartments'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useAuthStore } from '@/stores/auth.store'
+import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { formatVND } from '@/utils/format'
 import { Breadcrumb, Button, Divider, Image, Rate, Result, Spin, Tag, Typography } from 'antd'
 import { Bath, BedDouble, Building2, CalendarDays, ExternalLink, Map, MapPin, Maximize2, Sofa, Users, Video } from 'lucide-react'
@@ -16,6 +18,7 @@ import { use, useState } from 'react'
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const t = useTranslations('ApartmentDetailPage')
   const tLabels = useTranslations('ApartmentLabels')
+  const { addressType } = useAddressTypePreference()
   const { id } = use(params)
   const { data, isLoading, isError } = useApartment(id)
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
@@ -55,8 +58,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   }
 
   const images = apt?.images?.length ? apt.images : []
-  const location = [apt?.district, apt?.city].filter(Boolean).join(', ')
-  const fullAddress = [apt?.address, apt?.ward, apt?.district, apt?.city].filter(Boolean).join(', ')
+  const fullAddress = getApartmentDisplayAddress(apt, addressType)
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {
@@ -77,7 +79,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         items={[
           { title: t('breadcrumbHome'), href: ROUTES.HOME },
           { title: t('breadcrumbList'), href: ROUTES.APARTMENT },
-          { title: apt?.buildingName || apt?.apartmentNumber },
+          { title: apt?.buildingName },
         ]}
       />
 
@@ -155,7 +157,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 mt-3'>
           <span className='text-muted flex items-center gap-1 text-sm md:text-base'>
             <MapPin size={16} className='shrink-0' />
-            <span className='line-clamp-1'>{location || t('noAddress')}</span>
+            <span className='line-clamp-1'>{fullAddress || t('noAddress')}</span>
           </span>
           <Divider orientation='vertical' className='hidden sm:block' />
           <span className='text-muted flex gap-1 items-center text-sm md:text-base'>
@@ -328,7 +330,11 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         {apt?.latitude && apt?.longitude ? (
           <div className='relative w-full h-64 sm:h-80 md:h-96 lg:h-120 rounded-lg overflow-hidden'>
             <iframe
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(apt.longitude) - 0.005},${Number(apt.latitude) - 0.005},${Number(apt.longitude) + 0.005},${Number(apt.latitude) + 0.005}&layer=mapnik&marker=${apt.latitude},${apt.longitude}`}
+              src=
+              {`https://www.openstreetmap.org/export/embed.html?bbox=${Number(apt.longitude) - 0.002},
+              ${Number(apt.latitude) - 0.005},
+              ${Number(apt.longitude) + 0.005},
+              ${Number(apt.latitude) + 0.005}&layer=mapnik&marker=${apt.latitude},${apt.longitude}`}
               className='w-full h-full border-0'
               loading='lazy'
             />

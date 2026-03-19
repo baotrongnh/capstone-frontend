@@ -1,6 +1,7 @@
 'use client'
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
 import { Province } from '@/lib/services/provinces.service'
 import { ApartmentQueryParams, FurnishingType } from '@/types/apartment'
@@ -11,6 +12,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 type FurnishingStatusOption = NonNullable<ApartmentQueryParams['furnishingStatus']>
+type ApartmentFilterPatch = Partial<Omit<ApartmentQueryParams, 'addressType'>>
 
 const FURNISHING_TRANSLATION_KEY: Record<FurnishingStatusOption, string> = {
      unfurnished: 'furnishingOptions.unfurnished',
@@ -19,14 +21,14 @@ const FURNISHING_TRANSLATION_KEY: Record<FurnishingStatusOption, string> = {
 }
 
 export default function Filter({ onFilterChange }:
-     { onFilterChange: (filters: ApartmentQueryParams | null) => void }) {
+     { onFilterChange: (filters: ApartmentFilterPatch | null) => void }) {
      const t = useTranslations('ApartmentFilter')
+     const { isAfterMerge: afterMerge, setAfterMerge } = useAddressTypePreference()
      const [keyword, setKeyword] = useState('')
 
      // Location
-     const [afterMerge, setAfterMerge] = useState(false)
      const [selectedProvince, setSelectedProvince] = useState<Province | null>(null)
-     const [district, setDistrict] = useState<string>()
+     const [wardCode, setWardCode] = useState<number>()
 
      // Other filters
      const [price, setPrice] = useState([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
@@ -47,25 +49,24 @@ export default function Filter({ onFilterChange }:
      const resetAll = () => {
           setKeyword('')
           setSelectedProvince(null)
-          setDistrict(undefined)
+          setWardCode(undefined)
           setPrice([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
           setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
           setBedrooms(null)
           setFurnishing(undefined)
-          setAfterMerge(false)
           onFilterChange(null)
      }
 
-     const handleProvinceChange = (code?: string | number) => {
+     const handleProvinceChange = (code?: number) => {
           const province = (provinces?.find(p => p.code === code) ?? null)
           setSelectedProvince(province)
-          setDistrict(undefined)
-          onFilterChange({ city: province?.code.toString() ?? undefined, district: undefined })
+          setWardCode(undefined)
+          onFilterChange({ wardCode: undefined })
      }
 
-     const handleDistrictChange = (value?: string) => {
-          setDistrict(value)
-          onFilterChange({ district: value })
+     const handleDistrictChange = (value?: number) => {
+          setWardCode(value)
+          onFilterChange({ wardCode: value })
      }
 
      const handleBedroomsChange = (value: number | null) => {
@@ -82,8 +83,8 @@ export default function Filter({ onFilterChange }:
      const handleLocationAfterMerge = (checked: boolean) => {
           setAfterMerge(checked)
           setSelectedProvince(null)
-          setDistrict(undefined)
-          onFilterChange({ city: undefined, district: undefined, addressType: checked ? 'new' : 'old' })
+          setWardCode(undefined)
+          onFilterChange({ wardCode: undefined })
      }
 
      return (
@@ -118,7 +119,7 @@ export default function Filter({ onFilterChange }:
                          checked={afterMerge}
                          onChange={e => handleLocationAfterMerge(e.target.checked)}
                     >
-                         Địa chỉ sau sáp nhập
+                         {t('afterMergeLabel')}
                     </Checkbox>
 
                     <Select
@@ -142,7 +143,7 @@ export default function Filter({ onFilterChange }:
                     <Select
                          placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
                          className="w-full"
-                         value={district}
+                         value={wardCode}
                          options={secondaryAddress?.map(d => ({ label: d.name, value: d.code }))}
                          onChange={handleDistrictChange}
                          disabled={!selectedProvince}

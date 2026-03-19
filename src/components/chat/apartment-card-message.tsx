@@ -1,6 +1,8 @@
 'use client'
 
 import { useApartment } from '@/hooks/query/useApartments'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
+import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
@@ -8,6 +10,7 @@ import { useRouter } from 'next/navigation'
 
 export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
      const router = useRouter()
+     const { addressType } = useAddressTypePreference()
      const { data, isLoading } = useApartment(apartmentId)
      const apt = data?.data
 
@@ -15,6 +18,7 @@ export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
      if (!apt) return <div className="text-xs text-red-400">Không tìm thấy căn hộ</div>
 
      const thumb = apt.images?.[0] ?? null
+     const displayAddress = getApartmentDisplayAddress(apt, addressType)
 
      return (
           <button
@@ -31,7 +35,7 @@ export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
                     <p className="text-xs font-semibold text-gray-800 mb-0.5 truncate">{apt.buildingName}</p>
                     <p className="text-xs text-gray-500 mb-0.5">Phòng {apt.apartmentNumber}</p>
                     <p className="text-xs font-medium text-blue-600 mb-0">{formatVND(apt.baseRentPrice)}/tháng</p>
-                    <p className="text-xs text-gray-400 truncate">{[apt.district, apt.city].filter(Boolean).join(', ')}</p>
+                    <p className="text-xs text-gray-400 truncate">{displayAddress || 'Chưa có địa chỉ'}</p>
                </div>
           </button>
      )
