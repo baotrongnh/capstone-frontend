@@ -7,7 +7,7 @@ import { Avatar, Divider, FloatButton, Space } from 'antd'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import ModalLoginRequired from '@/components/modal/modalLoginRequired'
+import ModalLoginRequired from '@/components/modal/modal-login-required'
 import { ChatInput } from './chat-input'
 import { ChatMessages } from './chat-messages'
 import { ChatModeSelect } from './chat-mode-select'
@@ -18,13 +18,13 @@ export default function ChatSupport() {
   const t = useTranslations("Chat");
   const pathname = usePathname();
 
-     const user = useAuthStore(s => s.user)
-     const [loginModalOpen, setLoginModalOpen] = useState(false)
-     const [open, setOpen] = useState(false)
-     const [mode, setMode] = useState<ChatMode>(() =>
-          typeof window !== 'undefined' ? (localStorage.getItem(STORAGE_KEY) as ChatMode) ?? null : null
-     )
-     const [messages, setMessages] = useState<ChatMessage[]>([])
+  const user = useAuthStore(s => s.user)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState<ChatMode>(() =>
+    typeof window !== 'undefined' ? (localStorage.getItem(STORAGE_KEY) as ChatMode) ?? null : null
+  )
+  const [messages, setMessages] = useState<ChatMessage[]>([])
 
   // Detect current apartment page
   const apartmentIdMatch = pathname.match(/^\/apartment\/([^/]+)$/);
@@ -107,23 +107,23 @@ export default function ChatSupport() {
     </Space>
   );
 
-     return (
-          <>
-               <FloatButton
-                    icon={<CustomerServiceOutlined />}
-                    type="primary"
-                    style={{ right: 24, bottom: 24, width: 56, height: 56 }}
-                    onClick={() => user ? setOpen(true) : setLoginModalOpen(true)}
-                    tooltip={t('supportTooltip')}
-               />
+  return (
+    <>
+      <FloatButton
+        icon={<CustomerServiceOutlined />}
+        type="primary"
+        style={{ right: 24, bottom: 24, width: 56, height: 56 }}
+        onClick={() => user ? setOpen(true) : setLoginModalOpen(true)}
+        tooltip={t('supportTooltip')}
+      />
 
-               <ModalLoginRequired
-                    isModalOpen={loginModalOpen}
-                    setIsModalOpen={setLoginModalOpen}
-               />
+      <ModalLoginRequired
+        isModalOpen={loginModalOpen}
+        setIsModalOpen={setLoginModalOpen}
+      />
 
-               <ChatWindow open={open} title={title} onClose={() => setOpen(false)}>
-                    {!mode && <ChatModeSelect onSelect={selectMode} />}
+      <ChatWindow open={open} title={title} onClose={() => setOpen(false)}>
+        {!mode && <ChatModeSelect onSelect={selectMode} />}
 
         {mode && (
           <div className="flex flex-col h-full">
