@@ -1,38 +1,35 @@
 "use client";
 
-import {
-  Modal,
-  Upload,
-  Button,
-  Typography,
-  Space,
-  Alert,
-  Form,
-  Divider,
-  Tag,
-  Row,
-  Col,
-  DatePicker,
-  InputNumber,
-  Input,
-  Select,
-} from "antd";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useApartment } from "@/hooks/query/useApartments";
+import { useCreateReservations } from "@/hooks/query/useReservations";
+import { useUserProfile } from "@/hooks/query/useUser";
 import {
   CheckCircleOutlined,
-  InfoCircleOutlined,
-  HomeOutlined,
   FileTextOutlined,
+  HomeOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import {
+  Button,
+  Checkbox,
+  Col,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Tag,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useUserProfile } from "@/hooks/query/useUser";
-import { useApartment } from "@/hooks/query/useApartments";
-import ModalWaitingVerify from "./modal-waiting-verify";
-import { useCreateReservations } from "@/hooks/query/useReservations";
 import dayjs from "dayjs";
+import ModalWaitingVerify from "./modal-waiting-verify";
 
 import { ROUTES } from "@/constants/routes";
-import AuthModal from "./auth-modal";
 
 interface ModalReservationProps {
   open: boolean;
@@ -57,22 +54,18 @@ export default function ModalReservation({
   apartmentId,
   userId,
 }: ModalReservationProps) {
-  const [openLogin, setOpenLogin] = useState(false);
+  const router = useRouter();
   const [formReservations] = useForm();
-  const [duration, setDuration] = useState<number | null>(null);
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const { data: profile } = useUserProfile(!!userId && open);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
-  console.log("first", apartmentId);
-  console.log("apt", apartment);
-
   const { mutateAsync: createReservation } = useCreateReservations();
 
   const handleReservations = async () => {
     const values = await formReservations.validateFields();
-
     const payload = {
       apartmentId: apartmentId,
       desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),
@@ -84,8 +77,9 @@ export default function ModalReservation({
     try {
       await createReservation(payload);
       formReservations.resetFields();
-      setDuration(null);
       onClose();
+
+      router.push(`${ROUTES.PROFILE}/contracts`);
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
@@ -93,11 +87,9 @@ export default function ModalReservation({
 
   const handleStartDateChange = () => {
     formReservations.setFieldValue("desiredEndDate", null);
-    setDuration(null);
   };
 
   const handleDurationChange = (value: number) => {
-    setDuration(value);
     const startDate = formReservations.getFieldValue("desiredStartDate");
     if (startDate) {
       const endDate = startDate.add(value, "month");
@@ -111,8 +103,7 @@ export default function ModalReservation({
   const verified = profile?.isVerified === true;
 
   if (needVerify) {
-    window.location.href = ROUTES.PROFILE;
-    console.log("aaaa", ROUTES.PROFILE);
+    router.push(ROUTES.PROFILE);
   }
 
   return (
@@ -134,10 +125,11 @@ export default function ModalReservation({
                 <Button
                   type="primary"
                   onClick={handleReservations}
-                  className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2"
+                  disabled={!agreeTerms}
+                  className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <CheckCircleOutlined />
-                  Xác nhận gửi yêu cầu
+                  Đặt thuê
                 </Button>
               </>
             }
@@ -265,7 +257,11 @@ export default function ModalReservation({
                         </span>
                       }
                       rules={[
-                        { required: true, message: "Vui lòng nhập số người!" },
+                        {
+                          required: true,
+                          message: "Vui lòng nhập số người!",
+                          type: "number",
+                        },
                       ]}
                       initialValue={2}
                     >
@@ -316,23 +312,39 @@ export default function ModalReservation({
                     placeholder="Ví dụ: Need parking spot..."
                   />
                 </Form.Item>
-              </Form>
-
-              <div className="bg-blue-50/50 rounded-lg p-3 flex gap-3 text-sm text-blue-800">
-                <InfoCircleOutlined className="text-blue-500 mt-0.5" />
-                <div className="flex-1 space-y-1">
-                  <p className="font-medium m-0">Tiếp theo sẽ thế nào?</p>
-                  <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">
-                    <li>Bạn chưa phải thanh toán bất kỳ khoản nào lúc này.</li>
-                  </ul>
+                <div className="bg-blue-50/50 rounded-lg p-3 mb-5 flex gap-3 text-sm text-blue-800 mt-5">
+                  <InfoCircleOutlined className="text-blue-500 mt-0.5" />
+                  <div className="flex-1 space-y-1">
+                    <p className="font-medium m-0">Lưu ý!</p>
+                    <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">
+                      <li>Thao tác này sẽ tạo hợp đồng thuê và thanh toán.</li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
+
+                <Form.Item
+                  name="agreeTerms"
+                  valuePropName="checked"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng đồng ý với điều kiện lưu ý!",
+                    },
+                  ]}
+                  className="mt-4 mb-0"
+                >
+                  <Checkbox
+                    className="text-gray-700"
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                  >
+                    Tôi đồng ý với điều kiện lưu ý trên và sẵn sàng ký hợp đồng
+                    thuê
+                  </Checkbox>
+                </Form.Item>
+              </Form>
             </div>
           </Modal>
         </>
-      )}
-      {!userId && (
-        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
       )}
 
       {userId && (
