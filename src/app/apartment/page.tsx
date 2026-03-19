@@ -9,13 +9,11 @@ import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/a
 import { ROUTES } from '@/constants/routes'
 import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useApartments } from '@/hooks/query/useApartments'
-import { ApartmentQueryParams } from '@/types/apartment'
+import { ApartmentFilterPatch, ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useTranslations } from 'next-intl'
 import { useCallback, useMemo, useState } from 'react'
-
-type ApartmentFilterPatch = Partial<Omit<ApartmentQueryParams, 'addressType'>>
 
 export default function ApartmentList() {
   const { addressType } = useAddressTypePreference()

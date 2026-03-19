@@ -9,27 +9,21 @@ const STORAGE_KEY = 'apartment-address-type'
 const SYNC_EVENT = 'apartment-address-type-change'
 const DEFAULT_ADDRESS_TYPE: AddressTypePreference = 'new'
 
-function getAddressTypeFromStorage(): AddressTypePreference {
-     if (typeof window === 'undefined') {
-          return DEFAULT_ADDRESS_TYPE
-     }
-
+const getAddressTypeFromStorage = (): AddressTypePreference => {
      const saved = window.localStorage.getItem(STORAGE_KEY)
      return saved === 'old' ? 'old' : DEFAULT_ADDRESS_TYPE
 }
 
 export function useAddressTypePreference() {
-     const [addressType, setAddressTypeState] = useState<AddressTypePreference>(getAddressTypeFromStorage)
+     // Keep first render stable between server and client to avoid hydration mismatch.
+     const [addressType, setAddressTypeState] = useState<AddressTypePreference>(DEFAULT_ADDRESS_TYPE)
 
      useEffect(() => {
-          if (typeof window === 'undefined') {
-               return
-          }
-
           const syncFromStorage = () => {
                setAddressTypeState(getAddressTypeFromStorage())
           }
 
+          syncFromStorage()
           window.addEventListener('storage', syncFromStorage)
           window.addEventListener(SYNC_EVENT, syncFromStorage)
 
@@ -41,11 +35,6 @@ export function useAddressTypePreference() {
 
      const setAddressType = (next: AddressTypePreference) => {
           setAddressTypeState(next)
-
-          if (typeof window === 'undefined') {
-               return
-          }
-
           window.localStorage.setItem(STORAGE_KEY, next)
           window.dispatchEvent(new Event(SYNC_EVENT))
      }

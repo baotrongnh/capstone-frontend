@@ -13,5 +13,5 @@ export const useDistricts = (provinceCode: number | undefined, afterMerge: boole
           queryKey: afterMerge ? ['districts', provinceCode, afterMerge] : ['wards', provinceCode, afterMerge],
           queryFn: () => provincesService.getDistricts(provinceCode!, afterMerge),
           enabled: !!provinceCode,
-          staleTime: Infinity,
+          staleTime: 0,
      })

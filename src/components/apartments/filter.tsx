@@ -1,20 +1,16 @@
 'use client'
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
-import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
-import { Province } from '@/lib/services/provinces.service'
-import { ApartmentQueryParams, FurnishingType } from '@/types/apartment'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
+import { ApartmentFilterPatch, FurnishingType } from '@/types/apartment'
 import { formatArea, formatPrice, normalizeText } from '@/utils/format'
 import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
-type FurnishingStatusOption = NonNullable<ApartmentQueryParams['furnishingStatus']>
-type ApartmentFilterPatch = Partial<Omit<ApartmentQueryParams, 'addressType'>>
-
-const FURNISHING_TRANSLATION_KEY: Record<FurnishingStatusOption, string> = {
+const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
      unfurnished: 'furnishingOptions.unfurnished',
      semi_furnished: 'furnishingOptions.semi_furnished',
      fully_furnished: 'furnishingOptions.fully_furnished',
@@ -27,7 +23,7 @@ export default function Filter({ onFilterChange }:
      const [keyword, setKeyword] = useState('')
 
      // Location
-     const [selectedProvince, setSelectedProvince] = useState<Province | null>(null)
+     const [provinceCode, setProvinceCode] = useState<number>()
      const [wardCode, setWardCode] = useState<number>()
 
      // Other filters
@@ -37,7 +33,24 @@ export default function Filter({ onFilterChange }:
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
      const { data: provinces, isLoading: loadingProvinces } = useProvinces(afterMerge)
-     const { data: secondaryAddress, isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
+     const {
+          data: secondaryAddress,
+          isLoading: loadingDistricts,
+          isFetching: fetchingDistricts,
+     } = useDistricts(provinceCode, afterMerge)
+
+     const isDistrictSelectLoading = loadingDistricts || fetchingDistricts
+
+     const provinceOptions = provinces?.map(p => ({ label: p.name, value: p.code })) ?? []
+     const secondaryAddressOptions = secondaryAddress?.map(d => ({ label: d.name, value: d.code })) ?? []
+
+     const filterByLabel = (input: string, option?: { label?: string | number }) =>
+          normalizeText(String(option?.label ?? '').toLowerCase()).includes(input.toLowerCase())
+
+     const clearLocationFilter = () => {
+          setWardCode(undefined)
+          onFilterChange({ wardCode: undefined })
+     }
 
      useEffect(() => {
           const timer = setTimeout(() => {
@@ -48,7 +61,7 @@ export default function Filter({ onFilterChange }:
 
      const resetAll = () => {
           setKeyword('')
-          setSelectedProvince(null)
+          setProvinceCode(undefined)
           setWardCode(undefined)
           setPrice([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
           setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
@@ -58,10 +71,8 @@ export default function Filter({ onFilterChange }:
      }
 
      const handleProvinceChange = (code?: number) => {
-          const province = (provinces?.find(p => p.code === code) ?? null)
-          setSelectedProvince(province)
-          setWardCode(undefined)
-          onFilterChange({ wardCode: undefined })
+          setProvinceCode(code)
+          clearLocationFilter()
      }
 
      const handleDistrictChange = (value?: number) => {
@@ -82,9 +93,8 @@ export default function Filter({ onFilterChange }:
 
      const handleLocationAfterMerge = (checked: boolean) => {
           setAfterMerge(checked)
-          setSelectedProvince(null)
-          setWardCode(undefined)
-          onFilterChange({ wardCode: undefined })
+          setProvinceCode(undefined)
+          clearLocationFilter()
      }
 
      return (
@@ -125,16 +135,11 @@ export default function Filter({ onFilterChange }:
                     <Select
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
-                         value={selectedProvince?.code}
-                         options={provinces?.map(p => ({ label: p.name, value: p.code }))}
+                         value={provinceCode}
+                         options={provinceOptions}
                          onChange={handleProvinceChange}
                          loading={loadingProvinces}
-                         showSearch={{
-                              filterOption: (input, option) =>
-                                   normalizeText((option?.label ?? '')
-                                        .toLowerCase())
-                                        .includes(input.toLowerCase())
-                         }}
+                         showSearch={{ filterOption: filterByLabel }}
                          style={{ marginTop: 15 }}
                          allowClear
                          onClear={() => handleProvinceChange(undefined)}
@@ -144,15 +149,13 @@ export default function Filter({ onFilterChange }:
                          placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
                          className="w-full"
                          value={wardCode}
-                         options={secondaryAddress?.map(d => ({ label: d.name, value: d.code }))}
+                         options={secondaryAddressOptions}
                          onChange={handleDistrictChange}
-                         disabled={!selectedProvince}
-                         loading={loadingDistricts}
+                         disabled={!provinceCode}
+                         loading={isDistrictSelectLoading}
+                         notFoundContent={isDistrictSelectLoading ? <span>Đang tải...</span> : undefined}
                          showSearch={{
-                              filterOption: (input, option) =>
-                                   normalizeText((option?.label ?? '')
-                                        .toLowerCase())
-                                        .includes(input.toLowerCase())
+                              filterOption: filterByLabel
                          }}
                          allowClear
                          style={{ marginTop: 15 }}
@@ -225,7 +228,7 @@ export default function Filter({ onFilterChange }:
                {/* Furnishing Status */}
                <div className="space-y-2">
                     <Label>{t('furnishingLabel')}</Label>
-                    {(Object.keys(FURNISHING_TRANSLATION_KEY) as FurnishingStatusOption[]).map(option => (
+                    {(Object.keys(FURNISHING_TRANSLATION_KEY) as FurnishingType[]).map(option => (
                          <Checkbox
                               key={option}
                               checked={furnishing === option}

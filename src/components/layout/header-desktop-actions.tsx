@@ -3,7 +3,7 @@
 import { ROUTES } from "@/constants/routes"
 import type { MenuProps } from "antd"
 import { Avatar, Button, Dropdown } from "antd"
-import { ChevronDown, MessageSquareText, User } from "lucide-react"
+import { ChevronDown, User } from "lucide-react"
 import Link from "next/link"
 import type { ReactNode } from "react"
 import NotificationDropdown from "./notification-dropdown"
