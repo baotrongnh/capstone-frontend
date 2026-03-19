@@ -509,6 +509,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contracts/{id}/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload signed contract PDF */
+        post: operations["ContractsController_uploadSignedPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contracts/{id}/activate": {
         parameters: {
             query?: never;
@@ -2792,6 +2809,12 @@ export interface components {
             hasPdf: boolean;
             /** @example /contracts/9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf/pdf */
             pdfUrl: string;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            publicPdfUrl?: string | null;
+            /** @example false */
+            hasLandlordSignature: boolean;
+            /** @example false */
+            hasTenantSignature: boolean;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -2802,6 +2825,23 @@ export interface components {
             updatedAt: string;
             apartment: components["schemas"]["ContractApartmentDto"];
             members: components["schemas"]["ContractMemberDto"][];
+        };
+        UploadContractPdfDto: {
+            /**
+             * Format: binary
+             * @description Signed contract PDF file (required)
+             */
+            contractPdf: string;
+            /**
+             * @description Signed date for the contract (ISO 8601)
+             * @example 2026-03-17T10:30:00.000Z
+             */
+            signedDate?: string;
+            /**
+             * @description URL to the signed contract document
+             * @example https://storage.example.com/contracts/signed/CTR-2026-00001.pdf
+             */
+            contractDocumentUrl?: string;
         };
         CreateContractDto: {
             /** @description Apartment ID to rent */
@@ -5295,7 +5335,19 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -6082,6 +6134,64 @@ export interface operations {
             };
             /** @description Contract or PDF not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_uploadSignedPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Upload a signed contract PDF file */
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadContractPdfDto"];
+            };
+        };
+        responses: {
+            /** @description Signed contract PDF uploaded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or missing PDF file */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract PDF already uploaded */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
