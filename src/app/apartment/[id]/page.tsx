@@ -1,17 +1,15 @@
-"use client";
+"use client"
 
-import SimilarApartments from "@/components/apartments/similar-apartments";
-import ModalBookingSchedule, {
-  type BookingScheduleData,
-} from "@/components/modal/modal-booking-schedule";
-import ModalLoginRequired from "@/components/modal/modal-login-required";
-import { APARTMENT_STATUS } from "@/constants/apartment";
-import { ROUTES } from "@/constants/routes";
-import { useApartment } from "@/hooks/query/useApartments";
-import { useAddressTypePreference } from "@/hooks/useAddressTypePreference";
-import { useAuthStore } from "@/stores/auth.store";
-import { getApartmentDisplayAddress } from "@/utils/apartment-address";
-import { formatVND } from "@/utils/format";
+import SimilarApartments from "@/components/apartments/similar-apartments"
+import ModalBookingSchedule from "@/components/modal/modal-booking-schedule"
+import ModalLoginRequired from "@/components/modal/modal-login-required"
+import { APARTMENT_STATUS } from "@/constants/apartment"
+import { ROUTES } from "@/constants/routes"
+import { useApartment } from "@/hooks/query/useApartments"
+import { useAddressTypePreference } from "@/hooks/useAddressTypePreference"
+import { useAuthStore } from "@/stores/auth.store"
+import { getApartmentDisplayAddress } from "@/utils/apartment-address"
+import { formatVND } from "@/utils/format"
 import {
   Breadcrumb,
   Button,
@@ -22,7 +20,7 @@ import {
   Spin,
   Tag,
   Typography,
-} from "antd";
+} from "antd"
 import {
   Bath,
   BedDouble,
@@ -35,32 +33,40 @@ import {
   Sofa,
   Users,
   Video,
-} from "lucide-react";
-import { useTranslations } from "next-intl";
-import { use, useState } from "react";
+} from "lucide-react"
+import { useTranslations } from "next-intl"
+import { use, useState } from "react"
 
-export default function ApartmentDetail({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const t = useTranslations("ApartmentDetailPage");
-  const tLabels = useTranslations("ApartmentLabels");
-  const { addressType } = useAddressTypePreference();
-  const { id } = use(params);
-  const { data, isLoading, isError } = useApartment(id);
-  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
-    useState(false);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const user = useAuthStore((s) => s.user);
+export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
+  const t = useTranslations("ApartmentDetailPage")
+  const tLabels = useTranslations("ApartmentLabels")
+  const { addressType } = useAddressTypePreference()
 
-  const handleButtonRedirect = (onSuccess: () => void) => {
+  const { id } = use(params)
+  const { data: apartmentData, isLoading, isError } = useApartment(id)
+
+  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
+  const [isModalBookingApartmentOpen, setIsModalBookingApartmentOpen] = useState(false)
+
+  const user = useAuthStore((s) => s.user)
+
+  const handleButtonBooking = () => {
     if (!user) {
-      setIsModalLoginRequiredLogin(true);
-      return;
+      setIsModalLoginRequiredLogin(true)
+      return
     }
-    onSuccess();
-  };
+    setIsModalBookingApartmentOpen(true)
+  }
+
+  const handleBookingSchedule = () => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true)
+      return
+    }
+
+    setIsScheduleModalOpen(true)
+  }
 
   if (isLoading) {
     return (
@@ -69,10 +75,10 @@ export default function ApartmentDetail({
           <div className="p-10 text-gray-400">Đang tải thông tin căn hộ...</div>
         </Spin>
       </div>
-    );
+    )
   }
 
-  if (isError || !data) {
+  if (isError || !apartmentData) {
     return (
       <div className="container h-screen flex items-center justify-center">
         <Result
@@ -81,32 +87,28 @@ export default function ApartmentDetail({
           subTitle={t("notFoundDesc")}
         />
       </div>
-    );
+    )
   }
 
-  const apt = data.data;
+  const apt = apartmentData.data
 
-  const handleBookingSubmit = (bookingData: BookingScheduleData) => {
-    console.log("Booking data:", { ...bookingData, apartment: apt });
-  };
-
-  const images = apt?.images?.length ? apt.images : [];
-  const fullAddress = getApartmentDisplayAddress(apt, addressType);
-  const status = apt?.status ? APARTMENT_STATUS[apt.status] : null;
+  const images = apt?.images?.length ? apt.images : []
+  const fullAddress = getApartmentDisplayAddress(apt, addressType)
+  const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {
     if (apt?.latitude && apt?.longitude) {
       window.open(
         `https://www.google.com/maps/dir/?api=1&destination=${apt.latitude},${apt.longitude}`,
         "_blank",
-      );
+      )
     } else if (fullAddress) {
       window.open(
         `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`,
         "_blank",
-      );
+      )
     }
-  };
+  }
 
   return (
     <div className="container px-4 sm:px-6 lg:px-8">
@@ -115,9 +117,9 @@ export default function ApartmentDetail({
         setIsModalOpen={setIsModalLoginRequiredLogin}
       />
       <ModalBookingSchedule
-        open={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        onSubmit={handleBookingSubmit}
+        open={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+        apartmentId={id}
       />
 
       <Breadcrumb
@@ -215,9 +217,7 @@ export default function ApartmentDetail({
                 size="middle"
                 shape="round"
                 style={{ minWidth: 170, height: 40 }}
-                onClick={() =>
-                  handleButtonRedirect(() => setIsBookingModalOpen(true))
-                }
+                onClick={handleBookingSchedule}
               >
                 {t("scheduleBtn")}
               </Button>
@@ -226,7 +226,7 @@ export default function ApartmentDetail({
                 type="primary"
                 shape="round"
                 style={{ minWidth: 170, height: 40 }}
-                onClick={() => handleButtonRedirect(() => console.log("rent"))}
+                onClick={() => handleButtonBooking()}
               >
                 {t("rentBtn")}
               </Button>

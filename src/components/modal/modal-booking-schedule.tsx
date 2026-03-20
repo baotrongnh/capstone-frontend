@@ -23,17 +23,23 @@ const TIME_SLOTS = [
 export default function ModalBookingSchedule({
      open,
      onClose,
-     onSubmit,
+     apartmentId
 }: {
      open: boolean
      onClose: () => void
-     onSubmit: (data: BookingScheduleData) => void
+     apartmentId: string
 }) {
      const t = useTranslations('BookingModal')
      const [date, setDate] = useState<Dayjs | null>(null)
      const [timeSlot, setTimeSlot] = useState<string>('')
      const [note, setNote] = useState<string>('')
      const [errors, setErrors] = useState<{ date?: string; timeSlot?: string }>({})
+
+     console.log(apartmentId);
+
+     const onSubmit = (data: { date: dayjs.Dayjs, timeSlot: string, note: string }) => {
+          console.log(data)
+     }
 
      const handleOk = () => {
           if (!date || !timeSlot) {
