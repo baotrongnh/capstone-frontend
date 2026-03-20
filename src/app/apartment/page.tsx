@@ -7,8 +7,8 @@ import SimilarApartments from '@/components/apartments/similar-apartments'
 import AppPromoSection from '@/components/sections/app-promo'
 import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
-import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { useApartments } from '@/hooks/query/useApartments'
+import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { ApartmentFilterPatch, ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
@@ -17,17 +17,17 @@ import { useCallback, useMemo, useState } from 'react'
 
 export default function ApartmentList() {
   const { addressType } = useAddressTypePreference()
-  const [filters, setFilters] = useState<ApartmentQueryParams>(DEFAULT_APARTMENT_FILTERS)
+  const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
-  const queryFilters = useMemo<ApartmentQueryParams>(
+  const queryFilters = useMemo(
     () => ({ ...filters, addressType }),
     [filters, addressType],
   )
-  const { data, isLoading, isError, refetch } = useApartments(queryFilters)
+  const { data: dataApartment, isLoading, isError, refetch } = useApartments(queryFilters)
   const t = useTranslations('ApartmentListPage')
 
-  const apartments = data?.data ?? []
-  const meta = data?.meta
+  const apartments = dataApartment?.data ?? []
+  const meta = dataApartment?.meta
 
   const updateFilters = useCallback((patch: ApartmentFilterPatch | null) => {
     if (!patch) {

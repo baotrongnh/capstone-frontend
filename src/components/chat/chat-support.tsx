@@ -2,7 +2,7 @@
 
 import ModalLoginRequired from '@/components/modal/modal-login-required'
 import { useApartment } from '@/hooks/query/useApartments'
-import { socket } from '@/socket'
+import { socket } from '@/lib/socket/socket'
 import { useAuthStore } from '@/stores/auth.store'
 import { CHAT_MODE_STORAGE_KEY, ChatMessage, ChatMode } from '@/types/chat'
 import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'

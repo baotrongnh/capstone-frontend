@@ -7,9 +7,7 @@ import { apiClient } from "../apis/client"
 import { endpoints } from "../apis/endpoints"
 
 export const apartmentService = {
-  getList: async (
-    params?: ApartmentSearchQueryParams,
-  ): Promise<ApartmentListResponse> => {
+  getList: async (params?: ApartmentSearchQueryParams): Promise<ApartmentListResponse> => {
     const { data } = await apiClient.get(`${endpoints.apartments}/search`, {
       params,
     })
