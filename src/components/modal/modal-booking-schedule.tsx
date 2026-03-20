@@ -27,7 +27,7 @@ export default function ModalBookingSchedule({
 }: {
      open: boolean
      onClose: () => void
-     apartmentId: string
+     apartmentId?: string
 }) {
      const t = useTranslations('BookingModal')
      const [date, setDate] = useState<Dayjs | null>(null)
