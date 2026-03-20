@@ -7,6 +7,7 @@ import { Pen, Check } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
 import { useUploadContractPdf } from "@/hooks/query/useContracts";
 import { ROUTES } from "@/constants/routes";
+import { useRouter } from "next/navigation";
 
 interface ModalAssignContractProps {
   showDetailModal: boolean;
@@ -20,6 +21,8 @@ export default function ModalAssignContract({
   selectedContract,
 }: ModalAssignContractProps) {
   const sigRef = useRef<SignatureCanvas | null>(null);
+
+  const route = useRouter();
   const [signature, setSignature] = useState<string | null>(null);
   const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
   const [signedPdfBytes, setSignedPdfBytes] = useState<Uint8Array | null>(null);
@@ -174,7 +177,8 @@ export default function ModalAssignContract({
       setShowSignModal(false);
 
       setShowDetailModal(false);
-      window.location.href = `${ROUTES.PROFILE}/bills`;
+
+      route.push(`${ROUTES.PROFILE}/bills`);
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
     }

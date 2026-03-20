@@ -98,8 +98,7 @@ export default function ModalBooking({
   };
 
   const needVerify = profile?.isVerified === false && !profile?.profileImageUrl;
-  const waitingVerify =
-    profile?.isVerified === false && profile?.profileImageUrl;
+
   const verified = profile?.isVerified === true;
 
   if (needVerify) {
@@ -136,7 +135,7 @@ export default function ModalBooking({
             centered
             width={560}
           >
-            <div className="bg-blue-50/50 px-10 mt-2 py-5 border-b border-blue-100">
+            <div className="bg-blue-50/50 px-10 mt-2  py-5 border-b border-blue-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                   <FileTextOutlined className="text-lg" />
@@ -152,7 +151,7 @@ export default function ModalBooking({
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 max-h-[74vh]">
               <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -344,16 +343,6 @@ export default function ModalBooking({
               </Form>
             </div>
           </Modal>
-        </>
-      )}
-
-      {userId && (
-        <>
-          {waitingVerify && (
-            <>
-              <ModalWaitingVerify open={open} onClose={onClose} />
-            </>
-          )}
         </>
       )}
     </>

@@ -1,7 +1,7 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { Modal, Button, Select, message, Divider, Space, Tag } from "antd";
-import React, { useState } from "react";
-import { X, AlertCircle, FileText, Home } from "lucide-react";
+import { useState } from "react";
+import { AlertCircle, FileText, Home } from "lucide-react";
 import { useCancelContract } from "@/hooks/query/useContracts";
 
 interface ModalContractProps {
@@ -97,12 +97,9 @@ export default function ModalCancelContract({
     >
       {selectContract && (
         <div className="bg-white">
-          <div className="bg-gradient-to-r from-orange-50 to-red-50 border-l-4 border-red-500 p-4 mx-6 mt-6 rounded-lg">
+          <div className="bg-linear-to-r from-orange-50 to-red-50 border-l-4 border-red-500 p-4 mx-6 mt-6 rounded-lg">
             <div className="flex gap-3">
-              <AlertCircle
-                size={20}
-                className="text-red-600 flex-shrink-0 mt-0.5"
-              />
+              <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-red-900 text-sm mb-1">
                   Thao tác này sẽ hủy hợp đồng
