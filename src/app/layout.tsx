@@ -10,6 +10,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import SocketProvider from "@/components/providers/socket-provider";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
@@ -47,10 +48,12 @@ export default async function RootLayout({
               <ReactQueryProvider>
                 <NextIntlClientProvider messages={messages}>
                   <AuthProvider>
-                    <Header />
-                    <main className="mt-24">{children}</main>
-                    <Footer />
-                    <ChatSupport />
+                    <SocketProvider>
+                      <Header />
+                      <main className="mt-24">{children}</main>
+                      <Footer />
+                      <ChatSupport />
+                    </SocketProvider>
                   </AuthProvider>
                 </NextIntlClientProvider>
               </ReactQueryProvider>

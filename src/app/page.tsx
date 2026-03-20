@@ -7,7 +7,7 @@ import TestimonialsSection from "@/components/sections/testimonials"
 export default function Home() {
 
   return (
-    <div className="">
+    <div>
       <main>
         <HeroSection />
         <PropertiesSection />
@@ -16,5 +16,5 @@ export default function Home() {
         <AppPromoSection />
       </main>
     </div>
-  );
+  )
 }

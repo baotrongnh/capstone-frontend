@@ -1,111 +1,120 @@
-"use client";
+'use client'
 
-import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
+import ModalLoginRequired from '@/components/modal/modal-login-required'
 import { useApartment } from '@/hooks/query/useApartments'
+import { socket } from '@/socket'
 import { useAuthStore } from '@/stores/auth.store'
+import { CHAT_MODE_STORAGE_KEY, ChatMessage, ChatMode } from '@/types/chat'
+import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
 import { Avatar, Divider, FloatButton, Space } from 'antd'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import ModalLoginRequired from '@/components/modal/modal-login-required'
+import { useEffect, useState } from 'react'
 import { ChatInput } from './chat-input'
 import { ChatMessages } from './chat-messages'
 import { ChatModeSelect } from './chat-mode-select'
 import { ChatWindow } from './chat-window'
-import { ChatMode, ChatMessage, STORAGE_KEY } from '@/types/chat'
+
+const getInitialChatMode = (): ChatMode => {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const savedMode = localStorage.getItem(CHAT_MODE_STORAGE_KEY)
+  return savedMode === 'support' || savedMode === 'ai' ? savedMode : null
+}
 
 export default function ChatSupport() {
-  const t = useTranslations("Chat");
-  const pathname = usePathname();
+  const t = useTranslations('Chat')
+  const pathname = usePathname()
 
-  const user = useAuthStore(s => s.user)
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<ChatMode>(() =>
-    typeof window !== 'undefined' ? (localStorage.getItem(STORAGE_KEY) as ChatMode) ?? null : null
-  )
+  const user = useAuthStore((s) => s.user)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [mode, setMode] = useState<ChatMode>(getInitialChatMode)
   const [messages, setMessages] = useState<ChatMessage[]>([])
 
-  // Detect current apartment page
-  const apartmentIdMatch = pathname.match(/^\/apartment\/([^/]+)$/);
-  const currentApartmentId = apartmentIdMatch?.[1] ?? "";
-  const { data: aptData } = useApartment(currentApartmentId);
-  const currentApartment = aptData?.data;
+  const currentApartmentId = pathname.match(/^\/apartment\/([^/]+)$/)?.[1] ?? ''
+  const { data: apartmentData } = useApartment(currentApartmentId)
+  const currentApartment = apartmentData?.data
 
-  const accentColor = mode === "ai" ? "#7c3aed" : "#3b82f6";
+  const isAiMode = mode === 'ai'
+  const accentColor = isAiMode ? '#7c3aed' : '#3b82f6'
+  const titleText = !mode ? t('selectTitle') : isAiMode ? t('aiTitle') : t('title')
 
-  function pushMessage(msg: ChatMessage) {
-    setMessages((prev) => [...prev, msg]);
+  const pushMessage = (message: ChatMessage) => {
+    setMessages((prev) => [...prev, message])
   }
 
-  function autoReply(content: string) {
-    setTimeout(
-      () =>
-        pushMessage({
-          id: Date.now(),
-          content,
-          sender: "support",
-          timestamp: new Date(),
-        }),
-      1000,
-    );
-  }
+  useEffect(() => {
+    socket.on('chat:new_message', pushMessage)
 
-  function selectMode(selected: "support" | "ai") {
-    setMode(selected);
-    localStorage.setItem(STORAGE_KEY, selected);
-    pushMessage({
+    return () => {
+      socket.off('chat:new_message', pushMessage)
+    }
+  }, [])
+
+  const sendUserMessage = (payload: Pick<ChatMessage, 'content' | 'images' | 'apartmentId'>) => {
+    const message: ChatMessage = {
       id: Date.now(),
-      content: selected === "ai" ? t("aiWelcome") : t("welcomeMessage"),
-      sender: "support",
+      sender: 'user',
       timestamp: new Date(),
-    });
+      content: payload.content,
+      images: payload.images,
+      apartmentId: payload.apartmentId,
+    }
+
+    socket.emit('chat:send_message', message)
+    pushMessage(message)
+
+    console.log('[chat] outgoing message', {
+      mode,
+      message
+    })
   }
 
-  function handleBack() {
-    setMode(null);
-    setMessages([]);
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  const handleModeSelect = (selectedMode: 'support' | 'ai') => {
+    setMode(selectedMode)
+    localStorage.setItem(CHAT_MODE_STORAGE_KEY, selectedMode)
 
-  function handleSend(content: string, images?: string[]) {
     pushMessage({
       id: Date.now(),
-      content,
-      images,
-      sender: "user",
+      sender: 'support',
       timestamp: new Date(),
-    });
-    autoReply(mode === "ai" ? t("aiReply") : t("autoReply"));
+      content: selectedMode === 'ai' ? t('aiWelcome') : t('welcomeMessage'),
+    })
   }
 
-  function handleSendApartment() {
-    if (!currentApartment) return;
-    pushMessage({
-      id: Date.now(),
-      content: "",
+  const handleBack = () => {
+    setMode(null)
+    setMessages([])
+    localStorage.removeItem(CHAT_MODE_STORAGE_KEY)
+  }
+
+  const handleSend = (content: string, images?: string[]) => {
+    sendUserMessage({ content, images })
+  }
+
+  const handleSendApartment = () => {
+    if (!currentApartment) {
+      return
+    }
+
+    sendUserMessage({
+      content: '',
       apartmentId: String(currentApartment.id),
-      sender: "user",
-      timestamp: new Date(),
-    });
-    autoReply(t("autoReply"));
+    })
   }
 
   const title = (
     <Space>
       <Avatar
         style={{ backgroundColor: accentColor }}
-        icon={mode === "ai" ? <RobotOutlined /> : <CustomerServiceOutlined />}
+        icon={mode === 'ai' ? <RobotOutlined /> : <CustomerServiceOutlined />}
       />
-      <span>
-        {mode === "ai"
-          ? t("aiTitle")
-          : mode === "support"
-            ? t("title")
-            : t("selectTitle")}
-      </span>
+      <span>{titleText}</span>
     </Space>
-  );
+  )
 
   return (
     <>
@@ -113,39 +122,39 @@ export default function ChatSupport() {
         icon={<CustomerServiceOutlined />}
         type="primary"
         style={{ right: 24, bottom: 24, width: 56, height: 56 }}
-        onClick={() => user ? setOpen(true) : setLoginModalOpen(true)}
+        onClick={() => (user ? setIsChatOpen(true) : setIsLoginModalOpen(true))}
         tooltip={t('supportTooltip')}
       />
 
       <ModalLoginRequired
-        isModalOpen={loginModalOpen}
-        setIsModalOpen={setLoginModalOpen}
+        isModalOpen={isLoginModalOpen}
+        setIsModalOpen={setIsLoginModalOpen}
       />
 
-      <ChatWindow open={open} title={title} onClose={() => setOpen(false)}>
-        {!mode && <ChatModeSelect onSelect={selectMode} />}
+      <ChatWindow open={isChatOpen} title={title} onClose={() => setIsChatOpen(false)}>
+        {!mode && <ChatModeSelect onSelect={handleModeSelect} />}
 
         {mode && (
-          <div className="flex flex-col h-full">
-            <div className="px-4 pt-2 pb-1">
+          <div className="flex h-full flex-col">
+            <div className="px-4 pb-1 pt-2">
               <button
                 onClick={handleBack}
                 className="text-xs text-gray-400 hover:text-gray-600"
               >
-                &larr; {t("back")}
+                &larr; {t('back')}
               </button>
             </div>
+
             <ChatMessages messages={messages} />
             <Divider className="my-0" />
             <ChatInput
               onSend={handleSend}
               currentApartment={currentApartment}
               onSendApartment={handleSendApartment}
-              accentColor={accentColor}
             />
           </div>
         )}
       </ChatWindow>
     </>
-  );
+  )
 }
