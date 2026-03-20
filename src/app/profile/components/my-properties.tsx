@@ -21,7 +21,6 @@ import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 
 const { Search } = Input;
-const { Option } = Select;
 
 export default function MyPropertiesComponent({ properties = [], loading = false }: MyPropertiesProps) {
     const [search, setSearch] = useState('');
@@ -147,18 +146,18 @@ export default function MyPropertiesComponent({ properties = [], loading = false
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-72"
                 />
-                <Select
+                <Select<ApartmentStatusValue | 'all'>
                     value={statusFilter}
                     onChange={setStatusFilter}
                     className="w-40"
-                >
-                    <Option value="all">{t('allStatuses')}</Option>
-                    {statusValues.map((s) => (
-                        <Option key={s} value={s}>
-                            {t(`status.${s}`)}
-                        </Option>
-                    ))}
-                </Select>
+                    options={[
+                        { value: 'all', label: t('allStatuses') },
+                        ...statusValues.map((s) => ({
+                            value: s,
+                            label: t(`status.${s}`),
+                        })),
+                    ]}
+                />
             </div>
 
             {/* Property grid */}

@@ -1,44 +1,77 @@
 "use client";
 
 import ProfileLayout from "../components/profile-layout";
-import AccountInformation from "../components/account-information";
 import { ActorType } from "@/types/auth";
 import { useAuthStore } from "@/stores/auth.store";
 import { useUserProfile, useUpdateUser } from "@/hooks/query/useUser";
-import { usePartnerProfile } from "@/hooks/query/usePartner";
-import { UpdateUserDto } from "@/types/user";
+import { usePartnerProfile, useUpdatePartnerProfile } from "@/hooks/query/usePartner";
+import { UpdatePartnerDto } from "@/types/partner";
+import { AccountUpdateDto } from "@/types/profile";
 import { Spin } from "antd";
+import AccountInformation from "../components/account-information";
 
 export default function AccountPage() {
-  const user = useAuthStore((s) => s.user);
-  const id = user?.id ?? "";
-  const actorType = user?.actorType ?? ActorType.USER;
+  const user = useAuthStore((s) => s.user)
 
-  const isPartner = actorType === ActorType.PARTNER;
+  const id = user?.id
+  const actorType = user?.actorType ?? ActorType.USER
+  const isPartner = actorType === ActorType.PARTNER
 
-  const { data: userProfile, isLoading: userLoading } =
-    useUserProfile(!isPartner);
+  const {
+    data: userProfile,
+    isLoading: userLoading,
+    isError: userError,
+  } = useUserProfile(!isPartner)
 
-  const { data: partnerProfile, isLoading: partnerLoading } =
-    usePartnerProfile(isPartner);
+  const {
+    data: partnerProfile,
+    isLoading: partnerLoading,
+    isError: partnerError,
+  } = usePartnerProfile(isPartner)
 
-  const { mutateAsync: updateUser } = useUpdateUser(id);
+  const { mutateAsync: updateUser } = useUpdateUser(id ?? "")
+  const { mutateAsync: updatePartner } = useUpdatePartnerProfile()
 
-  const profile = isPartner ? partnerProfile : userProfile;
-  const isLoading = isPartner ? partnerLoading : userLoading;
+  const profile = isPartner ? partnerProfile : userProfile
+  const isLoading = userLoading || partnerLoading
+  const isError = userError || partnerError
 
-  const handleUpdate = async (values: UpdateUserDto) => {
-    if (!isPartner) {
-      await updateUser(values);
+  const handleUpdate = async (values: AccountUpdateDto) => {
+    if (isPartner) {
+      const partnerPayload: UpdatePartnerDto = {
+        fullName: values.fullName,
+        phone: values.phone,
+        email: values.email,
+        companyName: values.companyName,
+        taxCode: values.taxCode,
+        bankAccountNumber: values.bankAccountNumber,
+        bankName: values.bankName,
+        address: values.address,
+      }
+      await updatePartner(partnerPayload)
+      return
     }
-    // Partner update not yet supported by API
+    if (!id) {
+      throw new Error("Missing user id");
+    }
+    await updateUser(values)
   };
 
-  if (isLoading || !profile) {
+  if (isLoading) {
     return (
       <ProfileLayout actorType={actorType}>
         <div className="flex items-center justify-center py-20">
           <Spin size="large" />
+        </div>
+      </ProfileLayout>
+    );
+  }
+
+  if (isError || !profile) {
+    return (
+      <ProfileLayout actorType={actorType}>
+        <div className="py-20 text-center text-muted">
+          Unable to load account information.
         </div>
       </ProfileLayout>
     );

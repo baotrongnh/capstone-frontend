@@ -1,22 +1,4 @@
-// ========== Partner API Types ==========
+import { paths } from './api'
 
-export type PartnerDetail = {
-    id: string;
-    email: string;
-    phone: string;
-    fullName: string;
-    companyName: string;
-    taxCode: string;
-    nationalId: string;
-    bankAccountNumber: string;
-    bankName: string;
-    address: string;
-    contractStartDate: string;
-    contractEndDate: string;
-    commissionRate: number;
-    paymentTerms: string;
-    isVerified: boolean;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
+export type PartnerDetail = NonNullable<paths['/api/v1/partners/profile']['get']['responses']['200']['content']['application/json']['data']>
+export type UpdatePartnerDto = Partial<paths['/api/v1/partners/profile']['patch']['requestBody']['content']['application/json']>

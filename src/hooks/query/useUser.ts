@@ -31,7 +31,6 @@ export const useUpdateUser = (id: string) => {
     mutationFn: (data: UpdateUserDto) => userService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-      queryClient.invalidateQueries({ queryKey: ["user", id] });
       message.success("Profile updated successfully!");
     },
     onError: (error: Error) => {
