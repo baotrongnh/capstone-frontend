@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client'
-import { ChatMessage } from './types/chat';
+import { ChatMessage } from '../../types/chat';
 
 interface ServerToClientEvents {
      noArg: () => void;

@@ -1,6 +1,6 @@
 'use client'
 
-import { setSocketAuthToken, socket } from '@/socket'
+import { setSocketAuthToken, socket } from '@/lib/socket/socket'
 import { useAuthStore } from '@/stores/auth.store'
 import { type ReactNode, useEffect } from 'react'
 
