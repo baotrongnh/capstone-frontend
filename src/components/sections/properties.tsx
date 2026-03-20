@@ -11,8 +11,8 @@ import ModalLeaveInformation from "../modal/modal-leave-information";
 import ModalBookingSchedule, {
   BookingScheduleData,
 } from "../modal/modal-booking-schedule";
-import ModalLoginRequired from "../modal/modalLoginRequired";
 import ModalBooking from "../modal/modal-booking";
+import ModalLoginRequired from "../modal/modal-login-required";
 export default function PropertiesSection() {
   const router = useRouter();
 

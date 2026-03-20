@@ -1,119 +1,134 @@
-'use client';
+'use client'
 
-import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from 'antd';
-import { uploadFile } from '@/utils/uploadFile';
-import { UserOutlined, CameraOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { ActorType } from '@/types/auth';
-import { UserDetail, UpdateUserDto } from '@/types/user';
-import { PartnerDetail } from '@/types/partner';
-import { AccountInformationProps } from '@/types/profile';
-import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
-import ModalIdentityCard from '@/components/modal/modalIdentityCard';
-
-function isPartnerDetail(profile: UserDetail | PartnerDetail, actorType: ActorType): profile is PartnerDetail {
-    return actorType === ActorType.PARTNER;
-}
+import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from 'antd'
+import { uploadFile } from '@/utils/uploadFile'
+import { UserOutlined, CameraOutlined, CheckCircleOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { UserDetail } from '@/types/user'
+import { PartnerDetail } from '@/types/partner'
+import { AccountEditableValues, AccountInformationProps, AccountUpdateDto } from '@/types/profile'
+import { useTranslations } from 'next-intl'
+import ModalIdentityCard from '@/components/modal/modal-identity-card'
+import {
+    displayText,
+    formatDate,
+    formatDateTime,
+    getAvatarUrl,
+    getIdentityFields,
+    getPartnerEditableValues,
+    getUserEditableValues,
+    hasValue,
+    isPartnerProfile,
+    isUserProfile,
+    toText,
+} from '@/utils/account-information'
 
 export default function AccountInformation({ profile, actorType, onUpdate, loading: externalLoading }: AccountInformationProps) {
-    const [form] = Form.useForm();
-    const [submitting, setSubmitting] = useState(false);
-    const [hasChanges, setHasChanges] = useState(false);
-    const [avatarUploading, setAvatarUploading] = useState(false);
-    const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
-        'profileImageUrl' in profile ? profile.profileImageUrl : undefined
-    );
-    const identity = !('companyName' in profile) ? (profile as UserDetail).identity : undefined;
-    const isPartner = isPartnerDetail(profile, actorType);
-    const [localProfile, setLocalProfile] = useState<UserDetail | PartnerDetail>(profile);
-    const [cccdModalOpen, setCccdModalOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const { message } = App.useApp();
-    const t = useTranslations('Profile.account');
+    const [form] = Form.useForm()
+    const [submitting, setSubmitting] = useState(false)
+    const [hasChanges, setHasChanges] = useState(false)
+    const [avatarUploading, setAvatarUploading] = useState(false)
+    const [avatarUrl, setAvatarUrl] = useState<string | undefined>(getAvatarUrl(profile, actorType))
+    const [localProfile, setLocalProfile] = useState<UserDetail | PartnerDetail>(profile)
+    const [cccdModalOpen, setCccdModalOpen] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
 
-    const handleSubmit = async (values: UpdateUserDto) => {
+    const { message } = App.useApp()
+    const t = useTranslations('Profile.account')
+
+    const partnerProfile = isPartnerProfile(localProfile, actorType) ? localProfile : undefined
+    const userProfile = isUserProfile(localProfile, actorType) ? localProfile : undefined
+    const isPartner = !!partnerProfile
+    const identity = userProfile?.identity
+    const editableValues: AccountEditableValues = isPartner && partnerProfile
+        ? getPartnerEditableValues(partnerProfile)
+        : userProfile
+            ? getUserEditableValues(userProfile)
+            : {}
+
+    useEffect(() => {
+        setLocalProfile(profile)
+        setAvatarUrl(getAvatarUrl(profile, actorType))
+        setHasChanges(false)
+        setIsEditing(false)
+    }, [profile, actorType])
+
+    const identityFields = getIdentityFields(identity, t)
+
+    const startEditing = () => {
+        form.setFieldsValue(editableValues)
+        setHasChanges(false)
+        setIsEditing(true)
+    }
+
+    const handleSubmit = async (values: AccountUpdateDto) => {
         try {
-            setSubmitting(true);
-            if (onUpdate) {
-                await onUpdate(values);
-                setLocalProfile(prev => ({ ...prev, ...values }));
-                setIsEditing(false);
-                setHasChanges(false);
-                message.success(t('updateSuccess'));
+            setSubmitting(true)
+
+            if (!onUpdate) {
+                return
             }
+
+            await onUpdate(values)
+            setIsEditing(false)
+            setHasChanges(false)
+            message.success(t('updateSuccess'))
         } catch {
-            message.error(t('updateFailed'));
+            message.error(t('updateFailed'))
         } finally {
-            setSubmitting(false);
+            setSubmitting(false)
         }
-    };
+    }
 
     const handleAvatarUpload = async (file: File) => {
         try {
-            setAvatarUploading(true);
-            const { url } = await uploadFile(file);
-            setAvatarUrl(url);
+            setAvatarUploading(true)
+            const { url } = await uploadFile(file)
+            setAvatarUrl(url)
+
             if (onUpdate) {
-                await onUpdate({ profileImageUrl: url });
+                await onUpdate({ profileImageUrl: url })
             }
         } catch {
-            message.error(t('updateFailed'));
+            message.error(t('updateFailed'))
         } finally {
-            setAvatarUploading(false);
+            setAvatarUploading(false)
         }
-        return false;
-    };
+
+        return false
+    }
 
     const handleValuesChange = (_: unknown, allValues: Record<string, unknown>) => {
-        const initVals = isPartner
-            ? {
-                fullName: localProfile.fullName,
-                phone: localProfile.phone,
-                companyName: (localProfile as PartnerDetail).companyName,
-                taxCode: (localProfile as PartnerDetail).taxCode,
-                nationalId: (localProfile as PartnerDetail).nationalId,
-                bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
-                bankName: (localProfile as PartnerDetail).bankName,
-                address: (localProfile as PartnerDetail).address,
-            }
-            : {
-                fullName: localProfile.fullName,
-                phone: localProfile.phone,
-                emergencyContactName: (localProfile as UserDetail).emergencyContactName,
-                emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
-            };
+        const changed = Object.entries(editableValues).some(([key, initialValue]) => {
+            const nextValue = toText(allValues[key])
+            return toText(initialValue) !== nextValue
+        })
 
-        const changed = Object.keys(initVals).some((key) => {
-            const initial = initVals[key as keyof typeof initVals];
-            const current = allValues[key];
-            return (initial ?? '') !== (current ?? '');
-        });
-        setHasChanges(changed);
-    };
+        setHasChanges(changed)
+    }
 
     const handleCancel = () => {
-        form.resetFields();
-        setHasChanges(false);
-        setIsEditing(false);
-    };
+        form.resetFields()
+        setHasChanges(false)
+        setIsEditing(false)
+    }
 
     if (externalLoading) {
         return (
             <div className="flex items-center justify-center py-20">
                 <Spin size="large" />
             </div>
-        );
+        )
     }
 
     return (
         <div className="space-y-6">
             <div>
                 <h2 className="text-2xl font-bold">
-                    {actorType === ActorType.USER ? t('title') : t('titlePartner')}
+                    {isPartner ? t('titlePartner') : t('title')}
                 </h2>
                 <p className="mt-1 text-sm text-muted">
-                    {actorType === ActorType.USER ? t('subtitle') : t('subtitlePartner')}
+                    {isPartner ? t('subtitlePartner') : t('subtitle')}
                 </p>
             </div>
 
@@ -143,9 +158,9 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     </Upload>
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold">{localProfile.fullName}</h3>
-                    <p className="text-sm text-muted">{localProfile.email}</p>
-                    {actorType !== ActorType.USER && (
+                    <h3 className="text-xl font-semibold">{displayText(localProfile.fullName)}</h3>
+                    <p className="text-sm text-muted">{displayText(localProfile.email)}</p>
+                    {isPartner && (
                         <p className="text-xs text-muted mt-1">
                             {t('accountType')}: <span className="font-medium uppercase">{actorType}</span>
                         </p>
@@ -153,18 +168,11 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                 </div>
             </div>
 
-            {/* ── USER FORM ── */}
-            {!isPartner && (
+            {!isPartner && userProfile && (
                 <Form
                     form={form}
                     layout="vertical"
-                    initialValues={{
-                        fullName: profile.fullName,
-                        email: profile.email,
-                        phone: profile.phone,
-                        emergencyContactName: (profile as UserDetail).emergencyContactName,
-                        emergencyContactPhone: (profile as UserDetail).emergencyContactPhone,
-                    }}
+                    initialValues={getUserEditableValues(userProfile)}
                     onFinish={handleSubmit}
                     onValuesChange={handleValuesChange}
                     className="space-y-4"
@@ -177,12 +185,11 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(localProfile.fullName)}</span>}
                         </Form.Item>
 
                         <Form.Item label={t('emailAddress')}>
-                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{displayText(localProfile.email)}</span>
                         </Form.Item>
 
                         <Form.Item
@@ -191,8 +198,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(localProfile.phone)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -201,8 +207,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('emergencyContactNamePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactName || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(userProfile.emergencyContactName)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -211,12 +216,10 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('emergencyContactPhonePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as UserDetail).emergencyContactPhone || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(userProfile.emergencyContactPhone)}</span>}
                         </Form.Item>
                     </div>
 
-                    {/* ── CCCD / Identity Verification ── */}
                     <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div>
@@ -225,87 +228,33 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                             </div>
                             {identity?.isVerified && <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>}
                         </div>
-                        {!identity?.isVerified &&
+                        {!identity?.isVerified && (
                             <Button type="primary" onClick={() => setCccdModalOpen(true)}>
                                 {t('cccdUploadSubmit')}
-                            </Button>}
+                            </Button>
+                        )}
                     </div>
 
-                    {/* ── Extracted Identity Info ── */}
-                    {identity && (identity.nationalId || identity.name || identity.sex || identity.nationality) && (
+                    {identity && identityFields.some(({ value }) => hasValue(value)) && (
                         <div className="border border-gray-200 rounded-xl p-5 space-y-4">
                             <h4 className="font-semibold text-sm text-gray-700">{t('identityInfoTitle')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                                {identity.nationalId && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('nationalId')}</p>
-                                        <p className="font-medium text-sm">{identity.nationalId}</p>
-                                    </div>
-                                )}
-                                {identity.name && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idName')}</p>
-                                        <p className="font-medium text-sm">{identity.name}</p>
-                                    </div>
-                                )}
-                                {identity.dob && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idDob')}</p>
-                                        <p className="font-medium text-sm">{identity.dob}</p>
-                                    </div>
-                                )}
-                                {identity.sex && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idSex')}</p>
-                                        <p className="font-medium text-sm">{identity.sex}</p>
-                                    </div>
-                                )}
-                                {identity.nationality && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idNationality')}</p>
-                                        <p className="font-medium text-sm">{identity.nationality}</p>
-                                    </div>
-                                )}
-                                {identity.ethnicity && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idEthnicity')}</p>
-                                        <p className="font-medium text-sm">{identity.ethnicity}</p>
-                                    </div>
-                                )}
-                                {identity.home && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idHome')}</p>
-                                        <p className="font-medium text-sm">{identity.home}</p>
-                                    </div>
-                                )}
-                                {identity.address && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idAddress')}</p>
-                                        <p className="font-medium text-sm">{identity.address}</p>
-                                    </div>
-                                )}
-                                {identity.features && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idFeatures')}</p>
-                                        <p className="font-medium text-sm">{identity.features}</p>
-                                    </div>
-                                )}
-                                {identity.issueDate && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idIssueDate')}</p>
-                                        <p className="font-medium text-sm">{identity.issueDate}</p>
-                                    </div>
-                                )}
-                                {identity.doe && (
-                                    <div>
-                                        <p className="text-xs text-muted mb-0.5">{t('idExpiry')}</p>
-                                        <p className="font-medium text-sm">{identity.doe}</p>
-                                    </div>
-                                )}
-                                {identity.verifiedAt && (
+                                {identityFields.map(({ key, label, value }) => {
+                                    if (!hasValue(value)) {
+                                        return null
+                                    }
+
+                                    return (
+                                        <div key={key}>
+                                            <p className="text-xs text-muted mb-0.5">{label}</p>
+                                            <p className="font-medium text-sm">{displayText(value)}</p>
+                                        </div>
+                                    )
+                                })}
+                                {hasValue(identity.verifiedAt) && (
                                     <div>
                                         <p className="text-xs text-muted mb-0.5">{t('idVerifiedAt')}</p>
-                                        <p className="font-medium text-sm">{dayjs(identity.verifiedAt).format('DD/MM/YYYY HH:mm')}</p>
+                                        <p className="font-medium text-sm">{formatDateTime(identity.verifiedAt)}</p>
                                     </div>
                                 )}
                             </div>
@@ -323,15 +272,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                                 </Button>
                             </>
                         ) : (
-                            <Button type="primary" size="large" onClick={() => {
-                                form.setFieldsValue({
-                                    fullName: localProfile.fullName,
-                                    phone: localProfile.phone,
-                                    emergencyContactName: (localProfile as UserDetail).emergencyContactName,
-                                    emergencyContactPhone: (localProfile as UserDetail).emergencyContactPhone,
-                                });
-                                setIsEditing(true);
-                            }}>
+                            <Button type="primary" size="large" onClick={startEditing}>
                                 {t('edit')}
                             </Button>
                         )}
@@ -339,22 +280,11 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                 </Form>
             )}
 
-            {/* ── PARTNER FORM ── */}
-            {isPartner && (
+            {isPartner && partnerProfile && (
                 <Form
                     form={form}
                     layout="vertical"
-                    initialValues={{
-                        fullName: profile.fullName,
-                        email: profile.email,
-                        phone: profile.phone,
-                        companyName: (profile as PartnerDetail).companyName,
-                        taxCode: (profile as PartnerDetail).taxCode,
-                        nationalId: (profile as PartnerDetail).nationalId,
-                        bankAccountNumber: (profile as PartnerDetail).bankAccountNumber,
-                        bankName: (profile as PartnerDetail).bankName,
-                        address: (profile as PartnerDetail).address,
-                    }}
+                    initialValues={getPartnerEditableValues(partnerProfile)}
                     onFinish={handleSubmit}
                     onValuesChange={handleValuesChange}
                     className="space-y-4"
@@ -367,12 +297,11 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('fullNamePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.fullName || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(localProfile.fullName)}</span>}
                         </Form.Item>
 
                         <Form.Item label={t('emailAddress')}>
-                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{localProfile.email || '—'}</span>
+                            <span className="block py-2.5 text-[15px] text-gray-400 border-b border-gray-200">{displayText(localProfile.email)}</span>
                         </Form.Item>
 
                         <Form.Item
@@ -381,8 +310,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('phoneNumberPlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{localProfile.phone || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(localProfile.phone)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -391,8 +319,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('companyNamePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).companyName || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.companyName)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -401,8 +328,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('taxCodePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).taxCode || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.taxCode)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -411,8 +337,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('nationalIdPlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).nationalId || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.nationalId)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -421,8 +346,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('bankAccountNumberPlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankAccountNumber || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.bankAccountNumber)}</span>}
                         </Form.Item>
 
                         <Form.Item
@@ -431,8 +355,7 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                         >
                             {isEditing
                                 ? <Input size="large" placeholder={t('bankNamePlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{(localProfile as PartnerDetail).bankName || '—'}</span>
-                            }
+                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.bankName)}</span>}
                         </Form.Item>
                     </div>
 
@@ -442,31 +365,21 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                     >
                         {isEditing
                             ? <Input.TextArea rows={3} size="large" placeholder={t('addressPlaceholder')} />
-                            : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200 whitespace-pre-wrap">{(localProfile as PartnerDetail).address || '—'}</span>
-                        }
+                            : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200 whitespace-pre-wrap">{displayText(partnerProfile.address)}</span>}
                     </Form.Item>
 
-                    {/* Read-only contract info */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded-lg p-4">
                         <div>
                             <p className="text-xs text-muted mb-1">{t('commissionRate')}</p>
-                            <p className="font-medium">{(profile as PartnerDetail).commissionRate}%</p>
+                            <p className="font-medium">{displayText(partnerProfile.commissionRate)}%</p>
                         </div>
                         <div>
                             <p className="text-xs text-muted mb-1">{t('contractStartDate')}</p>
-                            <p className="font-medium">
-                                {(profile as PartnerDetail).contractStartDate
-                                    ? dayjs((profile as PartnerDetail).contractStartDate).format('DD/MM/YYYY')
-                                    : '—'}
-                            </p>
+                            <p className="font-medium">{formatDate(partnerProfile.contractStartDate)}</p>
                         </div>
                         <div>
                             <p className="text-xs text-muted mb-1">{t('contractEndDate')}</p>
-                            <p className="font-medium">
-                                {(profile as PartnerDetail).contractEndDate
-                                    ? dayjs((profile as PartnerDetail).contractEndDate).format('DD/MM/YYYY')
-                                    : '—'}
-                            </p>
+                            <p className="font-medium">{formatDate(partnerProfile.contractEndDate)}</p>
                         </div>
                     </div>
 
@@ -481,30 +394,19 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
                                 </Button>
                             </>
                         ) : (
-                            <Button type="primary" size="large" onClick={() => {
-                                form.setFieldsValue({
-                                    fullName: localProfile.fullName,
-                                    phone: localProfile.phone,
-                                    companyName: (localProfile as PartnerDetail).companyName,
-                                    taxCode: (localProfile as PartnerDetail).taxCode,
-                                    nationalId: (localProfile as PartnerDetail).nationalId,
-                                    bankAccountNumber: (localProfile as PartnerDetail).bankAccountNumber,
-                                    bankName: (localProfile as PartnerDetail).bankName,
-                                    address: (localProfile as PartnerDetail).address,
-                                });
-                                setIsEditing(true);
-                            }}>
+                            <Button type="primary" size="large" onClick={startEditing}>
                                 {t('edit')}
                             </Button>
                         )}
                     </div>
                 </Form>
             )}
+
             <ModalIdentityCard
                 open={cccdModalOpen}
                 onClose={() => setCccdModalOpen(false)}
-                identity={identity}
+                identity={identity ?? undefined}
             />
         </div>
-    );
+    )
 }
