@@ -167,7 +167,7 @@ export type AccountInformationProps = {
 }
 
 export type UserAccountEditableValues = Partial<Pick<UserDetail, 'fullName' | 'phone' | 'emergencyContactName' | 'emergencyContactPhone'>>
-export type PartnerAccountEditableValues = Partial<Pick<PartnerDetail, 'fullName' | 'phone' | 'companyName' | 'taxCode' | 'nationalId' | 'bankAccountNumber' | 'bankName' | 'address'>>
+export type PartnerAccountEditableValues = Partial<Pick<PartnerDetail, 'fullName' | 'phone' | 'companyName' | 'taxCode' | 'bankAccountNumber' | 'bankName' | 'address'>>
 export type AccountEditableValues = UserAccountEditableValues | PartnerAccountEditableValues
 export type AccountUpdateDto = Partial<UpdateUserDto & UpdatePartnerDto> & { profileImageUrl?: string }
 

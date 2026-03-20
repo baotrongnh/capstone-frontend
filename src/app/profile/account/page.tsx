@@ -11,23 +11,30 @@ import { Spin } from "antd";
 import AccountInformation from "../components/account-information";
 
 export default function AccountPage() {
-  const user = useAuthStore((s) => s.user);
-  const id = user?.id ?? "";
-  const actorType = user?.actorType ?? ActorType.USER;
+  const user = useAuthStore((s) => s.user)
 
-  const isPartner = actorType === ActorType.PARTNER;
+  const id = user?.id
+  const actorType = user?.actorType ?? ActorType.USER
+  const isPartner = actorType === ActorType.PARTNER
 
-  const { data: userProfile, isLoading: userLoading } =
-    useUserProfile(!isPartner);
+  const {
+    data: userProfile,
+    isLoading: userLoading,
+    isError: userError,
+  } = useUserProfile(!isPartner)
 
-  const { data: partnerProfile, isLoading: partnerLoading } =
-    usePartnerProfile(isPartner);
+  const {
+    data: partnerProfile,
+    isLoading: partnerLoading,
+    isError: partnerError,
+  } = usePartnerProfile(isPartner)
 
-  const { mutateAsync: updateUser } = useUpdateUser(id);
-  const { mutateAsync: updatePartner } = useUpdatePartnerProfile();
+  const { mutateAsync: updateUser } = useUpdateUser(id ?? "")
+  const { mutateAsync: updatePartner } = useUpdatePartnerProfile()
 
-  const profile = isPartner ? partnerProfile : userProfile;
-  const isLoading = isPartner ? partnerLoading : userLoading;
+  const profile = isPartner ? partnerProfile : userProfile
+  const isLoading = userLoading || partnerLoading
+  const isError = userError || partnerError
 
   const handleUpdate = async (values: AccountUpdateDto) => {
     if (isPartner) {
@@ -40,19 +47,31 @@ export default function AccountPage() {
         bankAccountNumber: values.bankAccountNumber,
         bankName: values.bankName,
         address: values.address,
-      };
-      await updatePartner(partnerPayload);
-      return;
+      }
+      await updatePartner(partnerPayload)
+      return
     }
-
-    await updateUser(values);
+    if (!id) {
+      throw new Error("Missing user id");
+    }
+    await updateUser(values)
   };
 
-  if (isLoading || !profile) {
+  if (isLoading) {
     return (
       <ProfileLayout actorType={actorType}>
         <div className="flex items-center justify-center py-20">
           <Spin size="large" />
+        </div>
+      </ProfileLayout>
+    );
+  }
+
+  if (isError || !profile) {
+    return (
+      <ProfileLayout actorType={actorType}>
+        <div className="py-20 text-center text-muted">
+          Unable to load account information.
         </div>
       </ProfileLayout>
     );

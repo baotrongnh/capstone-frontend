@@ -333,11 +333,8 @@ export default function AccountInformation({ profile, actorType, onUpdate, loadi
 
                         <Form.Item
                             label={t('nationalId')}
-                            name={isEditing ? 'nationalId' : undefined}
                         >
-                            {isEditing
-                                ? <Input size="large" placeholder={t('nationalIdPlaceholder')} />
-                                : <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.nationalId)}</span>}
+                            <span className="block py-2.5 text-[15px] text-gray-800 border-b border-gray-200">{displayText(partnerProfile.nationalId)}</span>
                         </Form.Item>
 
                         <Form.Item

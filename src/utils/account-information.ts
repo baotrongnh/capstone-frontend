@@ -64,7 +64,6 @@ export const getPartnerEditableValues = (partner: PartnerDetail): AccountEditabl
         phone: partner.phone,
         companyName: partner.companyName,
         taxCode: partner.taxCode,
-        nationalId: partner.nationalId,
         bankAccountNumber: partner.bankAccountNumber,
         bankName: partner.bankName,
         address: partner.address,
