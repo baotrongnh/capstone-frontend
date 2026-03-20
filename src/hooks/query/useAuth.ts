@@ -2,20 +2,11 @@
 
 import { authService } from '@/lib/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
-import { ROLE_PRIORITY } from '@/constants/roles'
-import { ActorType, ApiErrorResponse, UserInfo } from '@/types/auth'
+import { ApiErrorResponse } from '@/types/auth'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
 import { useState } from 'react'
 
-// ========== Helpers ==========
-const resolveEffectiveRole = (user: UserInfo): UserInfo => {
-    const availableRoles = user.availableRoles ?? [user.role]
-    const effectiveRole = ROLE_PRIORITY.find((r) => availableRoles.includes(r)) ?? ActorType.USER
-    return { ...user, actorType: effectiveRole, role: effectiveRole }
-}
-
-// MUTATIONS
 export const useLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
     const setAuth = useAuthStore((s) => s.setAuth)
@@ -25,7 +16,7 @@ export const useLogin = (onSuccess?: () => void) => {
         mutationFn: authService.login,
         onSuccess: (data) => {
             queryClient.clear()
-            setAuth(resolveEffectiveRole(data.user), data.tokens)
+            setAuth(data.user, data.tokens)
             message.success('Login successful!')
             onSuccess?.()
         },
@@ -46,7 +37,7 @@ export const useRegister = (onSuccess?: () => void) => {
         mutationFn: authService.register,
         onSuccess: (data) => {
             queryClient.clear()
-            setAuth(resolveEffectiveRole(data.user), data.tokens)
+            setAuth(data.user, data.tokens)
             message.success('Registration successful!')
             onSuccess?.()
         },
@@ -65,7 +56,7 @@ export const useRefreshToken = () => {
     return useMutation({
         mutationFn: authService.refresh,
         onSuccess: (data) => {
-            setTokens(data.tokens)
+            setTokens(data)
         },
         onError: (error: ApiErrorResponse) => {
             const msg = error?.response?.data?.message
@@ -92,7 +83,6 @@ export const useLogout = (onSuccess?: () => void) => {
             onSuccess?.()
         },
         onError: () => {
-            // Clear local state even if API call fails
             logoutStore()
             queryClient.clear()
         }

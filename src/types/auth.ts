@@ -1,4 +1,6 @@
 import { FormInstance } from "antd";
+import { paths } from "./api";
+import type { UserIdentity } from "./user";
 
 export type AuthModal = {
     open: boolean;
@@ -50,42 +52,57 @@ export enum ActorType {
     PARTNER = 'partner'
 }
 
-export type LoginDto = {
-    identifier: string
-    password: string
-    actorType?: ActorType
-}
+type LoginPost = paths['/api/v1/auth/login']['post']
+type RegisterPost = paths['/api/v1/auth/register']['post']
+type GooglePost = paths['/api/v1/auth/google']['post']
+type RefreshPost = paths['/api/v1/auth/refresh']['post']
+type LogoutPost = paths['/api/v1/auth/logout']['post']
 
-export type RegisterDto = {
-    email: string
-    phone: string
-    fullName: string
-    password: string
-}
+export type LoginDto = LoginPost['requestBody']['content']['application/json']
+export type RegisterDto = RegisterPost['requestBody']['content']['application/json']
+export type GoogleLoginDto = GooglePost['requestBody']['content']['application/json']
+export type RefreshTokenDto = RefreshPost['requestBody']['content']['application/json']
+export type LogoutDto = LogoutPost['requestBody']['content']['application/json']
 
-export type AuthTokens = {
-    accessToken: string
-    refreshToken: string
-}
+export type LoginRes = LoginPost['responses']['200']['content']['application/json']
+export type RegisterRes = RegisterPost['responses']['201']['content']['application/json']
+export type GoogleLoginRes = GooglePost['responses']['200']['content']['application/json']
+export type RefreshTokenRes = RefreshPost['responses']['200']['content']['application/json']
+export type LogoutRes = LogoutPost['responses']['200']['content']
 
-export type UserInfo = {
+export type AuthTokens = NonNullable<RefreshTokenRes['data']>
+
+type BaseUserInfo = {
     id: string
     email: string
     fullName: string
     role: string
     actorType: ActorType
     availableRoles?: string[]
+    isVerified?: boolean
 }
 
-export type GoogleLoginDto = {
-    accessToken: string
+export type UserActorInfo = BaseUserInfo & {
+    actorType: ActorType.USER
+    identity?: UserIdentity | null
 }
+
+export type PartnerActorInfo = BaseUserInfo & {
+    actorType: ActorType.PARTNER
+    nationalId?: string | null
+}
+
+export type StaffActorInfo = BaseUserInfo & {
+    actorType: ActorType.STAFF | ActorType.OPERATOR | ActorType.ADMIN
+}
+
+export type UserInfo = UserActorInfo | PartnerActorInfo | StaffActorInfo
 
 export type SupabaseUrlResponse = {
     url: string
 }
 
-export type LoginResponse = {
+export type LoginResponse = NonNullable<LoginRes['data']> & {
     user: UserInfo
     tokens: AuthTokens
 }
@@ -104,14 +121,4 @@ export type ApiErrorResponse = {
     message?: string
 }
 
-export type RefreshTokenDto = {
-    refreshToken: string
-}
-
-export type RefreshTokenResponse = {
-    tokens: AuthTokens
-}
-
-export type LogoutDto = {
-    refreshToken: string
-}
+export type RefreshTokenResponse = AuthTokens
