@@ -246,7 +246,7 @@ export default function PropertiesSection() {
         <ModalBookingSchedule
           open={isBookingModalOpen}
           onClose={() => setIsBookingModalOpen(false)}
-          onSubmit={handleBookingSubmit}
+          apartmentId={String(selectedApartmentId)}
         />
 
         <ModalLoginRequired
