@@ -25,11 +25,11 @@ export default function ModalWaitingVerify({
         </div>
 
         <h3 className="text-[22px] font-bold text-gray-900 mb-2">
-          Hồ sơ đang xét duyệt
+          Hồ sơ cần xét duyệt
         </h3>
         <p className="text-[15px] text-gray-500 mb-8 max-w-85 leading-relaxed">
-          Thông tin của bạn đã được tiếp nhận và đang trong quá trình kiểm tra.
-          Xin vui lòng chờ trong ít phút.
+          Vui lòng cung cấp thêm thông tin căn cước công dân để hệ thống có thể
+          xét duyệt hồ sơ của bạn.
         </p>
 
         <div className="w-full bg-gray-50 rounded-xl p-5 mb-8 border border-gray-100 text-left relative">

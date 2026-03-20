@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Card, Typography, Select, Spin, Empty } from "antd";
 import { Files, FileEdit, FileCheck } from "lucide-react";
 
-import { useCancelContract, useGetContracts } from "@/hooks/query/useContracts";
+import { useGetContracts } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { ContractCard } from "./card-contracts-layout";
 import ModalAssignContract from "./modal/modal-assign-contract";
@@ -12,7 +12,7 @@ import ModalCancelContract from "./modal/modal-cancel-contract";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "draft" | "active" | "terminated";
+type StatusFilter = "all" | "draft" | "signed" | "terminated" | "active";
 
 export default function ContractLayout() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -27,10 +27,6 @@ export default function ContractLayout() {
   const contractsList = useMemo<ContractWithMembers[]>(() => {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
-
-  const { mutateAsync: useCancelContracts } = useCancelContract(
-    selectedContractId ?? "",
-  );
 
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
@@ -105,7 +101,6 @@ export default function ContractLayout() {
     );
   }
 
-  // Cấu hình các thẻ thống kê
   const stats = [
     {
       title: "Tổng hợp đồng",
@@ -179,7 +174,9 @@ export default function ContractLayout() {
             options={[
               { label: "Tất cả hợp đồng", value: "all" },
               { label: "Chưa ký", value: "draft" },
-              { label: "Đã ký", value: "active" },
+              { label: "Đã ký", value: "signed" },
+              { label: "Đã hủy", value: "terminated" },
+              { label: "Đã kích hoạt", value: "active" },
             ]}
           />
         </div>

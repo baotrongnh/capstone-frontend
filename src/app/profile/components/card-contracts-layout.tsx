@@ -34,7 +34,7 @@ const StatusBadge = ({ status }: { status: string }) => {
       bg: "bg-rose-50",
       text: "text-rose-700",
       border: "border-rose-200",
-      label: "Hết hạn",
+      label: "Đã hủy",
     },
   };
 
@@ -161,7 +161,8 @@ export const ContractCard = ({
           className="flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
         >
           <Eye size={18} />
-          {contract.status === "signed" && (
+          {(contract.status === "signed" ||
+            contract.status === "terminated") && (
             <span className="font-medium">Xem hợp đồng</span>
           )}
 
@@ -174,16 +175,18 @@ export const ContractCard = ({
           )}
         </Button>
 
-        <Button
-          block
-          size="large"
-          style={{ marginBottom: 10 }}
-          onClick={onCancel}
-          className="flex items-center text-white! bg-red-500! justify-center gap-2 h-11 rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
-        >
-          <DeleteOutlined size={18} />
-          <span className="font-medium">Hủy hợp đồng</span>
-        </Button>
+        {contract.status != "terminated" && contract.status !== "active" && (
+          <Button
+            block
+            size="large"
+            style={{ marginBottom: 10 }}
+            onClick={onCancel}
+            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-11 rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
+          >
+            <DeleteOutlined size={18} />
+            <span className="font-medium">Hủy hợp đồng</span>
+          </Button>
+        )}
         <Button
           block
           size="large"
