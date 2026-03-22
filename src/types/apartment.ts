@@ -9,15 +9,7 @@ export type ApartmenList = ApartmentItem[]
 export type ApartmentQueryParams = NonNullable<ApartmentSearchQueryParams>
 export type FurnishingType = NonNullable<ApartmentQueryParams['furnishingStatus']>
 
-export type ApartmentFilterPatch = {
-     keyword?: ApartmentQueryParams['keyword']
-     minBedrooms?: ApartmentQueryParams['minBedrooms']
-     maxBedrooms?: ApartmentQueryParams['maxBedrooms']
-     minPrice?: ApartmentQueryParams['minPrice']
-     maxPrice?: ApartmentQueryParams['maxPrice']
-     minArea?: ApartmentQueryParams['minArea']
-     maxArea?: ApartmentQueryParams['maxArea']
-     furnishingStatus?: ApartmentQueryParams['furnishingStatus']
-     // Keep fallback while BE/OpenAPI has not synced wardCode yet.
-     wardCode?: number
-}
+export type ApartmentFilterPatch = paths["/api/v1/apartments/search"]["get"]["parameters"]["query"]
+
+export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
+export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
