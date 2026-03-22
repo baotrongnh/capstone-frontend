@@ -367,7 +367,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       )}
 
       {/* Partner */}
-      {apt?.partner && (
+      {apt?.owner && (
         <div className="mt-8 md:mt-10">
           <h2 className="font-semibold text-lg md:text-xl mb-3">
             {t("partnerTitle")}
@@ -377,8 +377,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
               <Building2 size={20} className="text-primary" />
             </div>
             <div>
-              <p className="font-semibold">{apt.partner.companyName}</p>
-              <p className="text-sm text-gray-500">{apt.partner.fullName}</p>
+              <p className="font-semibold">{apt?.owner?.companyName}</p>
+              <p className="text-sm text-gray-500">{apt?.owner?.companyName}</p>
             </div>
           </div>
         </div>
