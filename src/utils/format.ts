@@ -18,7 +18,7 @@ export const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + '
 export const formatArea = (area?: number) => area ? `${area} m²` : ''
 
 export const formatTime = (date: Date) => {
-     date.toLocaleTimeString('vi-VN', {
+     return date.toLocaleTimeString('vi-VN', {
           hour: '2-digit',
           minute: '2-digit',
      })
