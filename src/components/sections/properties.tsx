@@ -7,17 +7,18 @@ import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
 import { ApartmentItem, ApartmentQueryParams } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
-import ModalBookingSchedule, {
-  BookingScheduleData,
-} from "../modal/modal-booking-schedule";
+import ModalBookingSchedule from "../modal/modal-booking-schedule";
 import ModalBooking from "../modal/modal-booking";
 import ModalLoginRequired from "../modal/modal-login-required";
+import ModalVerify from "../modal/modal-verify";
+import { ROUTES } from "@/constants/routes";
+import { UserDetail } from "@/types/user";
 export default function PropertiesSection() {
   const router = useRouter();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
+  const [modalVerify, setModalVerify] = useState(false);
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
     useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -43,7 +44,6 @@ export default function PropertiesSection() {
   if (!apartments) {
     return <div>Loading...</div>;
   }
-  console.log("Fetched apartments data:", apartments);
 
   const apartmentsList = Array.isArray(apartments)
     ? apartments
@@ -82,17 +82,20 @@ export default function PropertiesSection() {
     }
   };
 
-  const handleBookingSubmit = (bookingData: BookingScheduleData) => {
-    console.log("Booking data:", bookingData);
-  };
-
   const handleReservation = (apartmentId: string | number) => {
     setSelectedApartmentId(apartmentId);
-    if (user) {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true);
+    } else if (user?.isVerified && user?.identity !== null) {
       setModalReservation(true);
     } else {
-      setIsModalLoginRequiredLogin(true);
+      console.log("User must verify identity before booking");
+      setModalVerify(true);
     }
+  };
+
+  const handleVerify = () => {
+    router.push(`${ROUTES.PROFILE}`);
   };
 
   return (
@@ -225,7 +228,6 @@ export default function PropertiesSection() {
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}
-          userId={user?.id}
         />
 
         <ModalBookingSchedule
@@ -237,6 +239,12 @@ export default function PropertiesSection() {
         <ModalLoginRequired
           isModalOpen={isModalLoginRequiredOpen}
           setIsModalOpen={setIsModalLoginRequiredLogin}
+        />
+
+        <ModalVerify
+          isOpen={modalVerify}
+          onClose={() => setModalVerify(false)}
+          onVerify={() => handleVerify()}
         />
       </div>
     </div>

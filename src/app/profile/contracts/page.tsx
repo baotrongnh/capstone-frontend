@@ -6,7 +6,7 @@ import ContractLayout from "../components/contracts-layout";
 
 export default function ContractPage() {
   return (
-    <ProfileLayout actorType={ActorType.USER}>
+    <ProfileLayout>
       <ContractLayout />
     </ProfileLayout>
   );
