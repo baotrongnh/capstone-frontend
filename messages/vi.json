@@ -460,6 +460,36 @@
         "paid": "Đã thanh toán"
       }
     },
+    "invoices": {
+      "title": "Hóa đơn của tôi",
+      "subtitle": "Xem tất cả hóa đơn từ hợp đồng của bạn",
+      "invoiceNumber": "Số hóa đơn",
+      "type": "Loại",
+      "apartment": "Căn hộ",
+      "amount": "Số tiền",
+      "dueDate": "Hạn thanh toán",
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "empty": "Không có hóa đơn",
+      "loadError": "Không tải được danh sách hóa đơn",
+      "types": {
+        "rent": "Tiền thuê",
+        "electricity": "Điện",
+        "water": "Nước",
+        "maintenance": "Bảo trì",
+        "deposit": "Đặt cọc",
+        "other": "Khác"
+      },
+      "statuses": {
+        "draft": "Nháp",
+        "issued": "Đã phát hành",
+        "sent": "Đã gửi",
+        "partially_paid": "Thanh toán một phần",
+        "paid": "Đã thanh toán",
+        "overdue": "Quá hạn",
+        "cancelled": "Đã hủy"
+      }
+    },
     "properties": {
       "title": "Bất động sản của tôi",
       "subtitle": "Quản lý tất cả bất động sản đã đăng của bạn",

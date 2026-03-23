@@ -26,7 +26,6 @@ export const useUserById = (id: string, enabled = true) => {
   });
 };
 
-// MUTATIONS
 export const useUpdateUser = (id: string) => {
   const { message } = App.useApp();
   const queryClient = useQueryClient();

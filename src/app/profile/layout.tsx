@@ -1,10 +1,10 @@
 "use client";
 
 import { ProfileLayoutProps } from "@/types/profile";
-import ProfileSidebar from "./profile-sidebar";
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/query/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
+import ProfileSidebar from "./components/profile-sidebar"
 
 export default function ProfileLayout({ children }: ProfileLayoutProps) {
   const router = useRouter();

@@ -232,7 +232,7 @@
       "myApartment": "My Apartment",
       "myContracts": "My Contracts",
       "paymentHistory": "Payment History",
-      "myBills": "My Bills",
+      "myBills": "My Invoices",
       "settings": "Settings",
       "partnerDashboard": "Partner Dashboard",
       "myProperties": "My Properties",
@@ -458,6 +458,36 @@
         "pending": "Pending",
         "overdue": "Overdue",
         "paid": "Paid"
+      }
+    },
+    "invoices": {
+      "title": "My Invoices",
+      "subtitle": "View all invoices from your contracts",
+      "invoiceNumber": "Invoice No.",
+      "type": "Type",
+      "apartment": "Apartment",
+      "amount": "Amount",
+      "dueDate": "Due Date",
+      "status": "Status",
+      "all": "All",
+      "empty": "No invoices found",
+      "loadError": "Unable to load invoice list",
+      "types": {
+        "rent": "Rent",
+        "electricity": "Electricity",
+        "water": "Water",
+        "maintenance": "Maintenance",
+        "deposit": "Deposit",
+        "other": "Other"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "issued": "Issued",
+        "sent": "Sent",
+        "partially_paid": "Partially Paid",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "cancelled": "Cancelled"
       }
     },
     "properties": {

@@ -1,7 +1,7 @@
 "use client"
 
-import { AuthFormProps, LoginDTO, RegisterDto } from "@/types/auth";
-import { Button, Divider, Form, Input, message } from "antd";
+import { ApiErrorResponse, AuthFormProps, LoginDTO, RegisterDto } from "@/types/auth";
+import { App, Button, Divider, Form, Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -16,6 +16,7 @@ export default function AuthForm({
   onGoogleLogin,
   googleLoading,
 }: AuthFormProps) {
+  const { message } = App.useApp();
   const tHook = useTranslations('Auth');
   const t = tProp || tHook;
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -26,14 +27,21 @@ export default function AuthForm({
   };
 
   const handleFinish = async (values: LoginDTO & RegisterDto) => {
-    if (mode === "login") {
-      if (onSubmit) {
-        await onSubmit({ identifier: values.identifier, password: values.password });
+    try {
+      if (mode === "login") {
+        if (onSubmit) {
+          await onSubmit({ identifier: values.identifier, password: values.password })
+        }
+      } else {
+        if (onRegister) {
+          await onRegister(values)
+        }
       }
-    } else {
-      if (onRegister) {
-        await onRegister(values);
-      }
+    } catch (error) {
+      const apiError = error as ApiErrorResponse;
+      if (apiError?.response) return
+
+      message.error(mode === 'login' ? t('loginFailed') : t('registrationFailed'));
     }
   };
 
