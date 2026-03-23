@@ -1,14 +1,14 @@
 'use client'
 
-// import { ROUTES } from '@/constants/routes'
+import { ROUTES } from '@/constants/routes'
 import { useCreateViewRequest } from '@/hooks/query/useViewRequest'
-// import { useAuthStore } from '@/stores/auth.store'
+import { useAuthStore } from '@/stores/auth.store'
 import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Input, Modal, Radio } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/vi'
 import { useTranslations } from 'next-intl'
-// import Link from 'next/link'
+import Link from 'next/link'
 import { useState } from 'react'
 
 dayjs.locale('vi')
@@ -40,10 +40,10 @@ export default function ModalBookingSchedule({
      const [errors, setErrors] = useState<{ date?: string; timeSlot?: string }>({})
      const { mutate, isPending } = useCreateViewRequest()
 
-     // const user = useAuthStore((store) => store.user)
-     // const hasPhone = user?.phone
-     // const hasID = user?.idNumber
-     // const isValidToBook = hasPhone && hasID
+     const user = useAuthStore((store) => store.user)
+     const hasPhone = user?.phone
+     const hasID = user?.identity
+     const isValidToBook = hasPhone && hasID
 
      const onSubmit = (date: dayjs.Dayjs, timeSlot: string, note: string) => {
           const appointmentAt = date.hour(
@@ -150,20 +150,20 @@ export default function ModalBookingSchedule({
                          />
                     </div>
 
-                    {/* {!isValidToBook && (
+                    {!isValidToBook && (
                          <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-3'>
                               <p className='text-yellow-800 text-sm font-medium'>
                                    ⚠️ Vui lòng cập nhật
                                    {!hasPhone && 'số điện thoại'}
-                                   {!(hasPhone & hasID) && ' & '}
-                                   {!hasID && 'CCCD '}
+                                   {hasPhone == null && hasID == null && ' &'}
+                                   {!hasID && ' CCCD '}
                                    để đặt lịch xem
                                    <Link href={ROUTES.PROFILE}>
                                         <span className='text-muted underline'> (Cập nhật ngay)</span>
                                    </Link>
                               </p>
                          </div>
-                    )} */}
+                    )}
 
                     {/* Actions */}
                     <div className='flex justify-end gap-2'>
@@ -174,7 +174,7 @@ export default function ModalBookingSchedule({
                               shape='round'
                               style={{ minWidth: 140 }}
                               onClick={handleOk}
-                         // disabled={isPending || !isValidToBook}
+                              disabled={isPending || !isValidToBook}
                          >
                               {t('confirm')}
                          </Button>
