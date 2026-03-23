@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import ModalWaitingVerify from "./modal-waiting-verify";
 
 import { ROUTES } from "@/constants/routes";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface ModalBookingProps {
   open: boolean;
