@@ -1,13 +1,14 @@
 export type ChatMode = 'support' | 'ai' | null
+export type ChatSender = 'user' | 'support'
 
-export const STORAGE_KEY = 'chat_mode'
+export const CHAT_MODE_STORAGE_KEY = 'chat_mode'
 
 export interface ChatMessage {
-     id: number
+     id: string | number
      content: string
      images?: string[]
      apartmentId?: string
-     sender: 'user' | 'support'
+     sender: ChatSender
      timestamp: Date
 }
 

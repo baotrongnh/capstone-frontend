@@ -14,4 +14,12 @@ export function normalizeText(text: string) {
 }
 
 export const formatPrice = (price: number) => (price / 1_000_000).toFixed(1) + ' tr'
+
 export const formatArea = (area?: number) => area ? `${area} m²` : ''
+
+export const formatTime = (date: Date) => {
+     return date.toLocaleTimeString('vi-VN', {
+          hour: '2-digit',
+          minute: '2-digit',
+     })
+}

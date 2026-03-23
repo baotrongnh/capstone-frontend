@@ -1,20 +1,37 @@
 'use client'
 
 import { SendOutlined } from '@ant-design/icons'
+import type { ChatApartmentRef } from '@/types/chat'
 import { Icon } from '@iconify/react'
 import { Button, Input } from 'antd'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { useState } from 'react'
-import { ChatApartmentRef } from '@/types/chat'
+import { useState, type ClipboardEvent, type KeyboardEvent } from 'react'
 
 const { TextArea } = Input
+
+function fileToDataUrl(file: File): Promise<string> {
+     return new Promise((resolve, reject) => {
+          const reader = new FileReader()
+
+          reader.onload = () => {
+               if (typeof reader.result === 'string') {
+                    resolve(reader.result)
+                    return
+               }
+
+               reject(new Error('Failed to read image data'))
+          }
+
+          reader.onerror = () => reject(reader.error ?? new Error('Failed to read image data'))
+          reader.readAsDataURL(file)
+     })
+}
 
 interface Props {
      onSend: (content: string, images?: string[]) => void
      currentApartment?: ChatApartmentRef
      onSendApartment: () => void
-     accentColor: string
 }
 
 export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) {
@@ -22,42 +39,62 @@ export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) 
      const [message, setMessage] = useState('')
      const [pendingImages, setPendingImages] = useState<string[]>([])
 
+     const canSend = message.trim().length > 0 || pendingImages.length > 0
+
      function handleSend() {
-          if (!message.trim() && pendingImages.length === 0) return
-          onSend(message, pendingImages.length > 0 ? pendingImages : undefined)
+          const text = message.trim()
+          if (!text && pendingImages.length === 0) return
+
+          onSend(text, pendingImages.length > 0 ? pendingImages : undefined)
           setMessage('')
           setPendingImages([])
      }
 
-     function handleKeyPress(e: React.KeyboardEvent) {
+     function handlePressEnter(e: KeyboardEvent<HTMLTextAreaElement>) {
           if (e.key === 'Enter' && !e.shiftKey) {
                e.preventDefault()
                handleSend()
           }
      }
 
-     function handlePaste(e: React.ClipboardEvent) {
-          const imageItems = Array.from(e.clipboardData.items).filter(i => i.type.startsWith('image/'))
+     async function handlePaste(e: ClipboardEvent<HTMLTextAreaElement>) {
+          const imageItems = Array.from(e.clipboardData.items).filter((item) => item.type.startsWith('image/'))
+
           if (imageItems.length === 0) return
+
           e.preventDefault()
-          imageItems.forEach(item => {
-               const file = item.getAsFile()
-               if (!file) return
-               const reader = new FileReader()
-               reader.onload = (ev) => setPendingImages(prev => [...prev, ev.target?.result as string])
-               reader.readAsDataURL(file)
-          })
+
+          const files = imageItems
+               .map((item) => item.getAsFile())
+               .filter((file): file is File => Boolean(file))
+
+          if (files.length === 0) return
+
+          console.log(files)
+
+          const results = await Promise.allSettled(files.map(fileToDataUrl))
+          const nextImages = results
+               .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
+               .map((result) => result.value)
+
+          if (nextImages.length === 0) return
+
+          setPendingImages((prev) => [...prev, ...nextImages])
+     }
+
+     function removePendingImage(index: number) {
+          setPendingImages((prev) => prev.filter((_, itemIndex) => itemIndex !== index))
      }
 
      return (
           <div className="p-3 flex flex-col gap-2">
                {pendingImages.length > 0 && (
                     <div className="flex gap-2 flex-wrap">
-                         {pendingImages.map((src, i) => (
-                              <div key={i} className="relative">
+                         {pendingImages.map((src, index) => (
+                              <div key={`${src}-${index}`} className="relative">
                                    <Image src={src} alt="preview" width={64} height={64} unoptimized className="h-16 w-16 object-cover rounded border" />
                                    <button
-                                        onClick={() => setPendingImages(prev => prev.filter((_, idx) => idx !== i))}
+                                        onClick={() => removePendingImage(index)}
                                         className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center leading-none"
                                    >×</button>
                               </div>
@@ -79,7 +116,7 @@ export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) 
                     <TextArea
                          value={message}
                          onChange={(e) => setMessage(e.target.value)}
-                         onKeyPress={handleKeyPress}
+                         onPressEnter={handlePressEnter}
                          onPaste={handlePaste}
                          placeholder={t('inputPlaceholder')}
                          autoSize={{ minRows: 1, maxRows: 4 }}
@@ -89,7 +126,7 @@ export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) 
                          type="primary"
                          icon={<SendOutlined />}
                          onClick={handleSend}
-                         disabled={!message.trim() && pendingImages.length === 0}
+                         disabled={!canSend}
                     >
                          {t('send')}
                     </Button>

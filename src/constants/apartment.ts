@@ -6,7 +6,7 @@ export const BEDROOM_OPTIONS = [1, 2, 3, 4, 5]
 export const DEBOUNCE_DELAY = 400
 
 export const DEFAULT_APARTMENT_FILTERS: ApartmentQueryParams = {
-     page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc', addressType: 'both'
+     page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc', addressType: 'both', status: 'available'
 }
 
 export const APARTMENT_SORT_OPTIONS = [
