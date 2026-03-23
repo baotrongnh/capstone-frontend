@@ -2,7 +2,7 @@
 
 // import { ROUTES } from '@/constants/routes'
 import { useCreateViewRequest } from '@/hooks/query/useViewRequest'
-import { useAuthStore } from '@/stores/auth.store'
+// import { useAuthStore } from '@/stores/auth.store'
 import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Input, Modal, Radio } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
@@ -40,7 +40,7 @@ export default function ModalBookingSchedule({
      const [errors, setErrors] = useState<{ date?: string; timeSlot?: string }>({})
      const { mutate, isPending } = useCreateViewRequest()
 
-     const user = useAuthStore((state) => state.user)
+     // const user = useAuthStore((store) => store.user)
      // const hasPhone = user?.phone
      // const hasID = user?.idNumber
      // const isValidToBook = hasPhone && hasID
