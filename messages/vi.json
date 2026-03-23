@@ -488,6 +488,70 @@
         "paid": "Đã thanh toán",
         "overdue": "Quá hạn",
         "cancelled": "Đã hủy"
+      },
+      "detail": {
+        "title": "Chi tiết hóa đơn",
+        "invoiceId": "Mã hóa đơn",
+        "loadError": "Không tải được chi tiết hóa đơn",
+        "notFound": "Không tìm thấy hóa đơn",
+        "sections": {
+          "overview": "Tổng quan",
+          "invoiceContent": "Nội dung hóa đơn",
+          "utilityCharges": "Phí tiện ích",
+          "additionalCharges": "Phụ phí",
+          "discounts": "Giảm trừ",
+          "payments": "Thanh toán"
+        },
+        "summary": {
+          "totalAmount": "Tổng tiền",
+          "status": "Trạng thái",
+          "invoiceType": "Loại hóa đơn"
+        },
+        "fields": {
+          "invoiceNumber": "Số hóa đơn",
+          "status": "Trạng thái",
+          "invoiceType": "Loại hóa đơn",
+          "billingStart": "Kỳ thanh toán bắt đầu",
+          "billingEnd": "Kỳ thanh toán kết thúc",
+          "dueDate": "Hạn thanh toán",
+          "issueDate": "Ngày phát hành",
+          "sentAt": "Ngày gửi",
+          "paidAt": "Ngày thanh toán",
+          "currency": "Tiền tệ",
+          "paymentMethod": "Phương thức thanh toán",
+          "totalAmount": "Tổng tiền",
+          "baseRent": "Tiền thuê cơ bản",
+          "taxAmount": "Thuế",
+          "invoiceDocument": "Tài liệu hóa đơn",
+          "notes": "Ghi chú",
+          "createdAt": "Ngày tạo",
+          "updatedAt": "Ngày cập nhật",
+          "id": "Mã hóa đơn",
+          "title": "Tiêu đề",
+          "description": "Mô tả"
+        },
+        "table": {
+          "description": "Mô tả",
+          "type": "Loại",
+          "quantity": "Số lượng",
+          "amount": "Số tiền",
+          "paymentId": "Mã thanh toán",
+          "method": "Phương thức",
+          "status": "Trạng thái",
+          "paymentDate": "Ngày thanh toán"
+        },
+        "actions": {
+          "openDocument": "Mở tài liệu",
+          "backToInvoices": "Quay lại danh sách hóa đơn",
+          "payNow": "Thanh toán"
+        },
+        "empty": {
+          "invoiceItems": "Không có hạng mục hóa đơn",
+          "utilityCharges": "Không có phí tiện ích",
+          "additionalCharges": "Không có phụ phí",
+          "discounts": "Không có giảm trừ",
+          "payments": "Không có thanh toán"
+        }
       }
     },
     "properties": {

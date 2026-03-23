@@ -1,15 +1,17 @@
 'use client'
 
-import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS, INVOICE_TYPE_VALUES } from '@/constants/invoice'
+import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS, isInvoiceStatus, isInvoiceType } from '@/types/invoice'
 import { useInvoices } from '@/hooks/query/useInvoices'
 import type { InvoiceItem, InvoiceStatus, ListInvoicesQuery } from '@/types/invoice'
 import { formatInvoiceAmount, formatInvoiceDate } from '../../../utils/invoice'
 import { Alert, Empty, Grid, Table, Tabs, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 
 export default function InvoicesPage() {
+    const router = useRouter()
     const t = useTranslations('Profile.invoices')
     const locale = useLocale()
     const screens = Grid.useBreakpoint()
@@ -22,6 +24,12 @@ export default function InvoicesPage() {
 
     const { data, isLoading, isError, error } = useInvoices(queryParams)
     const invoices = data?.data ?? []
+
+    const handleStatusTabChange = (key: string) => {
+        if (key === 'all' || isInvoiceStatus(key)) {
+            setActiveStatus(key)
+        }
+    }
 
     const columns: ColumnsType<InvoiceItem> = [
         {
@@ -41,7 +49,7 @@ export default function InvoicesPage() {
             render: (invoiceType?: string) => {
                 if (!invoiceType) return <Tag>-</Tag>
 
-                if (INVOICE_TYPE_VALUES.includes(invoiceType as (typeof INVOICE_TYPE_VALUES)[number])) {
+                if (isInvoiceType(invoiceType)) {
                     return <Tag>{t(`types.${invoiceType}`)}</Tag>
                 }
 
@@ -81,8 +89,9 @@ export default function InvoicesPage() {
             dataIndex: 'status',
             key: 'status',
             width: 140,
-            render: (status?: InvoiceStatus) => {
+            render: (status?: string | null) => {
                 if (!status) return <Tag>-</Tag>
+                if (!isInvoiceStatus(status)) return <Tag>{status}</Tag>
                 return <Tag color={INVOICE_STATUS_COLORS[status]}>{t(`statuses.${status}`)}</Tag>
             },
         },
@@ -111,7 +120,7 @@ export default function InvoicesPage() {
 
             <Tabs
                 activeKey={activeStatus}
-                onChange={(key) => setActiveStatus(key as 'all' | InvoiceStatus)}
+                onChange={handleStatusTabChange}
                 items={tabItems}
             />
 
@@ -125,6 +134,13 @@ export default function InvoicesPage() {
                     loading={isLoading}
                     scroll={screens.md ? undefined : { x: 760 }}
                     pagination={{ pageSize: 10 }}
+                    onRow={(record) => ({
+                        onClick: () => {
+                            if (!record.id) return
+                            router.push(`/profile/invoices/${record.id}`)
+                        },
+                        style: { cursor: record.id ? 'pointer' : 'default' },
+                    })}
                 />
             )}
         </div>

@@ -488,6 +488,70 @@
         "paid": "Paid",
         "overdue": "Overdue",
         "cancelled": "Cancelled"
+      },
+      "detail": {
+        "title": "Invoice Detail",
+        "invoiceId": "Invoice ID",
+        "loadError": "Unable to load invoice detail",
+        "notFound": "Invoice not found",
+        "sections": {
+          "overview": "Overview",
+          "invoiceContent": "Invoice Content",
+          "utilityCharges": "Utility Charges",
+          "additionalCharges": "Additional Charges",
+          "discounts": "Discounts",
+          "payments": "Payments"
+        },
+        "summary": {
+          "totalAmount": "Total Amount",
+          "status": "Status",
+          "invoiceType": "Invoice Type"
+        },
+        "fields": {
+          "invoiceNumber": "Invoice Number",
+          "status": "Status",
+          "invoiceType": "Invoice Type",
+          "billingStart": "Billing Period Start",
+          "billingEnd": "Billing Period End",
+          "dueDate": "Due Date",
+          "issueDate": "Issue Date",
+          "sentAt": "Sent At",
+          "paidAt": "Paid At",
+          "currency": "Currency",
+          "paymentMethod": "Payment Method",
+          "totalAmount": "Total Amount",
+          "baseRent": "Base Rent",
+          "taxAmount": "Tax Amount",
+          "invoiceDocument": "Invoice Document",
+          "notes": "Notes",
+          "createdAt": "Created At",
+          "updatedAt": "Updated At",
+          "id": "Invoice ID",
+          "title": "Title",
+          "description": "Description"
+        },
+        "table": {
+          "description": "Description",
+          "type": "Type",
+          "quantity": "Quantity",
+          "amount": "Amount",
+          "paymentId": "Payment ID",
+          "method": "Method",
+          "status": "Status",
+          "paymentDate": "Payment Date"
+        },
+        "actions": {
+          "openDocument": "Open document",
+          "backToInvoices": "Back to invoices",
+          "payNow": "Pay now"
+        },
+        "empty": {
+          "invoiceItems": "No invoice items",
+          "utilityCharges": "No utility charges",
+          "additionalCharges": "No additional charges",
+          "discounts": "No discounts",
+          "payments": "No payments"
+        }
       }
     },
     "properties": {
