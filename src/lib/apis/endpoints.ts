@@ -12,5 +12,6 @@ export const endpoints = {
   auth: createEndpoints("auth"),
   users: createEndpoints("users"),
   reservations: createEndpoints("reservations"),
-  notifications: createEndpoints("notifications")
+  notifications: createEndpoints("notifications"),
+  invoices: createEndpoints("invoices")
 };

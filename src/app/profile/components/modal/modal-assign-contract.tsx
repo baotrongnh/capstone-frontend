@@ -178,7 +178,7 @@ export default function ModalAssignContract({
 
       setShowDetailModal(false);
 
-      route.push(`${ROUTES.PROFILE}/bills`);
+      route.push(`${ROUTES.PROFILE}/invoices`);
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
     }

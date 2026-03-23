@@ -1,11 +1,12 @@
 import AuthForm from "@/app/(auth)/auth-form";
 import { useGoogleLogin, useLogin, useRegister } from "@/hooks/query/useAuth";
-import { AuthModal as AuthModalProps, LoginDTO, RegisterDto } from "@/types/auth";
-import { Form, Modal } from "antd";
+import { ApiErrorResponse, AuthModal as AuthModalProps, LoginDTO, RegisterDto } from "@/types/auth";
+import { App, Form, Modal } from "antd";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 export default function AuthModal({ open, onClose }: AuthModalProps) {
+  const { message } = App.useApp();
   const t = useTranslations("Auth");
   const [form] = Form.useForm();
 
@@ -18,11 +19,25 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     useGoogleLogin(onClose);
 
   const handleSubmit = async (values: LoginDTO) => {
-    await login(values);
+    try {
+      await login(values)
+    } catch (error) {
+      const apiError = error as ApiErrorResponse
+      if (apiError?.response) return
+
+      message.error(t('loginFailed'))
+    }
   };
 
   const handleRegister = async (values: RegisterDto) => {
-    await register(values);
+    try {
+      await register(values)
+    } catch (error) {
+      const apiError = error as ApiErrorResponse
+      if (apiError?.response) return
+
+      message.error(t('registrationFailed'))
+    }
   };
 
   return (

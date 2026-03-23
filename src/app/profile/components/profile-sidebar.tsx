@@ -40,10 +40,10 @@ const getNavigationItems = (
       path: "/profile/contracts",
     },
     {
-      key: "bills",
+      key: "Invoices",
       label: t("sidebar.myBills"),
       icon: <FileTextOutlined />,
-      path: "/profile/bills",
+      path: "/profile/invoices",
     },
     {
       key: "payment-history",
