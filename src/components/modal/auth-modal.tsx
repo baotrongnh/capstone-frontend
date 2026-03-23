@@ -1,6 +1,6 @@
 import AuthForm from "@/app/(auth)/auth-form";
 import { useGoogleLogin, useLogin, useRegister } from "@/hooks/query/useAuth";
-import { AuthModal as AuthModalProps } from "@/types/auth";
+import { AuthModal as AuthModalProps, LoginDTO, RegisterDto } from "@/types/auth";
 import { Form, Modal } from "antd";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -17,20 +17,12 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const { login: googleLogin, loading: googleLoginLoading } =
     useGoogleLogin(onClose);
 
-  const handleSubmit = async (values: Parameters<typeof login>[0]) => {
-    try {
-      await login(values);
-    } catch (e) {
-      console.log(e);
-    }
+  const handleSubmit = async (values: LoginDTO) => {
+    await login(values);
   };
 
-  const handleRegister = async (values: Parameters<typeof register>[0]) => {
-    try {
-      await register(values);
-    } catch (e) {
-      console.log(e);
-    }
+  const handleRegister = async (values: RegisterDto) => {
+    await register(values);
   };
 
   return (

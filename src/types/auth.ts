@@ -1,117 +1,65 @@
-import { FormInstance } from "antd";
+import type { FormInstance } from 'antd'
+import type { AxiosError } from 'axios'
+import type { paths } from './api'
+import type { UserDetail } from './user'
+
+export const ActorType = {
+    USER: 'user',
+    PARTNER: 'partner',
+    STAFF: 'staff',
+    OPERATOR: 'operator',
+    ADMIN: 'admin',
+    GUEST: 'guest',
+} as const
+
+export type ActorType = (typeof ActorType)[keyof typeof ActorType]
+
+export type LoginDTO = paths['/api/v1/auth/login']['post']['requestBody']['content']['application/json']
+export type LoginRes = paths['/api/v1/auth/login']['post']['responses']['200']['content']['application/json']
+export type LoginPayload = NonNullable<LoginRes['data']>
+export type LoginResponse = LoginPayload
+
+export type RegisterDto = paths['/api/v1/auth/register']['post']['requestBody']['content']['application/json']
+export type RegisterRes = paths['/api/v1/auth/register']['post']['responses']['201']['content']['application/json']
+export type RegisterPayload = NonNullable<RegisterRes['data']>
+
+export type LogoutDTO = paths['/api/v1/auth/logout']['post']['requestBody']['content']['application/json']
+export type LogoutRes = paths['/api/v1/auth/logout']['post']['responses']['200']['content']
+
+export type RefreshTokenDto = paths['/api/v1/auth/refresh']['post']['requestBody']['content']['application/json']
+export type RefreshTokenRes = paths['/api/v1/auth/refresh']['post']['responses']['200']['content']['application/json']
+export type RefreshTokenResponse = NonNullable<RefreshTokenRes['data']>
+export type AuthTokens = RefreshTokenResponse
+
+export type ApiErrorData = {
+    message?: string | string[]
+}
+
+export type ApiErrorResponse = AxiosError<ApiErrorData>
 
 export type AuthModal = {
-    open: boolean;
-    onClose: () => void;
+    open: boolean
+    onClose: () => void
 }
-
-export type Login = {
-    email: string,
-    password: string
-}
-
-export type Register = {
-    name: string,
-    email: string,
-    password: string,
-    confirmPassword: string,
-}
-
 
 export type AuthFormProps = {
-    form: FormInstance,
-    onSubmit?: (values: LoginDto) => void | Promise<void>;
-    onRegister?: (values: RegisterDto) => void | Promise<void>;
-    t?: (key: string) => string;
-    loading?: boolean;
-    registerLoading?: boolean;
-    onGoogleLogin?: () => Promise<void>;
-    googleLoading?: boolean;
+    form: FormInstance
+    onSubmit?: (values: LoginDTO) => Promise<void>
+    onRegister?: (values: RegisterDto) => Promise<void>
+    t?: (key: string) => string
+    loading?: boolean
+    registerLoading?: boolean
+    onGoogleLogin?: () => Promise<void>
+    googleLoading?: boolean
 }
 
 export type AuthState = {
-    user: UserInfo | null
+    user: UserDetail | null
     tokens: AuthTokens | null
     isAuthenticated: boolean
     isHydrated: boolean
-    setAuth: (user: UserInfo, tokens: AuthTokens) => void
+    setAuth: (user: UserDetail, tokens: AuthTokens) => void
     setTokens: (tokens: AuthTokens) => void
     logout: () => void
     hydrate: () => void
-}
-
-// ========== API Types ==========
-
-export enum ActorType {
-    USER = 'user',
-    STAFF = 'staff',
-    OPERATOR = 'operator',
-    ADMIN = 'admin',
-    PARTNER = 'partner'
-}
-
-export type LoginDto = {
-    identifier: string
-    password: string
-    actorType?: ActorType
-}
-
-export type RegisterDto = {
-    email: string
-    phone: string
-    fullName: string
-    password: string
-}
-
-export type AuthTokens = {
-    accessToken: string
-    refreshToken: string
-}
-
-export type UserInfo = {
-    id: string
-    email: string
-    fullName: string
-    role: string
-    actorType: ActorType
-    availableRoles?: string[]
-}
-
-export type GoogleLoginDto = {
-    accessToken: string
-}
-
-export type SupabaseUrlResponse = {
-    url: string
-}
-
-export type LoginResponse = {
-    user: UserInfo
-    tokens: AuthTokens
-}
-
-export type AuthError = {
-    message: string | string[]
-    statusCode?: number
-    error?: string
-}
-
-export type ApiErrorResponse = {
-    response?: {
-        data?: AuthError
-        status?: number
-    }
-    message?: string
-}
-
-export type RefreshTokenDto = {
-    refreshToken: string
-}
-
-export type RefreshTokenResponse = {
-    tokens: AuthTokens
-}
-
-export type LogoutDto = {
-    refreshToken: string
 }

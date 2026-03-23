@@ -1,7 +1,6 @@
 "use client";
 
 import PaymentHistoryComponent from "../components/payment-history";
-import { ActorType } from "@/types/auth";
 import { PaymentHistory, PaymentType, PaymentStatus } from "@/types/profile";
 import { ProfileLayout } from "../components";
 
@@ -85,7 +84,7 @@ export default function PaymentHistoryPage() {
   ];
 
   return (
-    <ProfileLayout actorType={ActorType.USER}>
+    <ProfileLayout>
       <PaymentHistoryComponent payments={mockPayments} />
     </ProfileLayout>
   );

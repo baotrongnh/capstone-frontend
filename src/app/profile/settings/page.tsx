@@ -1,7 +1,6 @@
 'use client';
 
 import ProfileLayout from '../components/profile-layout';
-import { ActorType } from '@/types/auth';
 import { Form, Input, Switch, Button, Divider, Select } from 'antd';
 import { useTranslations } from 'next-intl';
 
@@ -15,7 +14,7 @@ export default function SettingsPage() {
     };
 
     return (
-        <ProfileLayout actorType={ActorType.USER}>
+        <ProfileLayout>
             <div className="space-y-6">
                 <div>
                     <h2 className="text-2xl font-bold">{t('title')}</h2>
@@ -37,7 +36,7 @@ export default function SettingsPage() {
                         timezone: 'UTC'
                     }}
                 >
-                    <Divider style={{margin: 0}} >{t('notifications')}</Divider>
+                    <Divider style={{ margin: 0 }} >{t('notifications')}</Divider>
 
                     <Form.Item
                         name="emailNotifications"
@@ -63,7 +62,7 @@ export default function SettingsPage() {
                         <Switch />
                     </Form.Item>
 
-                    <Divider style={{margin: 0}} >{t('preferences')}</Divider>
+                    <Divider style={{ margin: 0 }} >{t('preferences')}</Divider>
 
                     <Form.Item name="language" label={t('language')}>
                         <Select size="large">
@@ -87,7 +86,7 @@ export default function SettingsPage() {
                         </Select>
                     </Form.Item>
 
-                    <Divider style={{margin: 0}}>{t('security')}</Divider>
+                    <Divider style={{ margin: 0 }}>{t('security')}</Divider>
 
                     <Form.Item
                         name="currentPassword"

@@ -1,7 +1,6 @@
 'use client';
 
 import MyPropertiesComponent from '../components/my-properties';
-import { ActorType } from '@/types/auth';
 import { PartnerProperty } from '@/types/profile';
 import { ProfileLayout } from '../components';
 
@@ -111,7 +110,7 @@ export default function MyPropertiesPage() {
     ];
 
     return (
-        <ProfileLayout actorType={ActorType.PARTNER}>
+        <ProfileLayout>
             <MyPropertiesComponent properties={mockProperties} />
         </ProfileLayout>
     );

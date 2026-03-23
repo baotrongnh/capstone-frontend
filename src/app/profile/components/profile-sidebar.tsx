@@ -12,13 +12,12 @@ import {
   ContactsOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { ActorType } from "@/types/auth";
-import { ProfileNavItem, ProfileSidebarProps } from "@/types/profile";
+import { ProfileNavItem, ProfileRole, ProfileSidebarProps } from "@/types/profile";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 
 const getNavigationItems = (
-  actorType: ActorType,
+  role: ProfileRole,
   t: (key: string) => string,
 ): ProfileNavItem[] => {
   const items: ProfileNavItem[] = [
@@ -27,57 +26,53 @@ const getNavigationItems = (
       label: t("sidebar.myInformation"),
       icon: <UserOutlined />,
       path: "/profile/account",
-      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "my-apartment",
       label: t("sidebar.myApartment"),
       icon: <HomeOutlined />,
       path: "/profile/my-apartment",
-      roles: [ActorType.USER, ActorType.PARTNER],
-    },
-    {
-      key: "my-properties",
-      label: t("sidebar.myProperties"),
-      icon: <ApartmentOutlined />,
-      path: "/profile/my-properties",
-      roles: [ActorType.PARTNER],
     },
     {
       key: "contracts",
       label: t("sidebar.myContracts"),
       icon: <ContactsOutlined />,
       path: "/profile/contracts",
-      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "bills",
       label: t("sidebar.myBills"),
       icon: <FileTextOutlined />,
       path: "/profile/bills",
-      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "payment-history",
       label: t("sidebar.paymentHistory"),
       icon: <WalletOutlined />,
       path: "/profile/payment-history",
-      roles: [ActorType.USER, ActorType.PARTNER],
     },
     {
       key: "settings",
       label: t("sidebar.settings"),
       icon: <SettingOutlined />,
       path: "/profile/settings",
-      roles: [ActorType.USER, ActorType.PARTNER],
     },
   ];
 
-  return items.filter((item) => item.roles.includes(actorType));
+  if (role === "partner") {
+    items.splice(2, 0, {
+      key: "my-properties",
+      label: t("sidebar.myProperties"),
+      icon: <ApartmentOutlined />,
+      path: "/profile/my-properties",
+    });
+  }
+
+  return items;
 };
 
 export default function ProfileSidebar({
-  actorType,
+  role,
   onLogout,
 }: ProfileSidebarProps) {
   const router = useRouter();
@@ -85,8 +80,8 @@ export default function ProfileSidebar({
   const t = useTranslations("Profile");
 
   const navigationItems = useMemo(
-    () => getNavigationItems(actorType, t),
-    [actorType, t],
+    () => getNavigationItems(role, t),
+    [role, t],
   );
 
   const menuItems = navigationItems.map((item) => ({
