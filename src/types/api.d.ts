@@ -2056,6 +2056,26 @@ export interface paths {
         patch: operations["ReservationsController_cancel"];
         trace?: never;
     };
+    "/api/v1/chat/upload-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload chat images (max 5)
+         * @description Upload image files to Supabase Storage. Returns array of public URLs to include when sending a message.
+         */
+        post: operations["ChatController_uploadImages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/chat/conversations": {
         parameters: {
             query?: never;
@@ -2063,10 +2083,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get conversations list (staff: all, user: own) */
+        /**
+         * Get conversations list
+         * @description Staff/operator/admin: sees all conversations. User: sees own conversations only.
+         */
         get: operations["ChatController_getConversations"];
         put?: never;
-        /** Create a new chat conversation */
+        /**
+         * Create a new chat conversation
+         * @description REST alternative to socket event chat:create_conversation.
+         */
         post: operations["ChatController_createConversation"];
         delete?: never;
         options?: never;
@@ -2098,7 +2124,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get paginated messages for a conversation */
+        /**
+         * Get paginated messages
+         * @description Returns messages in format: { id, content, images?, apartmentId?, sender: "user"|"support", timestamp }
+         */
         get: operations["ChatController_getMessages"];
         put?: never;
         post?: never;
@@ -5555,6 +5584,67 @@ export interface components {
              */
             specialRequests?: string;
         };
+        UploadImagesResponseDto: {
+            /**
+             * @description Array of uploaded image URLs
+             * @example [
+             *       "https://storage.example.com/chat-images/user-id/123-0.jpg"
+             *     ]
+             */
+            images: string[];
+        };
+        ConversationUserDto: {
+            /** @example uuid-123 */
+            id: string;
+            /** @example Nguyễn Văn A */
+            fullName: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: string;
+        };
+        ConversationResponseDto: {
+            /** @description Conversation ID */
+            id: string;
+            /** @description Conversation title */
+            title?: string;
+            /** @description User ID (null if guest) */
+            userId?: string;
+            /** @description Guest session ID */
+            guestSessionId?: string;
+            /** @description Guest display name */
+            guestName?: string;
+            /** @description Guest email */
+            guestEmail?: string;
+            /**
+             * @example active
+             * @enum {string}
+             */
+            status: "active" | "closed" | "archived";
+            /** @description Last message timestamp (ISO) */
+            lastMessageAt?: string;
+            /** @description Last message preview text */
+            lastMessageText?: string;
+            /** @description Additional metadata */
+            metadata?: Record<string, never>;
+            createdAt: string;
+            updatedAt: string;
+            user?: components["schemas"]["ConversationUserDto"];
+        };
+        PaginationMetaDto: {
+            /** @example 100 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 20 */
+            limit: number;
+            /** @example 5 */
+            totalPages: number;
+        };
+        PaginatedConversationsResponseDto: {
+            data: components["schemas"]["ConversationResponseDto"][];
+            meta: components["schemas"]["PaginationMetaDto"];
+        };
         CreateConversationDto: {
             /**
              * @description Custom title for the conversation
@@ -5584,6 +5674,10 @@ export interface components {
              *     }
              */
             metadata?: Record<string, never>;
+        };
+        PaginatedMessagesResponseDto: {
+            data: components["schemas"]["MessageResponseDto"][];
+            meta: components["schemas"]["PaginationMetaDto"];
         };
     };
     responses: never;
@@ -10893,6 +10987,40 @@ export interface operations {
             };
         };
     };
+    ChatController_uploadImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @description Image files (JPEG, PNG, WebP) — max 5 */
+                    images: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Images uploaded successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadImagesResponseDto"];
+                };
+            };
+            /** @description Invalid image format or no files provided */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ChatController_getConversations: {
         parameters: {
             query?: {
@@ -10909,11 +11037,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Paginated list of conversations */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PaginatedConversationsResponseDto"];
+                };
             };
         };
     };
@@ -10930,11 +11061,14 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Conversation created */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
             };
         };
     };
@@ -10943,13 +11077,24 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Conversation UUID */
                 id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Conversation details */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10967,13 +11112,24 @@ export interface operations {
             };
             header?: never;
             path: {
+                /** @description Conversation UUID */
                 id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Paginated messages list */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedMessagesResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10986,13 +11142,24 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Conversation UUID */
                 id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Conversation closed */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11005,13 +11172,24 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Conversation UUID */
                 id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Conversation archived */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11024,13 +11202,24 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Conversation UUID */
                 id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Conversation reopened */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
