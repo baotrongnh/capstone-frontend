@@ -1,6 +1,6 @@
 import { paths } from "./api";
 
-export type UserDetail = NonNullable<paths["/api/v1/users/{id}"]['get']['responses']['200']['content']['application/json']['data']>
+export type UserDetail = NonNullable<paths["/api/v1/users/profile"]['get']['responses']['200']['content']['application/json']['data']>
 export type ContractMembership = NonNullable<NonNullable<UserDetail['contractMemberships']>[number]>
 export type RentalContractSummary = ContractMembership['rentalContract']
 export type ContractApartment = RentalContractSummary['apartment']

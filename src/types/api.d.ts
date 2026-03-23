@@ -985,6 +985,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/viewing-requests/my": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my viewing requests
+         * @description Authenticated user gets their own viewing requests/appointments with optional status filter and pagination.
+         */
+        get: operations["ViewingRequestsController_getMyViewingRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/viewing-requests/my-assigned": {
         parameters: {
             query?: never;
@@ -2264,6 +2284,39 @@ export interface components {
              */
             newPassword: string;
         };
+        UserIdentityListDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example 012345678901 */
+            nationalId?: Record<string, never> | null;
+            /** @example false */
+            isVerified: boolean;
+            /** @example 2026-03-10T10:30:00.000Z */
+            verifiedAt?: Record<string, never> | null;
+        };
+        UserListItemDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example 0901234567 */
+            phone?: Record<string, never> | null;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example 1990-05-15T00:00:00.000Z */
+            dateOfBirth?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: Record<string, never> | null;
+            identity?: components["schemas"]["UserIdentityListDto"] | null;
+            /** @example true */
+            isActive: boolean;
+            /** @example false */
+            isVerified: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         UserIdentityDetailDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
@@ -2308,35 +2361,14 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
-        UserListItemDto: {
-            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
-            id: string;
-            /** @example user@example.com */
-            email: string;
-            /** @example 0901234567 */
-            phone?: Record<string, never> | null;
-            /** @example Nguyen Van A */
-            fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
-            /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
-            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
-            /** @example true */
-            isActive: boolean;
-            /** @example false */
-            isVerified: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
         ContractApartmentSummaryDto: {
             id: string;
-            /** @example 123 Nguyen Hue, Q1 */
-            address: string;
             /** @example A101 */
             apartmentNumber: string;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
         };
         ContractSummaryDto: {
             id: string;
@@ -2361,6 +2393,11 @@ export interface components {
             rentalContract: components["schemas"]["ContractSummaryDto"];
         };
         UserDetailDto: {
+            /**
+             * @example user
+             * @enum {string}
+             */
+            role: "user" | "partner" | "staff" | "operator" | "admin";
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
@@ -2377,10 +2414,51 @@ export interface components {
             emergencyContactName?: Record<string, never> | null;
             /** @example 0987654321 */
             emergencyContactPhone?: Record<string, never> | null;
+            /** @example ABC Investment Co., Ltd */
+            companyName?: Record<string, never> | null;
+            /** @example 0312345678 */
+            taxCode?: Record<string, never> | null;
+            /** @example 1234567890 */
+            bankAccountNumber?: Record<string, never> | null;
+            /** @example Vietcombank */
+            bankName?: Record<string, never> | null;
+            /** @example 123 Nguyen Trai, District 1 */
+            address?: Record<string, never> | null;
+            /** @example 10.00 */
+            commissionRate?: string | null;
+            /** Format: date-time */
+            contractStartDate?: string | null;
+            /** Format: date-time */
+            contractEndDate?: string | null;
+            paymentTerms?: string | null;
+            /** @example EMP-001 */
+            employeeCode?: Record<string, never> | null;
+            /** @example customer_service */
+            staffRole?: Record<string, never> | null;
+            /** @example Customer Service */
+            department?: Record<string, never> | null;
+            /** @example Ho Chi Minh */
+            workingCity?: Record<string, never> | null;
+            /** @example District 1 */
+            workingDistrict?: Record<string, never> | null;
+            /** Format: date-time */
+            hireDate?: string | null;
+            /** @example morning */
+            operatorShift?: Record<string, never> | null;
+            /** @example admin_root */
+            username?: Record<string, never> | null;
+            /** @example admin */
+            adminRoleLevel?: Record<string, never> | null;
+            /**
+             * @example {
+             *       "users": true
+             *     }
+             */
+            permissions?: Record<string, never> | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
-            isVerified: boolean;
+            isVerified?: Record<string, never> | null;
             /** @example 2026-03-10T10:30:00.000Z */
             lastLoginAt?: Record<string, never> | null;
             identity?: components["schemas"]["UserIdentityDetailDto"] | null;
@@ -2389,6 +2467,44 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             contractMemberships?: components["schemas"]["ContractMembershipDto"][] | null;
+        };
+        AiVerificationSideDto: {
+            /** @example true */
+            success: boolean;
+            /**
+             * @example {
+             *       "id": "012345678901",
+             *       "name": "Nguyen Van A",
+             *       "dob": "15/05/1990",
+             *       "sex": "M",
+             *       "nationality": "VN",
+             *       "home": "Ha Noi",
+             *       "address": "123 Tran Hung Dao",
+             *       "province": "Ha Noi",
+             *       "district": "Hoan Kiem",
+             *       "ward": "Hoan Kiem",
+             *       "street": "123 Tran Hung Dao"
+             *     }
+             */
+            extractedInfo?: Record<string, never> | null;
+        };
+        AiVerificationResultDto: {
+            front?: components["schemas"]["AiVerificationSideDto"] | null;
+            back?: components["schemas"]["AiVerificationSideDto"] | null;
+        };
+        UserIdentityCardDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
+            /** @example false */
+            isVerified: boolean;
+            aiVerification?: components["schemas"]["AiVerificationResultDto"] | null;
+            /** Format: date-time */
+            updatedAt: string;
         };
         UserCreatedDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
@@ -2552,12 +2668,198 @@ export interface components {
             id: string;
             /** @example user@example.com */
             email: string;
-            /** @example Nguyen Van A */
-            fullName: string;
             /** @example false */
             isActive: boolean;
+        };
+        PartnerRequestUserSummaryDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example ABC Investment Co., Ltd */
+            companyName?: Record<string, never> | null;
+        };
+        PartnerRequestListItemDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            /** Format: date-time */
+            createdAt: string;
+            user?: components["schemas"]["PartnerRequestUserSummaryDto"] | null;
+            /** @example Need additional legal papers */
+            reviewNotes?: Record<string, never> | null;
+            /** @example Invalid contact info */
+            rejectionReason?: Record<string, never> | null;
+        };
+        PartnerRequestReviewerSummaryDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567891 */
+            id: string;
+            /** @example Operator One */
+            fullName: string;
+        };
+        PartnerRequestDetailDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /** @example 75.50 */
+            totalArea?: string | null;
+            /** @example 1 */
+            numberOfUnits: number;
+            /** @example 15000000.00 */
+            expectedRentPrice?: string | null;
+            /** @example Near metro */
+            description?: string | null;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator"
+             *     ]
+             */
+            amenities?: string[] | null;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            reviewNotes?: string | null;
+            rejectionReason?: string | null;
+            /** Format: date-time */
+            approvedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
             /** Format: date-time */
             updatedAt: string;
+            user: components["schemas"]["PartnerRequestUserSummaryDto"];
+            reviewedByOperator?: components["schemas"]["PartnerRequestReviewerSummaryDto"] | null;
+        };
+        PartnerRequestMutationResultDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            reviewNotes?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        CreatePartnerRequestDto: {
+            /**
+             * @description Property type
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType?: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /**
+             * @description Total area in m2
+             * @example 75.5
+             */
+            totalArea?: number;
+            /** @example 1 */
+            numberOfUnits?: number;
+            /**
+             * @description Expected rent in VND
+             * @example 15000000
+             */
+            expectedRentPrice?: number;
+            /** @example Near metro, has balcony */
+            description?: string;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator",
+             *       "security"
+             *     ]
+             */
+            amenities?: string[];
+        };
+        UpdatePartnerRequestDto: {
+            /**
+             * @description Property type
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType?: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address?: string;
+            /** @example Ho Chi Minh */
+            city?: string;
+            /** @example District 1 */
+            district?: string;
+            /**
+             * @description Total area in m2
+             * @example 75.5
+             */
+            totalArea?: number;
+            /** @example 1 */
+            numberOfUnits?: number;
+            /**
+             * @description Expected rent in VND
+             * @example 15000000
+             */
+            expectedRentPrice?: number;
+            /** @example Near metro, has balcony */
+            description?: string;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator",
+             *       "security"
+             *     ]
+             */
+            amenities?: string[];
+        };
+        ReviewPartnerRequestDto: {
+            /**
+             * @example approved
+             * @enum {string}
+             */
+            status: "approved" | "rejected" | "on_hold" | "under_review";
+            /** @example Documents checked and valid */
+            reviewNotes?: string;
+            /** @example Missing ownership proof */
+            rejectionReason?: string;
         };
         WardAddressDto: {
             /** @example 26728 */
@@ -3880,6 +4182,52 @@ export interface components {
              * @example Toi muon xem can ho vao buoi sang, vui long lien he truoc 30 phut.
              */
             note: string;
+        };
+        UserMyViewingApartmentDto: {
+            /** @example 11111111-2222-3333-4444-555555555555 */
+            id: string;
+            /** @example A-1208 */
+            apartmentNumber: string;
+            /** @example Intelli Tower A */
+            buildingName?: string | null;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
+        };
+        UserMyViewingContactRequestDto: {
+            /** @example d7a8e15e-e4b7-4df5-83d4-f7d7e4d4a31a */
+            id: string;
+            /** @example scheduled */
+            status: string;
+            /** @example Toi muon xem can ho vao buoi sang. */
+            message?: string | null;
+            /** @example Vui long lien he truoc 30 phut. */
+            notes?: string | null;
+            /** Format: date-time */
+            receivedAt: string;
+        };
+        UserMyViewingRequestDto: {
+            /** @example b6a52ecf-6f88-4ed4-9aa4-7b8db6bc65d4 */
+            appointmentId: string;
+            /**
+             * Format: date-time
+             * @example 2026-03-24T09:30:00.000Z
+             */
+            appointmentAt: string;
+            /** @example 30 */
+            durationMinutes: number;
+            /** @example scheduled */
+            status: string;
+            /** @example Toi muon xem can ho vao buoi sang. */
+            note?: string | null;
+            /** Format: date-time */
+            cancelledAt?: string | null;
+            apartment: components["schemas"]["UserMyViewingApartmentDto"];
+            assignedStaff: components["schemas"]["UserViewingAssignedStaffDto"];
+            contactRequest?: components["schemas"]["UserMyViewingContactRequestDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
         };
         AppointmentResponseDto: {
             id: string;
@@ -5785,12 +6133,24 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Identity card verified and info extracted from both sides */
+            /** @description Identity card verified and extracted info returned */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityCardDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
             /** @description Invalid image files or unsupported format */
             400: {
@@ -5977,11 +6337,24 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description All partner requests */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -5994,11 +6367,24 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Current user partner requests */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -6013,6 +6399,25 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Partner request details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
             /** @description Request not found */
             404: {
                 headers: {
@@ -6031,8 +6436,31 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePartnerRequestDto"];
+            };
+        };
         responses: {
+            /** @description Partner request updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
             /** @description Request not found */
             404: {
                 headers: {
@@ -6049,13 +6477,30 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePartnerRequestDto"];
+            };
+        };
         responses: {
+            /** @description Partner request submitted */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -6068,8 +6513,31 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewPartnerRequestDto"];
+            };
+        };
         responses: {
+            /** @description Partner request reviewed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
             /** @description Request not found */
             404: {
                 headers: {
@@ -7708,6 +8176,51 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ViewingRequestsController_getMyViewingRequests: {
+        parameters: {
+            query?: {
+                /** @description Filter by appointment status */
+                status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
+                /** @description Page number */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of current user viewing requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserMyViewingRequestDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                            /** @example 25 */
+                            total?: number;
+                            /** @example 1 */
+                            page?: number;
+                            /** @example 10 */
+                            limit?: number;
+                            /** @example 3 */
+                            totalPages?: number;
+                        };
+                    };
+                };
             };
         };
     };

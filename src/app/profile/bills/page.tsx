@@ -1,7 +1,6 @@
 'use client';
 
 import BillsComponent from '../components/bills';
-import { ActorType } from '@/types/auth';
 import { Bill, BillStatus, PaymentType } from '@/types/profile';
 import { ProfileLayout } from '../components';
 
@@ -95,7 +94,7 @@ export default function BillsPage() {
     ];
 
     return (
-        <ProfileLayout actorType={ActorType.USER}>
+        <ProfileLayout>
             <BillsComponent bills={mockBills} />
         </ProfileLayout>
     );

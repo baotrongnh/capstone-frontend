@@ -1,16 +1,20 @@
 "use client";
 
 import { userService } from "@/lib/services/user.service";
+import { useAuthStore } from "@/stores/auth.store";
 import { UpdateUserDto } from "@/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App } from "antd";
 
-// QUERIES
-export const useUserProfile = (enabled = true) => {
+export const useUserProfile = () => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+
   return useQuery({
     queryKey: ["user", "profile"],
     queryFn: () => userService.getProfile(),
-    enabled,
+    enabled: isHydrated && isAuthenticated,
+    retry: false,
   });
 };
 

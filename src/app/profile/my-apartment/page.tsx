@@ -2,7 +2,6 @@
 
 import ProfileLayout from '../components/profile-layout';
 import MyApartment from '../components/my-apartment';
-import { ActorType } from '@/types/auth';
 import { UserApartment } from '@/types/profile';
 import { useAuthStore } from '@/stores/auth.store';
 
@@ -49,7 +48,7 @@ export default function MyApartmentPage() {
     };
 
     return (
-        <ProfileLayout actorType={ActorType.USER}>
+        <ProfileLayout>
             <MyApartment apartment={mockApartment} />
         </ProfileLayout>
     );

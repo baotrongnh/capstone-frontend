@@ -1,15 +1,14 @@
-import { ActorType } from "./auth"
 import { UserDetail, UpdateUserDto } from "./user"
-import { PartnerDetail, UpdatePartnerDto } from "./partner"
 
 // ========== Core Profile Types ==========
+
+export type ProfileRole = "user" | "partner"
 
 export type ProfileNavItem = {
   key: string
   label: string
   icon: React.ReactNode
   path: string
-  roles: ActorType[]
 }
 
 // ========== Rental & Contract Types ==========
@@ -150,26 +149,23 @@ export type PartnerProperty = {
 // ========== Component Props Types ==========
 
 export type ProfileSidebarProps = {
-  actorType: ActorType
+  role: ProfileRole
   onLogout: () => void
 }
 
 export type ProfileLayoutProps = {
-  actorType?: ActorType
   children: React.ReactNode
 }
 
 export type AccountInformationProps = {
-  actorType: ActorType
-  profile: UserDetail | PartnerDetail
+  profile: UserDetail
   onUpdate?: (values: AccountUpdateDto) => Promise<void>
   loading?: boolean
 }
 
 export type UserAccountEditableValues = Partial<Pick<UserDetail, 'fullName' | 'phone' | 'emergencyContactName' | 'emergencyContactPhone'>>
-export type PartnerAccountEditableValues = Partial<Pick<PartnerDetail, 'fullName' | 'phone' | 'companyName' | 'taxCode' | 'bankAccountNumber' | 'bankName' | 'address'>>
-export type AccountEditableValues = UserAccountEditableValues | PartnerAccountEditableValues
-export type AccountUpdateDto = Partial<UpdateUserDto & UpdatePartnerDto> & { profileImageUrl?: string }
+export type AccountEditableValues = UserAccountEditableValues
+export type AccountUpdateDto = Partial<UpdateUserDto> & { profileImageUrl?: string }
 
 export type MyApartmentProps = {
   apartment?: UserApartment
