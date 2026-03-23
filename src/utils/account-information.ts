@@ -1,6 +1,4 @@
 import dayjs from 'dayjs'
-import { ActorType } from '@/types/auth'
-import { PartnerDetail } from '@/types/partner'
 import { UserDetail, UserIdentity } from '@/types/user'
 import { AccountEditableValues } from '@/types/profile'
 
@@ -28,23 +26,7 @@ export const formatDateTime = (value: unknown): string => {
     return dayjs(text).format('DD/MM/YYYY HH:mm')
 }
 
-export const isPartnerActor = (actorType: ActorType): boolean => actorType === ActorType.PARTNER
-
-export const isPartnerProfile = (
-    profile: UserDetail | PartnerDetail,
-    actorType: ActorType
-): profile is PartnerDetail => actorType === ActorType.PARTNER
-
-export const isUserProfile = (
-    profile: UserDetail | PartnerDetail,
-    actorType: ActorType
-): profile is UserDetail => actorType === ActorType.USER
-
-export const getAvatarUrl = (profile: UserDetail | PartnerDetail, actorType: ActorType): string | undefined => {
-    if (isPartnerProfile(profile, actorType)) {
-        return undefined
-    }
-
+export const getAvatarUrl = (profile: UserDetail): string | undefined => {
     const text = toText(profile.profileImageUrl)
     return text || undefined
 }
@@ -55,18 +37,6 @@ export const getUserEditableValues = (user: UserDetail): AccountEditableValues =
         phone: user.phone,
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
-    }
-}
-
-export const getPartnerEditableValues = (partner: PartnerDetail): AccountEditableValues => {
-    return {
-        fullName: partner.fullName,
-        phone: partner.phone,
-        companyName: partner.companyName,
-        taxCode: partner.taxCode,
-        bankAccountNumber: partner.bankAccountNumber,
-        bankName: partner.bankName,
-        address: partner.address,
     }
 }
 

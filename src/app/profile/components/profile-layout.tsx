@@ -1,6 +1,5 @@
 "use client";
 
-import { ActorType } from "@/types/auth";
 import { ProfileLayoutProps } from "@/types/profile";
 import ProfileSidebar from "./profile-sidebar";
 import { useRouter } from "next/navigation";
@@ -10,7 +9,7 @@ import { useAuthStore } from "@/stores/auth.store";
 export default function ProfileLayout({ children }: ProfileLayoutProps) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const actorType = user?.actorType ?? ActorType.USER;
+  const role = user?.role === "partner" ? "partner" : "user";
   const { mutate: logout } = useLogout(() => router.push("/"));
 
   return (
@@ -19,7 +18,7 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
         <div className="grid grid-cols-1 lg:grid-cols-14 gap-6">
           <div className="lg:col-span-3">
             <div className="sticky top-25">
-              <ProfileSidebar actorType={actorType} onLogout={() => logout()} />
+              <ProfileSidebar role={role} onLogout={() => logout()} />
             </div>
           </div>
 

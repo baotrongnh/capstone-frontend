@@ -1,6 +1,6 @@
 "use client"
 
-import { AuthFormProps, LoginDto, RegisterDto } from "@/types/auth";
+import { AuthFormProps, LoginDTO, RegisterDto } from "@/types/auth";
 import { Button, Divider, Form, Input, message } from "antd";
 import Image from "next/image";
 import { useState } from "react";
@@ -25,7 +25,7 @@ export default function AuthForm({
     setMode(next);
   };
 
-  const handleFinish = async (values: LoginDto & RegisterDto) => {
+  const handleFinish = async (values: LoginDTO & RegisterDto) => {
     if (mode === "login") {
       if (onSubmit) {
         await onSubmit({ identifier: values.identifier, password: values.password });

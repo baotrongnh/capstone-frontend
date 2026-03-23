@@ -6,17 +6,24 @@ import { ApiErrorResponse } from '@/types/auth'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
 import { useState } from 'react'
+import { userService } from '@/lib/services/user.service'
 
 export const useLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
     const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: authService.login,
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             queryClient.clear()
-            setAuth(data.user, data.tokens)
+            setTokens(data.tokens)
+            const user = await queryClient.fetchQuery({
+                queryKey: ['user', 'profile'],
+                queryFn: () => userService.getProfile()
+            })
+            setAuth(user, data.tokens)
             message.success('Login successful!')
             onSuccess?.()
         },
@@ -30,14 +37,20 @@ export const useLogin = (onSuccess?: () => void) => {
 
 export const useRegister = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
     const queryClient = useQueryClient()
 
     return useMutation({
         mutationFn: authService.register,
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             queryClient.clear()
-            setAuth(data.user, data.tokens)
+            setTokens(data.tokens)
+            const user = await queryClient.fetchQuery({
+                queryKey: ['user', 'profile'],
+                queryFn: () => userService.getProfile()
+            })
+            setAuth(user, data.tokens)
             message.success('Registration successful!')
             onSuccess?.()
         },
@@ -91,6 +104,7 @@ export const useLogout = (onSuccess?: () => void) => {
 
 export const useGoogleLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
     const queryClient = useQueryClient()
     const [loading, setLoading] = useState(false)
@@ -132,7 +146,12 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
 
             const data = await authService.googleLogin(accessToken)
             queryClient.clear()
-            setAuth(data.user, data.tokens)
+            setTokens(data.tokens)
+            const user = await queryClient.fetchQuery({
+                queryKey: ['user', 'profile'],
+                queryFn: () => userService.getProfile()
+            })
+            setAuth(user, data.tokens)
             message.success('Login successful!')
             onSuccess?.()
         } catch (error: unknown) {
