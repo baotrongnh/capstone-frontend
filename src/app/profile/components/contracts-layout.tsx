@@ -9,6 +9,8 @@ import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { ContractCard } from "./card-contracts-layout";
 import ModalAssignContract from "./modal/modal-assign-contract";
 import ModalCancelContract from "./modal/modal-cancel-contract";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 const { Title, Text } = Typography;
 
@@ -21,7 +23,7 @@ export default function ContractLayout() {
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showModalCancelContract, setShowModalCancelContract] = useState(false);
-
+  const router = useRouter();
   const { data, isLoading } = useGetContracts();
 
   const contractsList = useMemo<ContractWithMembers[]>(() => {
@@ -77,6 +79,10 @@ export default function ContractLayout() {
   const handleCancelContract = (contractId: string) => {
     setSelectedContractId(contractId);
     setShowModalCancelContract(true);
+  };
+
+  const handleRedirectInvoice = () => {
+    router.push(`${ROUTES.PROFILE}/invoices`);
   };
 
   if (isLoading) {
@@ -198,6 +204,7 @@ export default function ContractLayout() {
             onView={() => handleViewContract(contract.id)}
             onDownload={() => handleDownloadContract(contract.id)}
             onCancel={() => handleCancelContract(contract.id)}
+            onRedirectInvoice={() => handleRedirectInvoice()}
           />
         ))}
       </div>
