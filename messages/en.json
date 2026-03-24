@@ -478,7 +478,19 @@
         "water": "Water",
         "maintenance": "Maintenance",
         "deposit": "Deposit",
+        "contract_deposit": "Contract Deposit",
+        "utility": "Utility",
+        "service": "Service",
+        "penalty": "Penalty",
         "other": "Other"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Bank Transfer",
+        "cash": "Cash",
+        "e_wallet": "E-wallet",
+        "auto_debit": "Auto Debit",
+        "credit_card": "Credit Card",
+        "debit_card": "Debit Card"
       },
       "statuses": {
         "draft": "Draft",

@@ -1,10 +1,18 @@
 'use client'
 
 import { CreditCardOutlined } from '@ant-design/icons'
-import { INVOICE_STATUS_COLORS, isInvoiceStatus, isInvoiceType } from '@/types/invoice'
+import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
 import type { InvoiceDetail, InvoiceDetailContentItem, InvoiceDetailPayment } from '@/types/invoice'
-import { formatInvoiceAmount, formatInvoiceDate, normalizeObjectToRows, normalizeText } from '@/utils/invoice'
+import {
+    formatInvoiceAmount,
+    formatInvoiceDate,
+    isInvoiceStatus,
+    normalizeObjectToRows,
+    normalizeText,
+    toInvoiceTypeTranslationKey,
+    toPaymentMethodTranslationKey,
+} from '@/utils/invoice'
 import { Alert, Breadcrumb, Button, Card, Col, Descriptions, Empty, Row, Spin, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
@@ -27,7 +35,15 @@ export default function InvoiceDetailPage() {
 
     const getStatusLabel = (status: string) => (isInvoiceStatus(status) ? tInvoices(`statuses.${status}`) : status)
 
-    const getTypeLabel = (invoiceType: string) => (isInvoiceType(invoiceType) ? tInvoices(`types.${invoiceType}`) : invoiceType)
+    const getTypeLabel = (invoiceType: string) => {
+        const translationKey = toInvoiceTypeTranslationKey(invoiceType)
+        return translationKey ? tInvoices(`types.${translationKey}`) : invoiceType
+    }
+
+    const getPaymentMethodLabel = (paymentMethod: string) => {
+        const translationKey = toPaymentMethodTranslationKey(paymentMethod)
+        return translationKey ? tInvoices(`paymentMethods.${translationKey}`) : paymentMethod
+    }
 
     const itemColumns: ColumnsType<InvoiceDetailContentItem> = [
         {
@@ -41,7 +57,7 @@ export default function InvoiceDetailPage() {
             dataIndex: 'itemType',
             key: 'itemType',
             width: 160,
-            render: (value: unknown) => normalizeText(value),
+            render: (value: unknown) => getTypeLabel(normalizeText(value)),
         },
         {
             title: t('table.quantity'),
@@ -72,7 +88,7 @@ export default function InvoiceDetailPage() {
             title: t('table.method'),
             dataIndex: 'paymentMethod',
             key: 'paymentMethod',
-            render: (value: unknown) => normalizeText(value),
+            render: (value: unknown) => getPaymentMethodLabel(normalizeText(value)),
         },
         {
             title: t('table.status'),
@@ -169,7 +185,7 @@ export default function InvoiceDetailPage() {
             {
                 key: 'paymentMethod',
                 label: t('fields.paymentMethod'),
-                children: normalizeText(invoiceData.paymentMethod),
+                children: getPaymentMethodLabel(normalizeText(invoiceData.paymentMethod)),
             },
             {
                 key: 'totalAmount',

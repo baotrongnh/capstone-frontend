@@ -1,9 +1,9 @@
 'use client'
 
-import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS, isInvoiceStatus, isInvoiceType } from '@/types/invoice'
+import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS } from '@/types/invoice'
 import { useInvoices } from '@/hooks/query/useInvoices'
 import type { InvoiceItem, InvoiceStatus, ListInvoicesQuery } from '@/types/invoice'
-import { formatInvoiceAmount, formatInvoiceDate } from '../../../utils/invoice'
+import { formatInvoiceAmount, formatInvoiceDate, isInvoiceStatus, toInvoiceTypeTranslationKey } from '../../../utils/invoice'
 import { Alert, Empty, Grid, Table, Tabs, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
@@ -22,13 +22,42 @@ export default function InvoicesPage() {
         [activeStatus],
     )
 
+    const { data: allInvoicesData } = useInvoices()
     const { data, isLoading, isError, error } = useInvoices(queryParams)
     const invoices = data?.data ?? []
+    const allInvoices = useMemo(() => allInvoicesData?.data ?? [], [allInvoicesData])
+
+    const statusCounts = useMemo(() => {
+        const counts: Record<InvoiceStatus, number> = {
+            draft: 0,
+            issued: 0,
+            sent: 0,
+            partially_paid: 0,
+            paid: 0,
+            overdue: 0,
+            cancelled: 0,
+        }
+
+        allInvoices.forEach((invoice) => {
+            const status = invoice.status
+            if (status && isInvoiceStatus(status)) {
+                counts[status] += 1
+            }
+        })
+
+        return counts
+    }, [allInvoices])
 
     const handleStatusTabChange = (key: string) => {
         if (key === 'all' || isInvoiceStatus(key)) {
             setActiveStatus(key)
         }
+    }
+
+    const getInvoiceTypeLabel = (invoiceType?: string | null) => {
+        if (!invoiceType) return '-'
+        const translationKey = toInvoiceTypeTranslationKey(invoiceType)
+        return translationKey ? t(`types.${translationKey}`) : invoiceType
     }
 
     const columns: ColumnsType<InvoiceItem> = [
@@ -49,11 +78,7 @@ export default function InvoicesPage() {
             render: (invoiceType?: string) => {
                 if (!invoiceType) return <Tag>-</Tag>
 
-                if (isInvoiceType(invoiceType)) {
-                    return <Tag>{t(`types.${invoiceType}`)}</Tag>
-                }
-
-                return <Tag>{invoiceType}</Tag>
+                return <Tag>{getInvoiceTypeLabel(invoiceType)}</Tag>
             },
         },
         {
@@ -98,8 +123,11 @@ export default function InvoicesPage() {
     ]
 
     const tabItems = [
-        { key: 'all', label: `${t('all')} (${invoices.length})` },
-        ...INVOICE_STATUS_TABS.map((status) => ({ key: status, label: t(`statuses.${status}`) })),
+        { key: 'all', label: `${t('all')} (${allInvoices.length})` },
+        ...INVOICE_STATUS_TABS.map((status) => ({
+            key: status,
+            label: `${t(`statuses.${status}`)} (${statusCounts[status]})`,
+        })),
     ]
 
     return (

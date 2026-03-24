@@ -478,11 +478,23 @@
         "water": "Nước",
         "maintenance": "Bảo trì",
         "deposit": "Đặt cọc",
+        "contract_deposit": "Đặt cọc hợp đồng",
+        "utility": "Tiện ích",
+        "service": "Dịch vụ",
+        "penalty": "Phạt",
         "other": "Khác"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "cash": "Tiền mặt",
+        "e_wallet": "Ví điện tử",
+        "auto_debit": "Trích nợ tự động",
+        "credit_card": "Thẻ tín dụng",
+        "debit_card": "Thẻ ghi nợ"
       },
       "statuses": {
         "draft": "Nháp",
-        "issued": "Đã phát hành",
+        "issued": "Chưa thanh toán",
         "sent": "Đã gửi",
         "partially_paid": "Thanh toán một phần",
         "paid": "Đã thanh toán",

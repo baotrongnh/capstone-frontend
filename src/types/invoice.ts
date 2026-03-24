@@ -24,16 +24,10 @@ export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
 }
 
 export const INVOICE_STATUS_TABS: InvoiceStatus[] = [
-    'draft',
     'issued',
-    'sent',
-    'partially_paid',
     'paid',
     'overdue',
     'cancelled',
 ]
 
 export const INVOICE_TYPE_VALUES: InvoiceType[] = ['rent', 'electricity', 'water', 'maintenance', 'deposit', 'other']
-
-export const isInvoiceStatus = (value: string): value is InvoiceStatus => value in INVOICE_STATUS_COLORS
-export const isInvoiceType = (value: string): value is InvoiceType => INVOICE_TYPE_VALUES.some((type) => type === value)
