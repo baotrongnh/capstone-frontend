@@ -1,5 +1,4 @@
 import { IMG_URL, ROUTES } from '@/constants/routes'
-import type { AddressTypePreference } from '@/hooks/useAddressTypePreference'
 import type { ApartmentItem } from '@/types/apartment'
 import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { Icon } from '@iconify/react'
@@ -17,10 +16,10 @@ function InfoChip({ icon, children }: { icon: string; children: React.ReactNode 
      )
 }
 
-export default function ApartmentItem({ apartment, addressType }: { apartment: ApartmentItem; addressType: AddressTypePreference }) {
+export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
      const tFurnishing = useTranslations('ApartmentLabels.furnishing')
      const t = useTranslations('ApartmentListPage')
-     const displayAddress = getApartmentDisplayAddress(apartment, addressType)
+     const displayAddress = getApartmentDisplayAddress(apartment)
 
      return (
           <Link

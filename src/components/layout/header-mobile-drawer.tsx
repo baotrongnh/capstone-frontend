@@ -18,7 +18,6 @@ type HeaderMobileDrawerProps = {
      navLinks: NavLink[]
      isLoggedIn: boolean
      langButton: ReactNode
-     guestAddressTypeButton: ReactNode
      userFullName: string
      becomePartnerLabel: string
      loginLabel: string
@@ -35,7 +34,6 @@ export default function HeaderMobileDrawer({
      navLinks,
      isLoggedIn,
      langButton,
-     guestAddressTypeButton,
      userFullName,
      becomePartnerLabel,
      loginLabel,
@@ -62,7 +60,6 @@ export default function HeaderMobileDrawer({
 
                <div className="flex items-center gap-4 px-3 mb-4">
                     {langButton}
-                    {!isLoggedIn && guestAddressTypeButton}
                     {isLoggedIn && <MessageSquareText strokeWidth={1.4} size={20} />}
                     {isLoggedIn && <NotificationDropdown iconSize={20} />}
                </div>

@@ -11,7 +11,6 @@ import NotificationDropdown from "./notification-dropdown"
 type HeaderDesktopActionsProps = {
      isLoggedIn: boolean
      langButton: ReactNode
-     guestAddressTypeButton: ReactNode
      userMenuItems: MenuProps['items']
      userFullName: string
      becomePartnerLabel: string
@@ -22,7 +21,6 @@ type HeaderDesktopActionsProps = {
 export default function HeaderDesktopActions({
      isLoggedIn,
      langButton,
-     guestAddressTypeButton,
      userMenuItems,
      userFullName,
      becomePartnerLabel,
@@ -32,7 +30,6 @@ export default function HeaderDesktopActions({
      return (
           <div className="hidden lg:flex items-center gap-5">
                {langButton}
-               {!isLoggedIn && guestAddressTypeButton}
                {/* {isLoggedIn && <MessageSquareText strokeWidth={1.4} />} */}
                {isLoggedIn && <NotificationDropdown />}
 
