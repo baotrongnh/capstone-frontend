@@ -262,15 +262,6 @@ export default function ModalAssignContract({
               />
             )}
 
-            {selectedContract.status === "active" && (
-              <Alert
-                message=" Hợp đồng đã được ký"
-                description="Hợp đồng này đã được ký và đã hoàn tất."
-                type="success"
-                showIcon
-              />
-            )}
-
             <div className="flex gap-3 justify-end pt-4 ">
               <Button onClick={handleCloseModal}>Đóng</Button>
               {selectedContract.status === "draft" && !signature && (
