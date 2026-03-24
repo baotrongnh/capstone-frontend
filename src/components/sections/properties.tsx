@@ -86,10 +86,9 @@ export default function PropertiesSection() {
     setSelectedApartmentId(apartmentId);
     if (!user) {
       setIsModalLoginRequiredLogin(true);
-    } else if (user?.isVerified && user?.identity !== null) {
+    } else if (user?.isVerified === true && user?.identity !== null) {
       setModalReservation(true);
     } else {
-      console.log("User must verify identity before booking");
       setModalVerify(true);
     }
   };
