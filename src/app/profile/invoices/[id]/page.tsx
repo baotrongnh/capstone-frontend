@@ -8,15 +8,14 @@ import {
     formatInvoiceAmount,
     formatInvoiceDate,
     isInvoiceStatus,
-    normalizeObjectToRows,
-    normalizeText,
     toInvoiceTypeTranslationKey,
     toPaymentMethodTranslationKey,
 } from '@/utils/invoice'
+import { normalizeObjectToRows, normalizeText } from '@/utils/text'
 import { Alert, Breadcrumb, Button, Card, Col, Descriptions, Empty, Row, Spin, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 
 const { Text, Title } = Typography
@@ -25,8 +24,14 @@ export default function InvoiceDetailPage() {
     const locale = useLocale()
     const t = useTranslations('Profile.invoices.detail')
     const tInvoices = useTranslations('Profile.invoices')
+    const tPayments = useTranslations('Profile.payment')
     const params = useParams<{ id: string }>()
+    const searchParams = useSearchParams()
     const id = params?.id
+    const from = searchParams.get('from')
+
+    const backHref = from === 'payments' ? '/profile/payment-history' : '/profile/invoices'
+    const backLabel = from === 'payments' ? tPayments('title') : tInvoices('title')
 
     const { data, isLoading, isError, error } = useInvoice(id)
     const invoice = data?.data
@@ -276,7 +281,7 @@ export default function InvoiceDetailPage() {
                     style={{ marginBottom: 24 }}
                     items={[
                         {
-                            title: <Link href="/profile/invoices">{tInvoices('title')}</Link>,
+                            title: <Link href={backHref}>{backLabel}</Link>,
                         },
                         {
                             title: normalizeText(invoice.invoiceNumber),

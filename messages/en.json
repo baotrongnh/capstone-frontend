@@ -362,32 +362,87 @@
     },
     "payment": {
       "title": "Payment History",
-      "subtitle": "View all your payment transactions",
-      "noPayments": "No payment records found",
-      "transactionId": "Transaction ID",
-      "type": "Type",
-      "apartment": "Apartment",
-      "dueDate": "Due Date",
-      "paidDate": "Paid Date",
+      "subtitle": "View all payment transactions from your invoices",
+      "paymentReference": "Payment Ref.",
+      "invoiceNumber": "Invoice No.",
+      "paymentMethod": "Method",
+      "paymentDate": "Payment Date",
       "amount": "Amount",
       "status": "Status",
-      "actions": "Actions",
-      "view": "View",
-      "invoice": "Invoice",
       "all": "All",
-      "types": {
-        "rent": "Rent",
-        "electricity": "Electricity",
-        "water": "Water",
-        "maintenance": "Maintenance",
-        "deposit": "Deposit",
-        "other": "Other"
-      },
+      "empty": "No payments found",
+      "loadError": "Unable to load payment list",
+      "syntheticStatus": "Pending (Unpaid Invoice)",
       "statuses": {
         "pending": "Pending",
+        "processing": "Processing",
         "completed": "Completed",
         "failed": "Failed",
+        "refunded": "Refunded",
         "cancelled": "Cancelled"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Bank Transfer",
+        "cash": "Cash",
+        "e_wallet": "E-wallet",
+        "auto_debit": "Auto Debit",
+        "credit_card": "Credit Card",
+        "debit_card": "Debit Card",
+        "other": "Other"
+      },
+      "detail": {
+        "title": "Payment Detail",
+        "paymentId": "Payment ID",
+        "loadError": "Unable to load payment detail",
+        "notFound": "Payment not found",
+        "sections": {
+          "overview": "Overview",
+          "invoice": "Invoice Information"
+        },
+        "summary": {
+          "amount": "Payment Amount",
+          "status": "Status",
+          "paymentDate": "Payment Date"
+        },
+        "fields": {
+          "paymentReference": "Payment Reference",
+          "status": "Status",
+          "amount": "Amount",
+          "currency": "Currency",
+          "paymentMethod": "Payment Method",
+          "transactionId": "Transaction ID",
+          "paymentDate": "Payment Date",
+          "paymentGateway": "Payment Gateway",
+          "bankName": "Bank Name",
+          "accountNumber": "Account Number",
+          "refundAmount": "Refund Amount",
+          "refundDate": "Refund Date",
+          "refundReason": "Refund Reason",
+          "notes": "Notes",
+          "createdAt": "Created At",
+          "updatedAt": "Updated At",
+          "id": "Payment ID"
+        },
+        "invoice": {
+          "id": "Invoice ID",
+          "invoiceNumber": "Invoice Number",
+          "invoiceType": "Invoice Type",
+          "currency": "Currency",
+          "totalAmount": "Total Amount",
+          "baseRent": "Base Rent",
+          "taxAmount": "Tax Amount",
+          "contentTitle": "Content Title",
+          "contentDescription": "Content Description"
+        },
+        "table": {
+          "description": "Description",
+          "type": "Type",
+          "quantity": "Quantity",
+          "amount": "Amount"
+        },
+        "empty": {
+          "invoiceItems": "No invoice items"
+        }
       }
     },
     "settings": {

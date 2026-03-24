@@ -13,5 +13,6 @@ export const endpoints = {
   users: createEndpoints("users"),
   reservations: createEndpoints("reservations"),
   notifications: createEndpoints("notifications"),
-  invoices: createEndpoints("invoices")
+  invoices: createEndpoints("invoices"),
+  payments: createEndpoints("payments")
 };

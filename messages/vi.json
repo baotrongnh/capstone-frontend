@@ -362,32 +362,87 @@
     },
     "payment": {
       "title": "Lịch sử thanh toán",
-      "subtitle": "Xem tất cả các giao dịch thanh toán của bạn",
-      "noPayments": "Không tìm thấy bản ghi thanh toán",
-      "transactionId": "Mã giao dịch",
-      "type": "Loại",
-      "apartment": "Căn hộ",
-      "dueDate": "Ngày đáo hạn",
-      "paidDate": "Ngày thanh toán",
+      "subtitle": "Xem tất cả giao dịch thanh toán từ các hóa đơn của bạn",
+      "paymentReference": "Mã thanh toán",
+      "invoiceNumber": "Số hóa đơn",
+      "paymentMethod": "Phương thức",
+      "paymentDate": "Ngày thanh toán",
       "amount": "Số tiền",
       "status": "Trạng thái",
-      "actions": "Thao tác",
-      "view": "Xem",
-      "invoice": "Hóa đơn",
       "all": "Tất cả",
-      "types": {
-        "rent": "Tiền thuê",
-        "electricity": "Điện",
-        "water": "Nước",
-        "maintenance": "Bảo trì",
-        "deposit": "Đặt cọc",
-        "other": "Khác"
-      },
+      "empty": "Không tìm thấy thanh toán",
+      "loadError": "Không thể tải danh sách thanh toán",
+      "syntheticStatus": "Chờ xử lý (Hóa đơn chưa thanh toán)",
       "statuses": {
         "pending": "Chờ xử lý",
+        "processing": "Đang xử lý",
         "completed": "Hoàn thành",
         "failed": "Thất bại",
+        "refunded": "Đã hoàn tiền",
         "cancelled": "Đã hủy"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "cash": "Tiền mặt",
+        "e_wallet": "Ví điện tử",
+        "auto_debit": "Trích nợ tự động",
+        "credit_card": "Thẻ tín dụng",
+        "debit_card": "Thẻ ghi nợ",
+        "other": "Khác"
+      },
+      "detail": {
+        "title": "Chi tiết thanh toán",
+        "paymentId": "Mã thanh toán",
+        "loadError": "Không thể tải chi tiết thanh toán",
+        "notFound": "Không tìm thấy thanh toán",
+        "sections": {
+          "overview": "Tổng quan",
+          "invoice": "Thông tin hóa đơn"
+        },
+        "summary": {
+          "amount": "Số tiền thanh toán",
+          "status": "Trạng thái",
+          "paymentDate": "Ngày thanh toán"
+        },
+        "fields": {
+          "paymentReference": "Mã tham chiếu thanh toán",
+          "status": "Trạng thái",
+          "amount": "Số tiền",
+          "currency": "Tiền tệ",
+          "paymentMethod": "Phương thức thanh toán",
+          "transactionId": "Mã giao dịch",
+          "paymentDate": "Ngày thanh toán",
+          "paymentGateway": "Cổng thanh toán",
+          "bankName": "Tên ngân hàng",
+          "accountNumber": "Số tài khoản",
+          "refundAmount": "Số tiền hoàn",
+          "refundDate": "Ngày hoàn tiền",
+          "refundReason": "Lý do hoàn tiền",
+          "notes": "Ghi chú",
+          "createdAt": "Ngày tạo",
+          "updatedAt": "Ngày cập nhật",
+          "id": "Mã thanh toán"
+        },
+        "invoice": {
+          "id": "Mã hóa đơn",
+          "invoiceNumber": "Số hóa đơn",
+          "invoiceType": "Loại hóa đơn",
+          "currency": "Tiền tệ",
+          "totalAmount": "Tổng tiền",
+          "baseRent": "Tiền thuê cơ bản",
+          "taxAmount": "Thuế",
+          "contentTitle": "Tiêu đề nội dung",
+          "contentDescription": "Mô tả nội dung"
+        },
+        "table": {
+          "description": "Mô tả",
+          "type": "Loại",
+          "quantity": "Số lượng",
+          "amount": "Số tiền"
+        },
+        "empty": {
+          "invoiceItems": "Không có hạng mục hóa đơn"
+        }
       }
     },
     "settings": {

@@ -24,8 +24,16 @@ export default function InvoicesPage() {
 
     const { data: allInvoicesData } = useInvoices()
     const { data, isLoading, isError, error } = useInvoices(queryParams)
-    const invoices = data?.data ?? []
+    const invoices = useMemo(() => data?.data ?? [], [data])
     const allInvoices = useMemo(() => allInvoicesData?.data ?? [], [allInvoicesData])
+    const filteredAllInvoices = useMemo(
+        () => allInvoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
+        [allInvoices],
+    )
+    const filteredInvoices = useMemo(
+        () => invoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
+        [invoices],
+    )
 
     const statusCounts = useMemo(() => {
         const counts: Record<InvoiceStatus, number> = {
@@ -38,7 +46,7 @@ export default function InvoicesPage() {
             cancelled: 0,
         }
 
-        allInvoices.forEach((invoice) => {
+        filteredAllInvoices.forEach((invoice) => {
             const status = invoice.status
             if (status && isInvoiceStatus(status)) {
                 counts[status] += 1
@@ -46,7 +54,7 @@ export default function InvoicesPage() {
         })
 
         return counts
-    }, [allInvoices])
+    }, [filteredAllInvoices])
 
     const handleStatusTabChange = (key: string) => {
         if (key === 'all' || isInvoiceStatus(key)) {
@@ -123,7 +131,7 @@ export default function InvoicesPage() {
     ]
 
     const tabItems = [
-        { key: 'all', label: `${t('all')} (${allInvoices.length})` },
+        { key: 'all', label: `${t('all')} (${filteredAllInvoices.length})` },
         ...INVOICE_STATUS_TABS.map((status) => ({
             key: status,
             label: `${t(`statuses.${status}`)} (${statusCounts[status]})`,
@@ -152,20 +160,20 @@ export default function InvoicesPage() {
                 items={tabItems}
             />
 
-            {invoices.length === 0 && !isLoading ? (
+            {filteredInvoices.length === 0 && !isLoading ? (
                 <Empty description={t('empty')} className="py-10" />
             ) : (
                 <Table
                     rowKey="id"
                     columns={columns}
-                    dataSource={invoices}
+                    dataSource={filteredInvoices}
                     loading={isLoading}
                     scroll={screens.md ? undefined : { x: 760 }}
                     pagination={{ pageSize: 10 }}
                     onRow={(record) => ({
                         onClick: () => {
                             if (!record.id) return
-                            router.push(`/profile/invoices/${record.id}`)
+                            router.push(`/profile/invoices/${record.id}?from=invoices`)
                         },
                         style: { cursor: record.id ? 'pointer' : 'default' },
                     })}

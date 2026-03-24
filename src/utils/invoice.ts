@@ -64,24 +64,6 @@ export const formatInvoiceAmount = (value?: string | null, locale = 'vi') => {
     })
 }
 
-export const normalizeText = (value: unknown) => {
-    if (typeof value === 'string') {
-        const trimmed = value.trim()
-        return trimmed.length > 0 ? trimmed : '-'
-    }
-    if (typeof value === 'number') return String(value)
-    return '-'
-}
-
-export const normalizeObjectToRows = (value: unknown): Array<{ key: string; value: string }> => {
-    if (!value || typeof value !== 'object' || Array.isArray(value)) return []
-
-    return Object.entries(value as Record<string, unknown>).map(([key, rowValue]) => ({
-        key,
-        value: normalizeText(rowValue),
-    }))
-}
-
 export const isInvoiceStatus = (value: string): value is InvoiceStatus => value in INVOICE_STATUS_COLORS
 
 export const isInvoiceType = (value: string): value is InvoiceType => INVOICE_TYPE_VALUES.some((type) => type === value)
