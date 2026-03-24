@@ -1,12 +1,13 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
-import { Card, Button } from "antd";
+import { Card, Button, Alert } from "antd";
 import { FileText, Eye, User, MapPin, Calendar, Wallet } from "lucide-react";
 
 interface ContractCardProps {
   contract: ContractWithMembers;
   onView: () => void;
   onDownload: () => void;
+  onRedirectInvoice: () => void;
   onCancel: () => void;
 }
 
@@ -22,12 +23,12 @@ const StatusBadge = ({ status }: { status: string }) => {
       bg: "bg-blue-50",
       text: "text-blue-700",
       border: "border-blue-200",
-      label: "Đã kích hoạt",
+      label: "Đã ký",
     },
     signed: {
-      bg: "bg-emerald-50",
-      text: "text-emerald-700",
-      border: "border-emerald-200",
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      border: "border-blue-200",
       label: "Đã ký",
     },
     terminated: {
@@ -55,6 +56,7 @@ export const ContractCard = ({
   onView,
   onDownload,
   onCancel,
+  onRedirectInvoice,
 }: ContractCardProps) => {
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
@@ -81,9 +83,6 @@ export const ContractCard = ({
       <div className="flex-1 flex flex-col gap-4">
         <div className="flex justify-between items-center pb-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-11 h-11 bg-blue-50 text-blue-600 rounded-xl">
-              <FileText size={22} />
-            </div>
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 mb-0.5">Mã hợp đồng</span>
               <span className="text-base font-bold text-gray-800 leading-none">
@@ -91,21 +90,25 @@ export const ContractCard = ({
               </span>
             </div>
           </div>
-          <StatusBadge status={contract.status} />
+          <div className="flex gap-2 items-center flex-wrap justify-end">
+            <StatusBadge status={contract.status} />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 py-2">
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <User size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 mb-0.5">
-                Người đại diện thuê
-              </span>
-              <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {primaryTenant?.user?.fullName ?? "Chưa cập nhật"}
-              </span>
+          <div className="flex justify-between gap-3">
+            <div className="flex gap-3.5">
+              <div className="flex justify-center w-6 pt-0.5">
+                <User size={18} className="text-gray-400" />
+              </div>
+              <div className="flex flex-col flex-1">
+                <span className="text-xs text-gray-500 ">
+                  Người đại diện thuê
+                </span>
+                <span className="text-sm font-semibold text-gray-800 leading-tight">
+                  {primaryTenant?.user?.fullName ?? "Chưa cập nhật"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -136,6 +139,48 @@ export const ContractCard = ({
               </span>
             </div>
           </div>
+
+          {contract.status === "signed" && (
+            <div className="flex bg-blue-50 border border-blue-100 p-3 rounded-lg shadow-sm">
+              <div className="w-full">
+                <div className="flex items-center gap-3">
+                  <div className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+                  </div>
+                  <p className="text-sm font-medium text-blue-800">
+                    <span className="font-bold mr-1">Lưu ý:</span>
+                    Chưa thanh toán
+                  </p>
+                </div>
+                <div
+                  className="flex justify-center items-center ml-3"
+                  onClick={onRedirectInvoice}
+                >
+                  <p className="text-blue-600 hover:text-blue-800 text-sm font-medium underline mt-2 cursor-pointer">
+                    Thanh toán hợp đồng ngay!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {contract.status === "active" && (
+            <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
+              <div className="w-full">
+                <div className="flex items-center gap-3">
+                  <div className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+                  </div>
+                  <p className="text-sm font-medium text-green-800">
+                    <span className="font-bold mr-1">Lưu ý:</span>
+                    Hợp đồng đã thanh toán và được kích hoạt!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -34,18 +34,6 @@ export default function ModalAssignContract({
     selectedContract?.id || "",
   );
 
-  console.log("II", selectedContract?.id);
-
-  useEffect(() => {
-    if (!showDetailModal) {
-      setSignature(null);
-      setSignedPdfUrl(null);
-      setSignedPdfBytes(null);
-      setAgreePolicy(false);
-      setShowSignModal(false);
-    }
-  }, [showDetailModal]);
-
   const dataUrlToBytes = (dataUrl: string): Uint8Array => {
     const arr = dataUrl.split(",");
     const bstr = atob(arr[1]);
@@ -64,7 +52,7 @@ export default function ModalAssignContract({
     }
 
     try {
-      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${selectedContract.pdfUrl}`;
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${selectedContract.pdfUrl}`;
       const pdfResponse = await fetch(pdfUrl);
       const pdfArrayBuffer = await pdfResponse.arrayBuffer();
 
@@ -212,7 +200,7 @@ export default function ModalAssignContract({
                   src={
                     signedPdfUrl
                       ? `${signedPdfUrl}#toolbar=0&navpanes=0`
-                      : `${process.env.NEXT_PUBLIC_API_BASE_URL}${selectedContract.pdfUrl}#toolbar=0&navpanes=0`
+                      : `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${selectedContract.pdfUrl}#toolbar=0&navpanes=0`
                   }
                   style={{
                     width: "100%",
@@ -226,7 +214,6 @@ export default function ModalAssignContract({
 
             {!selectedContract.hasPdf && (
               <Alert
-                message="Tệp PDF chưa sẵn sàng"
                 description="Hợp đồng này hiện chưa có tệp PDF."
                 type="warning"
                 showIcon
