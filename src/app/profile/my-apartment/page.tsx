@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Descriptions, Tag, Statistic, Row, Col, Empty, Divider } from 'antd'
+import { Card, Descriptions, Tag, Statistic, Row, Col, Empty } from 'antd'
 import {
     BgColorsOutlined,
     HomeOutlined,
@@ -10,53 +10,21 @@ import {
     EnvironmentOutlined
 } from '@ant-design/icons'
 import { useMyApartment } from '@/hooks/query/useMyApartment'
-import type { OwnerApartmentResponse } from '@/types/apartment'
 import type { ApartmentStatus, UserApartment } from '@/types/profile'
 import { useAuthStore } from '@/stores/auth.store'
 import { formatPaymentAmount } from '@/utils/payment'
-import Image from 'next/image'
+import { AdditionalInfoCard } from './components/additional-info-card'
+import { ApartmentGallery } from './components/apartment-gallery'
+import type { OwnerApartmentExtra, OwnerApartmentItem } from './components/types'
+import { UtilityUsageCard } from './components/utility-usage-card'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
 
-type OwnerApartmentItem = NonNullable<OwnerApartmentResponse['data']>[number]
-const APARTMENT_PLACEHOLDER = '/img/apartment-placeholder.png'
 const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
     available: 'green',
     occupied: 'blue',
     maintenance: 'orange',
     reserved: 'purple',
     inactive: 'red',
-}
-
-type ApartmentImageProps = {
-    src?: string
-    alt: string
-    priority?: boolean
-    className?: string
-}
-
-function ApartmentImage({ src, alt, priority, className }: ApartmentImageProps) {
-    const safeSource = typeof src === 'string' && src.trim().length > 0 ? src : APARTMENT_PLACEHOLDER
-    const [resolvedSource, setResolvedSource] = useState(safeSource)
-
-    useEffect(() => {
-        setResolvedSource(safeSource)
-    }, [safeSource])
-
-    return (
-        <Image
-            src={resolvedSource}
-            alt={alt}
-            fill
-            className={className}
-            priority={priority}
-            onError={() => {
-                if (resolvedSource !== APARTMENT_PLACEHOLDER) {
-                    setResolvedSource(APARTMENT_PLACEHOLDER)
-                }
-            }}
-        />
-    )
 }
 
 const toNumber = (value: unknown, fallback = 0) => {
@@ -103,6 +71,7 @@ export default function MyApartmentPage() {
     const id = user?.id ?? ''
     const t = useTranslations('Profile.apartment')
     const { data: ownerApartments, isLoading } = useMyApartment(isHydrated ? id : '')
+    const rawApartment = ownerApartments?.[0] as OwnerApartmentExtra | undefined
     const apartment = ownerApartments?.length
         ? mapToUserApartment(ownerApartments[0])
         : null
@@ -140,8 +109,6 @@ export default function MyApartmentPage() {
     const waterCost = waterUsage * apartment.waterUnitPrice
     const totalUtilityCost = electricityCost + waterCost
     const totalThisMonth = apartment.baseRentPrice + totalUtilityCost
-    const apartmentImages = apartment.images ?? []
-    const imageSlots = [apartmentImages[0], apartmentImages[1], apartmentImages[2]]
 
     return (
         <div className="space-y-6">
@@ -192,32 +159,7 @@ export default function MyApartmentPage() {
             </div>
 
             <Card className="overflow-hidden border-blue-200 bg-white" styles={{ body: { padding: 0 } }}>
-                <div className="grid grid-cols-1 gap-2 bg-slate-100 p-2 lg:grid-cols-3">
-                    <div className="relative h-72 overflow-hidden rounded-lg bg-slate-50 lg:col-span-2">
-                        <ApartmentImage
-                            src={imageSlots[0]}
-                            alt={`${apartment.buildingName} - main`}
-                            className="object-cover transition-transform duration-500 hover:scale-105"
-                            priority
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
-                        <div className="relative h-36 overflow-hidden rounded-lg bg-slate-50">
-                            <ApartmentImage
-                                src={imageSlots[1]}
-                                alt={`${apartment.buildingName} - side 1`}
-                                className="object-cover transition-transform duration-500 hover:scale-105"
-                            />
-                        </div>
-                        <div className="relative h-36 overflow-hidden rounded-lg bg-slate-50">
-                            <ApartmentImage
-                                src={imageSlots[2]}
-                                alt={`${apartment.buildingName} - side 2`}
-                                className="object-cover transition-transform duration-500 hover:scale-105"
-                            />
-                        </div>
-                    </div>
-                </div>
+                <ApartmentGallery buildingName={apartment.buildingName} images={apartment.images} />
             </Card>
 
             <Card
@@ -248,6 +190,8 @@ export default function MyApartmentPage() {
                     </Descriptions.Item>
                 </Descriptions>
             </Card>
+
+            <AdditionalInfoCard apartment={rawApartment} t={t} />
 
             <Card
                 className="border-blue-200 bg-linear-to-b from-blue-50 to-cyan-50"
@@ -324,91 +268,14 @@ export default function MyApartmentPage() {
                 </Card>
             )}
 
-            <Card
-                className="border-blue-200 bg-linear-to-br from-blue-50 to-cyan-50"
-                title={<span className="flex items-center gap-2 text-blue-900"><ThunderboltOutlined /> {t('utilityUsage')}</span>}
-                extra={<span className="text-sm text-stone-600">{t('currentBillingPeriod')}</span>}
-            >
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12}>
-                        <Card className="border-yellow-300 bg-linear-to-br from-yellow-50 to-amber-50">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="h-12 w-12 rounded-full bg-yellow-400 flex items-center justify-center">
-                                    <ThunderboltOutlined style={{ color: '#ffffff', fontSize: 24 }} />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-yellow-600">{t('electricity')}</h3>
-                                    <p className="text-sm text-stone-600">kWh</p>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('previousReading')}</span>
-                                    <span className="font-medium">{apartment.previousElectricReading} kWh</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('currentReading')}</span>
-                                    <span className="font-medium">{apartment.currentElectricReading} kWh</span>
-                                </div>
-                                <Divider className="my-2" />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('usage')}</span>
-                                    <span className="font-bold text-yellow-500">{electricityUsage} kWh</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('unitPrice')}</span>
-                                    <span className="font-medium">{formatPaymentAmount(apartment.electricityUnitPrice, 'vi')}/kWh</span>
-                                </div>
-                                <div className="mt-3 flex justify-between items-center rounded-lg bg-yellow-100 p-3">
-                                    <span className="font-semibold">{t('totalCost')}</span>
-                                    <span className="font-bold text-xl text-yellow-500">
-                                        {formatPaymentAmount(electricityCost, 'vi')}
-                                    </span>
-                                </div>
-                            </div>
-                        </Card>
-                    </Col>
-
-                    <Col xs={24} sm={12}>
-                        <Card className="border-sky-300 bg-linear-to-br from-sky-50 to-cyan-50">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="h-12 w-12 rounded-full bg-sky-400 flex items-center justify-center">
-                                    <BgColorsOutlined style={{ color: '#ffffff', fontSize: 24 }} />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-sky-700">{t('water')}</h3>
-                                    <p className="text-sm text-stone-600">m³</p>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('previousReading')}</span>
-                                    <span className="font-medium">{apartment.previousWaterReading} m³</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('currentReading')}</span>
-                                    <span className="font-medium">{apartment.currentWaterReading} m³</span>
-                                </div>
-                                <Divider className="my-2" />
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('usage')}</span>
-                                    <span className="font-bold text-sky-700">{waterUsage} m³</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-stone-600">{t('unitPrice')}</span>
-                                    <span className="font-medium">{formatPaymentAmount(apartment.waterUnitPrice, 'vi')}/m³</span>
-                                </div>
-                                <div className="mt-3 flex justify-between items-center rounded-lg bg-sky-100 p-3">
-                                    <span className="font-semibold">{t('totalCost')}</span>
-                                    <span className="font-bold text-xl text-sky-700">
-                                        {formatPaymentAmount(waterCost, 'vi')}
-                                    </span>
-                                </div>
-                            </div>
-                        </Card>
-                    </Col>
-                </Row>
-            </Card>
+            <UtilityUsageCard
+                apartment={apartment}
+                electricityUsage={electricityUsage}
+                waterUsage={waterUsage}
+                electricityCost={electricityCost}
+                waterCost={waterCost}
+                t={t}
+            />
         </div>
     )
 }

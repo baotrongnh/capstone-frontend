@@ -5,6 +5,57 @@ export const formatVND = (value: number | string, showVND = false) => {
      return showVND ? `${formatted} VNĐ` : formatted
 }
 
+type AppLocale = 'vi' | 'en'
+
+const toLocaleCode = (locale: AppLocale) => (locale === 'en' ? 'en-US' : 'vi-VN')
+
+export const toDisplayText = (value: unknown, fallback = '-') => {
+     if (value === null || value === undefined) {
+          return fallback
+     }
+
+     if (typeof value === 'string') {
+          const trimmed = value.trim()
+          return trimmed.length > 0 ? trimmed : fallback
+     }
+
+     return String(value)
+}
+
+export const toFiniteNumber = (value: unknown, fallback = 0) => {
+     const parsed = typeof value === 'number' ? value : Number(value)
+     return Number.isFinite(parsed) ? parsed : fallback
+}
+
+export const formatVndCurrency = (value?: string | number | null, locale: AppLocale = 'vi') => {
+     const amount = toFiniteNumber(value, Number.NaN)
+     if (!Number.isFinite(amount)) return '-'
+
+     return amount.toLocaleString(toLocaleCode(locale), {
+          style: 'currency',
+          currency: 'VND',
+          maximumFractionDigits: 0,
+     })
+}
+
+export const formatLocaleDate = (value?: string | null, locale: AppLocale = 'vi') => {
+     if (!value) return '-'
+
+     const date = new Date(value)
+     if (Number.isNaN(date.getTime())) return '-'
+
+     return date.toLocaleDateString(toLocaleCode(locale))
+}
+
+export const formatLocaleDateTime = (value?: string | null, locale: AppLocale = 'vi') => {
+     if (!value) return '-'
+
+     const date = new Date(value)
+     if (Number.isNaN(date.getTime())) return '-'
+
+     return date.toLocaleString(toLocaleCode(locale))
+}
+
 export function normalizeText(text: string) {
      return text
           .normalize("NFD")

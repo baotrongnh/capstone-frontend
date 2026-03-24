@@ -1,4 +1,5 @@
 import { PAYMENT_STATUS_COLORS, type PaymentStatus } from '@/types/payment'
+import { formatLocaleDate, formatLocaleDateTime, formatVndCurrency } from './format'
 import { normalizeText } from './text'
 
 export type PaymentMethodTranslationKey =
@@ -27,35 +28,15 @@ const PAYMENT_METHOD_ALIASES: Record<string, PaymentMethodTranslationKey> = {
 export const isPaymentStatus = (value: string): value is PaymentStatus => value in PAYMENT_STATUS_COLORS
 
 export const formatPaymentDate = (value?: string | null, locale = 'vi') => {
-    if (!value) return '-'
-
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return '-'
-
-    const normalizedLocale = locale === 'en' ? 'en-US' : 'vi-VN'
-    return date.toLocaleDateString(normalizedLocale)
+    return formatLocaleDate(value, locale === 'en' ? 'en' : 'vi')
 }
 
 export const formatPaymentDateTime = (value?: string | null, locale = 'vi') => {
-    if (!value) return '-'
-
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return '-'
-
-    const normalizedLocale = locale === 'en' ? 'en-US' : 'vi-VN'
-    return date.toLocaleString(normalizedLocale)
+    return formatLocaleDateTime(value, locale === 'en' ? 'en' : 'vi')
 }
 
 export const formatPaymentAmount = (value?: string | number | null, locale = 'vi') => {
-    const amount = typeof value === 'number' ? value : Number(value)
-    if (!Number.isFinite(amount)) return '-'
-
-    const normalizedLocale = locale === 'en' ? 'en-US' : 'vi-VN'
-    return amount.toLocaleString(normalizedLocale, {
-        style: 'currency',
-        currency: 'VND',
-        maximumFractionDigits: 0,
-    })
+    return formatVndCurrency(value, locale === 'en' ? 'en' : 'vi')
 }
 
 export const toPaymentMethodTranslationKey = (value?: string | null): PaymentMethodTranslationKey => {
