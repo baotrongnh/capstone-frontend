@@ -8,22 +8,16 @@ import AppPromoSection from '@/components/sections/app-promo'
 import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartments } from '@/hooks/query/useApartments'
-import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
 import { ApartmentFilterPatch, ApartmentQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useTranslations } from 'next-intl'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export default function ApartmentList() {
-  const { addressType } = useAddressTypePreference()
   const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
-  const queryFilters = useMemo(
-    () => ({ ...filters, addressType }),
-    [filters, addressType],
-  )
-  const { data: dataApartment, isLoading, isError, refetch } = useApartments(queryFilters)
+  const { data: dataApartment, isLoading, isError, refetch } = useApartments(filters)
   const t = useTranslations('ApartmentListPage')
 
   const apartments = dataApartment?.data ?? []
@@ -117,7 +111,7 @@ export default function ApartmentList() {
           {/* Apartment List */}
           {!isLoading && !isError && apartments.length > 0 && (
             <div className='space-y-6'>
-              {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} addressType={addressType} />)}
+              {apartments.map(apt => <ApartmentItem key={apt.id} apartment={apt} />)}
             </div>
           )}
 

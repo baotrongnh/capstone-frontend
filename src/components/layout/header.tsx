@@ -3,12 +3,11 @@
 import { APP_NAME } from "@/constants"
 import { IMG_URL, ROUTES } from "@/constants/routes"
 import { useLogout } from "@/hooks/query/useAuth"
-import { useAddressTypePreference } from "@/hooks/useAddressTypePreference"
 import { useAuthStore } from "@/stores/auth.store"
 import { Icon } from "@iconify/react"
 import type { MenuProps } from "antd"
 import { Button } from "antd"
-import { Check, LogOut, MapPin, Menu, User } from "lucide-react"
+import { LogOut, Menu, User } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,7 +21,6 @@ export default function Header() {
   const searchParams = useSearchParams()
   const t = useTranslations('Header')
   const router = useRouter()
-  const { addressType, setAddressType } = useAddressTypePreference()
   const { user, isAuthenticated, isHydrated } = useAuthStore()
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
 
@@ -43,7 +41,6 @@ export default function Header() {
   const loginLabel = t('login')
   const profileLabel = t('profile')
   const logoutLabel = t('logout')
-  const currentAddressTypeLabel = addressType === 'new' ? t('addressTypeNew') : t('addressTypeOld')
 
   useEffect(() => {
     if (searchParams.get('openAuthModal') === 'true') {
@@ -73,51 +70,8 @@ export default function Header() {
   }
 
   const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
-  const toggleAddressType = () => setAddressType(addressType === 'new' ? 'old' : 'new')
-
-  const addressTypeButton = (
-    <Button
-      shape="round"
-      size="small"
-      icon={<MapPin size={14} />}
-      onClick={toggleAddressType}
-      title={t('addressTypeLabel')}
-    >
-      {currentAddressTypeLabel}
-    </Button>
-  )
-
-  const addressTypeMenuItems: MenuProps['items'] = [
-    {
-      key: 'address-type-new',
-      label: (
-        <div className="flex items-center justify-between min-w-40">
-          <span>{t('addressTypeNew')}</span>
-          {addressType === 'new' && <Check size={14} />}
-        </div>
-      ),
-      onClick: () => setAddressType('new'),
-    },
-    {
-      key: 'address-type-old',
-      label: (
-        <div className="flex items-center justify-between min-w-40">
-          <span>{t('addressTypeOld')}</span>
-          {addressType === 'old' && <Check size={14} />}
-        </div>
-      ),
-      onClick: () => setAddressType('old'),
-    },
-  ]
-
   const userMenuItems: MenuProps['items'] = [
     { key: 'profile', label: profileLabel, icon: <User size={16} />, onClick: () => goProfile() },
-    {
-      key: 'address-type',
-      label: t('addressTypeLabel'),
-      icon: <MapPin size={16} />,
-      children: addressTypeMenuItems,
-    },
     { type: 'divider' },
     { key: 'logout', label: logoutLabel, icon: <LogOut size={16} />, danger: true, onClick: () => logout() },
   ]
@@ -146,7 +100,6 @@ export default function Header() {
         <HeaderDesktopActions
           isLoggedIn={isLoggedIn}
           langButton={langBtn}
-          guestAddressTypeButton={addressTypeButton}
           userMenuItems={userMenuItems}
           userFullName={userFullName}
           becomePartnerLabel={becomePartnerLabel}
@@ -166,7 +119,6 @@ export default function Header() {
         navLinks={navLinks}
         isLoggedIn={isLoggedIn}
         langButton={langBtn}
-        guestAddressTypeButton={addressTypeButton}
         userFullName={userFullName}
         becomePartnerLabel={becomePartnerLabel}
         loginLabel={loginLabel}

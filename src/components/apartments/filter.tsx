@@ -1,8 +1,7 @@
 'use client'
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
-import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
-import { useAddressTypePreference } from '@/hooks/useAddressTypePreference'
+import { useProvinces, useWards } from '@/hooks/query/useProvinces'
 import { ApartmentFilterPatch, FurnishingType } from '@/types/apartment'
 import { formatArea, formatPrice, normalizeText } from '@/utils/format'
 import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
@@ -19,7 +18,6 @@ const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
 export default function Filter({ onFilterChange }:
      { onFilterChange: (filters: ApartmentFilterPatch | null) => void }) {
      const t = useTranslations('ApartmentFilter')
-     const { isAfterMerge: afterMerge, setAfterMerge } = useAddressTypePreference()
      const [keyword, setKeyword] = useState('')
 
      // Location
@@ -32,17 +30,17 @@ export default function Filter({ onFilterChange }:
      const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
-     const { data: provinces, isLoading: loadingProvinces } = useProvinces(afterMerge)
+     const { data: provinces, isLoading: loadingProvinces } = useProvinces()
      const {
-          data: secondaryAddress,
-          isLoading: loadingDistricts,
-          isFetching: fetchingDistricts,
-     } = useDistricts(provinceCode, afterMerge)
+          data: wards,
+          isLoading: loadingWards,
+          isFetching: fetchingWards,
+     } = useWards(provinceCode)
 
-     const isDistrictSelectLoading = loadingDistricts || fetchingDistricts
+     const isWardSelectLoading = loadingWards || fetchingWards
 
      const provinceOptions = provinces?.map(p => ({ label: p.name, value: p.code })) ?? []
-     const secondaryAddressOptions = secondaryAddress?.map(d => ({ label: d.name, value: d.code })) ?? []
+     const wardOptions = wards?.map(d => ({ label: d.name, value: d.code })) ?? []
 
      const filterByLabel = (input: string, option?: { label?: string | number }) =>
           normalizeText(String(option?.label ?? '').toLowerCase()).includes(input.toLowerCase())
@@ -75,7 +73,7 @@ export default function Filter({ onFilterChange }:
           clearLocationFilter()
      }
 
-     const handleDistrictChange = (value?: number) => {
+     const handleWardChange = (value?: number) => {
           setWardCode(value)
           onFilterChange({ wardCode: value })
      }
@@ -89,12 +87,6 @@ export default function Filter({ onFilterChange }:
           const next = checked ? value : undefined
           setFurnishing(next)
           onFilterChange({ furnishingStatus: next })
-     }
-
-     const handleLocationAfterMerge = (checked: boolean) => {
-          setAfterMerge(checked)
-          setProvinceCode(undefined)
-          clearLocationFilter()
      }
 
      return (
@@ -125,13 +117,6 @@ export default function Filter({ onFilterChange }:
                <div>
                     <Label>{t('locationLabel')}</Label>
 
-                    <Checkbox
-                         checked={afterMerge}
-                         onChange={e => handleLocationAfterMerge(e.target.checked)}
-                    >
-                         {t('afterMergeLabel')}
-                    </Checkbox>
-
                     <Select
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
@@ -146,14 +131,14 @@ export default function Filter({ onFilterChange }:
                     />
 
                     <Select
-                         placeholder={afterMerge ? t('wardPlaceholder') : t('districtPlaceholder')}
+                         placeholder={t('wardPlaceholder')}
                          className="w-full"
                          value={wardCode}
-                         options={secondaryAddressOptions}
-                         onChange={handleDistrictChange}
+                         options={wardOptions}
+                         onChange={handleWardChange}
                          disabled={!provinceCode}
-                         loading={isDistrictSelectLoading}
-                         notFoundContent={isDistrictSelectLoading ? <span>Đang tải...</span> : undefined}
+                         loading={isWardSelectLoading}
+                         notFoundContent={isWardSelectLoading ? <span>Đang tải...</span> : undefined}
                          showSearch={{
                               filterOption: filterByLabel
                          }}

@@ -29,7 +29,6 @@ export default function PropertiesSection() {
 
   const params = useMemo<ApartmentQueryParams>(
     () => ({
-      addressType: "new",
       sortBy: "baseRentPrice",
       sortOrder: "asc",
       status: "available",
