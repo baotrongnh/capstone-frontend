@@ -1,4 +1,5 @@
-import { AuthState, UserInfo } from '@/types/auth'
+import { AuthState } from '@/types/auth'
+import { UserDetail } from '@/types/user'
 import { create } from 'zustand'
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -7,7 +8,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isAuthenticated: false,
     isHydrated: false,
 
-    setAuth: (user, tokens) => {
+    setAuth: (user: UserDetail, tokens) => {
         localStorage.setItem('accessToken', tokens.accessToken)
         localStorage.setItem('refreshToken', tokens.refreshToken)
         localStorage.setItem('user', JSON.stringify(user))
@@ -34,7 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
         if (accessToken && refreshToken && userStr) {
             try {
-                const user = JSON.parse(userStr) as UserInfo
+                const user = JSON.parse(userStr)
                 set({
                     user,
                     tokens: { accessToken, refreshToken },

@@ -1,10 +1,14 @@
 'use client'
 
+import { ROUTES } from '@/constants/routes'
+import { useCreateViewRequest } from '@/hooks/query/useViewRequest'
+import { useAuthStore } from '@/stores/auth.store'
 import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Input, Modal, Radio } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/vi'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { useState } from 'react'
 
 dayjs.locale('vi')
@@ -23,24 +27,42 @@ const TIME_SLOTS = [
 export default function ModalBookingSchedule({
      open,
      onClose,
-     onSubmit,
+     apartmentId
 }: {
      open: boolean
      onClose: () => void
-     onSubmit: (data: BookingScheduleData) => void
+     apartmentId: string
 }) {
      const t = useTranslations('BookingModal')
      const [date, setDate] = useState<Dayjs | null>(null)
      const [timeSlot, setTimeSlot] = useState<string>('')
      const [note, setNote] = useState<string>('')
      const [errors, setErrors] = useState<{ date?: string; timeSlot?: string }>({})
+     const { mutate, isPending } = useCreateViewRequest()
+
+     const user = useAuthStore((store) => store.user)
+     const hasPhone = user?.phone
+     const hasID = user?.identity
+     const isValidToBook = hasPhone && hasID
+
+     const onSubmit = (date: dayjs.Dayjs, timeSlot: string, note: string) => {
+          const appointmentAt = date.hour(
+               parseInt(timeSlot.split(':')[0]))
+               .minute(parseInt(timeSlot.split(':')[1]))
+               .toISOString()
+          mutate({
+               apartmentId,
+               appointmentAt,
+               note
+          })
+     }
 
      const handleOk = () => {
           if (!date || !timeSlot) {
                setErrors({ date: !date ? t('dateRequired') : undefined, timeSlot: !timeSlot ? t('timeRequired') : undefined })
                return
           }
-          onSubmit({ date, timeSlot, note })
+          onSubmit(date, timeSlot, note)
           handleCancel()
      }
 
@@ -81,7 +103,10 @@ export default function ModalBookingSchedule({
                               placeholder={t('datePlaceholder')}
                               disabledDate={disabledDate}
                               value={date}
-                              onChange={(val) => { setDate(val); setErrors(e => ({ ...e, date: undefined })) }}
+                              onChange={(val) => {
+                                   setDate(val)
+                                   setErrors(e => ({ ...e, date: undefined }))
+                              }}
                          />
                          {errors.date && <p className='text-red-500 text-xs'>{errors.date}</p>}
                     </div>
@@ -125,10 +150,32 @@ export default function ModalBookingSchedule({
                          />
                     </div>
 
+                    {!isValidToBook && (
+                         <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-3'>
+                              <p className='text-yellow-800 text-sm font-medium'>
+                                   ⚠️ Vui lòng cập nhật
+                                   {!hasPhone && 'số điện thoại'}
+                                   {hasPhone == null && hasID == null && ' &'}
+                                   {!hasID && ' CCCD '}
+                                   để đặt lịch xem
+                                   <Link href={ROUTES.PROFILE}>
+                                        <span className='text-muted underline'> (Cập nhật ngay)</span>
+                                   </Link>
+                              </p>
+                         </div>
+                    )}
+
                     {/* Actions */}
                     <div className='flex justify-end gap-2'>
                          <Button size='large' shape='round' onClick={handleCancel}>{t('cancel')}</Button>
-                         <Button size='large' type='primary' shape='round' style={{ minWidth: 140 }} onClick={handleOk}>
+                         <Button
+                              size='large'
+                              type='primary'
+                              shape='round'
+                              style={{ minWidth: 140 }}
+                              onClick={handleOk}
+                              disabled={isPending || !isValidToBook}
+                         >
                               {t('confirm')}
                          </Button>
                     </div>

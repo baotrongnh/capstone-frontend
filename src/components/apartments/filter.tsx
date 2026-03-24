@@ -1,36 +1,54 @@
 'use client'
 
-import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE, FURNISHING_OPTIONS } from '@/constants/apartment'
-import { useDistricts, useProvinces } from '@/hooks/query/useProvinces'
-import { Province } from '@/lib/services/provinces.service'
-import { ApartmentQueryParams, FurnishingType } from '@/types/apartment'
+import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
+import { useProvinces, useWards } from '@/hooks/query/useProvinces'
+import { ApartmentFilterPatch, FurnishingType } from '@/types/apartment'
 import { formatArea, formatPrice, normalizeText } from '@/utils/format'
 import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
-interface FilterProps {
-     onFilterChange: (filters: Partial<ApartmentQueryParams> | null) => void
+const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
+     unfurnished: 'furnishingOptions.unfurnished',
+     semi_furnished: 'furnishingOptions.semi_furnished',
+     fully_furnished: 'furnishingOptions.fully_furnished',
 }
 
-export default function Filter({ onFilterChange }: FilterProps) {
+export default function Filter({ onFilterChange }:
+     { onFilterChange: (filters: ApartmentFilterPatch | null) => void }) {
      const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
 
      // Location
-     const [afterMerge, setAfterMerge] = useState(false)
-     const [selectedProvince, setSelectedProvince] = useState<Province | null>(null)
-     const [district, setDistrict] = useState<string>()
+     const [provinceCode, setProvinceCode] = useState<number>()
+     const [wardCode, setWardCode] = useState<number>()
 
      // Other filters
      const [price, setPrice] = useState([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
-     const [area, setArea] = useState<[number, number]>([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
+     const [area, setArea] = useState([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
      const [bedrooms, setBedrooms] = useState<number | null>(null)
      const [furnishing, setFurnishing] = useState<FurnishingType>()
 
-     const { data: provinces = [], isLoading: loadingProvinces } = useProvinces(afterMerge)
-     const { data: districts = [], isLoading: loadingDistricts } = useDistricts(selectedProvince?.code, afterMerge)
+     const { data: provinces, isLoading: loadingProvinces } = useProvinces()
+     const {
+          data: wards,
+          isLoading: loadingWards,
+          isFetching: fetchingWards,
+     } = useWards(provinceCode)
+
+     const isWardSelectLoading = loadingWards || fetchingWards
+
+     const provinceOptions = provinces?.map(p => ({ label: p.name, value: p.code })) ?? []
+     const wardOptions = wards?.map(d => ({ label: d.name, value: d.code })) ?? []
+
+     const filterByLabel = (input: string, option?: { label?: string | number }) =>
+          normalizeText(String(option?.label ?? '').toLowerCase()).includes(input.toLowerCase())
+
+     const clearLocationFilter = () => {
+          setWardCode(undefined)
+          onFilterChange({ wardCode: undefined })
+     }
 
      useEffect(() => {
           const timer = setTimeout(() => {
@@ -41,26 +59,23 @@ export default function Filter({ onFilterChange }: FilterProps) {
 
      const resetAll = () => {
           setKeyword('')
-          setSelectedProvince(null)
-          setDistrict(undefined)
+          setProvinceCode(undefined)
+          setWardCode(undefined)
           setPrice([FILTER_PRICE_RANGE.MIN, FILTER_PRICE_RANGE.MAX])
           setArea([FILTER_AREA_RANGE.MIN, FILTER_AREA_RANGE.MAX])
           setBedrooms(null)
           setFurnishing(undefined)
-          setAfterMerge(false)
           onFilterChange(null)
      }
 
      const handleProvinceChange = (code?: number) => {
-          const province = code != null ? (provinces.find(p => p.code === code) ?? null) : null
-          setSelectedProvince(province)
-          setDistrict(undefined)
-          onFilterChange({ city: province?.name ?? undefined, district: undefined })
+          setProvinceCode(code)
+          clearLocationFilter()
      }
 
-     const handleDistrictChange = (value?: string) => {
-          setDistrict(value)
-          onFilterChange({ district: value })
+     const handleWardChange = (value?: number) => {
+          setWardCode(value)
+          onFilterChange({ wardCode: value })
      }
 
      const handleBedroomsChange = (value: number | null) => {
@@ -102,49 +117,30 @@ export default function Filter({ onFilterChange }: FilterProps) {
                <div>
                     <Label>{t('locationLabel')}</Label>
 
-                    <Checkbox
-                         checked={afterMerge}
-                         onChange={e => {
-                              setAfterMerge(e.target.checked)
-                              setSelectedProvince(null)
-                              setDistrict(undefined)
-                              onFilterChange({ city: undefined, district: undefined })
-                         }}
-                    >
-                         Địa chỉ sau sáp nhập
-                    </Checkbox>
-
                     <Select
                          placeholder={t('cityPlaceholder')}
                          className="w-full"
-                         value={selectedProvince?.code}
-                         options={provinces.map(p => ({ label: p.name, value: p.code }))}
+                         value={provinceCode}
+                         options={provinceOptions}
                          onChange={handleProvinceChange}
                          loading={loadingProvinces}
-                         showSearch={{
-                              filterOption: (input, option) =>
-                                   normalizeText((option?.label ?? '')
-                                        .toLowerCase())
-                                        .includes(input.toLowerCase())
-                         }}
+                         showSearch={{ filterOption: filterByLabel }}
                          style={{ marginTop: 15 }}
                          allowClear
                          onClear={() => handleProvinceChange(undefined)}
                     />
 
                     <Select
-                         placeholder={t('districtPlaceholder')}
+                         placeholder={t('wardPlaceholder')}
                          className="w-full"
-                         value={district}
-                         options={districts.map(d => ({ label: d.name, value: d.name }))}
-                         onChange={handleDistrictChange}
-                         disabled={!selectedProvince}
-                         loading={loadingDistricts}
+                         value={wardCode}
+                         options={wardOptions}
+                         onChange={handleWardChange}
+                         disabled={!provinceCode}
+                         loading={isWardSelectLoading}
+                         notFoundContent={isWardSelectLoading ? <span>Đang tải...</span> : undefined}
                          showSearch={{
-                              filterOption: (input, option) =>
-                                   normalizeText((option?.label ?? '')
-                                        .toLowerCase())
-                                        .includes(input.toLowerCase())
+                              filterOption: filterByLabel
                          }}
                          allowClear
                          style={{ marginTop: 15 }}
@@ -217,13 +213,13 @@ export default function Filter({ onFilterChange }: FilterProps) {
                {/* Furnishing Status */}
                <div className="space-y-2">
                     <Label>{t('furnishingLabel')}</Label>
-                    {FURNISHING_OPTIONS.map(option => (
+                    {(Object.keys(FURNISHING_TRANSLATION_KEY) as FurnishingType[]).map(option => (
                          <Checkbox
-                              key={option.value}
-                              checked={furnishing === option.value}
-                              onChange={e => handleFurnishingChange(option.value, e.target.checked)}
+                              key={option}
+                              checked={furnishing === option}
+                              onChange={e => handleFurnishingChange(option, e.target.checked)}
                          >
-                              <span className="text-sm">{t(`furnishingOptions.${option.value}`)}</span>
+                              <span className="text-sm">{t(FURNISHING_TRANSLATION_KEY[option])}</span>
                          </Checkbox>
                     ))}
                </div>

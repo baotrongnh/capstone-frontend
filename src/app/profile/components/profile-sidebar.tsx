@@ -1,128 +1,88 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   UserOutlined,
   HomeOutlined,
   WalletOutlined,
-  CalendarOutlined,
   SettingOutlined,
   LogoutOutlined,
-  DashboardOutlined,
+  FileTextOutlined,
+  ApartmentOutlined,
+  ContactsOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { ActorType } from "@/types/auth";
-import { ProfileNavItem, ProfileSidebarProps } from "@/types/profile";
+import { ProfileNavItem, ProfileRole, ProfileSidebarProps } from "@/types/profile";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 
 const getNavigationItems = (
-  actorType: ActorType,
+  role: ProfileRole,
   t: (key: string) => string,
 ): ProfileNavItem[] => {
-  const baseItems: ProfileNavItem[] = [];
-
-  const userItems: ProfileNavItem[] = [
+  const items: ProfileNavItem[] = [
     {
       key: "account",
       label: t("sidebar.myInformation"),
       icon: <UserOutlined />,
       path: "/profile/account",
-      roles: [ActorType.USER],
     },
     {
       key: "my-apartment",
       label: t("sidebar.myApartment"),
       icon: <HomeOutlined />,
       path: "/profile/my-apartment",
-      roles: [ActorType.USER],
+    },
+    {
+      key: "contracts",
+      label: t("sidebar.myContracts"),
+      icon: <ContactsOutlined />,
+      path: "/profile/contracts",
+    },
+    {
+      key: "Invoices",
+      label: t("sidebar.myBills"),
+      icon: <FileTextOutlined />,
+      path: "/profile/invoices",
     },
     {
       key: "payment-history",
       label: t("sidebar.paymentHistory"),
       icon: <WalletOutlined />,
       path: "/profile/payment-history",
-      roles: [ActorType.USER],
     },
     {
       key: "settings",
       label: t("sidebar.settings"),
       icon: <SettingOutlined />,
       path: "/profile/settings",
-      roles: [ActorType.PARTNER],
     },
   ];
 
-  const partnerItems: ProfileNavItem[] = [
-    {
-      key: "account",
-      label: t("sidebar.accountInformation"),
-      icon: <UserOutlined />,
-      path: "/profile/account",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "partner-dashboard",
-      label: t("sidebar.partnerDashboard"),
-      icon: <DashboardOutlined />,
-      path: "/profile/dashboard",
-      roles: [ActorType.PARTNER],
-    },
-    {
+  if (role === "partner") {
+    items.splice(2, 0, {
       key: "my-properties",
       label: t("sidebar.myProperties"),
-      icon: <HomeOutlined />,
+      icon: <ApartmentOutlined />,
       path: "/profile/my-properties",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "bookings",
-      label: t("sidebar.bookings"),
-      icon: <CalendarOutlined />,
-      path: "/profile/bookings",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "revenue",
-      label: t("sidebar.revenue"),
-      icon: <WalletOutlined />,
-      path: "/profile/revenue",
-      roles: [ActorType.PARTNER],
-    },
-    {
-      key: "settings",
-      label: t("sidebar.settings"),
-      icon: <SettingOutlined />,
-      path: "/profile/settings",
-      roles: [ActorType.PARTNER],
-    },
-  ];
-
-  let roleSpecificItems: ProfileNavItem[] = [];
-
-  switch (actorType) {
-    case ActorType.USER:
-      roleSpecificItems = userItems;
-      break;
-    case ActorType.PARTNER:
-      roleSpecificItems = partnerItems;
-      break;
+    });
   }
 
-  return [...roleSpecificItems, ...baseItems];
+  return items;
 };
 
 export default function ProfileSidebar({
-  actorType,
+  role,
   onLogout,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("Profile");
 
   const navigationItems = useMemo(
-    () => getNavigationItems(actorType, t),
-    [actorType, t],
+    () => getNavigationItems(role, t),
+    [role, t],
   );
 
   const menuItems = navigationItems.map((item) => ({
@@ -133,22 +93,33 @@ export default function ProfileSidebar({
   }));
 
   const activeKey = useMemo(() => {
-    const matchedItem = navigationItems.find((item) => pathname === item.path);
+    if (pathname.startsWith("/profile/invoices/")) {
+      const from = searchParams.get("from");
+      if (from === "payments") {
+        return "payment-history";
+      }
+      return "Invoices";
+    }
+
+    const matchedItem = navigationItems.find((item) =>
+      pathname === item.path || pathname.startsWith(`${item.path}/`),
+    );
     return matchedItem?.key || "account";
-  }, [pathname, navigationItems]);
+  }, [pathname, navigationItems, searchParams]);
 
   return (
-    <div className="h-full flex flex-col shadow-sm">
-      <div className="flex-1 overflow-y-auto">
+    <div className="h-full flex flex-col shadow-sm bg-white">
+      <div className="flex-1 overflow-y-auto p-2">
         <Menu
           mode="inline"
           selectedKeys={[activeKey]}
           items={menuItems}
-          className="border-0"
+          className="border-0 p-0 m-0"
+          style={{ borderRight: 0 }}
         />
       </div>
 
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 p-4 bg-white ">
         <button
           onClick={onLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"

@@ -5,14 +5,8 @@ export const FILTER_AREA_RANGE = { MIN: 10, MAX: 200, STEP: 5 }
 export const BEDROOM_OPTIONS = [1, 2, 3, 4, 5]
 export const DEBOUNCE_DELAY = 400
 
-export const FURNISHING_OPTIONS = [
-     { value: 'unfurnished' as const, label: 'Không nội thất' },
-     { value: 'semi_furnished' as const, label: 'Nội thất cơ bản' },
-     { value: 'fully_furnished' as const, label: 'Đầy đủ nội thất' },
-]
-
 export const DEFAULT_APARTMENT_FILTERS: ApartmentQueryParams = {
-     page: 1, limit: 10, status: 'available', sortBy: 'createdAt', sortOrder: 'desc'
+     page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc', status: 'available'
 }
 
 export const APARTMENT_SORT_OPTIONS = [
@@ -25,12 +19,6 @@ export const APARTMENT_SORT_OPTIONS = [
      { key: 'bedroomsAsc', value: 'numberOfBedrooms-asc' },
      { key: 'bedroomsDesc', value: 'numberOfBedrooms-desc' },
 ]
-
-export const FURNISHING: Record<string, string> = {
-     fully_furnished: 'Đầy đủ nội thất',
-     semi_furnished: 'Nội thất cơ bản',
-     unfurnished: 'Không nội thất',
-}
 
 export const APARTMENT_STATUS: Record<string, { label: string; color: string }> = {
      available: { label: 'Còn trống', color: 'green' },
@@ -48,9 +36,4 @@ export const ROOM_TYPE: Record<string, string> = {
      dining_room: 'Phòng ăn',
      balcony: 'Ban công',
      other: 'Khác',
-}
-
-export function formatPrice(price: string | number | null | undefined) {
-     if (!price) return 'Liên hệ'
-     return Number(price).toLocaleString('vi-VN') + ' ₫'
 }

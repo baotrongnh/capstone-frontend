@@ -1,29 +1,30 @@
 import axios from 'axios'
 
-const BASE = process.env.NEXT_PUBLIC_PROVINCES_API_URL! // https://provinces.open-api.vn/api
+const BASE = process.env.NEXT_PUBLIC_PROVINCES_API_URL
 
 export interface Province {
      code: number
      name: string
 }
 
-export interface District {
+export interface Division {
      code: number
      name: string
 }
 
+type ProvinceResponse = {
+     wards?: Division[]
+}
+
 export const provincesService = {
-     getAll: (afterMerge: boolean): Promise<Province[]> => {
-          const url = afterMerge ? `${BASE}/v2/p/` : `${BASE}/v1/p/`
-          return axios.get<Province[]>(url).then(r => r.data)
+     getAll: (): Promise<Province[]> => {
+          return axios.get<Province[]>(`${BASE}/v2/p/`).then(r => r.data)
      },
 
-     getDistricts: (provinceCode: number, afterMerge: boolean): Promise<District[]> => {
-          const url = afterMerge
-               ? `${BASE}/v2/p/${provinceCode}?depth=2`
-               : `${BASE}/v1/p/${provinceCode}?depth=2`
+     getWards: (provinceCode: number): Promise<Division[]> => {
+          const url = `${BASE}/v2/p/${provinceCode}?depth=2`
           return axios
-               .get<{ districts: District[] }>(url)
-               .then(r => r.data.districts ?? [])
-     },
+               .get<ProvinceResponse>(url)
+               .then(r => r.data.wards ?? [])
+     }
 }

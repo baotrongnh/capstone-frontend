@@ -9,7 +9,18 @@
     "language": "Ngôn ngữ",
     "login": "Đăng nhập",
     "profile": "Trang cá nhân",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "addressTypeLabel": "Chế độ địa chỉ",
+    "addressTypeNew": "Sau sáp nhập",
+    "addressTypeOld": "Trước sáp nhập",
+    "notifications": "Thông báo",
+    "viewAllNotifications": "Xem tất cả thông báo",
+    "notificationSample1": "Lịch xem căn hộ của bạn đã được xác nhận.",
+    "notificationSample2": "Giảm giá 10% cho đơn đặt thuê đầu tiên trong tháng này.",
+    "notificationSample3": "Hệ thống vừa cập nhật chính sách đặt lịch mới.",
+    "notificationTime1": "Vừa xong",
+    "notificationTime2": "5 phút trước",
+    "notificationTime3": "1 giờ trước"
   },
   "HomePage": {
     "title": "Xin chào",
@@ -221,6 +232,7 @@
       "myApartment": "Căn hộ của tôi",
       "myContracts": "Hợp đồng của tôi",
       "paymentHistory": "Lịch sử thanh toán",
+      "myBills": "Hóa đơn của tôi",
       "settings": "Cài đặt",
       "partnerDashboard": "Bảng điều khiển đối tác",
       "myProperties": "Bất động sản của tôi",
@@ -250,8 +262,8 @@
       "nationalIdPlaceholder": "Nhập số CMND/CCCD của bạn",
       "passportNumber": "Số hộ chiếu",
       "passportNumberPlaceholder": "Nhập số hộ chiếu của bạn",
-      "emergencyContactName": "Tên liên hệ khẩn cấp",
-      "emergencyContactNamePlaceholder": "Nhập tên liên hệ khẩn cấp",
+      "emergencyContactName": "Tên người liên hệ khẩn cấp",
+      "emergencyContactNamePlaceholder": "Nhập tên người liên hệ khẩn cấp",
       "emergencyContactPhone": "Số điện thoại khẩn cấp",
       "emergencyContactPhonePlaceholder": "Nhập số điện thoại khẩn cấp",
       "companyName": "Tên công ty",
@@ -267,6 +279,7 @@
       "contractEndDate": "Ngày kết thúc hợp đồng",
       "cancel": "Hủy",
       "saveChanges": "Lưu thay đổi",
+      "edit": "Chỉnh sửa",
       "updateSuccess": "Cập nhật hồ sơ thành công",
       "updateFailed": "Cập nhật hồ sơ thất bại",
       "nationalIdInvalid": "Vui lòng nhập số CCCD hợp lệ (9 hoặc 12 chữ số)",
@@ -281,8 +294,27 @@
       "cccdBackUploadSuccess": "Tải lên ảnh mặt sau thành công",
       "cccdUploadFailed": "Tải ảnh thất bại. Vui lòng thử lại.",
       "cccdFrontRequired": "Vui lòng tải lên mặt trước của CCCD.",
+      "cccdBackRequired": "Vui lòng tải lên mặt sau của CCCD.",
       "cccdUploadSuccess": "Tải lên và xác minh CCCD thành công.",
       "cccdUploadSubmit": "Tải lên CCCD",
+      "cccdAiVerifying": "AI đang xác minh...",
+      "cccdAiCheckFailedTitle": "Xác minh AI thất bại",
+      "cccdAiFrontFailed": "Hệ thống AI không thể nhận dạng mặt trước của CCCD bạn.",
+      "cccdAiBackFailed": "Hệ thống AI không thể nhận dạng mặt sau của CCCD bạn.",
+      "cccdAiBothFailed": "Hệ thống AI không thể nhận dạng cả hai mặt của CCCD bạn.",
+      "cccdAiRetryHint": "Vui lòng tải lên ảnh rõ hơn và thử lại.",
+      "identityInfoTitle": "Thông tin CCCD đã trích xuất",
+      "idName": "Họ và tên (trên CCCD)",
+      "idDob": "Ngày sinh",
+      "idSex": "Giới tính",
+      "idNationality": "Quốc tịch",
+      "idEthnicity": "Dân tộc",
+      "idHome": "Quê quán",
+      "idAddress": "Nơi đăng ký thường trú",
+      "idFeatures": "Đặc điểm nhận dạng",
+      "idIssueDate": "Ngày cấp",
+      "idExpiry": "Ngày hết hạn",
+      "idVerifiedAt": "Thời gian xác minh",
       "verified": "Đã xác minh",
       "pendingVerification": "Chờ xác minh"
     },
@@ -318,6 +350,36 @@
       "totalCost": "Tổng chi phí",
       "totalUtilityCost": "Tổng chi phí tiện ích",
       "thisMonth": "Tháng này",
+      "additionalInfo": "Thông tin mở rộng",
+      "apartmentId": "Mã căn hộ",
+      "floorNumber": "Tầng",
+      "maxConcurrentViewings": "Số lượt xem tối đa cùng lúc",
+      "newWardCode": "Mã phường mới",
+      "oldWardCode": "Mã phường cũ",
+      "rating": "Đánh giá",
+      "latitude": "Vĩ độ",
+      "longitude": "Kinh độ",
+      "usableArea": "Diện tích sử dụng",
+      "furnishingStatus": "Tình trạng nội thất",
+      "yearBuilt": "Năm xây dựng",
+      "ownerName": "Tên chủ sở hữu",
+      "ownerCompany": "Công ty chủ sở hữu",
+      "ownerId": "Mã chủ sở hữu",
+      "approvedByOperatorId": "Mã người duyệt",
+      "approvedAt": "Thời gian duyệt",
+      "createdAt": "Thời gian tạo",
+      "updatedAt": "Thời gian cập nhật",
+      "videoTourUrl": "Video tour",
+      "description": "Mô tả",
+      "amenities": "Tiện ích",
+      "roomsCount": "Số phòng",
+      "iotDevicesCount": "Số thiết bị IoT",
+      "utilityMetersCount": "Số đồng hồ tiện ích",
+      "furnishing": {
+        "fully_furnished": "Đầy đủ nội thất",
+        "semi_furnished": "Nội thất cơ bản",
+        "unfurnished": "Không nội thất"
+      },
       "status": {
         "available": "Có sẵn",
         "occupied": "Đã có người ở",
@@ -330,32 +392,107 @@
     },
     "payment": {
       "title": "Lịch sử thanh toán",
-      "subtitle": "Xem tất cả các giao dịch thanh toán của bạn",
-      "noPayments": "Không tìm thấy bản ghi thanh toán",
-      "transactionId": "Mã giao dịch",
-      "type": "Loại",
-      "apartment": "Căn hộ",
-      "dueDate": "Ngày đáo hạn",
-      "paidDate": "Ngày thanh toán",
+      "subtitle": "Xem tất cả giao dịch thanh toán từ các hóa đơn của bạn",
+      "paymentReference": "Mã thanh toán",
+      "invoiceNumber": "Số hóa đơn",
+      "paymentMethod": "Phương thức",
+      "paymentDate": "Ngày thanh toán",
       "amount": "Số tiền",
       "status": "Trạng thái",
-      "actions": "Thao tác",
-      "view": "Xem",
-      "invoice": "Hóa đơn",
       "all": "Tất cả",
-      "types": {
-        "rent": "Tiền thuê",
-        "electricity": "Điện",
-        "water": "Nước",
-        "maintenance": "Bảo trì",
-        "deposit": "Đặt cọc",
-        "other": "Khác"
-      },
+      "empty": "Không tìm thấy thanh toán",
+      "loadError": "Không thể tải danh sách thanh toán",
+      "syntheticStatus": "Chờ xử lý (Hóa đơn chưa thanh toán)",
       "statuses": {
         "pending": "Chờ xử lý",
+        "processing": "Đang xử lý",
         "completed": "Hoàn thành",
         "failed": "Thất bại",
+        "refunded": "Đã hoàn tiền",
         "cancelled": "Đã hủy"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "cash": "Tiền mặt",
+        "e_wallet": "Ví điện tử",
+        "auto_debit": "Trích nợ tự động",
+        "credit_card": "Thẻ tín dụng",
+        "debit_card": "Thẻ ghi nợ",
+        "other": "Khác"
+      },
+      "checkout": {
+        "labels": {
+          "invoiceId": "Mã hóa đơn",
+          "invoiceNumber": "Số hóa đơn",
+          "totalAmount": "Tổng tiền",
+          "status": "Trạng thái"
+        },
+        "success": {
+          "title": "Thanh toán thành công",
+          "subtitle": "Hệ thống đã ghi nhận giao dịch của bạn.",
+          "loadWarning": "Không thể tải đầy đủ thông tin hóa đơn",
+          "backToHistory": "Về lịch sử thanh toán"
+        },
+        "cancel": {
+          "title": "Bạn đã hủy thanh toán",
+          "subtitle": "Giao dịch chưa hoàn tất. Bạn có thể quay lại hóa đơn để thanh toán lại.",
+          "loadWarning": "Không thể tải đầy đủ thông tin hóa đơn",
+          "backToInvoice": "Quay về chi tiết hóa đơn"
+        }
+      },
+      "detail": {
+        "title": "Chi tiết thanh toán",
+        "paymentId": "Mã thanh toán",
+        "loadError": "Không thể tải chi tiết thanh toán",
+        "notFound": "Không tìm thấy thanh toán",
+        "sections": {
+          "overview": "Tổng quan",
+          "invoice": "Thông tin hóa đơn"
+        },
+        "summary": {
+          "amount": "Số tiền thanh toán",
+          "status": "Trạng thái",
+          "paymentDate": "Ngày thanh toán"
+        },
+        "fields": {
+          "paymentReference": "Mã tham chiếu thanh toán",
+          "status": "Trạng thái",
+          "amount": "Số tiền",
+          "currency": "Tiền tệ",
+          "paymentMethod": "Phương thức thanh toán",
+          "transactionId": "Mã giao dịch",
+          "paymentDate": "Ngày thanh toán",
+          "paymentGateway": "Cổng thanh toán",
+          "bankName": "Tên ngân hàng",
+          "accountNumber": "Số tài khoản",
+          "refundAmount": "Số tiền hoàn",
+          "refundDate": "Ngày hoàn tiền",
+          "refundReason": "Lý do hoàn tiền",
+          "notes": "Ghi chú",
+          "createdAt": "Ngày tạo",
+          "updatedAt": "Ngày cập nhật",
+          "id": "Mã thanh toán"
+        },
+        "invoice": {
+          "id": "Mã hóa đơn",
+          "invoiceNumber": "Số hóa đơn",
+          "invoiceType": "Loại hóa đơn",
+          "currency": "Tiền tệ",
+          "totalAmount": "Tổng tiền",
+          "baseRent": "Tiền thuê cơ bản",
+          "taxAmount": "Thuế",
+          "contentTitle": "Tiêu đề nội dung",
+          "contentDescription": "Mô tả nội dung"
+        },
+        "table": {
+          "description": "Mô tả",
+          "type": "Loại",
+          "quantity": "Số lượng",
+          "amount": "Số tiền"
+        },
+        "empty": {
+          "invoiceItems": "Không có hạng mục hóa đơn"
+        }
       }
     },
     "settings": {
@@ -391,6 +528,182 @@
         "asiaHoChiMinh": "Asia/Hồ Chí Minh",
         "americaNewYork": "America/New York"
       }
+    },
+    "bills": {
+      "title": "Hóa đơn của tôi",
+      "subtitle": "Xem và thanh toán các hóa đơn sắp tới và đang chờ xử lý",
+      "noBills": "Không tìm thấy hóa đơn",
+      "noResults": "Không có hóa đơn nào phù hợp với bộ lọc",
+      "billNumber": "Số hóa đơn",
+      "type": "Loại",
+      "apartment": "Căn hộ",
+      "description": "Mô tả",
+      "issueDate": "Ngày phát hành",
+      "dueDate": "Ngày đến hạn",
+      "amount": "Số tiền",
+      "status": "Trạng thái",
+      "actions": "Thao tác",
+      "view": "Xem",
+      "payNow": "Thanh toán ngay",
+      "all": "Tất cả",
+      "overdueAlert": "{count} hóa đơn đã quá hạn!",
+      "pendingAlert": "{count} hóa đơn đang chờ thanh toán",
+      "totalDueDesc": "Tổng số tiền cần thanh toán:",
+      "totalItems": "Tổng cộng {total} hóa đơn",
+      "types": {
+        "rent": "Tiền thuê",
+        "electricity": "Điện",
+        "water": "Nước",
+        "maintenance": "Bảo trì",
+        "deposit": "Đặt cọc",
+        "other": "Khác"
+      },
+      "statuses": {
+        "upcoming": "Sắp tới",
+        "pending": "Chờ thanh toán",
+        "overdue": "Quá hạn",
+        "paid": "Đã thanh toán"
+      }
+    },
+    "invoices": {
+      "title": "Hóa đơn của tôi",
+      "subtitle": "Xem tất cả hóa đơn từ hợp đồng của bạn",
+      "invoiceNumber": "Số hóa đơn",
+      "type": "Loại",
+      "apartment": "Căn hộ",
+      "amount": "Số tiền",
+      "dueDate": "Hạn thanh toán",
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "empty": "Không có hóa đơn",
+      "loadError": "Không tải được danh sách hóa đơn",
+      "types": {
+        "rent": "Tiền thuê",
+        "electricity": "Điện",
+        "water": "Nước",
+        "maintenance": "Bảo trì",
+        "deposit": "Đặt cọc",
+        "contract_deposit": "Đặt cọc hợp đồng",
+        "utility": "Tiện ích",
+        "service": "Dịch vụ",
+        "penalty": "Phạt",
+        "other": "Khác"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "cash": "Tiền mặt",
+        "e_wallet": "Ví điện tử",
+        "auto_debit": "Trích nợ tự động",
+        "credit_card": "Thẻ tín dụng",
+        "debit_card": "Thẻ ghi nợ"
+      },
+      "statuses": {
+        "draft": "Nháp",
+        "issued": "Chưa thanh toán",
+        "sent": "Đã gửi",
+        "partially_paid": "Thanh toán một phần",
+        "paid": "Đã thanh toán",
+        "overdue": "Quá hạn",
+        "cancelled": "Đã hủy"
+      },
+      "detail": {
+        "title": "Chi tiết hóa đơn",
+        "invoiceId": "Mã hóa đơn",
+        "loadError": "Không tải được chi tiết hóa đơn",
+        "notFound": "Không tìm thấy hóa đơn",
+        "sections": {
+          "overview": "Tổng quan",
+          "invoiceContent": "Nội dung hóa đơn",
+          "utilityCharges": "Phí tiện ích",
+          "additionalCharges": "Phụ phí",
+          "discounts": "Giảm trừ",
+          "payments": "Thanh toán"
+        },
+        "summary": {
+          "totalAmount": "Tổng tiền",
+          "status": "Trạng thái",
+          "invoiceType": "Loại hóa đơn"
+        },
+        "fields": {
+          "invoiceNumber": "Số hóa đơn",
+          "status": "Trạng thái",
+          "invoiceType": "Loại hóa đơn",
+          "billingStart": "Kỳ thanh toán bắt đầu",
+          "billingEnd": "Kỳ thanh toán kết thúc",
+          "dueDate": "Hạn thanh toán",
+          "issueDate": "Ngày phát hành",
+          "sentAt": "Ngày gửi",
+          "paidAt": "Ngày thanh toán",
+          "currency": "Tiền tệ",
+          "paymentMethod": "Phương thức thanh toán",
+          "totalAmount": "Tổng tiền",
+          "baseRent": "Tiền thuê cơ bản",
+          "taxAmount": "Thuế",
+          "invoiceDocument": "Tài liệu hóa đơn",
+          "notes": "Ghi chú",
+          "createdAt": "Ngày tạo",
+          "updatedAt": "Ngày cập nhật",
+          "id": "Mã hóa đơn",
+          "title": "Tiêu đề",
+          "description": "Mô tả"
+        },
+        "table": {
+          "description": "Mô tả",
+          "type": "Loại",
+          "quantity": "Số lượng",
+          "amount": "Số tiền",
+          "paymentId": "Mã thanh toán",
+          "method": "Phương thức",
+          "status": "Trạng thái",
+          "paymentDate": "Ngày thanh toán"
+        },
+        "errors": {
+          "invalidReturnUrl": "Đường dẫn Return URL không được sử dụng localhost. Vui lòng đặt NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL là domain https công khai.",
+          "createPaymentLinkFailed": "Không thể tạo link thanh toán. Vui lòng thử lại.",
+          "missingCheckoutUrl": "Không nhận được link thanh toán từ hệ thống."
+        },
+        "actions": {
+          "openDocument": "Mở tài liệu",
+          "backToInvoices": "Quay lại danh sách hóa đơn",
+          "payNow": "Thanh toán"
+        },
+        "empty": {
+          "invoiceItems": "Không có hạng mục hóa đơn",
+          "utilityCharges": "Không có phí tiện ích",
+          "additionalCharges": "Không có phụ phí",
+          "discounts": "Không có giảm trừ",
+          "payments": "Không có thanh toán"
+        }
+      }
+    },
+    "properties": {
+      "title": "Bất động sản của tôi",
+      "subtitle": "Quản lý tất cả bất động sản đã đăng của bạn",
+      "addProperty": "Thêm bất động sản",
+      "noProperties": "Bạn chưa có bất động sản nào",
+      "noResults": "Không có bất động sản nào phù hợp với tìm kiếm",
+      "searchPlaceholder": "Tìm theo tên hoặc địa chỉ...",
+      "allStatuses": "Tất cả trạng thái",
+      "loading": "Đang tải...",
+      "view": "Xem",
+      "edit": "Chỉnh sửa",
+      "beds": "phòng ngủ",
+      "baths": "phòng tắm",
+      "vacant": "Trống",
+      "contractEnds": "Hợp đồng kết thúc",
+      "stats": {
+        "total": "Tổng bất động sản",
+        "available": "Còn trống",
+        "occupied": "Đã cho thuê",
+        "monthlyRevenue": "Doanh thu tháng"
+      },
+      "status": {
+        "available": "Còn trống",
+        "occupied": "Đã có người ở",
+        "maintenance": "Bảo trì",
+        "reserved": "Đã đặt trước",
+        "inactive": "Không hoạt động"
+      }
     }
   },
   "ApartmentListPage": {
@@ -415,7 +728,8 @@
       "oldest": "Cũ nhất",
       "bedroomsAsc": "Số phòng tăng dần",
       "bedroomsDesc": "Số phòng giảm dần"
-    }
+    },
+    "month": "tháng"
   },
   "ApartmentDetailPage": {
     "breadcrumbHome": "Trang chủ",
@@ -471,6 +785,8 @@
     "locationLabel": "Khu vực",
     "cityPlaceholder": "Thành phố",
     "districtPlaceholder": "Quận / Huyện",
+    "wardPlaceholder": "Phường",
+    "afterMergeLabel": "Địa chỉ sau sáp nhập",
     "priceLabel": "Giá thuê",
     "areaLabel": "Diện tích",
     "bedroomsLabel": "Phòng ngủ",

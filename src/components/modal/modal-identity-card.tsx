@@ -1,38 +1,35 @@
 'use client';
 
-import { Modal, Upload, Button, Tag, App } from 'antd';
-import { InboxOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useVerifyIdentity } from '@/hooks/query/useUser';
+import { ModalIdentityCardProps } from '@/types/user';
+import { InboxOutlined } from '@ant-design/icons';
+import { Alert, App, Button, Modal, Upload } from 'antd';
 import { useTranslations } from 'next-intl';
-import { UserIdentity } from '@/types/user';
-import { useUpdateIdentityCard } from '@/hooks/query/useUser';
+import { useState } from 'react';
 
-interface ModalIdentityCardProps {
-    open: boolean;
-    onClose: () => void;
-    identity?: UserIdentity;
-}
-
-export default function ModalIdentityCard({ open, onClose, identity }: ModalIdentityCardProps) {
+export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardProps) {
     const t = useTranslations('Profile.account');
     const { message } = App.useApp();
-    const { mutateAsync: updateIdentityCard } = useUpdateIdentityCard();
+    const { mutateAsync: verifyIdentity } = useVerifyIdentity();
 
     const [frontFile, setFrontFile] = useState<File | null>(null);
     const [backFile, setBackFile] = useState<File | null>(null);
-    const [frontUrl, setFrontUrl] = useState<string | undefined>(identity?.identityCardFrontUrl);
-    const [backUrl, setBackUrl] = useState<string | undefined>(identity?.identityCardBackUrl);
+    const [frontUrl, setFrontUrl] = useState<string | undefined>(undefined);
+    const [backUrl, setBackUrl] = useState<string | undefined>(undefined);
     const [submitting, setSubmitting] = useState(false);
+    const [aiErrorSides, setAiErrorSides] = useState<{ front: boolean; back: boolean } | null>(null);
 
     const handleFrontUpload = (file: File) => {
         setFrontFile(file);
         setFrontUrl(URL.createObjectURL(file));
+        setAiErrorSides(prev => prev ? { ...prev, front: false } : null);
         return false;
     };
 
     const handleBackUpload = (file: File) => {
         setBackFile(file);
         setBackUrl(URL.createObjectURL(file));
+        setAiErrorSides(prev => prev ? { ...prev, back: false } : null);
         return false;
     };
 
@@ -41,9 +38,19 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
             message.warning(t('cccdFrontRequired'));
             return;
         }
+        if (!backFile) {
+            message.warning(t('cccdBackRequired'));
+            return;
+        }
         setSubmitting(true);
+        setAiErrorSides(null);
         try {
-            await updateIdentityCard({ front: frontFile, back: backFile ?? undefined });
+            const result = await verifyIdentity({ identityCardFront: frontFile, identityCardBack: backFile });
+            const { front, back } = result.aiVerification;
+            if (!front.success || !back.success) {
+                setAiErrorSides({ front: !front.success, back: !back.success });
+                return;
+            }
             message.success(t('cccdUploadSuccess'));
             setFrontFile(null);
             setBackFile(null);
@@ -58,8 +65,9 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
     const handleClose = () => {
         setFrontFile(null);
         setBackFile(null);
-        setFrontUrl(identity?.identityCardFrontUrl);
-        setBackUrl(identity?.identityCardBackUrl);
+        setFrontUrl(undefined);
+        setBackUrl(undefined);
+        setAiErrorSides(null);
         onClose();
     };
 
@@ -70,11 +78,6 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
             title={
                 <div className="flex items-center gap-3">
                     <span className="font-semibold text-base">{t('cccdTitle')}</span>
-                    {identity?.isVerified ? (
-                        <Tag icon={<CheckCircleOutlined />} color="success">{t('verified')}</Tag>
-                    ) : (
-                        <Tag icon={<ClockCircleOutlined />} color="warning">{t('pendingVerification')}</Tag>
-                    )}
                 </div>
             }
             footer={[
@@ -87,15 +90,35 @@ export default function ModalIdentityCard({ open, onClose, identity }: ModalIden
                     size="large"
                     onClick={handleSubmit}
                     loading={submitting}
-                    disabled={!frontFile}
+                    disabled={!frontFile || !backFile}
                 >
-                    {t('cccdUploadSubmit')}
+                    {submitting ? t('cccdAiVerifying') : t('cccdUploadSubmit')}
                 </Button>,
             ]}
             width={720}
             centered
         >
             <p className="text-sm text-gray-500 mb-4">{t('cccdSubtitle')}</p>
+            {aiErrorSides && (
+                <Alert
+                    type="error"
+                    showIcon
+                    className="mb-4"
+                    title={t('cccdAiCheckFailedTitle')}
+                    description={
+                        <div>
+                            <p>
+                                {aiErrorSides.front && aiErrorSides.back
+                                    ? t('cccdAiBothFailed')
+                                    : aiErrorSides.front
+                                        ? t('cccdAiFrontFailed')
+                                        : t('cccdAiBackFailed')}
+                            </p>
+                            <p className="mt-1">{t('cccdAiRetryHint')}</p>
+                        </div>
+                    }
+                />
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Front */}
                 <div>

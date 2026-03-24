@@ -1,34 +1,37 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useState, useRef, useMemo } from "react";
-import { MailOutlined, StarFilled } from "@ant-design/icons";
+import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
-import ModalReservation from "../modal/modalReservation";
-import {
-  ApartmenList,
-  ApartmentItem,
-  ApartmentQueryParams,
-} from "@/types/apartment";
+import { ApartmentItem, ApartmentQueryParams } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
-import ModalLeaveInformation from "../modal/modalLeaveInformation";
-import AuthModal from "../modal/auth-modal";
+import ModalBookingSchedule from "../modal/modal-booking-schedule";
+import ModalBooking from "../modal/modal-booking";
+import ModalLoginRequired from "../modal/modal-login-required";
+import ModalVerify from "../modal/modal-verify";
+import { ROUTES } from "@/constants/routes";
+import { UserDetail } from "@/types/user";
 export default function PropertiesSection() {
-  const t = useTranslations("HomePage");
+  const router = useRouter();
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalReservation, setModalReservation] = useState(false);
-  const [openLogin, setOpenLogin] = useState(false);
+  const [modalVerify, setModalVerify] = useState(false);
+  const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
+    useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const [selectedApartmentId, setSelectedApartmentId] = useState<
     string | number | null
   >(null);
 
   const params = useMemo<ApartmentQueryParams>(
     () => ({
-      status: "available",
       sortBy: "baseRentPrice",
       sortOrder: "asc",
+      status: "available",
     }),
     [],
   );
@@ -40,7 +43,6 @@ export default function PropertiesSection() {
   if (!apartments) {
     return <div>Loading...</div>;
   }
-  console.log("Fetched apartments data:", apartments);
 
   const apartmentsList = Array.isArray(apartments)
     ? apartments
@@ -54,7 +56,7 @@ export default function PropertiesSection() {
 
   const handleDetail = (id: string | number) => {
     console.log("Navigate to apartment detail with ID:", id);
-    window.location.href = `/apartment/${id}`;
+    router.push(`/apartment/${id}`);
   };
 
   const handleScroll = (direction: "left" | "right") => {
@@ -71,18 +73,27 @@ export default function PropertiesSection() {
     }
   };
 
-  const handleOpenModalContact = (apartmentId: string | number) => {
-    setSelectedApartmentId(apartmentId);
-    setIsModalOpen(true);
+  const handleButtonRedirect = () => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true);
+    } else {
+      setIsBookingModalOpen(true);
+    }
   };
 
   const handleReservation = (apartmentId: string | number) => {
     setSelectedApartmentId(apartmentId);
-    if (user) {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true);
+    } else if (user?.isVerified === true && user?.identity !== null) {
       setModalReservation(true);
     } else {
-      setOpenLogin(true);
+      setModalVerify(true);
     }
+  };
+
+  const handleVerify = () => {
+    router.push(`${ROUTES.PROFILE}`);
   };
 
   return (
@@ -123,7 +134,8 @@ export default function PropertiesSection() {
                     <div className="space-y-1 text-xs text-gray-500 mb-2">
                       <div>{apartment.totalArea} m²</div>
                       <div>
-                        {apartment.district}, {apartment.city}
+                        {apartment.newAddress?.wardName},{" "}
+                        {apartment.newAddress?.provinceName}
                       </div>
                       <div>
                         {apartment.numberOfBedrooms} PN ·{" "}
@@ -167,7 +179,7 @@ export default function PropertiesSection() {
                     </div>
 
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>758 đánh giá</span>
+                      <span>{0} đánh giá</span>
                       <span>/tháng</span>
                     </div>
                   </div>
@@ -176,7 +188,7 @@ export default function PropertiesSection() {
                       size="middle"
                       shape="round"
                       style={{ minWidth: 110, height: 30 }}
-                      onClick={() => handleOpenModalContact(apartment.id)}
+                      onClick={() => handleButtonRedirect()}
                     >
                       Đặt lịch xem
                     </Button>
@@ -209,18 +221,29 @@ export default function PropertiesSection() {
             →
           </button>
         </div>
-        <ModalLeaveInformation
-          open={isModalOpen}
-          setOpen={setIsModalOpen}
-          apartmentId={selectedApartmentId}
-        />
-        <ModalReservation
+
+        <ModalBooking
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}
-          userId={user?.id}
         />
-        <AuthModal open={openLogin} onClose={() => setOpenLogin(false)} />
+
+        <ModalBookingSchedule
+          open={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          apartmentId={String(selectedApartmentId)}
+        />
+
+        <ModalLoginRequired
+          isModalOpen={isModalLoginRequiredOpen}
+          setIsModalOpen={setIsModalLoginRequiredLogin}
+        />
+
+        <ModalVerify
+          isOpen={modalVerify}
+          onClose={() => setModalVerify(false)}
+          onVerify={() => handleVerify()}
+        />
       </div>
     </div>
   );

@@ -1,78 +1,27 @@
-// ========== User API Types ==========
+import { paths } from "./api";
 
-export type ContractApartment = {
-  id: string;
-  address: string;
-  apartmentNumber: string;
-};
+export type UserDetail = NonNullable<paths["/api/v1/users/profile"]['get']['responses']['200']['content']['application/json']['data']>
+export type ContractMembership = NonNullable<NonNullable<UserDetail['contractMemberships']>[number]>
+export type RentalContractSummary = ContractMembership['rentalContract']
+export type ContractApartment = RentalContractSummary['apartment']
+export type UserIdentity = NonNullable<paths["/api/v1/users/profile/identity"]['get']['responses']['200']['content']['application/json']['data']>
 
-export type RentalContractSummary = {
-  id: string;
-  contractNumber: string;
-  status: "active" | "expired" | "terminated";
-  startDate: string;
-  endDate: string;
-  apartment: ContractApartment;
-};
 
-export type ContractMembership = {
-  id: string;
-  memberType: "primary" | "secondary";
-  moveInDate: string;
-  sharePercentage: number;
-  rentalContract: RentalContractSummary;
-};
+export type UpdateUserDto = Partial<paths["/api/v1/users/{id}"]['patch']['requestBody']['content']['application/json']>
+export type UpdateUserResponse = NonNullable<paths["/api/v1/users/{id}"]['patch']['responses']['200']['content']['application/json']['data']>
 
-export type UserIdentity = {
-  passportNumber?: string;
-  identityCardFrontUrl?: string;
-  identityCardBackUrl?: string;
-  isVerified: boolean;
-};
+export type AiVerificationResult = {
+  success: boolean
+  extractedInfo: Record<string, unknown> | null
+}
 
-export type UserDetail = {
-  id: string;
-  email: string;
-  phone: string;
-  fullName: string;
-  dateOfBirth: string;
-  nationalId: string;
-  passportNumber: string;
-  profileImageUrl: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  isActive: boolean;
-  isVerified: boolean;
-  lastLoginAt: string;
-  createdAt: string;
-  updatedAt: string;
-  contractMemberships: ContractMembership[];
-  identity?: UserIdentity;
-};
+export type AiVerification = {
+  front: AiVerificationResult
+  back: AiVerificationResult
+}
 
-export type UpdateUserDto = {
-  email?: string;
-  phone?: string;
-  fullName?: string;
-  password?: string;
-  dateOfBirth?: string;
-  nationalId?: string;
-  passportNumber?: string;
-  profileImageUrl?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  isActive?: boolean;
-  isVerified?: boolean;
-};
-
-export type UpdateUserResponse = {
-  id: string;
-  email: string;
-  phone: string;
-  fullName: string;
-  dateOfBirth: string;
-  profileImageUrl: string;
-  isActive: boolean;
-  isVerified: boolean;
-  updatedAt: string;
-};
+export type ModalIdentityCardProps = {
+  open: boolean
+  onClose: () => void
+  identity?: UserIdentity
+}

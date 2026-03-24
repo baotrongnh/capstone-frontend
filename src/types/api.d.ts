@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Health Check */
+        /** Health Check Backend */
         get: operations["AppController_healthCheck"];
         put?: never;
         post?: never;
@@ -253,6 +253,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/profile/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my identity information */
+        get: operations["UsersController_getProfileIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/profile/verify-identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify identity card via AI (front + back)
+         * @description Upload front and back identity card images. AI will extract information from both sides and store extracted data. Images are NOT saved.
+         */
+        post: operations["UsersController_verifyIdentityCard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{id}": {
         parameters: {
             query?: never;
@@ -272,6 +309,109 @@ export interface paths {
         patch: operations["UsersController_update"];
         trace?: never;
     };
+    "/api/v1/users/{id}/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user identity by user ID */
+        get: operations["UsersController_findIdentity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/partner-requests/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all partner requests */
+        get: operations["UsersController_findAllPartnerRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/partner-requests/my": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List own partner requests */
+        get: operations["UsersController_findMyPartnerRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/partner-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get partner request details */
+        get: operations["UsersController_findOnePartnerRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update partner request */
+        patch: operations["UsersController_updatePartnerRequest"];
+        trace?: never;
+    };
+    "/api/v1/users/partner-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit partner request */
+        post: operations["UsersController_createPartnerRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/partner-requests/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Review partner request (approve/reject) */
+        patch: operations["UsersController_reviewPartnerRequest"];
+        trace?: never;
+    };
     "/api/v1/apartments/search": {
         parameters: {
             query?: never;
@@ -281,7 +421,7 @@ export interface paths {
         };
         /**
          * Search apartments
-         * @description Public endpoint to search available apartments with filters
+         * @description Public endpoint to search apartments with filters. If status is not provided, all statuses are returned.
          */
         get: operations["ApartmentsController_search"];
         put?: never;
@@ -311,6 +451,26 @@ export interface paths {
         patch: operations["ApartmentsController_update"];
         trace?: never;
     };
+    "/api/v1/apartments/{id}/rating": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rate apartment by user
+         * @description User can rate only once per apartment and only when they have an active contract for that apartment.
+         */
+        post: operations["ApartmentsController_rateApartment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/apartments": {
         parameters: {
             query?: never;
@@ -328,15 +488,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/apartments/partner/{partnerId}": {
+    "/api/v1/apartments/owner/{ownerId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get apartments by partner */
-        get: operations["ApartmentsController_findByPartner"];
+        /** Get apartments by owner */
+        get: operations["ApartmentsController_findByOwner"];
         put?: never;
         post?: never;
         delete?: never;
@@ -380,6 +540,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/contracts/pdf/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * View contract PDF (public with token)
+         * @description View contract PDF using a signed token. Token is valid for 5 minutes.
+         */
+        get: operations["ContractsController_viewPdfPublic"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/contracts/{id}": {
         parameters: {
             query?: never;
@@ -396,6 +576,43 @@ export interface paths {
         head?: never;
         /** Update contract */
         patch: operations["ContractsController_update"];
+        trace?: never;
+    };
+    "/api/v1/contracts/{id}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download contract PDF
+         * @description Download the generated PDF document for a contract.
+         */
+        get: operations["ContractsController_downloadPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/contracts/{id}/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload signed contract PDF */
+        post: operations["ContractsController_uploadSignedPdf"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/contracts/{id}/activate": {
@@ -430,6 +647,23 @@ export interface paths {
         head?: never;
         /** Terminate contract */
         patch: operations["ContractsController_terminate"];
+        trace?: never;
+    };
+    "/api/v1/contracts/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Cancel contract by user */
+        patch: operations["ContractsController_cancelByUser"];
         trace?: never;
     };
     "/api/v1/invoices": {
@@ -486,6 +720,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/payments/invoice/{invoiceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payments by invoice ID */
+        get: operations["PaymentsController_findByInvoiceId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/payments/{id}": {
         parameters: {
             query?: never;
@@ -497,6 +748,23 @@ export interface paths {
         get: operations["PaymentsController_findOne"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/payos/create-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create PayOS hosted checkout link from invoice */
+        post: operations["PaymentsController_createPayOSPaymentLink"];
         delete?: never;
         options?: never;
         head?: never;
@@ -697,6 +965,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/viewing-requests/user/book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * User books apartment viewing
+         * @description Authenticated user books a viewing by sending apartmentId, appointmentAt, and note.
+         */
+        post: operations["ViewingRequestsController_createUserViewingBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/viewing-requests/my": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my viewing requests
+         * @description Authenticated user gets their own viewing requests/appointments with optional status filter and pagination.
+         */
+        get: operations["ViewingRequestsController_getMyViewingRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/viewing-requests/my-assigned": {
         parameters: {
             query?: never;
@@ -749,6 +1057,66 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/viewing-requests/appointments/{appointmentId}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Confirm viewing appointment
+         * @description Assigned staff confirms the viewing appointment. System marks appointment as confirmed.
+         */
+        patch: operations["ViewingRequestsController_confirmAppointment"];
+        trace?: never;
+    };
+    "/api/v1/viewing-requests/appointments/{appointmentId}/done": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Staff confirms done job
+         * @description Assigned staff confirms the viewing job is done. System marks appointment as completed.
+         */
+        patch: operations["ViewingRequestsController_confirmDoneJob"];
+        trace?: never;
+    };
+    "/api/v1/viewing-requests/appointments/{appointmentId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Cancel appointment
+         * @description Staff (assigned) or user (owner) cancels an appointment. System marks appointment as cancelled.
+         */
+        patch: operations["ViewingRequestsController_cancelAppointment"];
         trace?: never;
     };
     "/api/v1/iot/devices": {
@@ -1019,110 +1387,7 @@ export interface paths {
         patch: operations["TasksController_cancel"];
         trace?: never;
     };
-    "/api/v1/partners": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all partners */
-        get: operations["PartnersController_findAllPartners"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/profile": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get own partner profile */
-        get: operations["PartnersController_getMyProfile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get partner by ID */
-        get: operations["PartnersController_findOnePartner"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/requests/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all partner requests */
-        get: operations["PartnersController_findAllRequests"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/requests/my": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List own partner requests */
-        get: operations["PartnersController_findMyRequests"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/requests/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get partner request details */
-        get: operations["PartnersController_findOneRequest"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update partner request */
-        patch: operations["PartnersController_updateRequest"];
-        trace?: never;
-    };
-    "/api/v1/partners/requests": {
+    "/api/v1/notifications/fcm-token": {
         parameters: {
             query?: never;
             header?: never;
@@ -1131,29 +1396,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Submit partner request */
-        post: operations["PartnersController_createRequest"];
-        delete?: never;
+        /** Register FCM device token for push notifications */
+        post: operations["NotificationsController_registerFcmToken"];
+        /** Remove FCM device token */
+        delete: operations["NotificationsController_removeFcmToken"];
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/api/v1/partners/requests/{id}/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Review partner request (approve/reject) */
-        patch: operations["PartnersController_reviewRequest"];
         trace?: never;
     };
     "/api/v1/notifications/my": {
@@ -1199,7 +1448,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Send notification */
+        /** Send notification (admin/operator only) */
         post: operations["NotificationsController_create"];
         delete?: never;
         options?: never;
@@ -1612,6 +1861,40 @@ export interface paths {
         patch: operations["UserRoomsController_moveOut"];
         trace?: never;
     };
+    "/api/v1/user-apartments/my": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get apartments assigned to current user */
+        get: operations["UserApartmentsController_findMy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/user-apartments/{id}/access-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update user-apartment access information */
+        patch: operations["UserApartmentsController_updateAccessInfo"];
+        trace?: never;
+    };
     "/api/v1/apartment-policies": {
         parameters: {
             query?: never;
@@ -1715,6 +1998,196 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my reservations */
+        get: operations["ReservationsController_findMyReservations"];
+        put?: never;
+        /**
+         * Create a reservation
+         * @description User must be verified (isVerified = true). Apartment must be available. Sets apartment status to reserved.
+         */
+        post: operations["ReservationsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reservations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get reservation by ID */
+        get: operations["ReservationsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reservations/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Cancel a reservation
+         * @description Cancels the reservation and sets apartment status back to available.
+         */
+        patch: operations["ReservationsController_cancel"];
+        trace?: never;
+    };
+    "/api/v1/chat/upload-images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload chat images (max 5)
+         * @description Upload image files to Supabase Storage. Returns array of public URLs to include when sending a message.
+         */
+        post: operations["ChatController_uploadImages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/chat/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get conversations list
+         * @description Staff/operator/admin: sees all conversations. User: sees own conversations only.
+         */
+        get: operations["ChatController_getConversations"];
+        put?: never;
+        /**
+         * Create a new chat conversation
+         * @description REST alternative to socket event chat:create_conversation.
+         */
+        post: operations["ChatController_createConversation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/chat/conversations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get conversation detail */
+        get: operations["ChatController_getConversation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/chat/conversations/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get paginated messages
+         * @description Returns messages in format: { id, content, images?, apartmentId?, sender: "user"|"support", timestamp }
+         */
+        get: operations["ChatController_getMessages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/chat/conversations/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Close a conversation (staff only) */
+        patch: operations["ChatController_closeConversation"];
+        trace?: never;
+    };
+    "/api/v1/chat/conversations/{id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Archive a conversation (staff only) */
+        patch: operations["ChatController_archiveConversation"];
+        trace?: never;
+    };
+    "/api/v1/chat/conversations/{id}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reopen a closed conversation (staff only) */
+        patch: operations["ChatController_reopenConversation"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1725,14 +2198,14 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example Nguyen Van A */
-            fullName: Record<string, never> | null;
+            fullName: string | null;
             /** @example user */
             role: string;
             /**
              * @example user
              * @enum {string}
              */
-            actorType: "user" | "staff" | "operator" | "admin" | "partner" | "guest";
+            actorType: "user" | "staff" | "operator" | "admin" | "guest";
             /**
              * @description All available roles for this account
              * @example [
@@ -1754,6 +2227,7 @@ export interface components {
         };
         RegisterDto: {
             /**
+             * Format: email
              * @description Email address
              * @example user@example.com
              */
@@ -1789,7 +2263,7 @@ export interface components {
              * @description Type of actor logging in. If not provided, system will auto-detect.
              * @enum {string}
              */
-            actorType?: "user" | "staff" | "operator" | "admin" | "partner";
+            actorType?: "user" | "staff" | "operator" | "admin";
         };
         GoogleAuthDto: {
             /**
@@ -1806,11 +2280,12 @@ export interface components {
             refreshToken: string;
         };
         MessageResponseDto: {
-            /** @example Operation successful */
+            /** @example Operation completed successfully */
             message: string;
         };
         ForgotPasswordDto: {
             /**
+             * Format: email
              * @description Email address of the account
              * @example user@example.com
              */
@@ -1840,19 +2315,36 @@ export interface components {
              */
             newPassword: string;
         };
+        UserIdentityListDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example 012345678901 */
+            nationalId?: string | null;
+            /** @example false */
+            isVerified: boolean;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
+            verifiedAt?: string | null;
+        };
         UserListItemDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
+            dateOfBirth?: string | null;
             /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
+            profileImageUrl?: string | null;
+            identity?: components["schemas"]["UserIdentityListDto"] | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
@@ -1862,12 +2354,61 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        UserIdentityDetailDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example 012345678901 */
+            nationalId?: string | null;
+            /** @example A12345678 */
+            passportNumber?: string | null;
+            /** @example Nguyen Van A */
+            name?: string | null;
+            /** @example 01/01/1990 */
+            dob?: string | null;
+            /** @example M */
+            sex?: string | null;
+            /** @example Việt Nam */
+            nationality?: string | null;
+            /** @example Kinh */
+            ethnicity?: string | null;
+            /** @example Ha Noi */
+            home?: string | null;
+            /** @example 123 Tran Hung Dao, Hoan Kiem, Ha Noi */
+            address?: string | null;
+            /** @example Ha Noi */
+            province?: string | null;
+            /** @example Hoan Kiem */
+            district?: string | null;
+            /** @example Hoan Kiem */
+            ward?: string | null;
+            /** @example 123 Tran Hung Dao */
+            street?: string | null;
+            /** @example Sẹo 2cm trán phải */
+            features?: string | null;
+            /** @example 01/01/2020 */
+            issueDate?: string | null;
+            /** @example 01/01/2030 */
+            doe?: string | null;
+            /** @example false */
+            isVerified: boolean;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
+            verifiedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         ContractApartmentSummaryDto: {
             id: string;
-            /** @example 123 Nguyen Hue, Q1 */
-            address: string;
             /** @example A101 */
             apartmentNumber: string;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
         };
         ContractSummaryDto: {
             id: string;
@@ -1888,53 +2429,157 @@ export interface components {
             /** Format: date-time */
             moveInDate?: string | null;
             /** @example 50.00 */
-            sharePercentage?: Record<string, never> | null;
+            sharePercentage?: string | null;
             rentalContract: components["schemas"]["ContractSummaryDto"];
         };
         UserDetailDto: {
+            /**
+             * @example user
+             * @enum {string}
+             */
+            role: "user" | "partner" | "staff" | "operator" | "admin";
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
             dateOfBirth?: string | null;
-            /** @example 012345678901 */
-            nationalId?: Record<string, never> | null;
-            /** @example A12345678 */
-            passportNumber?: Record<string, never> | null;
+            /** @example https://example.com/avatar.jpg */
             profileImageUrl?: string | null;
+            /** @example Tran Thi B */
             emergencyContactName?: string | null;
+            /** @example 0987654321 */
             emergencyContactPhone?: string | null;
-            isActive: boolean;
-            isVerified: boolean;
+            /** @example ABC Investment Co., Ltd */
+            companyName?: string | null;
+            /** @example 0312345678 */
+            taxCode?: string | null;
+            /** @example 1234567890 */
+            bankAccountNumber?: string | null;
+            /** @example Vietcombank */
+            bankName?: string | null;
+            /** @example 123 Nguyen Trai, District 1 */
+            address?: string | null;
+            /** @example 10.00 */
+            commissionRate?: string | null;
             /** Format: date-time */
+            contractStartDate?: string | null;
+            /** Format: date-time */
+            contractEndDate?: string | null;
+            paymentTerms?: string | null;
+            /** @example EMP-001 */
+            employeeCode?: string | null;
+            /** @example customer_service */
+            staffRole?: string | null;
+            /** @example Customer Service */
+            department?: string | null;
+            /** @example Ho Chi Minh */
+            workingCity?: string | null;
+            /** @example District 1 */
+            workingDistrict?: string | null;
+            /** Format: date-time */
+            hireDate?: string | null;
+            /** @example morning */
+            operatorShift?: string | null;
+            /** @example admin_root */
+            username?: string | null;
+            /** @example admin */
+            adminRoleLevel?: string | null;
+            /**
+             * @example {
+             *       "users": true
+             *     }
+             */
+            permissions?: Record<string, never> | null;
+            /** @example true */
+            isActive: boolean;
+            /** @example false */
+            isVerified?: boolean | null;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
             lastLoginAt?: string | null;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            contractMemberships: components["schemas"]["ContractMembershipDto"][];
+            contractMemberships?: components["schemas"]["ContractMembershipDto"][] | null;
+        };
+        AiVerificationSideDto: {
+            /** @example true */
+            success: boolean;
+            /**
+             * @example {
+             *       "id": "012345678901",
+             *       "name": "Nguyen Van A",
+             *       "dob": "15/05/1990",
+             *       "sex": "M",
+             *       "nationality": "VN",
+             *       "home": "Ha Noi",
+             *       "address": "123 Tran Hung Dao",
+             *       "province": "Ha Noi",
+             *       "district": "Hoan Kiem",
+             *       "ward": "Hoan Kiem",
+             *       "street": "123 Tran Hung Dao"
+             *     }
+             */
+            extractedInfo?: Record<string, never> | null;
+        };
+        AiVerificationResultDto: {
+            front?: components["schemas"]["AiVerificationSideDto"] | null;
+            back?: components["schemas"]["AiVerificationSideDto"] | null;
+        };
+        UserIdentityCardDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            identity?: components["schemas"]["UserIdentityDetailDto"] | null;
+            /** @example false */
+            isVerified: boolean;
+            aiVerification?: components["schemas"]["AiVerificationResultDto"] | null;
+            /** Format: date-time */
+            updatedAt: string;
         };
         UserCreatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
             dateOfBirth?: string | null;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: string | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
             /** Format: date-time */
             createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         CreateUserDto: {
             /**
+             * Format: email
              * @description Email address (must be unique)
              * @example user@example.com
              */
@@ -1970,6 +2615,7 @@ export interface components {
              */
             passportNumber?: string;
             /**
+             * Format: uri
              * @description Profile image URL
              * @example https://example.com/avatar.jpg
              */
@@ -1986,23 +2632,35 @@ export interface components {
             emergencyContactPhone?: string;
         };
         UserUpdatedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone: string;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
             dateOfBirth?: string | null;
+            /** @example https://example.com/avatar.jpg */
             profileImageUrl?: string | null;
+            /** @example Tran Thi B */
+            emergencyContactName?: string | null;
+            /** @example 0987654321 */
+            emergencyContactPhone?: string | null;
+            /** @example true */
             isActive: boolean;
+            /** @example false */
             isVerified: boolean;
             /** Format: date-time */
             updatedAt: string;
         };
         UpdateUserDto: {
             /**
+             * Format: email
              * @description Email address (must be unique)
              * @example user@example.com
              */
@@ -2038,6 +2696,7 @@ export interface components {
              */
             passportNumber?: string;
             /**
+             * Format: uri
              * @description Profile image URL
              * @example https://example.com/avatar.jpg
              */
@@ -2061,11 +2720,218 @@ export interface components {
             isVerified?: boolean;
         };
         UserDeletedDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example user@example.com */
             email: string;
             /** @example false */
             isActive: boolean;
+        };
+        PartnerRequestUserSummaryDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
+            id: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example ABC Investment Co., Ltd */
+            companyName?: string | null;
+        };
+        PartnerRequestListItemDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            /** Format: date-time */
+            createdAt: string;
+            user?: components["schemas"]["PartnerRequestUserSummaryDto"] | null;
+            /** @example Need additional legal papers */
+            reviewNotes?: string | null;
+            /** @example Invalid contact info */
+            rejectionReason?: string | null;
+        };
+        PartnerRequestReviewerSummaryDto: {
+            /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567891 */
+            id: string;
+            /** @example Operator One */
+            fullName: string;
+        };
+        PartnerRequestDetailDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /** @example 75.50 */
+            totalArea?: string | null;
+            /** @example 1 */
+            numberOfUnits: number;
+            /** @example 15000000.00 */
+            expectedRentPrice?: string | null;
+            /** @example Near metro */
+            description?: string | null;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator"
+             *     ]
+             */
+            amenities?: string[] | null;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            reviewNotes?: string | null;
+            rejectionReason?: string | null;
+            /** Format: date-time */
+            approvedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            user: components["schemas"]["PartnerRequestUserSummaryDto"];
+            reviewedByOperator?: components["schemas"]["PartnerRequestReviewerSummaryDto"] | null;
+        };
+        PartnerRequestMutationResultDto: {
+            /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
+            id: string;
+            /**
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /**
+             * @example submitted
+             * @enum {string}
+             */
+            status: "submitted" | "under_review" | "approved" | "rejected" | "on_hold";
+            reviewNotes?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        CreatePartnerRequestDto: {
+            /**
+             * @description Property type
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType?: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address: string;
+            /** @example Ho Chi Minh */
+            city: string;
+            /** @example District 1 */
+            district: string;
+            /**
+             * @description Total area in m2
+             * @example 75.5
+             */
+            totalArea?: number;
+            /** @example 1 */
+            numberOfUnits?: number;
+            /**
+             * @description Expected rent in VND
+             * @example 15000000
+             */
+            expectedRentPrice?: number;
+            /** @example Near metro, has balcony */
+            description?: string;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator",
+             *       "security"
+             *     ]
+             */
+            amenities?: string[];
+        };
+        UpdatePartnerRequestDto: {
+            /**
+             * @description Property type
+             * @example apartment
+             * @enum {string}
+             */
+            propertyType?: "apartment" | "house" | "condo" | "studio";
+            /** @example 123 Nguyen Trai */
+            address?: string;
+            /** @example Ho Chi Minh */
+            city?: string;
+            /** @example District 1 */
+            district?: string;
+            /**
+             * @description Total area in m2
+             * @example 75.5
+             */
+            totalArea?: number;
+            /** @example 1 */
+            numberOfUnits?: number;
+            /**
+             * @description Expected rent in VND
+             * @example 15000000
+             */
+            expectedRentPrice?: number;
+            /** @example Near metro, has balcony */
+            description?: string;
+            /**
+             * @example [
+             *       "parking",
+             *       "elevator",
+             *       "security"
+             *     ]
+             */
+            amenities?: string[];
+        };
+        ReviewPartnerRequestDto: {
+            /**
+             * @example approved
+             * @enum {string}
+             */
+            status: "approved" | "rejected" | "on_hold" | "under_review";
+            /** @example Documents checked and valid */
+            reviewNotes?: string;
+            /** @example Missing ownership proof */
+            rejectionReason?: string;
+        };
+        WardAddressDto: {
+            /** @example 26728 */
+            wardCode: number;
+            /** @example Xã Châu Pha */
+            wardName?: string | null;
+            /** @example 754 */
+            districtCode?: number | null;
+            /** @example Thị xã Phú Mỹ */
+            districtName?: string | null;
+            /** @example 79 */
+            provinceCode?: number | null;
+            /** @example Thành phố Hồ Chí Minh */
+            provinceName?: string | null;
+            /** @example Xã Châu Pha, Thành phố Hồ Chí Minh */
+            fullAddress?: string | null;
         };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
@@ -2074,16 +2940,18 @@ export interface components {
             buildingName?: string | null;
             /** @example R1-801 */
             apartmentNumber: string;
-            /** @example STANDARD */
-            apartmentType?: string | null;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
-            /** @example Hồ Chí Minh */
-            city: string;
-            /** @example Quận Bình Thạnh */
-            district: string;
+            /**
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
+             */
+            newWardCode?: number | null;
+            /**
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
+             */
+            oldWardCode?: number | null;
             /** @example 55 */
             totalArea: string;
             /** @example 1 */
@@ -2098,8 +2966,19 @@ export interface components {
             depositAmount?: string | null;
             /** @example available */
             status: string;
+            /**
+             * @description Diem danh gia trung binh cua apartment (1-5)
+             * @example 4.5
+             */
+            rating?: number | null;
             description?: string | null;
             images?: string[] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ sau sáp nhập (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Địa chỉ đã resolve từ mã địa chỉ trước sáp nhập (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Dia chi hien thi theo addressType dang filter (new/old/both) */
+            address?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -2128,13 +3007,53 @@ export interface components {
             description?: string | null;
             images?: string[] | null;
         };
-        PartnerSummaryDto: {
+        OwnerSummaryDto: {
             /** @example e33f798c-7978-4a86-b243-b3ac43e020ba */
             id: string;
             /** @example Công ty Đầu tư Hoàng Gia */
             companyName: string;
             /** @example Trương Thị Đầu Tư */
             fullName: string;
+        };
+        RentalContractLinkedUserDto: {
+            /** @example e33f798c-7978-4a86-b243-b3ac43e020ba */
+            id: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+        };
+        RentalContractMemberLinkDto: {
+            /** @example 7c2946d7-b237-4e6d-aec4-8f055f8d12f0 */
+            id: string;
+            /** @example primary */
+            memberType: string;
+            /** @example true */
+            isPrimaryContact: boolean;
+            /** @example active */
+            status: string;
+            user: components["schemas"]["RentalContractLinkedUserDto"];
+        };
+        ApartmentUserApartmentContractDto: {
+            /** @example 5e10f4d8-1c14-48f5-8ad4-e35ea928f2a3 */
+            id: string;
+            /** @example CTR-2026-00001 */
+            contractNumber: string;
+            /** @example active */
+            status: string;
+            members: components["schemas"]["RentalContractMemberLinkDto"][];
+        };
+        ApartmentUserApartmentDto: {
+            /** @example ce47fe96-d6a9-4df2-9f95-c0a7ac4a4d5c */
+            id: string;
+            /** @example active */
+            status: string;
+            /** @example true */
+            isPrimaryTenant: boolean;
+            /** Format: date-time */
+            moveInDate?: string | null;
+            /** Format: date-time */
+            moveOutDate?: string | null;
+            user: components["schemas"]["RentalContractLinkedUserDto"];
+            rentalContract: components["schemas"]["ApartmentUserApartmentContractDto"];
         };
         ApartmentDetailDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
@@ -2143,20 +3062,20 @@ export interface components {
             buildingName?: string | null;
             /** @example R1-801 */
             apartmentNumber: string;
-            /** @example STANDARD */
-            apartmentType?: string | null;
             /** @example 2 */
             maxConcurrentViewings: number;
             /** @example 8 */
             floorNumber?: number | null;
-            /** @example 92 Nguyễn Hữu Cảnh */
-            address: string;
-            /** @example Hồ Chí Minh */
-            city: string;
-            /** @example Quận Bình Thạnh */
-            district: string;
-            /** @example Phường 22 */
-            ward?: string | null;
+            /**
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
+             */
+            newWardCode?: number | null;
+            /**
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
+             */
+            oldWardCode?: number | null;
             /** @example 10.788 */
             latitude?: string | null;
             /** @example 106.7195 */
@@ -2184,11 +3103,22 @@ export interface components {
             depositAmount?: string | null;
             /** @example available */
             status: string;
+            /**
+             * @description Diem danh gia trung binh cua apartment (1-5)
+             * @example 4.5
+             */
+            rating?: number | null;
             description?: string | null;
             images?: string[] | null;
             videoTourUrl?: string | null;
             yearBuilt?: number | null;
-            partnerId?: string | null;
+            /** @description Dia chi resolve theo ma phuong/xa sau sap nhap (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Dia chi resolve theo ma phuong/xa truoc sap nhap (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Dia chi hien thi theo addressType query (new/old/both) khi lay chi tiet can ho */
+            address?: string | null;
+            ownerId?: string | null;
             approvedByOperatorId?: string | null;
             /** Format: date-time */
             approvedAt?: string | null;
@@ -2197,11 +3127,46 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             rooms: components["schemas"]["RoomDto"][];
-            partner?: components["schemas"]["PartnerSummaryDto"];
+            owner?: components["schemas"]["OwnerSummaryDto"];
             /** @example [] */
             iotDevices: Record<string, never>[];
             /** @example [] */
             utilityMeters: Record<string, never>[];
+            /**
+             * @description Danh sach userApartment duoc lay tu rental contract co status active
+             * @example []
+             */
+            userApartments: components["schemas"]["ApartmentUserApartmentDto"][];
+        };
+        ApartmentRatingResultDto: {
+            /** @example fbec65aa-facd-45f8-bd7b-97317018f3e6 */
+            id: string;
+            /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
+            apartmentId: string;
+            /** @example e33f798c-7978-4a86-b243-b3ac43e020ba */
+            userId: string;
+            /** @example 5 */
+            rating: number;
+            /** @example Can ho sach se, quan ly ho tro nhanh. */
+            comment?: string | null;
+            /**
+             * @description Diem danh gia trung binh moi nhat cua apartment
+             * @example 4.5
+             */
+            averageRating?: number | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        RateApartmentDto: {
+            /**
+             * @description Diem danh gia tu 1 den 5
+             * @example 5
+             */
+            rating: number;
+            /** @example Can ho sach se, quan ly ho tro nhanh. */
+            comment?: string | null;
         };
         ApartmentMutationResultDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
@@ -2228,14 +3193,16 @@ export interface components {
             apartmentNumber: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
-            /** @example Binh Thanh */
-            district: string;
-            /** @example Ward 22 */
-            ward?: string;
+            /**
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
+             */
+            newWardCode?: number;
+            /**
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
+             */
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2288,12 +3255,15 @@ export interface components {
              *     ]
              */
             images?: string[];
-            /** @example https://youtube.com/watch?v=... */
+            /**
+             * Format: uri
+             * @example https://youtube.com/watch?v=...
+             */
             videoTourUrl?: string;
             /** @example 2020 */
             yearBuilt?: number;
-            /** @description Partner ID if listed by partner */
-            partnerId?: string;
+            /** @description Owner user ID if listed by a specific owner */
+            ownerId?: string;
         };
         UpdateApartmentDto: {
             /** @example Vinhomes Central Park */
@@ -2302,14 +3272,16 @@ export interface components {
             apartmentNumber?: string;
             /** @example 15 */
             floorNumber?: number;
-            /** @example 208 Nguyen Huu Canh, Binh Thanh */
-            address?: string;
-            /** @example Ho Chi Minh */
-            city?: string;
-            /** @example Binh Thanh */
-            district?: string;
-            /** @example Ward 22 */
-            ward?: string;
+            /**
+             * @description Mã phường/xã sau sáp nhập (v2)
+             * @example 26728
+             */
+            newWardCode?: number;
+            /**
+             * @description Mã phường/xã trước sáp nhập (v1)
+             * @example 26731
+             */
+            oldWardCode?: number;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -2362,12 +3334,15 @@ export interface components {
              *     ]
              */
             images?: string[];
-            /** @example https://youtube.com/watch?v=... */
+            /**
+             * Format: uri
+             * @example https://youtube.com/watch?v=...
+             */
             videoTourUrl?: string;
             /** @example 2020 */
             yearBuilt?: number;
-            /** @description Partner ID if listed by partner */
-            partnerId?: string;
+            /** @description Owner user ID if listed by a specific owner */
+            ownerId?: string;
             /**
              * @description Apartment status
              * @enum {string}
@@ -2386,10 +3361,29 @@ export interface components {
             id: string;
             /** @example A101 */
             apartmentNumber: string;
-            /** @example 123 Nguyen Hue, Q1 */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
+            /** @description Resolved address from new ward code (v2) */
+            newAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Resolved address from old ward code (v1) */
+            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Display address derived from resolved ward data */
+            displayAddress?: string | null;
+        };
+        ContractListMemberUserDto: {
+            id: string;
+            /** @example Nguyen Van A */
+            fullName: string;
+            /** @example user@example.com */
+            email: string;
+        };
+        ContractListMemberDto: {
+            user: components["schemas"]["ContractListMemberUserDto"];
+            /** @example primary */
+            memberType: string;
+            isPrimaryContact: boolean;
         };
         ContractListItemDto: {
             id: string;
@@ -2405,7 +3399,12 @@ export interface components {
             monthlyRent: string;
             /** Format: date-time */
             createdAt: string;
+            /** @example true */
+            hasPdf: boolean;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            pdfUrl?: string | null;
             apartment: components["schemas"]["ContractApartmentDto"];
+            members: components["schemas"]["ContractListMemberDto"][];
         };
         ContractMemberUserDto: {
             id: string;
@@ -2454,6 +3453,16 @@ export interface components {
             /** Format: date-time */
             signedDate?: string | null;
             contractDocumentUrl?: string | null;
+            /** @example true */
+            hasPdf: boolean;
+            /** @example /contracts/9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf/pdf */
+            pdfUrl: string;
+            /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
+            publicPdfUrl?: string | null;
+            /** @example false */
+            hasLandlordSignature: boolean;
+            /** @example false */
+            hasTenantSignature: boolean;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -2465,8 +3474,28 @@ export interface components {
             apartment: components["schemas"]["ContractApartmentDto"];
             members: components["schemas"]["ContractMemberDto"][];
         };
+        UploadContractPdfDto: {
+            /**
+             * Format: binary
+             * @description Signed contract PDF file (required)
+             */
+            contractPdf: string;
+            /**
+             * @description Signed date for the contract (ISO 8601)
+             * @example 2026-03-17T10:30:00.000Z
+             */
+            signedDate?: string;
+            /**
+             * @description URL to the signed contract document
+             * @example https://storage.example.com/contracts/signed/CTR-2026-00001.pdf
+             */
+            contractDocumentUrl?: string;
+        };
         CreateContractDto: {
-            /** @description Apartment ID to rent */
+            /**
+             * Format: uuid
+             * @description Apartment ID to rent
+             */
             apartmentId: string;
             /**
              * @description Contract start date
@@ -2575,7 +3604,7 @@ export interface components {
             /** @description Special conditions */
             specialConditions?: string;
             /** @enum {string} */
-            status?: "draft" | "pending" | "active" | "expired" | "terminated" | "renewed";
+            status?: "draft" | "pending" | "signed" | "active" | "expired" | "terminated" | "renewed";
             /** @description Signed date when contract is activated */
             signedDate?: string;
             /** @description URL to signed contract document */
@@ -2586,6 +3615,13 @@ export interface components {
             terminationReason?: string;
             /** @description Early termination fee */
             earlyTerminationFee?: number;
+        };
+        CancelContractDto: {
+            /**
+             * @description Reason provided by user when cancelling contract
+             * @example Khong co nhu cau thue nua
+             */
+            reason: string;
         };
         InvoiceContractApartmentDto: {
             /** @example A101 */
@@ -2607,6 +3643,8 @@ export interface components {
             totalAmount: string;
             /** @example issued */
             status: string;
+            /** @example rent */
+            invoiceType: string;
             /** Format: date-time */
             dueDate: string;
             /** Format: date-time */
@@ -2616,6 +3654,21 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             rentalContract: components["schemas"]["InvoiceContractSummaryDto"];
+        };
+        InvoiceContentItemDto: {
+            /** @example Deposit for contract CTR-2026-00001 */
+            description: string;
+            /** @example 20000000 */
+            amount: number;
+            /** @example 1 */
+            quantity: number;
+            /** @example contractDeposit */
+            itemType: string;
+        };
+        InvoiceContentDto: {
+            title?: string | null;
+            description?: string | null;
+            items: components["schemas"]["InvoiceContentItemDto"][];
         };
         InvoicePaymentSummaryDto: {
             id: string;
@@ -2653,6 +3706,9 @@ export interface components {
             currency: string;
             /** @example issued */
             status: string;
+            /** @example rent */
+            invoiceType: string;
+            invoiceContent?: components["schemas"]["InvoiceContentDto"] | null;
             paymentMethod?: string | null;
             invoiceDocumentUrl?: string | null;
             notes?: string | null;
@@ -2689,7 +3745,10 @@ export interface components {
             itemType?: string;
         };
         CreateInvoiceDto: {
-            /** @description Contract ID for this invoice */
+            /**
+             * Format: uuid
+             * @description Contract ID for this invoice
+             */
             rentalContractId: string;
             /**
              * @description Due date
@@ -2707,6 +3766,12 @@ export interface components {
              */
             billingPeriodEnd: string;
             items: components["schemas"]["InvoiceItemDto"][];
+            /**
+             * @description Invoice type for payment routing and display
+             * @default rent
+             * @enum {string}
+             */
+            invoiceType: "rent" | "deposit" | "contractDeposit" | "utility" | "service" | "penalty" | "other";
             /** @description Additional notes */
             notes?: string;
         };
@@ -2746,6 +3811,50 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             invoice: components["schemas"]["PaymentInvoiceSummaryDto"];
+            /** @description True when this is a synthetic pending row generated from an unpaid invoice without payment records */
+            isSynthetic?: boolean;
+        };
+        PaymentInvoiceItemDto: {
+            /** @example Deposit for contract CTR-2026-00001 */
+            description: string;
+            /** @example 20000000 */
+            amount: number;
+            /** @example 1 */
+            quantity: number;
+            /** @example contractDeposit */
+            itemType: string;
+        };
+        PaymentInvoiceContentDto: {
+            /** @example invoice-123 */
+            invoiceId: string;
+            /** @example INV-202601-00001 */
+            invoiceNumber: string;
+            /** @example contractDeposit */
+            invoiceType: string;
+            /** @example VND */
+            currency: string;
+            /** @example 0 */
+            baseRent: number;
+            /** @example 0 */
+            taxAmount: number;
+            /** @example 20000000 */
+            totalAmount: number;
+            items: components["schemas"]["PaymentInvoiceItemDto"][];
+            /**
+             * @example {
+             *       "title": "Deposit invoice for CTR-2026-00001",
+             *       "description": "Security deposit payment",
+             *       "items": [
+             *         {
+             *           "description": "Deposit for contract CTR-2026-00001",
+             *           "amount": 20000000,
+             *           "quantity": 1,
+             *           "itemType": "contractDeposit"
+             *         }
+             *       ]
+             *     }
+             */
+            content: Record<string, never>;
         };
         PaymentDetailDto: {
             id: string;
@@ -2776,7 +3885,7 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            invoice: Record<string, never>;
+            invoice: components["schemas"]["PaymentInvoiceContentDto"];
             user: Record<string, never>;
         };
         PaymentCreatedDto: {
@@ -2789,7 +3898,10 @@ export interface components {
             status: string;
         };
         CreatePaymentDto: {
-            /** @description Invoice ID to pay */
+            /**
+             * Format: uuid
+             * @description Invoice ID to pay
+             */
             invoiceId: string;
             /** @example 15000000 */
             amount: number;
@@ -2802,6 +3914,49 @@ export interface components {
             transactionReference?: string;
             /** @description Payment notes */
             notes?: string;
+        };
+        PayOSPaymentLinkCreatedDto: {
+            /** @example 9fbc9e7e-5a4d-4f38-9ba8-cc96af4f0eaf */
+            paymentId: string;
+            /** @example invoice-123 */
+            invoiceId: string;
+            /** @example PAYOS-250319123456 */
+            paymentReference: string;
+            /** @example 250319123456 */
+            orderCode: number;
+            /** @example PENDING */
+            status: string;
+            /** @example https://pay.payos.vn/web/4cecc6f4f7af43f09b3d3137ce645a49 */
+            checkoutUrl: string;
+            /** @example 0002010102123858... */
+            qrCode: string;
+            /** @description Unix timestamp (seconds) for link expiry */
+            expiredAt?: number | null;
+            invoice: components["schemas"]["PaymentInvoiceContentDto"];
+        };
+        CreatePayOSPaymentLinkDto: {
+            /**
+             * Format: uuid
+             * @description Invoice ID to create PayOS payment link for
+             */
+            invoiceId: string;
+            /**
+             * Format: uri
+             * @description Return URL after successful payment
+             * @example https://app.intelliservops.com/payment/success
+             */
+            returnUrl?: string;
+            /**
+             * Format: uri
+             * @description Cancel URL when customer cancels payment
+             * @example https://app.intelliservops.com/payment/cancel
+             */
+            cancelUrl?: string;
+            /**
+             * @description Payment description shown on PayOS
+             * @example Thanh toan hoa don INV-202603-00001
+             */
+            description?: string;
         };
         MaintenanceApartmentDto: {
             /** @example A101 */
@@ -2865,9 +4020,9 @@ export interface components {
             tenantRating?: number | null;
             tenantFeedback?: string | null;
             /** @example 500000.00 */
-            costEstimate?: Record<string, never> | null;
+            costEstimate?: string | null;
             /** @example 450000.00 */
-            actualCost?: Record<string, never> | null;
+            actualCost?: string | null;
             costCoveredBy?: string | null;
             /** Format: date-time */
             completedAt?: string | null;
@@ -2889,9 +4044,15 @@ export interface components {
             urgency: string;
         };
         CreateMaintenanceDto: {
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
-            /** @description Room ID if specific to a room */
+            /**
+             * Format: uuid
+             * @description Room ID if specific to a room
+             */
             roomId?: string;
             /** @example Broken air conditioner */
             title: string;
@@ -2996,7 +4157,10 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Related contract ID */
+            /**
+             * Format: uuid
+             * @description Related contract ID
+             */
             rentalContractId?: string;
         };
         UpdateTicketDto: {
@@ -3004,7 +4168,10 @@ export interface components {
             status?: "open" | "in_progress" | "waiting_for_user" | "resolved" | "closed" | "escalated";
             /** @enum {string} */
             priority?: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
             /** @description Resolution notes */
             resolutionNotes?: string;
@@ -3016,7 +4183,7 @@ export interface components {
             /** @example 0901234567 */
             guestPhone: string;
             /** @example guest@example.com */
-            guestEmail?: Record<string, never> | null;
+            guestEmail?: string | null;
             apartmentId: string;
             assignedStaffId?: string | null;
             /** @example pending */
@@ -3031,11 +4198,17 @@ export interface components {
             updatedAt: string;
         };
         CreateViewingRequestDto: {
-            /** @description Apartment ID to view */
+            /**
+             * Format: uuid
+             * @description Apartment ID to view
+             */
             apartmentId: string;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example guest@example.com */
+            /**
+             * Format: email
+             * @example guest@example.com
+             */
             email: string;
             /** @example 0901234567 */
             phone: string;
@@ -3056,6 +4229,100 @@ export interface components {
              * @example morning
              */
             preferredContactTime?: string;
+        };
+        UserViewingAssignedStaffDto: {
+            /** @example e9df7f8e-6cd8-45f9-8e9a-4c0c1e1d9f3f */
+            id: string;
+            /** @example Tran Van B */
+            fullName: string;
+            /** @example 0908889999 */
+            phone: string;
+        };
+        UserViewingBookingResponseDto: {
+            /** @example d7a8e15e-e4b7-4df5-83d4-f7d7e4d4a31a */
+            contactRequestId: string;
+            /** @example b6a52ecf-6f88-4ed4-9aa4-7b8db6bc65d4 */
+            appointmentId: string;
+            /** @example 11111111-2222-3333-4444-555555555555 */
+            apartmentId: string;
+            /** @example A-1208 */
+            apartmentNumber: string;
+            /**
+             * Format: date-time
+             * @example 2026-03-24T09:30:00.000Z
+             */
+            appointmentAt: string;
+            /** @example 30 */
+            durationMinutes: number;
+            /** @example scheduled */
+            status: string;
+            /** @example Toi muon xem can ho vao buoi sang, vui long lien he truoc 30 phut. */
+            note: string;
+            assignedStaff: components["schemas"]["UserViewingAssignedStaffDto"];
+        };
+        CreateUserViewingRequestDto: {
+            /**
+             * Format: uuid
+             * @description ID can ho ma user muon dat lich xem
+             * @example 11111111-2222-3333-4444-555555555555
+             */
+            apartmentId: string;
+            /**
+             * @description Thoi gian hen xem can ho (ISO 8601)
+             * @example 2026-03-24T09:30:00.000Z
+             */
+            appointmentAt: string;
+            /**
+             * @description Ghi chu cua user cho lich hen
+             * @example Toi muon xem can ho vao buoi sang, vui long lien he truoc 30 phut.
+             */
+            note: string;
+        };
+        UserMyViewingApartmentDto: {
+            /** @example 11111111-2222-3333-4444-555555555555 */
+            id: string;
+            /** @example A-1208 */
+            apartmentNumber: string;
+            /** @example Intelli Tower A */
+            buildingName?: string | null;
+            /** @example 26728 */
+            newWardCode?: number | null;
+            /** @example 26731 */
+            oldWardCode?: number | null;
+        };
+        UserMyViewingContactRequestDto: {
+            /** @example d7a8e15e-e4b7-4df5-83d4-f7d7e4d4a31a */
+            id: string;
+            /** @example scheduled */
+            status: string;
+            /** @example Toi muon xem can ho vao buoi sang. */
+            message?: string | null;
+            /** @example Vui long lien he truoc 30 phut. */
+            notes?: string | null;
+            /** Format: date-time */
+            receivedAt: string;
+        };
+        UserMyViewingRequestDto: {
+            /** @example b6a52ecf-6f88-4ed4-9aa4-7b8db6bc65d4 */
+            appointmentId: string;
+            /**
+             * Format: date-time
+             * @example 2026-03-24T09:30:00.000Z
+             */
+            appointmentAt: string;
+            /** @example 30 */
+            durationMinutes: number;
+            /** @example scheduled */
+            status: string;
+            /** @example Toi muon xem can ho vao buoi sang. */
+            note?: string | null;
+            /** Format: date-time */
+            cancelledAt?: string | null;
+            apartment: components["schemas"]["UserMyViewingApartmentDto"];
+            assignedStaff: components["schemas"]["UserViewingAssignedStaffDto"];
+            contactRequest?: components["schemas"]["UserMyViewingContactRequestDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
         };
         AppointmentResponseDto: {
             id: string;
@@ -3185,9 +4452,15 @@ export interface components {
             serialNumber?: string;
             /** @example AA:BB:CC:DD:EE:FF */
             macAddress?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
-            /** @description Room ID */
+            /**
+             * Format: uuid
+             * @description Room ID
+             */
             roomId?: string;
             /** @example Installed at main entrance */
             locationDescription?: string;
@@ -3216,9 +4489,15 @@ export interface components {
             serialNumber?: string;
             /** @example AA:BB:CC:DD:EE:FF */
             macAddress?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
-            /** @description Room ID */
+            /**
+             * Format: uuid
+             * @description Room ID
+             */
             roomId?: string;
             /** @example Installed at main entrance */
             locationDescription?: string;
@@ -3261,9 +4540,9 @@ export interface components {
             brand?: string | null;
             model?: string | null;
             /** @example 1234.56 */
-            currentReading?: Record<string, never> | null;
+            currentReading?: string | null;
             /** @example 1200.00 */
-            previousReading?: Record<string, never> | null;
+            previousReading?: string | null;
             /** Format: date-time */
             readingDate?: string | null;
             /** @example active */
@@ -3288,11 +4567,11 @@ export interface components {
             nextInspectionDate?: string | null;
             unitOfMeasurement?: string | null;
             /** @example 3500.00 */
-            ratePerUnit?: Record<string, never> | null;
+            ratePerUnit?: string | null;
             /** @example 1234.56 */
-            currentReading?: Record<string, never> | null;
+            currentReading?: string | null;
             /** @example 1200.00 */
-            previousReading?: Record<string, never> | null;
+            previousReading?: string | null;
             /** Format: date-time */
             readingDate?: string | null;
             /** @example active */
@@ -3314,7 +4593,10 @@ export interface components {
             brand?: string;
             /** @example iEM3155 */
             model?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
             /** @example 2026-01-15 */
             installationDate: string;
@@ -3338,7 +4620,10 @@ export interface components {
             brand?: string;
             /** @example iEM3155 */
             model?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @example 2026-01-15 */
             installationDate?: string;
@@ -3360,9 +4645,9 @@ export interface components {
             /** @example 1234.56 */
             readingValue: string;
             /** @example 1200.00 */
-            previousReadingValue?: Record<string, never> | null;
+            previousReadingValue?: string | null;
             /** @example 34.56 */
-            consumption?: Record<string, never> | null;
+            consumption?: string | null;
             /** Format: date-time */
             readingDate: string;
             /** @example manual */
@@ -3376,9 +4661,15 @@ export interface components {
             createdAt: string;
         };
         CreateUtilityReadingDto: {
-            /** @description Utility meter ID */
+            /**
+             * Format: uuid
+             * @description Utility meter ID
+             */
             utilityMeterId: string;
-            /** @description Rental contract ID */
+            /**
+             * Format: uuid
+             * @description Rental contract ID
+             */
             rentalContractId?: string;
             /** @example 2026-02-01 */
             readingDate: string;
@@ -3464,13 +4755,22 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @enum {string} */
             relatedEntityType?: "contact_request" | "maintenance_request" | "appointment" | "inspection";
-            /** @description Related entity UUID */
+            /**
+             * Format: uuid
+             * @description Related entity UUID
+             */
             relatedEntityId?: string;
             /** @example 2026-02-15 */
             scheduledDate?: string;
@@ -3497,9 +4797,15 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @example 2026-02-15 */
             scheduledDate?: string;
@@ -3518,155 +4824,24 @@ export interface components {
             /** @description Completion notes */
             completionNotes?: string;
         };
-        PartnerResponseDto: {
-            id: string;
-            /** @example partner@company.com */
-            email: string;
-            /** @example 0901234567 */
-            phone: string;
-            fullName?: string | null;
-            companyName?: string | null;
-            taxCode?: string | null;
-            nationalId?: string | null;
-            bankAccountNumber?: string | null;
-            bankName?: string | null;
-            address?: string | null;
-            /** Format: date-time */
-            contractStartDate?: string | null;
-            /** Format: date-time */
-            contractEndDate?: string | null;
-            /** @example 10.00 */
-            commissionRate?: Record<string, never> | null;
-            paymentTerms?: string | null;
-            isVerified: boolean;
-            isActive: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
+        RegisterFcmTokenDto: {
+            /**
+             * @description FCM device token from Firebase SDK
+             * @example dK4xR9gS...:APA91bH...
+             */
+            token: string;
+            /**
+             * @description Device name / identifier (e.g. "iPhone 15", "Chrome Windows")
+             * @example iPhone 15 Pro
+             */
+            device?: string;
         };
-        PartnerRequestResponseDto: {
-            id: string;
-            partnerId: string;
-            /** @example apartment */
-            propertyType: string;
-            /** @example 456 Le Loi, Q3 */
-            address: string;
-            /** @example Ho Chi Minh */
-            city: string;
-            /** @example Quan 3 */
-            district: string;
-            /** @example 100.00 */
-            totalArea?: Record<string, never> | null;
-            /** @example 1 */
-            numberOfUnits: number;
-            /** @example 20000000.00 */
-            expectedRentPrice?: Record<string, never> | null;
-            propertyImages?: Record<string, never> | null;
-            propertyDocuments?: Record<string, never> | null;
-            description?: string | null;
-            amenities?: Record<string, never> | null;
-            /** @example exclusive */
-            preferredContractType: string;
-            /** @example submitted */
-            status: string;
-            reviewedByOperatorId?: string | null;
-            reviewNotes?: string | null;
-            rejectionReason?: string | null;
-            /** Format: date-time */
-            approvedAt?: string | null;
-            createdApartmentIds?: Record<string, never> | null;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        CreatePartnerRequestDto: {
+        RemoveFcmTokenDto: {
             /**
-             * @default apartment
-             * @enum {string}
+             * @description FCM device token to remove
+             * @example dK4xR9gS...:APA91bH...
              */
-            propertyType: "apartment" | "house" | "condo" | "studio";
-            /** @example 123 Nguyễn Xiển, Long Thạnh Mỹ */
-            address: string;
-            /** @example TP. Hồ Chí Minh */
-            city: string;
-            /** @example Quận 9 */
-            district: string;
-            /**
-             * @description Total area in m²
-             * @example 75.5
-             */
-            totalArea?: number;
-            /**
-             * @description Number of units
-             * @example 1
-             */
-            numberOfUnits?: number;
-            /**
-             * @description Expected monthly rent in VND
-             * @example 15000000
-             */
-            expectedRentPrice?: number;
-            /** @example Căn hộ mới, full nội thất... */
-            description?: string;
-            /**
-             * @example [
-             *       "parking",
-             *       "gym",
-             *       "pool"
-             *     ]
-             */
-            amenities?: string[];
-        };
-        UpdatePartnerRequestDto: {
-            /**
-             * @default apartment
-             * @enum {string}
-             */
-            propertyType: "apartment" | "house" | "condo" | "studio";
-            /** @example 123 Nguyễn Xiển, Long Thạnh Mỹ */
-            address?: string;
-            /** @example TP. Hồ Chí Minh */
-            city?: string;
-            /** @example Quận 9 */
-            district?: string;
-            /**
-             * @description Total area in m²
-             * @example 75.5
-             */
-            totalArea?: number;
-            /**
-             * @description Number of units
-             * @example 1
-             */
-            numberOfUnits?: number;
-            /**
-             * @description Expected monthly rent in VND
-             * @example 15000000
-             */
-            expectedRentPrice?: number;
-            /** @example Căn hộ mới, full nội thất... */
-            description?: string;
-            /**
-             * @example [
-             *       "parking",
-             *       "gym",
-             *       "pool"
-             *     ]
-             */
-            amenities?: string[];
-        };
-        ReviewPartnerRequestDto: {
-            /**
-             * @description Approve or reject the request
-             * @enum {string}
-             */
-            status: "approved" | "rejected";
-            /** @example Đã xác minh thông tin bất động sản */
-            reviewNotes?: string;
-            /** @example Thiếu giấy tờ sở hữu */
-            rejectionReason?: string;
+            token: string;
         };
         NotificationResponseDto: {
             id: string;
@@ -3706,14 +4881,13 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
-        UnreadCountResponseDto: {
-            /** @example 5 */
-            count: number;
-        };
         CreateNotificationDto: {
             /** @enum {string} */
-            recipientType: "guest" | "user" | "staff" | "operator" | "admin" | "partner" | "system";
-            /** @description Recipient UUID */
+            recipientType: "guest" | "user" | "staff" | "operator" | "admin" | "system";
+            /**
+             * Format: uuid
+             * @description Recipient UUID
+             */
             recipientId: string;
             /**
              * @default info
@@ -3737,6 +4911,7 @@ export interface components {
             priority: "low" | "medium" | "high" | "urgent";
             /** @example Invoice */
             relatedEntityType?: string;
+            /** Format: uuid */
             relatedEntityId?: string;
         };
         PolicyListItemDto: {
@@ -3757,13 +4932,9 @@ export interface components {
             requiresAcceptance: boolean;
             /** @example 0 */
             displayOrder: number;
-            /**
-             * @description Số căn hộ áp dụng
-             * @example {
-             *       "apartmentPolicies": 2
-             *     }
-             */
-            _count: Record<string, never>;
+            _count: {
+                apartmentPolicies: number;
+            };
             /** Format: date-time */
             createdAt: string;
         };
@@ -4076,27 +5247,20 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            /**
-             * @description Staff who created the note
-             * @example {
-             *       "id": "...",
-             *       "fullName": "Nguyen Van B",
-             *       "email": "staff@example.com"
-             *     }
-             */
-            staff: Record<string, never>;
-            /**
-             * @description User the note is about
-             * @example {
-             *       "id": "...",
-             *       "fullName": "Nguyen Van A",
-             *       "email": "user@example.com"
-             *     }
-             */
-            user: Record<string, never>;
+            staff: {
+                id: string;
+                fullName: string;
+                email: string;
+            };
+            user: {
+                id: string;
+                fullName: string;
+                email: string;
+            };
         };
         CreateStaffNoteDto: {
             /**
+             * Format: uuid
              * @description ID of the user this note is about
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
@@ -4195,16 +5359,19 @@ export interface components {
         };
         CreateUserRoomDto: {
             /**
+             * Format: uuid
              * @description User ID
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
             userId: string;
             /**
+             * Format: uuid
              * @description Room ID
              * @example b2c3d4e5-f6a7-8901-bcde-f12345678901
              */
             roomId: string;
             /**
+             * Format: uuid
              * @description Rental Contract ID
              * @example c3d4e5f6-a7b8-9012-cdef-123456789012
              */
@@ -4254,6 +5421,99 @@ export interface components {
             /**
              * @description Additional notes
              * @example Updated notes
+             */
+            notes?: string;
+        };
+        UserApartmentApartmentDto: {
+            id: string;
+            /** @example A-1208 */
+            apartmentNumber: string;
+            /** @example Intelli Tower A */
+            buildingName?: string | null;
+        };
+        UserApartmentContractDto: {
+            id: string;
+            /** @example CTR-2026-00001 */
+            contractNumber: string;
+        };
+        UserApartmentResponseDto: {
+            id: string;
+            userId: string;
+            apartmentId: string;
+            rentalContractId: string;
+            /** @example active */
+            status: string;
+            isPrimaryTenant: boolean;
+            /** Format: date-time */
+            moveInDate?: string | null;
+            /** Format: date-time */
+            moveOutDate?: string | null;
+            apartmentDoorPassword?: string | null;
+            buildingGateCode?: string | null;
+            smartLockPin?: string | null;
+            mailboxCode?: string | null;
+            parkingAccessCode?: string | null;
+            wifiName?: string | null;
+            wifiPassword?: string | null;
+            emergencyContactName?: string | null;
+            emergencyContactPhone?: string | null;
+            notes?: string | null;
+            apartment: components["schemas"]["UserApartmentApartmentDto"];
+            rentalContract: components["schemas"]["UserApartmentContractDto"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateUserApartmentAccessDto: {
+            /**
+             * @description Apartment door password/PIN
+             * @example 2580
+             */
+            apartmentDoorPassword?: string;
+            /**
+             * @description Building gate code
+             * @example GATE-9911
+             */
+            buildingGateCode?: string;
+            /**
+             * @description Smart lock PIN/code
+             * @example SL-8899
+             */
+            smartLockPin?: string;
+            /**
+             * @description Mailbox code
+             * @example MB-1188
+             */
+            mailboxCode?: string;
+            /**
+             * @description Parking access code/card number
+             * @example PARK-B2-99
+             */
+            parkingAccessCode?: string;
+            /**
+             * @description WiFi SSID name
+             * @example INTELLI_HOME_12A
+             */
+            wifiName?: string;
+            /**
+             * @description WiFi password
+             * @example Wifi@2026#Safe
+             */
+            wifiPassword?: string;
+            /**
+             * @description Emergency contact name for apartment support
+             * @example To ky thuat toa A
+             */
+            emergencyContactName?: string;
+            /**
+             * @description Emergency contact phone
+             * @example 0901234567
+             */
+            emergencyContactPhone?: string;
+            /**
+             * @description Internal notes for access instructions
+             * @example Khong cung cap cho ben thu ba
              */
             notes?: string;
         };
@@ -4317,11 +5577,13 @@ export interface components {
         };
         CreateApartmentPolicyDto: {
             /**
+             * Format: uuid
              * @description Apartment ID
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
             apartmentId: string;
             /**
+             * Format: uuid
              * @description Policy ID
              * @example b2c3d4e5-f6a7-8901-bcde-f12345678901
              */
@@ -4368,6 +5630,159 @@ export interface components {
              * @example Updated notes
              */
             notes?: string;
+        };
+        ReservationApartmentDto: {
+            id: string;
+            /** @example A101 */
+            apartmentNumber: string;
+            /** @example 123 Nguyen Hue, Q1 */
+            address: string;
+            /** @example 15000000.00 */
+            baseRentPrice: string;
+        };
+        ReservationResponseDto: {
+            id: string;
+            userId: string;
+            apartmentId: string;
+            /** Format: date-time */
+            desiredStartDate: string;
+            /** Format: date-time */
+            desiredEndDate: string;
+            numberOfOccupants?: number | null;
+            specialRequests?: string | null;
+            /** @example pending */
+            status: string;
+            /** Format: date-time */
+            expiresAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            apartment: components["schemas"]["ReservationApartmentDto"];
+        };
+        CreateReservationDto: {
+            /**
+             * Format: uuid
+             * @description Apartment ID to reserve
+             * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
+             */
+            apartmentId: string;
+            /**
+             * @description Desired move-in / start date (ISO format)
+             * @example 2026-04-01
+             */
+            desiredStartDate: string;
+            /**
+             * @description Desired end date (ISO format)
+             * @example 2027-04-01
+             */
+            desiredEndDate: string;
+            /**
+             * @description Number of occupants
+             * @example 2
+             */
+            numberOfOccupants?: number;
+            /**
+             * @description Any special requests
+             * @example Need parking spot
+             */
+            specialRequests?: string;
+        };
+        UploadImagesResponseDto: {
+            /**
+             * @description Array of uploaded image URLs
+             * @example [
+             *       "https://storage.example.com/chat-images/user-id/123-0.jpg"
+             *     ]
+             */
+            images: string[];
+        };
+        ConversationUserDto: {
+            /** @example uuid-123 */
+            id: string;
+            /** @example Nguyễn Văn A */
+            fullName: string;
+            /** @example user@example.com */
+            email: string;
+            /** @example https://example.com/avatar.jpg */
+            profileImageUrl?: string;
+        };
+        ConversationResponseDto: {
+            /** @description Conversation ID */
+            id: string;
+            /** @description Conversation title */
+            title?: string;
+            /** @description User ID (null if guest) */
+            userId?: string;
+            /** @description Guest session ID */
+            guestSessionId?: string;
+            /** @description Guest display name */
+            guestName?: string;
+            /** @description Guest email */
+            guestEmail?: string;
+            /**
+             * @example active
+             * @enum {string}
+             */
+            status: "active" | "closed" | "archived";
+            /** @description Last message timestamp (ISO) */
+            lastMessageAt?: string;
+            /** @description Last message preview text */
+            lastMessageText?: string;
+            /** @description Additional metadata */
+            metadata?: Record<string, never>;
+            createdAt: string;
+            updatedAt: string;
+            user?: components["schemas"]["ConversationUserDto"];
+        };
+        PaginationMetaDto: {
+            /** @example 100 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 20 */
+            limit: number;
+            /** @example 5 */
+            totalPages: number;
+        };
+        PaginatedConversationsResponseDto: {
+            data: components["schemas"]["ConversationResponseDto"][];
+            meta: components["schemas"]["PaginationMetaDto"];
+        };
+        CreateConversationDto: {
+            /**
+             * @description Custom title for the conversation
+             * @example Hỏi về căn hộ A1-2001
+             */
+            title?: string;
+            /**
+             * @description Guest session ID (auto-generated if empty). Only for guest users.
+             * @example guest_1710000000_abc123
+             */
+            guestSessionId?: string;
+            /**
+             * @description Guest display name
+             * @example Nguyễn Văn A
+             */
+            guestName?: string;
+            /**
+             * Format: email
+             * @description Guest email address
+             * @example guest@example.com
+             */
+            guestEmail?: string;
+            /**
+             * @description Additional metadata (page URL, apartment of interest, etc.)
+             * @example {
+             *       "pageUrl": "/apartments/123",
+             *       "apartmentId": "apt-001"
+             *     }
+             */
+            metadata?: Record<string, never>;
+        };
+        PaginatedMessagesResponseDto: {
+            data: components["schemas"]["MessageResponseDto"][];
+            meta: components["schemas"]["PaginationMetaDto"];
         };
     };
     responses: never;
@@ -4746,6 +6161,8 @@ export interface operations {
             query?: {
                 /** @description Search by email, name, or phone */
                 search?: string;
+                page?: number;
+                limit?: number;
             };
             header?: never;
             path?: never;
@@ -4753,7 +6170,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of users */
+            /** @description Paginated list of users */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -4768,6 +6185,14 @@ export interface operations {
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;
+                            /** @example 25 */
+                            total?: number;
+                            /** @example 1 */
+                            page?: number;
+                            /** @example 10 */
+                            limit?: number;
+                            /** @example 3 */
+                            totalPages?: number;
                         };
                     };
                 };
@@ -4824,7 +6249,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description User profile */
+            /** @description User/Staff/Operator/Admin profile */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -4842,6 +6267,103 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    UsersController_getProfileIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User identity information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_verifyIdentityCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Upload front and back identity card images for AI to extract information. Images are NOT stored. */
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Front image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardFront: string;
+                    /**
+                     * Format: binary
+                     * @description Back image of identity card (required) - JPEG, PNG, or WebP
+                     */
+                    identityCardBack: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Identity card verified and extracted info returned */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityCardDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid image files or unsupported format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -4966,11 +6488,271 @@ export interface operations {
             };
         };
     };
+    UsersController_findIdentity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User identity information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserIdentityDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_findAllPartnerRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All partner requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    UsersController_findMyPartnerRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user partner requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    UsersController_findOnePartnerRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Partner request details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Request not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_updatePartnerRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePartnerRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Partner request updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Request not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UsersController_createPartnerRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePartnerRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Partner request submitted */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    UsersController_reviewPartnerRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewPartnerRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Partner request reviewed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PartnerRequestMutationResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Request not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ApartmentsController_search: {
         parameters: {
             query?: {
-                city?: string;
-                district?: string;
+                /** @description Ward code filter. Uses newWardCode when addressType=new, oldWardCode when addressType=old, both when addressType=both */
+                wardCode?: number;
+                /** @description Address type to search: new (post-merger), old (pre-merger), both (default: both) */
+                addressType?: "new" | "old" | "both";
                 keyword?: string;
                 /** @description Minimum bedrooms */
                 minBedrooms?: number;
@@ -4985,6 +6767,7 @@ export interface operations {
                 /** @description Maximum area m² */
                 maxArea?: number;
                 furnishingStatus?: "unfurnished" | "semi_furnished" | "fully_furnished";
+                /** @description Apartment status filter. If omitted, returns apartments of all statuses. */
                 status?: "available" | "occupied" | "maintenance" | "reserved" | "inactive";
                 page?: number;
                 limit?: number;
@@ -5028,7 +6811,10 @@ export interface operations {
     };
     ApartmentsController_findOne: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Address type for display address: new (v2), old (v1), both (default) */
+                addressType?: "new" | "old" | "both";
+            };
             header?: never;
             path: {
                 id: string;
@@ -5147,6 +6933,63 @@ export interface operations {
             };
         };
     };
+    ApartmentsController_rateApartment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RateApartmentDto"];
+            };
+        };
+        responses: {
+            /** @description Apartment rated successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ApartmentRatingResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description No active contract for apartment */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Apartment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Apartment already rated by user */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ApartmentsController_create: {
         parameters: {
             query?: never;
@@ -5181,18 +7024,18 @@ export interface operations {
             };
         };
     };
-    ApartmentsController_findByPartner: {
+    ApartmentsController_findByOwner: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                partnerId: string;
+                ownerId: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Partner apartments */
+            /** @description Owner apartments */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -5255,7 +7098,7 @@ export interface operations {
     ContractsController_findAll: {
         parameters: {
             query?: {
-                status?: "draft" | "pending" | "active" | "expired" | "terminated" | "renewed";
+                status?: "draft" | "pending" | "signed" | "active" | "expired" | "terminated" | "renewed";
             };
             header?: never;
             path?: never;
@@ -5315,6 +7158,41 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    ContractsController_viewPdfPublic: {
+        parameters: {
+            query: {
+                /** @description Signed PDF token */
+                token: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contract PDF file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract or PDF not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -5400,6 +7278,99 @@ export interface operations {
             };
         };
     };
+    ContractsController_downloadPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contract PDF file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract or PDF not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_uploadSignedPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Upload a signed contract PDF file */
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadContractPdfDto"];
+            };
+        };
+        responses: {
+            /** @description Signed contract PDF uploaded */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
+            /** @description Invalid or missing PDF file */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract PDF already uploaded */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ContractsController_activate: {
         parameters: {
             query?: never;
@@ -5471,6 +7442,56 @@ export interface operations {
             };
             /** @description Contract not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_cancelByUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelContractDto"];
+            };
+        };
+        responses: {
+            /** @description Contract cancelled by user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract cannot be cancelled */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5630,6 +7651,7 @@ export interface operations {
         parameters: {
             query?: {
                 status?: "pending" | "processing" | "completed" | "failed" | "refunded" | "cancelled";
+                invoiceId?: string;
             };
             header?: never;
             path?: never;
@@ -5699,6 +7721,40 @@ export interface operations {
             };
         };
     };
+    PaymentsController_findByInvoiceId: {
+        parameters: {
+            query?: {
+                status?: "pending" | "processing" | "completed" | "failed" | "refunded" | "cancelled";
+            };
+            header?: never;
+            path: {
+                invoiceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payments of a specific invoice (includes pending synthetic entry if unpaid) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PaymentListItemDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
     PaymentsController_findOne: {
         parameters: {
             query?: never;
@@ -5738,6 +7794,40 @@ export interface operations {
             };
         };
     };
+    PaymentsController_createPayOSPaymentLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePayOSPaymentLinkDto"];
+            };
+        };
+        responses: {
+            /** @description PayOS payment link created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["PayOSPaymentLinkCreatedDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
     PaymentsController_confirm: {
         parameters: {
             query?: never;
@@ -5755,6 +7845,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>[];
+                };
             };
             /** @description Payment not found */
             404: {
@@ -5780,6 +7878,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -6241,6 +8347,106 @@ export interface operations {
             };
         };
     };
+    ViewingRequestsController_createUserViewingBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUserViewingRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Viewing appointment created for user */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserViewingBookingResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid request data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User or apartment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Requested slot is full */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ViewingRequestsController_getMyViewingRequests: {
+        parameters: {
+            query?: {
+                /** @description Filter by appointment status */
+                status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
+                /** @description Page number */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of current user viewing requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserMyViewingRequestDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                            /** @example 25 */
+                            total?: number;
+                            /** @example 1 */
+                            page?: number;
+                            /** @example 10 */
+                            limit?: number;
+                            /** @example 3 */
+                            totalPages?: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
     ViewingRequestsController_getMyAssigned: {
         parameters: {
             query?: never;
@@ -6339,6 +8545,154 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    ViewingRequestsController_confirmAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Appointment ID to confirm */
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Appointment confirmed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["MessageResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Appointment cannot be confirmed from current status */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Current staff is not assigned to this appointment */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Appointment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ViewingRequestsController_confirmDoneJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Appointment ID that the staff completed */
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Job confirmed and appointment is completed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["MessageResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Current staff is not assigned to this appointment */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Appointment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ViewingRequestsController_cancelAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Appointment ID to cancel */
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Appointment cancelled successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["MessageResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description No permission to cancel appointment */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Appointment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -6569,6 +8923,12 @@ export interface operations {
                         };
                     };
                 };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Access denied */
             403: {
@@ -7090,250 +9450,7 @@ export interface operations {
             };
         };
     };
-    PartnersController_findAllPartners: {
-        parameters: {
-            query?: {
-                isActive?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of partners */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerResponseDto"][];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    PartnersController_getMyProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Partner profile */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    PartnersController_findOnePartner: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Partner details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Partner not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PartnersController_findAllRequests: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of partner requests */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"][];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    PartnersController_findMyRequests: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Own partner requests */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"][];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    PartnersController_findOneRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Partner request details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Request not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PartnersController_updateRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePartnerRequestDto"];
-            };
-        };
-        responses: {
-            /** @description Request updated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Request not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PartnersController_createRequest: {
+    NotificationsController_registerFcmToken: {
         parameters: {
             query?: never;
             header?: never;
@@ -7342,67 +9459,34 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreatePartnerRequestDto"];
+                "application/json": components["schemas"]["RegisterFcmTokenDto"];
             };
         };
         responses: {
-            /** @description Request submitted */
+            /** @description Token registered */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        /** @example 201 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
+                content?: never;
             };
         };
     };
-    PartnersController_reviewRequest: {
+    NotificationsController_removeFcmToken: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReviewPartnerRequestDto"];
+                "application/json": components["schemas"]["RemoveFcmTokenDto"];
             };
         };
         responses: {
-            /** @description Request reviewed */
+            /** @description Token removed */
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["PartnerRequestResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
-            };
-            /** @description Request not found */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7451,24 +9535,11 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Unread count */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["UnreadCountResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
+                content?: never;
             };
         };
     };
@@ -7485,7 +9556,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Notification sent */
+            /** @description Notification sent + FCM push */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7517,24 +9588,11 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Notification marked as read */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        /** @example 200 */
-                        statusCode?: number;
-                        /** @example Success */
-                        message?: string;
-                        data?: components["schemas"]["NotificationResponseDto"];
-                        meta?: {
-                            /** @example 2026-02-26T10:21:00.000Z */
-                            timestamp?: string;
-                        };
-                    };
-                };
+                content?: never;
             };
             /** @description Notification not found */
             404: {
@@ -7554,7 +9612,6 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description All marked as read */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7673,6 +9730,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Căn hộ không tồn tại */
             404: {
                 headers: {
@@ -7992,7 +10055,7 @@ export interface operations {
     ActivityLogsController_findAll: {
         parameters: {
             query?: {
-                actorType?: "guest" | "user" | "staff" | "operator" | "admin" | "partner" | "system";
+                actorType?: "guest" | "user" | "staff" | "operator" | "admin" | "system";
                 actorId?: string;
                 entityType?: string;
                 entityId?: string;
@@ -8540,6 +10603,79 @@ export interface operations {
             };
         };
     };
+    UserApartmentsController_findMy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User apartment assignments with access info */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserApartmentResponseDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    UserApartmentsController_updateAccessInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserApartmentAccessDto"];
+            };
+        };
+        responses: {
+            /** @description Updated user-apartment assignment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["UserApartmentResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User apartment assignment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ApartmentPoliciesController_findAll: {
         parameters: {
             query?: {
@@ -8821,6 +10957,416 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_findMyReservations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of user reservations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"][];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    ReservationsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateReservationDto"];
+            };
+        };
+        responses: {
+            /** @description Reservation created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 201 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description User not verified or invalid data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User or apartment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Apartment not available or duplicate reservation */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reservation details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Reservation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationsController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reservation cancelled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ReservationResponseDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Reservation already cancelled or expired */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Reservation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_uploadImages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** @description Image files (JPEG, PNG, WebP) — max 5 */
+                    images: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Images uploaded successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadImagesResponseDto"];
+                };
+            };
+            /** @description Invalid image format or no files provided */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_getConversations: {
+        parameters: {
+            query?: {
+                /** @description Filter by conversation status */
+                status?: "active" | "closed" | "archived";
+                /** @description Page number (starting from 1) */
+                page?: number;
+                /** @description Number of items per page */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of conversations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedConversationsResponseDto"];
+                };
+            };
+        };
+    };
+    ChatController_createConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateConversationDto"];
+            };
+        };
+        responses: {
+            /** @description Conversation created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+        };
+    };
+    ChatController_getConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation UUID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_getMessages: {
+        parameters: {
+            query?: {
+                /** @description Page number (starting from 1) */
+                page?: number;
+                /** @description Number of messages per page */
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Conversation UUID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated messages list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedMessagesResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_closeConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation UUID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation closed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_archiveConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation UUID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation archived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChatController_reopenConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Conversation UUID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation reopened */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationResponseDto"];
+                };
+            };
+            /** @description Conversation not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

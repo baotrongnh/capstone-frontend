@@ -1,473 +1,225 @@
 "use client";
 
-import React, { useRef, useState, useMemo, useEffect } from "react";
-import {
-  Card,
-  Button,
-  Typography,
-  Modal,
-  message,
-  Checkbox,
-  Spin,
-  Empty,
-  Space,
-  Alert,
-} from "antd";
-import SignatureCanvas from "react-signature-canvas";
+import { useState, useMemo } from "react";
+import { Card, Typography, Select, Spin, Empty } from "antd";
+import { Files, FileEdit, FileCheck } from "lucide-react";
 
 import { useGetContracts } from "@/hooks/query/useContracts";
-import type { ContractDetail } from "@/types/contracts";
+import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { ContractCard } from "./card-contracts-layout";
+import ModalAssignContract from "./modal/modal-assign-contract";
+import ModalCancelContract from "./modal/modal-cancel-contract";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 const { Title, Text } = Typography;
 
-export default function ContractLayout() {
-  const sigRef = useRef<SignatureCanvas | null>(null);
-  const pdfContentRef = useRef<HTMLDivElement>(null);
+type StatusFilter = "all" | "draft" | "signed" | "terminated" | "active";
 
+export default function ContractLayout() {
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [selectedContractId, setSelectedContractId] = useState<string | null>(
     null,
   );
-  const [showPdfModal, setShowPdfModal] = useState(false);
-  const [showSignModal, setShowSignModal] = useState(false);
-  const [signature, setSignature] = useState<string | null>(null);
-  const [agreePolicy, setAgreePolicy] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showModalCancelContract, setShowModalCancelContract] = useState(false);
+  const router = useRouter();
+  const { data, isLoading } = useGetContracts();
 
-  const { data, isLoading, error } = useGetContracts();
-  const contractsList: ContractDetail[] = (data as any)?.data ?? [];
+  const contractsList = useMemo<ContractWithMembers[]>(() => {
+    return (data?.data ?? []) as ContractWithMembers[];
+  }, [data]);
 
-  console.log("DATA", data);
+  const filteredContracts = useMemo(() => {
+    if (statusFilter === "all") return contractsList;
+    return contractsList.filter(
+      (c: ContractWithMembers) => c.status === statusFilter,
+    );
+  }, [contractsList, statusFilter]);
 
-  useEffect(() => {
-    if (!selectedContractId && contractsList.length > 0) {
-      setSelectedContractId(contractsList[0].id);
-    }
-  }, [contractsList, selectedContractId]);
-
-  const contract = useMemo<ContractDetail | null>(() => {
-    if (!contractsList.length) return null;
+  const selectedContract = useMemo(() => {
     return (
-      contractsList.find((c) => c.id === selectedContractId) ?? contractsList[0]
+      contractsList.find(
+        (c: ContractWithMembers) => c.id === selectedContractId,
+      ) ?? null
     );
   }, [contractsList, selectedContractId]);
 
-  const formattedContract = useMemo(() => {
-    if (!contract) return null;
-    const member = contract.members?.[0];
-    return {
-      contractNumber: contract.contractNumber,
-      startDate: new Date(contract.startDate).toLocaleDateString("vi-VN"),
-      endDate: new Date(contract.endDate).toLocaleDateString("vi-VN"),
-      monthlyRent: Number(contract.monthlyRent).toLocaleString("vi-VN"),
-      apartmentNumber: contract.apartment?.apartmentNumber,
-      address: contract.apartment?.address,
-      city: contract.apartment?.city,
-      renterName: member?.user?.fullName ?? "Chưa cập nhật",
-      renterEmail: member?.user?.email ?? "Chưa cập nhật",
-    };
-  }, [contract]);
-
-  const handleViewContract = () => {
-    setShowPdfModal(true);
+  const handleViewContract = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setShowDetailModal(true);
   };
 
-  const handleSignClick = () => {
-    if (!agreePolicy) {
-      message.warning("Vui lòng đồng ý chính sách trước");
-      return;
-    }
-    setShowSignModal(true);
-  };
-
-  const handleSignConfirm = () => {
-    if (!sigRef.current || sigRef.current.isEmpty()) {
-      message.warning("Vui lòng ký");
-      return;
-    }
-    setSignature(sigRef.current.toDataURL("image/png"));
-    setShowSignModal(false);
-    message.success("Ký thành công!");
-  };
-
-  const handleRedoSign = () => {
-    Modal.confirm({
-      title: "Ký lại?",
-      content: "Chữ ký hiện tại sẽ bị xóa",
-      okText: "Ký lại",
-      cancelText: "Hủy",
-      onOk: () => {
-        setSignature(null);
-        setShowSignModal(true);
-      },
-    });
-  };
-
-  const handleSubmit = () => {
-    if (!signature) {
-      message.warning("Vui lòng ký hợp đồng");
+  const handleDownloadContract = async (contractId: string) => {
+    const contract = contractsList.find((c) => c.id === contractId);
+    if (!contract?.pdfUrl) {
+      alert("Không tìm thấy file PDF để tải");
       return;
     }
 
-    Modal.confirm({
-      title: "Xác nhận gửi hợp đồng",
-      content: "Sau khi gửi, hợp đồng sẽ được khóa",
-      okText: "Gửi",
-      cancelText: "Hủy",
-      onOk: () => {
-        setIsSubmitted(true);
-        setShowPdfModal(false);
-        message.success("Hợp đồng đã được gửi!");
-      },
-    });
+    try {
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${contract.pdfUrl}`;
+
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${contract.contractNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      alert("Lỗi khi tải file PDF");
+    }
   };
 
-  // States
+  const handleCancelContract = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setShowModalCancelContract(true);
+  };
+
+  const handleRedirectInvoice = () => {
+    router.push(`${ROUTES.PROFILE}/invoices`);
+  };
+
   if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: 60 }}>
+      <div className="flex flex-col items-center justify-center py-20 min-h-[50vh]">
         <Spin size="large" />
-        <p style={{ marginTop: 16 }}>Đang tải hợp đồng...</p>
+        <Text className="mt-4 text-gray-500">
+          Đang tải danh sách hợp đồng...
+        </Text>
       </div>
     );
   }
 
-  if (error) {
+  if (contractsList.length === 0) {
     return (
-      <Alert
-        type="error"
-        showIcon
-        message="Lỗi"
-        description="Không thể tải hợp đồng"
-      />
-    );
-  }
-
-  if (!contractsList.length || !formattedContract) {
-    return (
-      <Card style={{ textAlign: "center", padding: 60 }}>
-        <Empty description="Chưa có hợp đồng nào" />
+      <Card className="text-center py-20 border-gray-200 rounded-2xl shadow-sm">
+        <Empty description="Chưa có hợp đồng nào" style={{ marginTop: 24 }} />
+        <Text type="secondary" className="block mt-4">
+          Vui lòng liên hệ với người quản lý để tạo hợp đồng.
+        </Text>
       </Card>
     );
   }
 
+  const stats = [
+    {
+      title: "Tổng hợp đồng",
+      value: contractsList.length,
+      icon: <Files size={24} />,
+      textColor: "text-blue-600",
+      bgColor: "bg-blue-50",
+    },
+    {
+      title: "Chưa ký",
+      value: contractsList.filter((c: any) => c.status === "draft").length,
+      icon: <FileEdit size={24} />,
+      textColor: "text-amber-600",
+      bgColor: "bg-amber-50",
+    },
+    {
+      title: "Đã ký",
+      value: contractsList.filter((c: any) => c.status === "active").length,
+      icon: <FileCheck size={24} />,
+      textColor: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+    },
+  ];
+
   return (
-    <>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: 32 }}>
-        <Title level={2}> Hợp Đồng Thuê Nhà</Title>
-
-        {isSubmitted && (
-          <Alert
-            type="success"
-            showIcon
-            message="✓ Hợp đồng đã được gửi thành công"
-            closable
-            style={{ marginBottom: 24 }}
-          />
-        )}
-
-        {/* Contract Selection */}
-        {contractsList.length > 1 && (
-          <Card style={{ marginBottom: 24, background: "#fafafa" }}>
-            <Space wrap>
-              <Text strong>Chọn hợp đồng:</Text>
-              {contractsList.map((c) => (
-                <Button
-                  key={c.id}
-                  type={selectedContractId === c.id ? "primary" : "default"}
-                  onClick={() => {
-                    setSelectedContractId(c.id);
-                    setSignature(null);
-                    setAgreePolicy(false);
-                    setIsSubmitted(false);
-                  }}
-                >
-                  {c.contractNumber}
-                </Button>
-              ))}
-            </Space>
-          </Card>
-        )}
-
-        {/* Main Button */}
-        {!isSubmitted && (
-          <Card style={{ textAlign: "center", padding: 40 }}>
-            <Button
-              type="primary"
-              size="large"
-              onClick={handleViewContract}
-              style={{
-                fontSize: 16,
-                height: 48,
-                paddingLeft: 32,
-                paddingRight: 32,
-              }}
-            >
-              Xem & Ký Hợp Đồng
-            </Button>
-          </Card>
-        )}
-
-        {isSubmitted && (
-          <Card style={{ textAlign: "center", padding: 40 }}>
-            <Title level={3}>✓ Hợp Đồng Đã Gửi</Title>
-            <Text type="secondary">
-              Hợp đồng đang chờ xác nhận từ bên cho thuê
-            </Text>
-          </Card>
-        )}
-
-        <Modal
-          title="Hợp Đồng Thuê Nhà"
-          open={showPdfModal}
-          width={920}
-          onCancel={() => setShowPdfModal(false)}
-          footer={null}
-          bodyStyle={{ maxHeight: 700, overflow: "auto" }}
-        >
-          <div
-            ref={pdfContentRef}
-            style={{
-              backgroundColor: "white",
-              padding: 40,
-              fontFamily: "Times New Roman, serif",
-              fontSize: 15,
-              lineHeight: 1.8,
-              color: "#000",
-            }}
-          >
-            {/* Header */}
-            <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ fontSize: 14, fontWeight: "bold" }}>
-                CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
-              </div>
-              <div style={{ fontSize: 13 }}>Độc lập - Tự do - Hạnh phúc</div>
-              <div style={{ textDecoration: "overline", marginTop: 8 }}></div>
-            </div>
-
-            {/* Title */}
-            <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <h3 style={{ fontSize: 18, fontWeight: "bold", margin: 0 }}>
-                HỢP ĐỒNG THUÊ NHÀ
-              </h3>
-              <div style={{ marginTop: 10 }}>
-                Số: {formattedContract.contractNumber}
-              </div>
-              <div>
-                Ngày {new Date().getDate()} tháng {new Date().getMonth() + 1}{" "}
-                năm {new Date().getFullYear()}
-              </div>
-            </div>
-
-            {/* Info Section */}
-            <div style={{ marginBottom: 20 }}>
-              <div>
-                <span style={{ fontWeight: "bold" }}>Người thuê:</span>{" "}
-                {formattedContract.renterName}
-              </div>
-              <div>
-                <span style={{ fontWeight: "bold" }}>Địa chỉ:</span>{" "}
-                {formattedContract.address}, {formattedContract.city}
-              </div>
-              <div>
-                <span style={{ fontWeight: "bold" }}>Email:</span>{" "}
-                {formattedContract.renterEmail}
-              </div>
-            </div>
-
-            {/* Thời hạn thuê */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontWeight: "bold" }}>Thời hạn thuê:</div>
-              <div>
-                Từ ngày {formattedContract.startDate} đến ngày{" "}
-                {formattedContract.endDate}
-              </div>
-            </div>
-
-            {/* Apartment Info */}
-            <div
-              style={{
-                marginBottom: 20,
-                padding: 12,
-                backgroundColor: "#f9f9f9",
-                border: "1px solid #ddd",
-              }}
-            >
-              <div style={{ fontWeight: "bold", marginBottom: 10 }}>
-                THÔNG TIN CĂN HỘ:
-              </div>
-              <div>
-                - Số căn hộ:{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.apartmentNumber}
-                </span>
-              </div>
-              <div>
-                - Địa chỉ:{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.address}
-                </span>
-              </div>
-              <div>
-                - Thành phố:{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.city}
-                </span>
-              </div>
-              <div>
-                - Thời hạn thuê:{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.startDate}
-                </span>{" "}
-                đến{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.endDate}
-                </span>
-              </div>
-              <div>
-                - Tiền thuê/tháng:{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {formattedContract.monthlyRent} VNĐ
-                </span>
-              </div>
-            </div>
-
-            {/* Agreement Section */}
-            <div style={{ marginBottom: 16 }}>
-              <Checkbox
-                checked={agreePolicy}
-                onChange={(e) => setAgreePolicy(e.target.checked)}
-              >
-                <Text strong>
-                  Tôi đã đọc và đồng ý với tất cả các điều khoản trên
-                </Text>
-              </Checkbox>
-            </div>
-
-            {/* Signature Section */}
-            <div
-              style={{
-                marginTop: 30,
-                borderTop: "1px solid #999",
-                paddingTop: 20,
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div style={{ textAlign: "center", width: "45%" }}>
-                  <div style={{ fontWeight: "bold", marginBottom: 30 }}>
-                    BÊN CHO THUÊ
-                  </div>
-                  <div
-                    style={{
-                      height: 60,
-                      border: "1px dashed #999",
-                      marginBottom: 10,
-                    }}
-                  ></div>
-                  <div style={{ fontSize: 12 }}>(Ký và ghi rõ họ tên)</div>
-                </div>
-
-                <div style={{ textAlign: "center", width: "45%" }}>
-                  <div style={{ fontWeight: "bold", marginBottom: 30 }}>
-                    NGƯỜI THUÊ
-                  </div>
-                  {signature ? (
-                    <div
-                      style={{
-                        height: 60,
-                        border: "1px solid #ccc",
-                        marginBottom: 10,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <img
-                        src={signature}
-                        style={{ maxHeight: 55, maxWidth: "90%" }}
-                        alt="signature"
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        height: 60,
-                        border: "1px dashed #999",
-                        marginBottom: 10,
-                      }}
-                    ></div>
-                  )}
-                  <div style={{ fontSize: 12 }}>(Ký và ghi rõ họ tên)</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginTop: 20,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button onClick={() => setShowPdfModal(false)}>Đóng</Button>
-            <Space>
-              {signature && <Button onClick={handleRedoSign}> Ký Lại</Button>}
-              {!signature ? (
-                <Button
-                  type="primary"
-                  onClick={handleSignClick}
-                  disabled={!agreePolicy}
-                >
-                  Ký
-                </Button>
-              ) : (
-                <Button type="primary" danger onClick={handleSubmit}>
-                  Gửi Hợp Đồng
-                </Button>
-              )}
-            </Space>
-          </div>
-        </Modal>
-
-        <Modal
-          title=" Ký Điện Tử"
-          open={showSignModal}
-          width={600}
-          onCancel={() => setShowSignModal(false)}
-          footer={[
-            <Button key="clear" onClick={() => sigRef.current?.clear()}>
-              Xóa
-            </Button>,
-            <Button key="cancel" onClick={() => setShowSignModal(false)}>
-              Hủy
-            </Button>,
-            <Button key="confirm" type="primary" onClick={handleSignConfirm}>
-              ✓ Xác nhận Ký
-            </Button>,
-          ]}
-        >
-          <div style={{ textAlign: "center" }}>
-            <p>Vui lòng ký vào ô bên dưới:</p>
-            <SignatureCanvas
-              ref={sigRef}
-              penColor="black"
-              canvasProps={{
-                width: 500,
-                height: 200,
-                style: {
-                  border: "2px solid #1890ff",
-                  borderRadius: 8,
-                  cursor: "crosshair",
-                  backgroundColor: "white",
-                },
-              }}
-            />
-            <p style={{ marginTop: 12, color: "#666", fontSize: 12 }}>
-              Sử dụng chuột hoặc touch để ký
-            </p>
-          </div>
-        </Modal>
+    <div className="space-y-8">
+      <div>
+        <Title level={2} style={{ marginBottom: 4, color: "#111827" }}>
+          Hợp Đồng Thuê Nhà
+        </Title>
+        <Text type="secondary" className="text-gray-500">
+          Quản lý và ký kỹ thuật số các hợp đồng thuê nhà của bạn
+        </Text>
       </div>
-    </>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {stats.map((stat, index) => (
+          <Card
+            key={index}
+            className="border-gray-100 shadow-sm transition-all duration-300"
+            style={{ borderRadius: "16px" }}
+            styles={{ body: { padding: "24px" } }}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-gray-500 text-md  font-semibold uppercase tracking-wider block mb-2">
+                  {stat.title}
+                </h1>
+                <h1 className="text-4xl">{stat.value}</h1>
+              </div>
+              <div
+                className={`flex items-center justify-center w-12 h-12 rounded-2xl ${stat.bgColor} ${stat.textColor}`}
+              >
+                {stat.icon}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <Text strong className="whitespace-nowrap text-gray-700">
+            Trạng thái:
+          </Text>
+          <Select
+            size="large"
+            style={{ width: "100%", minWidth: "200px" }}
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value)}
+            options={[
+              { label: "Tất cả hợp đồng", value: "all" },
+              { label: "Chưa ký", value: "draft" },
+              { label: "Đã ký", value: "signed" },
+              { label: "Đã hủy", value: "terminated" },
+              { label: "Đã kích hoạt", value: "active" },
+            ]}
+          />
+        </div>
+
+        <Text className="text-gray-500 font-medium bg-gray-50 px-3 py-1.5 rounded-lg">
+          Hiển thị{" "}
+          <span className="text-gray-900 font-bold">
+            {filteredContracts.length}
+          </span>{" "}
+          / {contractsList.length}
+        </Text>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredContracts.map((contract: ContractWithMembers) => (
+          <ContractCard
+            key={contract.id}
+            contract={contract}
+            onView={() => handleViewContract(contract.id)}
+            onDownload={() => handleDownloadContract(contract.id)}
+            onCancel={() => handleCancelContract(contract.id)}
+            onRedirectInvoice={() => handleRedirectInvoice()}
+          />
+        ))}
+      </div>
+
+      <ModalAssignContract
+        selectedContract={selectedContract}
+        showDetailModal={showDetailModal}
+        setShowDetailModal={setShowDetailModal}
+      />
+
+      <ModalCancelContract
+        showModalCancelContract={showModalCancelContract}
+        cancel={() => setShowModalCancelContract(false)}
+        selectContract={selectedContract}
+      />
+    </div>
   );
 }

@@ -1,11 +1,12 @@
 import AuthForm from "@/app/(auth)/auth-form";
 import { useGoogleLogin, useLogin, useRegister } from "@/hooks/query/useAuth";
-import { AuthModal as AuthModalProps } from "@/types/auth";
-import { Form, Modal } from "antd";
+import { ApiErrorResponse, AuthModal as AuthModalProps, LoginDTO, RegisterDto } from "@/types/auth";
+import { App, Form, Modal } from "antd";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 export default function AuthModal({ open, onClose }: AuthModalProps) {
+  const { message } = App.useApp();
   const t = useTranslations("Auth");
   const [form] = Form.useForm();
 
@@ -17,19 +18,25 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const { login: googleLogin, loading: googleLoginLoading } =
     useGoogleLogin(onClose);
 
-  const handleSubmit = async (values: Parameters<typeof login>[0]) => {
+  const handleSubmit = async (values: LoginDTO) => {
     try {
-      await login(values);
-    } catch (e) {
-      console.log(e);
+      await login(values)
+    } catch (error) {
+      const apiError = error as ApiErrorResponse
+      if (apiError?.response) return
+
+      message.error(t('loginFailed'))
     }
   };
 
-  const handleRegister = async (values: Parameters<typeof register>[0]) => {
+  const handleRegister = async (values: RegisterDto) => {
     try {
-      await register(values);
-    } catch (e) {
-      console.log(e);
+      await register(values)
+    } catch (error) {
+      const apiError = error as ApiErrorResponse
+      if (apiError?.response) return
+
+      message.error(t('registrationFailed'))
     }
   };
 
