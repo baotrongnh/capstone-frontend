@@ -2,6 +2,7 @@ import {
   ApartmentDetailResponse,
   ApartmentListResponse,
   ApartmentSearchQueryParams,
+  OwnerApartmentResponse,
 } from "@/types/apartment"
 import { apiClient } from "../apis/client"
 import { endpoints } from "../apis/endpoints"
@@ -37,7 +38,7 @@ export const apartmentService = {
     return data
   },
 
-  owner: async (id: string | number) => {
+  owner: async (id: string | number): Promise<OwnerApartmentResponse> => {
     const { data } = await apiClient.get(`${endpoints.apartments}/owner/${id}`)
     return data.data
   }

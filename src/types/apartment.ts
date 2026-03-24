@@ -5,6 +5,7 @@ export type ApartmentDetailResponse = paths["/api/v1/apartments/{id}"]["get"]["r
 export type ApartmentSearchQueryParams = paths["/api/v1/apartments/search"]["get"]["parameters"]["query"]
      
 export type ApartmentItem = NonNullable<ApartmentListResponse['data']>[number]
+export type OwnerApartmentResponse = paths["/api/v1/apartments/owner/{ownerId}"]["get"]["responses"]["200"]["content"]["application/json"]
 export type ApartmenList = ApartmentItem[]
 export type ApartmentQueryParams = NonNullable<ApartmentSearchQueryParams>
 export type FurnishingType = NonNullable<ApartmentQueryParams['furnishingStatus']>
