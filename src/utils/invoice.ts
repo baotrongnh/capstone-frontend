@@ -1,4 +1,5 @@
 import { INVOICE_STATUS_COLORS, INVOICE_TYPE_VALUES, type InvoiceStatus, type InvoiceType } from '@/types/invoice'
+import { formatLocaleDate, formatVndCurrency } from './format'
 
 export type InvoiceTypeTranslationKey =
     | 'rent'
@@ -43,25 +44,11 @@ const PAYMENT_METHOD_ALIASES: Record<string, PaymentMethodTranslationKey> = {
 }
 
 export const formatInvoiceDate = (value?: string | null, locale = 'vi') => {
-    if (!value) return '-'
-
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return '-'
-
-    const normalizedLocale = locale === 'en' ? 'en-US' : 'vi-VN'
-    return date.toLocaleDateString(normalizedLocale)
+    return formatLocaleDate(value, locale === 'en' ? 'en' : 'vi')
 }
 
 export const formatInvoiceAmount = (value?: string | null, locale = 'vi') => {
-    const amount = Number(value)
-    if (!Number.isFinite(amount)) return '-'
-
-    const normalizedLocale = locale === 'en' ? 'en-US' : 'vi-VN'
-    return amount.toLocaleString(normalizedLocale, {
-        style: 'currency',
-        currency: 'VND',
-        maximumFractionDigits: 0,
-    })
+    return formatVndCurrency(value, locale === 'en' ? 'en' : 'vi')
 }
 
 export const isInvoiceStatus = (value: string): value is InvoiceStatus => value in INVOICE_STATUS_COLORS
