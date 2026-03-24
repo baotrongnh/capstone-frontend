@@ -3,9 +3,9 @@
 import { useInvoice } from '@/hooks/query/useInvoices'
 import { formatInvoiceAmount } from '@/utils/invoice'
 import { normalizeText } from '@/utils/text'
-import { Alert, Button, Card, Descriptions, Result, Spin, Typography } from 'antd'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Alert, Button, Descriptions, Result, Spin, Typography } from 'antd'
 import { useLocale, useTranslations } from 'next-intl'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const { Text } = Typography
 
