@@ -255,7 +255,6 @@ export default function ModalAssignContract({
 
             {selectedContract.status === "draft" && signature && (
               <Alert
-                message=" Hợp đồng đã ký"
                 description="Bạn đã ký hợp đồng. Vui lòng gửi để hoàn tất quá trình."
                 type="success"
                 showIcon
