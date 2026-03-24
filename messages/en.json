@@ -362,32 +362,107 @@
     },
     "payment": {
       "title": "Payment History",
-      "subtitle": "View all your payment transactions",
-      "noPayments": "No payment records found",
-      "transactionId": "Transaction ID",
-      "type": "Type",
-      "apartment": "Apartment",
-      "dueDate": "Due Date",
-      "paidDate": "Paid Date",
+      "subtitle": "View all payment transactions from your invoices",
+      "paymentReference": "Payment Ref.",
+      "invoiceNumber": "Invoice No.",
+      "paymentMethod": "Method",
+      "paymentDate": "Payment Date",
       "amount": "Amount",
       "status": "Status",
-      "actions": "Actions",
-      "view": "View",
-      "invoice": "Invoice",
       "all": "All",
-      "types": {
-        "rent": "Rent",
-        "electricity": "Electricity",
-        "water": "Water",
-        "maintenance": "Maintenance",
-        "deposit": "Deposit",
-        "other": "Other"
-      },
+      "empty": "No payments found",
+      "loadError": "Unable to load payment list",
+      "syntheticStatus": "Pending (Unpaid Invoice)",
       "statuses": {
         "pending": "Pending",
+        "processing": "Processing",
         "completed": "Completed",
         "failed": "Failed",
+        "refunded": "Refunded",
         "cancelled": "Cancelled"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Bank Transfer",
+        "cash": "Cash",
+        "e_wallet": "E-wallet",
+        "auto_debit": "Auto Debit",
+        "credit_card": "Credit Card",
+        "debit_card": "Debit Card",
+        "other": "Other"
+      },
+      "checkout": {
+        "labels": {
+          "invoiceId": "Invoice ID",
+          "invoiceNumber": "Invoice Number",
+          "totalAmount": "Total Amount",
+          "status": "Status"
+        },
+        "success": {
+          "title": "Payment successful",
+          "subtitle": "Your payment has been recorded successfully.",
+          "loadWarning": "Unable to load full invoice information",
+          "backToHistory": "Go to payment history"
+        },
+        "cancel": {
+          "title": "Payment cancelled",
+          "subtitle": "The payment was not completed. You can return to invoice detail and try again.",
+          "loadWarning": "Unable to load full invoice information",
+          "backToInvoice": "Back to invoice detail"
+        }
+      },
+      "detail": {
+        "title": "Payment Detail",
+        "paymentId": "Payment ID",
+        "loadError": "Unable to load payment detail",
+        "notFound": "Payment not found",
+        "sections": {
+          "overview": "Overview",
+          "invoice": "Invoice Information"
+        },
+        "summary": {
+          "amount": "Payment Amount",
+          "status": "Status",
+          "paymentDate": "Payment Date"
+        },
+        "fields": {
+          "paymentReference": "Payment Reference",
+          "status": "Status",
+          "amount": "Amount",
+          "currency": "Currency",
+          "paymentMethod": "Payment Method",
+          "transactionId": "Transaction ID",
+          "paymentDate": "Payment Date",
+          "paymentGateway": "Payment Gateway",
+          "bankName": "Bank Name",
+          "accountNumber": "Account Number",
+          "refundAmount": "Refund Amount",
+          "refundDate": "Refund Date",
+          "refundReason": "Refund Reason",
+          "notes": "Notes",
+          "createdAt": "Created At",
+          "updatedAt": "Updated At",
+          "id": "Payment ID"
+        },
+        "invoice": {
+          "id": "Invoice ID",
+          "invoiceNumber": "Invoice Number",
+          "invoiceType": "Invoice Type",
+          "currency": "Currency",
+          "totalAmount": "Total Amount",
+          "baseRent": "Base Rent",
+          "taxAmount": "Tax Amount",
+          "contentTitle": "Content Title",
+          "contentDescription": "Content Description"
+        },
+        "table": {
+          "description": "Description",
+          "type": "Type",
+          "quantity": "Quantity",
+          "amount": "Amount"
+        },
+        "empty": {
+          "invoiceItems": "No invoice items"
+        }
       }
     },
     "settings": {
@@ -478,7 +553,19 @@
         "water": "Water",
         "maintenance": "Maintenance",
         "deposit": "Deposit",
+        "contract_deposit": "Contract Deposit",
+        "utility": "Utility",
+        "service": "Service",
+        "penalty": "Penalty",
         "other": "Other"
+      },
+      "paymentMethods": {
+        "bank_transfer": "Bank Transfer",
+        "cash": "Cash",
+        "e_wallet": "E-wallet",
+        "auto_debit": "Auto Debit",
+        "credit_card": "Credit Card",
+        "debit_card": "Debit Card"
       },
       "statuses": {
         "draft": "Draft",
@@ -488,6 +575,75 @@
         "paid": "Paid",
         "overdue": "Overdue",
         "cancelled": "Cancelled"
+      },
+      "detail": {
+        "title": "Invoice Detail",
+        "invoiceId": "Invoice ID",
+        "loadError": "Unable to load invoice detail",
+        "notFound": "Invoice not found",
+        "sections": {
+          "overview": "Overview",
+          "invoiceContent": "Invoice Content",
+          "utilityCharges": "Utility Charges",
+          "additionalCharges": "Additional Charges",
+          "discounts": "Discounts",
+          "payments": "Payments"
+        },
+        "summary": {
+          "totalAmount": "Total Amount",
+          "status": "Status",
+          "invoiceType": "Invoice Type"
+        },
+        "fields": {
+          "invoiceNumber": "Invoice Number",
+          "status": "Status",
+          "invoiceType": "Invoice Type",
+          "billingStart": "Billing Period Start",
+          "billingEnd": "Billing Period End",
+          "dueDate": "Due Date",
+          "issueDate": "Issue Date",
+          "sentAt": "Sent At",
+          "paidAt": "Paid At",
+          "currency": "Currency",
+          "paymentMethod": "Payment Method",
+          "totalAmount": "Total Amount",
+          "baseRent": "Base Rent",
+          "taxAmount": "Tax Amount",
+          "invoiceDocument": "Invoice Document",
+          "notes": "Notes",
+          "createdAt": "Created At",
+          "updatedAt": "Updated At",
+          "id": "Invoice ID",
+          "title": "Title",
+          "description": "Description"
+        },
+        "table": {
+          "description": "Description",
+          "type": "Type",
+          "quantity": "Quantity",
+          "amount": "Amount",
+          "paymentId": "Payment ID",
+          "method": "Method",
+          "status": "Status",
+          "paymentDate": "Payment Date"
+        },
+        "errors": {
+          "invalidReturnUrl": "Return URL must not use localhost. Please set NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL to a public HTTPS domain.",
+          "createPaymentLinkFailed": "Unable to create payment link. Please try again.",
+          "missingCheckoutUrl": "Did not receive a payment link from the system."
+        },
+        "actions": {
+          "openDocument": "Open document",
+          "backToInvoices": "Back to invoices",
+          "payNow": "Pay now"
+        },
+        "empty": {
+          "invoiceItems": "No invoice items",
+          "utilityCharges": "No utility charges",
+          "additionalCharges": "No additional charges",
+          "discounts": "No discounts",
+          "payments": "No payments"
+        }
       }
     },
     "properties": {

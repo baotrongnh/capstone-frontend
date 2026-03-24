@@ -1,15 +1,17 @@
 'use client'
 
-import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS, INVOICE_TYPE_VALUES } from '@/constants/invoice'
+import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS } from '@/types/invoice'
 import { useInvoices } from '@/hooks/query/useInvoices'
 import type { InvoiceItem, InvoiceStatus, ListInvoicesQuery } from '@/types/invoice'
-import { formatInvoiceAmount, formatInvoiceDate } from '../../../utils/invoice'
+import { formatInvoiceAmount, formatInvoiceDate, isInvoiceStatus, toInvoiceTypeTranslationKey } from '../../../utils/invoice'
 import { Alert, Empty, Grid, Table, Tabs, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 
 export default function InvoicesPage() {
+    const router = useRouter()
     const t = useTranslations('Profile.invoices')
     const locale = useLocale()
     const screens = Grid.useBreakpoint()
@@ -20,15 +22,58 @@ export default function InvoicesPage() {
         [activeStatus],
     )
 
+    const { data: allInvoicesData } = useInvoices()
     const { data, isLoading, isError, error } = useInvoices(queryParams)
-    const invoices = data?.data ?? []
+    const invoices = useMemo(() => data?.data ?? [], [data])
+    const allInvoices = useMemo(() => allInvoicesData?.data ?? [], [allInvoicesData])
+    const filteredAllInvoices = useMemo(
+        () => allInvoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
+        [allInvoices],
+    )
+    const filteredInvoices = useMemo(
+        () => invoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
+        [invoices],
+    )
+
+    const statusCounts = useMemo(() => {
+        const counts: Record<InvoiceStatus, number> = {
+            draft: 0,
+            issued: 0,
+            sent: 0,
+            partially_paid: 0,
+            paid: 0,
+            overdue: 0,
+            cancelled: 0,
+        }
+
+        filteredAllInvoices.forEach((invoice) => {
+            const status = invoice.status
+            if (status && isInvoiceStatus(status)) {
+                counts[status] += 1
+            }
+        })
+
+        return counts
+    }, [filteredAllInvoices])
+
+    const handleStatusTabChange = (key: string) => {
+        if (key === 'all' || isInvoiceStatus(key)) {
+            setActiveStatus(key)
+        }
+    }
+
+    const getInvoiceTypeLabel = (invoiceType?: string | null) => {
+        if (!invoiceType) return '-'
+        const translationKey = toInvoiceTypeTranslationKey(invoiceType)
+        return translationKey ? t(`types.${translationKey}`) : invoiceType
+    }
 
     const columns: ColumnsType<InvoiceItem> = [
         {
             title: t('invoiceNumber'),
             dataIndex: 'invoiceNumber',
             key: 'invoiceNumber',
-            width: 160,
+            width: 200,
             render: (invoiceNumber?: string) => (
                 <span className="font-mono text-xs text-muted">{invoiceNumber || '-'}</span>
             ),
@@ -41,11 +86,7 @@ export default function InvoicesPage() {
             render: (invoiceType?: string) => {
                 if (!invoiceType) return <Tag>-</Tag>
 
-                if (INVOICE_TYPE_VALUES.includes(invoiceType as (typeof INVOICE_TYPE_VALUES)[number])) {
-                    return <Tag>{t(`types.${invoiceType}`)}</Tag>
-                }
-
-                return <Tag>{invoiceType}</Tag>
+                return <Tag>{getInvoiceTypeLabel(invoiceType)}</Tag>
             },
         },
         {
@@ -56,14 +97,28 @@ export default function InvoicesPage() {
                 const number = record.rentalContract?.apartment?.apartmentNumber
                 const address = record.rentalContract?.apartment?.address
                 const text = [number, address].filter(Boolean).join(' - ')
-                return <span>{text || '-'}</span>
+                return (
+                    <span
+                        style={{
+                            display: 'inline-block',
+                            maxWidth: 120,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            verticalAlign: 'bottom',
+                        }}
+                        title={text || '-'}
+                    >
+                        {text || '-'}
+                    </span>
+                )
             },
         },
         {
             title: t('amount'),
             dataIndex: 'totalAmount',
             key: 'totalAmount',
-            width: 140,
+            width: 120,
             align: 'right',
             render: (totalAmount?: string | null) => (
                 <span className="font-semibold">{formatInvoiceAmount(totalAmount, locale)}</span>
@@ -73,7 +128,7 @@ export default function InvoicesPage() {
             title: t('dueDate'),
             dataIndex: 'dueDate',
             key: 'dueDate',
-            width: 100,
+            width: 150,
             render: (dueDate?: string | null) => formatInvoiceDate(dueDate, locale),
         },
         {
@@ -81,16 +136,20 @@ export default function InvoicesPage() {
             dataIndex: 'status',
             key: 'status',
             width: 140,
-            render: (status?: InvoiceStatus) => {
+            render: (status?: string | null) => {
                 if (!status) return <Tag>-</Tag>
+                if (!isInvoiceStatus(status)) return <Tag>{status}</Tag>
                 return <Tag color={INVOICE_STATUS_COLORS[status]}>{t(`statuses.${status}`)}</Tag>
             },
         },
     ]
 
     const tabItems = [
-        { key: 'all', label: `${t('all')} (${invoices.length})` },
-        ...INVOICE_STATUS_TABS.map((status) => ({ key: status, label: t(`statuses.${status}`) })),
+        { key: 'all', label: `${t('all')} (${filteredAllInvoices.length})` },
+        ...INVOICE_STATUS_TABS.map((status) => ({
+            key: status,
+            label: `${t(`statuses.${status}`)} (${statusCounts[status]})`,
+        })),
     ]
 
     return (
@@ -111,20 +170,27 @@ export default function InvoicesPage() {
 
             <Tabs
                 activeKey={activeStatus}
-                onChange={(key) => setActiveStatus(key as 'all' | InvoiceStatus)}
+                onChange={handleStatusTabChange}
                 items={tabItems}
             />
 
-            {invoices.length === 0 && !isLoading ? (
+            {filteredInvoices.length === 0 && !isLoading ? (
                 <Empty description={t('empty')} className="py-10" />
             ) : (
                 <Table
                     rowKey="id"
                     columns={columns}
-                    dataSource={invoices}
+                    dataSource={filteredInvoices}
                     loading={isLoading}
                     scroll={screens.md ? undefined : { x: 760 }}
                     pagination={{ pageSize: 10 }}
+                    onRow={(record) => ({
+                        onClick: () => {
+                            if (!record.id) return
+                            router.push(`/profile/invoices/${record.id}?from=invoices`)
+                        },
+                        style: { cursor: record.id ? 'pointer' : 'default' },
+                    })}
                 />
             )}
         </div>

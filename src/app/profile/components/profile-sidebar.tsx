@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   UserOutlined,
   HomeOutlined,
@@ -77,6 +77,7 @@ export default function ProfileSidebar({
 }: ProfileSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("Profile");
 
   const navigationItems = useMemo(
@@ -92,9 +93,19 @@ export default function ProfileSidebar({
   }));
 
   const activeKey = useMemo(() => {
-    const matchedItem = navigationItems.find((item) => pathname === item.path);
+    if (pathname.startsWith("/profile/invoices/")) {
+      const from = searchParams.get("from");
+      if (from === "payments") {
+        return "payment-history";
+      }
+      return "Invoices";
+    }
+
+    const matchedItem = navigationItems.find((item) =>
+      pathname === item.path || pathname.startsWith(`${item.path}/`),
+    );
     return matchedItem?.key || "account";
-  }, [pathname, navigationItems]);
+  }, [pathname, navigationItems, searchParams]);
 
   return (
     <div className="h-full flex flex-col shadow-sm bg-white">
