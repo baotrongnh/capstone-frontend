@@ -38,46 +38,44 @@ export default function PaymentCancelPage() {
 
     return (
         <div className="mx-auto max-w-3xl py-8">
-            <Card className="shadow-sm">
-                <Result
-                    status="warning"
-                    title={t('cancel.title')}
-                    subTitle={t('cancel.subtitle')}
+            <Result
+                status="warning"
+                title={t('cancel.title')}
+                subTitle={t('cancel.subtitle')}
+            />
+
+            {isError && (
+                <Alert
+                    type="warning"
+                    showIcon
+                    className="mb-4"
+                    title={t('cancel.loadWarning')}
+                    description={error?.message}
                 />
+            )}
 
-                {isError && (
-                    <Alert
-                        type="warning"
-                        showIcon
-                        className="mb-4"
-                        message={t('cancel.loadWarning')}
-                        description={error?.message}
-                    />
-                )}
+            {invoice && (
+                <Descriptions bordered column={1} size="middle" className="mb-4">
+                    <Descriptions.Item label={t('labels.invoiceId')}>
+                        <Text className="font-mono text-xs">{invoice.id}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={t('labels.invoiceNumber')}>
+                        {invoice.invoiceNumber}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={t('labels.totalAmount')}>
+                        {formatInvoiceAmount(invoice.totalAmount, locale)}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={t('labels.status')}>
+                        {normalizeText(invoice.status)}
+                    </Descriptions.Item>
+                </Descriptions>
+            )}
 
-                {invoice && (
-                    <Descriptions bordered column={1} size="middle" className="mb-4">
-                        <Descriptions.Item label={t('labels.invoiceId')}>
-                            <Text className="font-mono text-xs">{invoice.id}</Text>
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('labels.invoiceNumber')}>
-                            {invoice.invoiceNumber}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('labels.totalAmount')}>
-                            {formatInvoiceAmount(invoice.totalAmount, locale)}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('labels.status')}>
-                            {normalizeText(invoice.status)}
-                        </Descriptions.Item>
-                    </Descriptions>
-                )}
-
-                <div className="flex justify-center">
-                    <Button type="primary" size="large" onClick={goToInvoice}>
-                        {t('cancel.backToInvoice')}
-                    </Button>
-                </div>
-            </Card>
+            <div className="flex justify-center">
+                <Button type="primary" size="large" onClick={goToInvoice}>
+                    {t('cancel.backToInvoice')}
+                </Button>
+            </div>
         </div>
     )
 }
