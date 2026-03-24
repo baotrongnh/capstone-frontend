@@ -2198,7 +2198,7 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example Nguyen Van A */
-            fullName: Record<string, never> | null;
+            fullName: string | null;
             /** @example user */
             role: string;
             /**
@@ -2227,6 +2227,7 @@ export interface components {
         };
         RegisterDto: {
             /**
+             * Format: email
              * @description Email address
              * @example user@example.com
              */
@@ -2284,6 +2285,7 @@ export interface components {
         };
         ForgotPasswordDto: {
             /**
+             * Format: email
              * @description Email address of the account
              * @example user@example.com
              */
@@ -2317,11 +2319,14 @@ export interface components {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example 012345678901 */
-            nationalId?: Record<string, never> | null;
+            nationalId?: string | null;
             /** @example false */
             isVerified: boolean;
-            /** @example 2026-03-10T10:30:00.000Z */
-            verifiedAt?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
+            verifiedAt?: string | null;
         };
         UserListItemDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
@@ -2329,13 +2334,16 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone?: Record<string, never> | null;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
+            dateOfBirth?: string | null;
             /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
+            profileImageUrl?: string | null;
             identity?: components["schemas"]["UserIdentityListDto"] | null;
             /** @example true */
             isActive: boolean;
@@ -2350,41 +2358,44 @@ export interface components {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567890 */
             id: string;
             /** @example 012345678901 */
-            nationalId?: Record<string, never> | null;
+            nationalId?: string | null;
             /** @example A12345678 */
-            passportNumber?: Record<string, never> | null;
+            passportNumber?: string | null;
             /** @example Nguyen Van A */
-            name?: Record<string, never> | null;
+            name?: string | null;
             /** @example 01/01/1990 */
-            dob?: Record<string, never> | null;
+            dob?: string | null;
             /** @example M */
-            sex?: Record<string, never> | null;
+            sex?: string | null;
             /** @example Việt Nam */
-            nationality?: Record<string, never> | null;
+            nationality?: string | null;
             /** @example Kinh */
-            ethnicity?: Record<string, never> | null;
+            ethnicity?: string | null;
             /** @example Ha Noi */
-            home?: Record<string, never> | null;
+            home?: string | null;
             /** @example 123 Tran Hung Dao, Hoan Kiem, Ha Noi */
-            address?: Record<string, never> | null;
+            address?: string | null;
             /** @example Ha Noi */
-            province?: Record<string, never> | null;
+            province?: string | null;
             /** @example Hoan Kiem */
-            district?: Record<string, never> | null;
+            district?: string | null;
             /** @example Hoan Kiem */
-            ward?: Record<string, never> | null;
+            ward?: string | null;
             /** @example 123 Tran Hung Dao */
-            street?: Record<string, never> | null;
+            street?: string | null;
             /** @example Sẹo 2cm trán phải */
-            features?: Record<string, never> | null;
+            features?: string | null;
             /** @example 01/01/2020 */
-            issueDate?: Record<string, never> | null;
+            issueDate?: string | null;
             /** @example 01/01/2030 */
-            doe?: Record<string, never> | null;
+            doe?: string | null;
             /** @example false */
             isVerified: boolean;
-            /** @example 2026-03-10T10:30:00.000Z */
-            verifiedAt?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
+            verifiedAt?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -2418,7 +2429,7 @@ export interface components {
             /** Format: date-time */
             moveInDate?: string | null;
             /** @example 50.00 */
-            sharePercentage?: Record<string, never> | null;
+            sharePercentage?: string | null;
             rentalContract: components["schemas"]["ContractSummaryDto"];
         };
         UserDetailDto: {
@@ -2432,27 +2443,30 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone?: Record<string, never> | null;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
+            dateOfBirth?: string | null;
             /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
+            profileImageUrl?: string | null;
             /** @example Tran Thi B */
-            emergencyContactName?: Record<string, never> | null;
+            emergencyContactName?: string | null;
             /** @example 0987654321 */
-            emergencyContactPhone?: Record<string, never> | null;
+            emergencyContactPhone?: string | null;
             /** @example ABC Investment Co., Ltd */
-            companyName?: Record<string, never> | null;
+            companyName?: string | null;
             /** @example 0312345678 */
-            taxCode?: Record<string, never> | null;
+            taxCode?: string | null;
             /** @example 1234567890 */
-            bankAccountNumber?: Record<string, never> | null;
+            bankAccountNumber?: string | null;
             /** @example Vietcombank */
-            bankName?: Record<string, never> | null;
+            bankName?: string | null;
             /** @example 123 Nguyen Trai, District 1 */
-            address?: Record<string, never> | null;
+            address?: string | null;
             /** @example 10.00 */
             commissionRate?: string | null;
             /** Format: date-time */
@@ -2461,23 +2475,23 @@ export interface components {
             contractEndDate?: string | null;
             paymentTerms?: string | null;
             /** @example EMP-001 */
-            employeeCode?: Record<string, never> | null;
+            employeeCode?: string | null;
             /** @example customer_service */
-            staffRole?: Record<string, never> | null;
+            staffRole?: string | null;
             /** @example Customer Service */
-            department?: Record<string, never> | null;
+            department?: string | null;
             /** @example Ho Chi Minh */
-            workingCity?: Record<string, never> | null;
+            workingCity?: string | null;
             /** @example District 1 */
-            workingDistrict?: Record<string, never> | null;
+            workingDistrict?: string | null;
             /** Format: date-time */
             hireDate?: string | null;
             /** @example morning */
-            operatorShift?: Record<string, never> | null;
+            operatorShift?: string | null;
             /** @example admin_root */
-            username?: Record<string, never> | null;
+            username?: string | null;
             /** @example admin */
-            adminRoleLevel?: Record<string, never> | null;
+            adminRoleLevel?: string | null;
             /**
              * @example {
              *       "users": true
@@ -2487,9 +2501,12 @@ export interface components {
             /** @example true */
             isActive: boolean;
             /** @example false */
-            isVerified?: Record<string, never> | null;
-            /** @example 2026-03-10T10:30:00.000Z */
-            lastLoginAt?: Record<string, never> | null;
+            isVerified?: boolean | null;
+            /**
+             * Format: date-time
+             * @example 2026-03-10T10:30:00.000Z
+             */
+            lastLoginAt?: string | null;
             identity?: components["schemas"]["UserIdentityDetailDto"] | null;
             /** Format: date-time */
             createdAt: string;
@@ -2541,13 +2558,16 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone?: Record<string, never> | null;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
+            dateOfBirth?: string | null;
             /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
+            profileImageUrl?: string | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
@@ -2559,6 +2579,7 @@ export interface components {
         };
         CreateUserDto: {
             /**
+             * Format: email
              * @description Email address (must be unique)
              * @example user@example.com
              */
@@ -2594,6 +2615,7 @@ export interface components {
              */
             passportNumber?: string;
             /**
+             * Format: uri
              * @description Profile image URL
              * @example https://example.com/avatar.jpg
              */
@@ -2615,17 +2637,20 @@ export interface components {
             /** @example user@example.com */
             email: string;
             /** @example 0901234567 */
-            phone?: Record<string, never> | null;
+            phone?: string | null;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example 1990-05-15T00:00:00.000Z */
-            dateOfBirth?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 1990-05-15T00:00:00.000Z
+             */
+            dateOfBirth?: string | null;
             /** @example https://example.com/avatar.jpg */
-            profileImageUrl?: Record<string, never> | null;
+            profileImageUrl?: string | null;
             /** @example Tran Thi B */
-            emergencyContactName?: Record<string, never> | null;
+            emergencyContactName?: string | null;
             /** @example 0987654321 */
-            emergencyContactPhone?: Record<string, never> | null;
+            emergencyContactPhone?: string | null;
             /** @example true */
             isActive: boolean;
             /** @example false */
@@ -2635,6 +2660,7 @@ export interface components {
         };
         UpdateUserDto: {
             /**
+             * Format: email
              * @description Email address (must be unique)
              * @example user@example.com
              */
@@ -2670,6 +2696,7 @@ export interface components {
              */
             passportNumber?: string;
             /**
+             * Format: uri
              * @description Profile image URL
              * @example https://example.com/avatar.jpg
              */
@@ -2706,7 +2733,7 @@ export interface components {
             /** @example Nguyen Van A */
             fullName: string;
             /** @example ABC Investment Co., Ltd */
-            companyName?: Record<string, never> | null;
+            companyName?: string | null;
         };
         PartnerRequestListItemDto: {
             /** @example d88c6858-ec67-4a37-9541-8e9bcf0f9328 */
@@ -2731,9 +2758,9 @@ export interface components {
             createdAt: string;
             user?: components["schemas"]["PartnerRequestUserSummaryDto"] | null;
             /** @example Need additional legal papers */
-            reviewNotes?: Record<string, never> | null;
+            reviewNotes?: string | null;
             /** @example Invalid contact info */
-            rejectionReason?: Record<string, never> | null;
+            rejectionReason?: string | null;
         };
         PartnerRequestReviewerSummaryDto: {
             /** @example a1b2c3d4-e5f6-7890-abcd-ef1234567891 */
@@ -3228,7 +3255,10 @@ export interface components {
              *     ]
              */
             images?: string[];
-            /** @example https://youtube.com/watch?v=... */
+            /**
+             * Format: uri
+             * @example https://youtube.com/watch?v=...
+             */
             videoTourUrl?: string;
             /** @example 2020 */
             yearBuilt?: number;
@@ -3304,7 +3334,10 @@ export interface components {
              *     ]
              */
             images?: string[];
-            /** @example https://youtube.com/watch?v=... */
+            /**
+             * Format: uri
+             * @example https://youtube.com/watch?v=...
+             */
             videoTourUrl?: string;
             /** @example 2020 */
             yearBuilt?: number;
@@ -3459,7 +3492,10 @@ export interface components {
             contractDocumentUrl?: string;
         };
         CreateContractDto: {
-            /** @description Apartment ID to rent */
+            /**
+             * Format: uuid
+             * @description Apartment ID to rent
+             */
             apartmentId: string;
             /**
              * @description Contract start date
@@ -3709,7 +3745,10 @@ export interface components {
             itemType?: string;
         };
         CreateInvoiceDto: {
-            /** @description Contract ID for this invoice */
+            /**
+             * Format: uuid
+             * @description Contract ID for this invoice
+             */
             rentalContractId: string;
             /**
              * @description Due date
@@ -3859,7 +3898,10 @@ export interface components {
             status: string;
         };
         CreatePaymentDto: {
-            /** @description Invoice ID to pay */
+            /**
+             * Format: uuid
+             * @description Invoice ID to pay
+             */
             invoiceId: string;
             /** @example 15000000 */
             amount: number;
@@ -3893,14 +3935,19 @@ export interface components {
             invoice: components["schemas"]["PaymentInvoiceContentDto"];
         };
         CreatePayOSPaymentLinkDto: {
-            /** @description Invoice ID to create PayOS payment link for */
+            /**
+             * Format: uuid
+             * @description Invoice ID to create PayOS payment link for
+             */
             invoiceId: string;
             /**
+             * Format: uri
              * @description Return URL after successful payment
              * @example https://app.intelliservops.com/payment/success
              */
             returnUrl?: string;
             /**
+             * Format: uri
              * @description Cancel URL when customer cancels payment
              * @example https://app.intelliservops.com/payment/cancel
              */
@@ -3973,9 +4020,9 @@ export interface components {
             tenantRating?: number | null;
             tenantFeedback?: string | null;
             /** @example 500000.00 */
-            costEstimate?: Record<string, never> | null;
+            costEstimate?: string | null;
             /** @example 450000.00 */
-            actualCost?: Record<string, never> | null;
+            actualCost?: string | null;
             costCoveredBy?: string | null;
             /** Format: date-time */
             completedAt?: string | null;
@@ -3997,9 +4044,15 @@ export interface components {
             urgency: string;
         };
         CreateMaintenanceDto: {
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
-            /** @description Room ID if specific to a room */
+            /**
+             * Format: uuid
+             * @description Room ID if specific to a room
+             */
             roomId?: string;
             /** @example Broken air conditioner */
             title: string;
@@ -4104,7 +4157,10 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Related contract ID */
+            /**
+             * Format: uuid
+             * @description Related contract ID
+             */
             rentalContractId?: string;
         };
         UpdateTicketDto: {
@@ -4112,7 +4168,10 @@ export interface components {
             status?: "open" | "in_progress" | "waiting_for_user" | "resolved" | "closed" | "escalated";
             /** @enum {string} */
             priority?: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
             /** @description Resolution notes */
             resolutionNotes?: string;
@@ -4124,7 +4183,7 @@ export interface components {
             /** @example 0901234567 */
             guestPhone: string;
             /** @example guest@example.com */
-            guestEmail?: Record<string, never> | null;
+            guestEmail?: string | null;
             apartmentId: string;
             assignedStaffId?: string | null;
             /** @example pending */
@@ -4139,11 +4198,17 @@ export interface components {
             updatedAt: string;
         };
         CreateViewingRequestDto: {
-            /** @description Apartment ID to view */
+            /**
+             * Format: uuid
+             * @description Apartment ID to view
+             */
             apartmentId: string;
             /** @example Nguyen Van A */
             fullName: string;
-            /** @example guest@example.com */
+            /**
+             * Format: email
+             * @example guest@example.com
+             */
             email: string;
             /** @example 0901234567 */
             phone: string;
@@ -4197,6 +4262,7 @@ export interface components {
         };
         CreateUserViewingRequestDto: {
             /**
+             * Format: uuid
              * @description ID can ho ma user muon dat lich xem
              * @example 11111111-2222-3333-4444-555555555555
              */
@@ -4386,9 +4452,15 @@ export interface components {
             serialNumber?: string;
             /** @example AA:BB:CC:DD:EE:FF */
             macAddress?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
-            /** @description Room ID */
+            /**
+             * Format: uuid
+             * @description Room ID
+             */
             roomId?: string;
             /** @example Installed at main entrance */
             locationDescription?: string;
@@ -4417,9 +4489,15 @@ export interface components {
             serialNumber?: string;
             /** @example AA:BB:CC:DD:EE:FF */
             macAddress?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
-            /** @description Room ID */
+            /**
+             * Format: uuid
+             * @description Room ID
+             */
             roomId?: string;
             /** @example Installed at main entrance */
             locationDescription?: string;
@@ -4462,9 +4540,9 @@ export interface components {
             brand?: string | null;
             model?: string | null;
             /** @example 1234.56 */
-            currentReading?: Record<string, never> | null;
+            currentReading?: string | null;
             /** @example 1200.00 */
-            previousReading?: Record<string, never> | null;
+            previousReading?: string | null;
             /** Format: date-time */
             readingDate?: string | null;
             /** @example active */
@@ -4489,11 +4567,11 @@ export interface components {
             nextInspectionDate?: string | null;
             unitOfMeasurement?: string | null;
             /** @example 3500.00 */
-            ratePerUnit?: Record<string, never> | null;
+            ratePerUnit?: string | null;
             /** @example 1234.56 */
-            currentReading?: Record<string, never> | null;
+            currentReading?: string | null;
             /** @example 1200.00 */
-            previousReading?: Record<string, never> | null;
+            previousReading?: string | null;
             /** Format: date-time */
             readingDate?: string | null;
             /** @example active */
@@ -4515,7 +4593,10 @@ export interface components {
             brand?: string;
             /** @example iEM3155 */
             model?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId: string;
             /** @example 2026-01-15 */
             installationDate: string;
@@ -4539,7 +4620,10 @@ export interface components {
             brand?: string;
             /** @example iEM3155 */
             model?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @example 2026-01-15 */
             installationDate?: string;
@@ -4561,9 +4645,9 @@ export interface components {
             /** @example 1234.56 */
             readingValue: string;
             /** @example 1200.00 */
-            previousReadingValue?: Record<string, never> | null;
+            previousReadingValue?: string | null;
             /** @example 34.56 */
-            consumption?: Record<string, never> | null;
+            consumption?: string | null;
             /** Format: date-time */
             readingDate: string;
             /** @example manual */
@@ -4577,9 +4661,15 @@ export interface components {
             createdAt: string;
         };
         CreateUtilityReadingDto: {
-            /** @description Utility meter ID */
+            /**
+             * Format: uuid
+             * @description Utility meter ID
+             */
             utilityMeterId: string;
-            /** @description Rental contract ID */
+            /**
+             * Format: uuid
+             * @description Rental contract ID
+             */
             rentalContractId?: string;
             /** @example 2026-02-01 */
             readingDate: string;
@@ -4665,13 +4755,22 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @enum {string} */
             relatedEntityType?: "contact_request" | "maintenance_request" | "appointment" | "inspection";
-            /** @description Related entity UUID */
+            /**
+             * Format: uuid
+             * @description Related entity UUID
+             */
             relatedEntityId?: string;
             /** @example 2026-02-15 */
             scheduledDate?: string;
@@ -4698,9 +4797,15 @@ export interface components {
              * @enum {string}
              */
             priority: "low" | "medium" | "high" | "urgent";
-            /** @description Staff ID to assign */
+            /**
+             * Format: uuid
+             * @description Staff ID to assign
+             */
             assignedToStaffId?: string;
-            /** @description Apartment ID */
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
             apartmentId?: string;
             /** @example 2026-02-15 */
             scheduledDate?: string;
@@ -4779,7 +4884,10 @@ export interface components {
         CreateNotificationDto: {
             /** @enum {string} */
             recipientType: "guest" | "user" | "staff" | "operator" | "admin" | "system";
-            /** @description Recipient UUID */
+            /**
+             * Format: uuid
+             * @description Recipient UUID
+             */
             recipientId: string;
             /**
              * @default info
@@ -4803,6 +4911,7 @@ export interface components {
             priority: "low" | "medium" | "high" | "urgent";
             /** @example Invoice */
             relatedEntityType?: string;
+            /** Format: uuid */
             relatedEntityId?: string;
         };
         PolicyListItemDto: {
@@ -4823,13 +4932,9 @@ export interface components {
             requiresAcceptance: boolean;
             /** @example 0 */
             displayOrder: number;
-            /**
-             * @description Số căn hộ áp dụng
-             * @example {
-             *       "apartmentPolicies": 2
-             *     }
-             */
-            _count: Record<string, never>;
+            _count: {
+                apartmentPolicies: number;
+            };
             /** Format: date-time */
             createdAt: string;
         };
@@ -5142,27 +5247,20 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            /**
-             * @description Staff who created the note
-             * @example {
-             *       "id": "...",
-             *       "fullName": "Nguyen Van B",
-             *       "email": "staff@example.com"
-             *     }
-             */
-            staff: Record<string, never>;
-            /**
-             * @description User the note is about
-             * @example {
-             *       "id": "...",
-             *       "fullName": "Nguyen Van A",
-             *       "email": "user@example.com"
-             *     }
-             */
-            user: Record<string, never>;
+            staff: {
+                id: string;
+                fullName: string;
+                email: string;
+            };
+            user: {
+                id: string;
+                fullName: string;
+                email: string;
+            };
         };
         CreateStaffNoteDto: {
             /**
+             * Format: uuid
              * @description ID of the user this note is about
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
@@ -5261,16 +5359,19 @@ export interface components {
         };
         CreateUserRoomDto: {
             /**
+             * Format: uuid
              * @description User ID
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
             userId: string;
             /**
+             * Format: uuid
              * @description Room ID
              * @example b2c3d4e5-f6a7-8901-bcde-f12345678901
              */
             roomId: string;
             /**
+             * Format: uuid
              * @description Rental Contract ID
              * @example c3d4e5f6-a7b8-9012-cdef-123456789012
              */
@@ -5476,11 +5577,13 @@ export interface components {
         };
         CreateApartmentPolicyDto: {
             /**
+             * Format: uuid
              * @description Apartment ID
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
             apartmentId: string;
             /**
+             * Format: uuid
              * @description Policy ID
              * @example b2c3d4e5-f6a7-8901-bcde-f12345678901
              */
@@ -5559,6 +5662,7 @@ export interface components {
         };
         CreateReservationDto: {
             /**
+             * Format: uuid
              * @description Apartment ID to reserve
              * @example a1b2c3d4-e5f6-7890-abcd-ef1234567890
              */
@@ -5662,6 +5766,7 @@ export interface components {
              */
             guestName?: string;
             /**
+             * Format: email
              * @description Guest email address
              * @example guest@example.com
              */
@@ -7235,6 +7340,14 @@ export interface operations {
                     };
                 };
             };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
+            };
             /** @description Invalid or missing PDF file */
             400: {
                 headers: {
@@ -7733,6 +7846,14 @@ export interface operations {
                 };
                 content?: never;
             };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>[];
+                };
+            };
             /** @description Payment not found */
             404: {
                 headers: {
@@ -7757,6 +7878,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -8795,6 +8924,12 @@ export interface operations {
                     };
                 };
             };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Access denied */
             403: {
                 headers: {
@@ -9453,6 +9588,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Notification not found */
             404: {
                 headers: {
@@ -9589,6 +9730,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Căn hộ không tồn tại */
             404: {
                 headers: {

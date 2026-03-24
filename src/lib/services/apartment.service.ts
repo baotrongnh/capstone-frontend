@@ -36,4 +36,9 @@ export const apartmentService = {
     const { data } = await apiClient.delete(`${endpoints.apartments}/${id}`)
     return data
   },
+
+  owner: async (id: string | number) => {
+    const { data } = await apiClient.get(`${endpoints.apartments}/owner/${id}`)
+    return data.data
+  }
 }
