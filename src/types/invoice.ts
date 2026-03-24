@@ -31,3 +31,29 @@ export const INVOICE_STATUS_TABS: InvoiceStatus[] = [
 ]
 
 export const INVOICE_TYPE_VALUES: InvoiceType[] = ['rent', 'electricity', 'water', 'maintenance', 'deposit', 'other']
+
+export type TranslateFn = (key: string) => string
+
+export type BuildItemColumnsParams = {
+    t: TranslateFn
+    locale: string
+    getTypeLabel: (invoiceType: string) => string
+}
+
+export type BuildPaymentColumnsParams = {
+    t: TranslateFn
+    locale: string
+    getPaymentMethodLabel: (paymentMethod: string) => string
+    getStatusColor: (status: string) => string
+    getStatusLabel: (status: string) => string
+}
+
+export type BuildDetailRowsParams = {
+    invoiceData: InvoiceDetail
+    t: TranslateFn
+    locale: string
+    getStatusColor: (status: string) => string
+    getStatusLabel: (status: string) => string
+    getTypeLabel: (invoiceType: string) => string
+    getPaymentMethodLabel: (paymentMethod: string) => string
+}

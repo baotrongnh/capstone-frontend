@@ -3,17 +3,17 @@
 import { CreditCardOutlined } from '@ant-design/icons'
 import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
-import type { InvoiceDetail, InvoiceDetailContentItem, InvoiceDetailPayment } from '@/types/invoice'
+import { useCreatePayOSPaymentLink } from '@/hooks/query/usePayments'
+import { createDetailRows, createItemColumns, createPaymentColumns } from './components/invoice-detail-config'
+import type { ApiErrorResponse } from '@/types/auth'
 import {
     formatInvoiceAmount,
-    formatInvoiceDate,
     isInvoiceStatus,
     toInvoiceTypeTranslationKey,
     toPaymentMethodTranslationKey,
 } from '@/utils/invoice'
 import { normalizeObjectToRows, normalizeText } from '@/utils/text'
-import { Alert, Breadcrumb, Button, Card, Col, Descriptions, Empty, Row, Spin, Statistic, Table, Tag, Typography } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import { Alert, App, Breadcrumb, Button, Card, Col, Descriptions, Empty, Row, Spin, Statistic, Table, Tag, Typography } from 'antd'
 import Link from 'next/link'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
@@ -21,6 +21,7 @@ import { useLocale, useTranslations } from 'next-intl'
 const { Text, Title } = Typography
 
 export default function InvoiceDetailPage() {
+    const { message } = App.useApp()
     const locale = useLocale()
     const t = useTranslations('Profile.invoices.detail')
     const tInvoices = useTranslations('Profile.invoices')
@@ -34,7 +35,60 @@ export default function InvoiceDetailPage() {
     const backLabel = from === 'payments' ? tPayments('title') : tInvoices('title')
 
     const { data, isLoading, isError, error } = useInvoice(id)
+    const { mutateAsync: createPayOSLink, isPending: isCreatingPayOSPaymentLink } = useCreatePayOSPaymentLink()
     const invoice = data?.data
+
+    const getErrorMessage = (errorValue: unknown) => {
+        const apiError = errorValue as ApiErrorResponse
+        const errorMessage = apiError?.response?.data?.message
+
+        if (Array.isArray(errorMessage) && errorMessage.length > 0) {
+            return errorMessage[0]
+        }
+
+        if (errorMessage) {
+            return errorMessage
+        }
+
+        return t('errors.createPaymentLinkFailed')
+    }
+
+    const handlePayNow = async () => {
+        if (!invoice?.id) {
+            message.error(t('notFound'))
+            return
+        }
+
+        const callbackBaseUrl = process.env.NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+        if (callbackBaseUrl.includes('localhost')) {
+            message.error(t('errors.invalidReturnUrl'))
+            return
+        }
+
+        const returnUrl = `${callbackBaseUrl}/payment/success?invoiceId=${encodeURIComponent(invoice.id)}`
+        const cancelUrl = `${callbackBaseUrl}/payment/cancel?invoiceId=${encodeURIComponent(invoice.id)}`
+        const descriptionSource = invoice.invoiceNumber || invoice.id
+        const description = `TT ${descriptionSource}`.slice(0, 25)
+
+        try {
+            const response = await createPayOSLink({
+                invoiceId: invoice.id,
+                returnUrl,
+                cancelUrl,
+                description,
+            })
+
+            const checkoutUrl = response.data?.checkoutUrl
+            if (!checkoutUrl) {
+                message.error(t('errors.missingCheckoutUrl'))
+                return
+            }
+
+            window.location.assign(checkoutUrl)
+        } catch (errorValue) {
+            message.error(getErrorMessage(errorValue))
+        }
+    }
 
     const getStatusColor = (status: string) => (isInvoiceStatus(status) ? INVOICE_STATUS_COLORS[status] : 'default')
 
@@ -50,196 +104,15 @@ export default function InvoiceDetailPage() {
         return translationKey ? tInvoices(`paymentMethods.${translationKey}`) : paymentMethod
     }
 
-    const itemColumns: ColumnsType<InvoiceDetailContentItem> = [
-        {
-            title: t('table.description'),
-            dataIndex: 'description',
-            key: 'description',
-            render: (value: unknown) => normalizeText(value),
-        },
-        {
-            title: t('table.type'),
-            dataIndex: 'itemType',
-            key: 'itemType',
-            width: 160,
-            render: (value: unknown) => getTypeLabel(normalizeText(value)),
-        },
-        {
-            title: t('table.quantity'),
-            dataIndex: 'quantity',
-            key: 'quantity',
-            width: 120,
-            align: 'right',
-            render: (value: unknown) => normalizeText(value),
-        },
-        {
-            title: t('table.amount'),
-            dataIndex: 'amount',
-            key: 'amount',
-            width: 200,
-            align: 'right',
-            render: (value: number) => formatInvoiceAmount(String(value), locale),
-        },
-    ]
+    const itemColumns = createItemColumns({ t, locale, getTypeLabel })
 
-    const paymentColumns: ColumnsType<InvoiceDetailPayment> = [
-        {
-            title: t('table.paymentId'),
-            dataIndex: 'id',
-            key: 'id',
-            render: (value: unknown) => <Text className="font-mono text-xs">{normalizeText(value)}</Text>,
-        },
-        {
-            title: t('table.method'),
-            dataIndex: 'paymentMethod',
-            key: 'paymentMethod',
-            render: (value: unknown) => getPaymentMethodLabel(normalizeText(value)),
-        },
-        {
-            title: t('table.status'),
-            dataIndex: 'status',
-            key: 'status',
-            width: 140,
-            render: (value: unknown) => {
-                const status = normalizeText(value)
-                const color = getStatusColor(status)
-                const label = getStatusLabel(status)
-                return <Tag color={color}>{label}</Tag>
-            },
-        },
-        {
-            title: t('table.paymentDate'),
-            dataIndex: 'paymentDate',
-            key: 'paymentDate',
-            width: 160,
-            render: (value: string) => formatInvoiceDate(value, locale),
-        },
-        {
-            title: t('table.amount'),
-            dataIndex: 'amount',
-            key: 'amount',
-            width: 200,
-            align: 'right',
-            render: (value: string) => formatInvoiceAmount(value, locale),
-        },
-    ]
-
-    const detailRows = (invoiceData: InvoiceDetail) => {
-        const status = normalizeText(invoiceData.status)
-        const invoiceType = normalizeText(invoiceData.invoiceType)
-        const invoiceStatusLabel = getStatusLabel(status)
-        const invoiceTypeLabel = getTypeLabel(invoiceType)
-
-        return [
-            {
-                key: 'invoiceNumber',
-                label: t('fields.invoiceNumber'),
-                children: <Text className="font-mono">{normalizeText(invoiceData.invoiceNumber)}</Text>,
-            },
-            {
-                key: 'status',
-                label: t('fields.status'),
-                children: (
-                    <Tag color={getStatusColor(status)}>
-                        {invoiceStatusLabel}
-                    </Tag>
-                ),
-            },
-            {
-                key: 'invoiceType',
-                label: t('fields.invoiceType'),
-                children: (
-                    <Tag>{invoiceTypeLabel}</Tag>
-                ),
-            },
-            {
-                key: 'billingStart',
-                label: t('fields.billingStart'),
-                children: formatInvoiceDate(invoiceData.billingPeriodStart, locale),
-            },
-            {
-                key: 'billingEnd',
-                label: t('fields.billingEnd'),
-                children: formatInvoiceDate(invoiceData.billingPeriodEnd, locale),
-            },
-            {
-                key: 'dueDate',
-                label: t('fields.dueDate'),
-                children: formatInvoiceDate(invoiceData.dueDate, locale),
-            },
-            {
-                key: 'issueDate',
-                label: t('fields.issueDate'),
-                children: formatInvoiceDate(invoiceData.issueDate, locale),
-            },
-            {
-                key: 'sentAt',
-                label: t('fields.sentAt'),
-                children: formatInvoiceDate(invoiceData.sentAt ?? undefined, locale),
-            },
-            {
-                key: 'paidAt',
-                label: t('fields.paidAt'),
-                children: formatInvoiceDate(invoiceData.paidAt ?? undefined, locale),
-            },
-            {
-                key: 'currency',
-                label: t('fields.currency'),
-                children: normalizeText(invoiceData.currency),
-            },
-            {
-                key: 'paymentMethod',
-                label: t('fields.paymentMethod'),
-                children: getPaymentMethodLabel(normalizeText(invoiceData.paymentMethod)),
-            },
-            {
-                key: 'totalAmount',
-                label: t('fields.totalAmount'),
-                children: <Text strong>{formatInvoiceAmount(invoiceData.totalAmount, locale)}</Text>,
-            },
-            {
-                key: 'baseRent',
-                label: t('fields.baseRent'),
-                children: formatInvoiceAmount(invoiceData.baseRent, locale),
-            },
-            {
-                key: 'taxAmount',
-                label: t('fields.taxAmount'),
-                children: formatInvoiceAmount(invoiceData.taxAmount, locale),
-            },
-            {
-                key: 'invoiceDocumentUrl',
-                label: t('fields.invoiceDocument'),
-                children: invoiceData.invoiceDocumentUrl ? (
-                    <Link href={invoiceData.invoiceDocumentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
-                        {t('actions.openDocument')}
-                    </Link>
-                ) : (
-                    '-'
-                ),
-            },
-            {
-                key: 'notes',
-                label: t('fields.notes'),
-                children: normalizeText(invoiceData.notes),
-            },
-            {
-                key: 'createdAt',
-                label: t('fields.createdAt'),
-                children: formatInvoiceDate(invoiceData.createdAt, locale),
-            },
-            {
-                key: 'updatedAt',
-                label: t('fields.updatedAt'),
-                children: formatInvoiceDate(invoiceData.updatedAt, locale),
-            },
-            {
-                key: 'id',
-                label: t('fields.id'),
-                children: <Text className="font-mono text-xs">{normalizeText(invoiceData.id)}</Text>,
-            },
-        ]
-    }
+    const paymentColumns = createPaymentColumns({
+        t,
+        locale,
+        getPaymentMethodLabel,
+        getStatusColor,
+        getStatusLabel,
+    })
 
     if (isLoading) {
         return (
@@ -299,6 +172,8 @@ export default function InvoiceDetailPage() {
                         type="primary"
                         size="large"
                         icon={<CreditCardOutlined />}
+                        loading={isCreatingPayOSPaymentLink}
+                        onClick={() => void handlePayNow()}
                         style={{
                             border: 'none',
                             background: 'linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)',
@@ -356,7 +231,15 @@ export default function InvoiceDetailPage() {
                         bordered
                         size="middle"
                         column={{ xs: 1, sm: 2, lg: 3 }}
-                        items={detailRows(invoice)}
+                        items={createDetailRows({
+                            invoiceData: invoice,
+                            t,
+                            locale,
+                            getStatusColor,
+                            getStatusLabel,
+                            getTypeLabel,
+                            getPaymentMethodLabel,
+                        })}
                     />
                 </div>
             </Card>

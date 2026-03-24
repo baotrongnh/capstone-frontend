@@ -77,7 +77,7 @@ export default function PaymentHistoryPage() {
       title: t("paymentReference"),
       dataIndex: "paymentReference",
       key: "paymentReference",
-      width: 180,
+      width: 160,
       render: (paymentReference?: string) => (
         <span className="font-mono text-xs text-muted whitespace-nowrap">{paymentReference || "-"}</span>
       ),
@@ -85,7 +85,7 @@ export default function PaymentHistoryPage() {
     {
       title: t("invoiceNumber"),
       key: "invoiceNumber",
-      width: 160,
+      width: 300,
       render: (_: unknown, record) => {
         const invoiceNumber = record.invoice?.invoiceNumber;
         return <span className="font-medium">{invoiceNumber || "-"}</span>;
@@ -95,14 +95,14 @@ export default function PaymentHistoryPage() {
       title: t("paymentMethod"),
       dataIndex: "paymentMethod",
       key: "paymentMethod",
-      width: 140,
+      width: 60,
       render: (paymentMethod?: string | null) => <Tag>{getMethodLabel(paymentMethod)}</Tag>,
     },
     {
       title: t("paymentDate"),
       dataIndex: "paymentDate",
       key: "paymentDate",
-      width: 120,
+      width: 240,
       render: (paymentDate?: string | null) => formatPaymentDate(paymentDate, locale),
     },
     {

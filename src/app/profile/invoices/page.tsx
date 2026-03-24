@@ -73,7 +73,7 @@ export default function InvoicesPage() {
             title: t('invoiceNumber'),
             dataIndex: 'invoiceNumber',
             key: 'invoiceNumber',
-            width: 160,
+            width: 200,
             render: (invoiceNumber?: string) => (
                 <span className="font-mono text-xs text-muted">{invoiceNumber || '-'}</span>
             ),
@@ -97,14 +97,28 @@ export default function InvoicesPage() {
                 const number = record.rentalContract?.apartment?.apartmentNumber
                 const address = record.rentalContract?.apartment?.address
                 const text = [number, address].filter(Boolean).join(' - ')
-                return <span>{text || '-'}</span>
+                return (
+                    <span
+                        style={{
+                            display: 'inline-block',
+                            maxWidth: 120,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            verticalAlign: 'bottom',
+                        }}
+                        title={text || '-'}
+                    >
+                        {text || '-'}
+                    </span>
+                )
             },
         },
         {
             title: t('amount'),
             dataIndex: 'totalAmount',
             key: 'totalAmount',
-            width: 140,
+            width: 120,
             align: 'right',
             render: (totalAmount?: string | null) => (
                 <span className="font-semibold">{formatInvoiceAmount(totalAmount, locale)}</span>
@@ -114,7 +128,7 @@ export default function InvoicesPage() {
             title: t('dueDate'),
             dataIndex: 'dueDate',
             key: 'dueDate',
-            width: 100,
+            width: 150,
             render: (dueDate?: string | null) => formatInvoiceDate(dueDate, locale),
         },
         {

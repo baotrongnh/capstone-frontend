@@ -390,6 +390,26 @@
         "debit_card": "Debit Card",
         "other": "Other"
       },
+      "checkout": {
+        "labels": {
+          "invoiceId": "Invoice ID",
+          "invoiceNumber": "Invoice Number",
+          "totalAmount": "Total Amount",
+          "status": "Status"
+        },
+        "success": {
+          "title": "Payment successful",
+          "subtitle": "Your payment has been recorded successfully.",
+          "loadWarning": "Unable to load full invoice information",
+          "backToHistory": "Go to payment history"
+        },
+        "cancel": {
+          "title": "Payment cancelled",
+          "subtitle": "The payment was not completed. You can return to invoice detail and try again.",
+          "loadWarning": "Unable to load full invoice information",
+          "backToInvoice": "Back to invoice detail"
+        }
+      },
       "detail": {
         "title": "Payment Detail",
         "paymentId": "Payment ID",
@@ -606,6 +626,11 @@
           "method": "Method",
           "status": "Status",
           "paymentDate": "Payment Date"
+        },
+        "errors": {
+          "invalidReturnUrl": "Return URL must not use localhost. Please set NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL to a public HTTPS domain.",
+          "createPaymentLinkFailed": "Unable to create payment link. Please try again.",
+          "missingCheckoutUrl": "Did not receive a payment link from the system."
         },
         "actions": {
           "openDocument": "Open document",

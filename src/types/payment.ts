@@ -6,6 +6,10 @@ export type ListPaymentsPayload = NonNullable<ListPaymentsRes['data']>
 export type PaymentListItem = ListPaymentsPayload[number]
 export type PaymentStatus = Exclude<NonNullable<ListPaymentsQuery>['status'], undefined>
 
+export type CreatePayOSPaymentLinkBody = paths['/api/v1/payments/payos/create-link']['post']['requestBody']['content']['application/json']
+export type CreatePayOSPaymentLinkRes = paths['/api/v1/payments/payos/create-link']['post']['responses']['201']['content']['application/json']
+export type CreatePayOSPaymentLinkData = NonNullable<CreatePayOSPaymentLinkRes['data']>
+
 export const PAYMENT_STATUS_COLORS: Record<PaymentStatus, string> = {
     pending: 'orange',
     processing: 'blue',

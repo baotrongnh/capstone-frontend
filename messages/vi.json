@@ -390,6 +390,26 @@
         "debit_card": "Thẻ ghi nợ",
         "other": "Khác"
       },
+      "checkout": {
+        "labels": {
+          "invoiceId": "Mã hóa đơn",
+          "invoiceNumber": "Số hóa đơn",
+          "totalAmount": "Tổng tiền",
+          "status": "Trạng thái"
+        },
+        "success": {
+          "title": "Thanh toán thành công",
+          "subtitle": "Hệ thống đã ghi nhận giao dịch của bạn.",
+          "loadWarning": "Không thể tải đầy đủ thông tin hóa đơn",
+          "backToHistory": "Về lịch sử thanh toán"
+        },
+        "cancel": {
+          "title": "Bạn đã hủy thanh toán",
+          "subtitle": "Giao dịch chưa hoàn tất. Bạn có thể quay lại hóa đơn để thanh toán lại.",
+          "loadWarning": "Không thể tải đầy đủ thông tin hóa đơn",
+          "backToInvoice": "Quay về chi tiết hóa đơn"
+        }
+      },
       "detail": {
         "title": "Chi tiết thanh toán",
         "paymentId": "Mã thanh toán",
@@ -606,6 +626,11 @@
           "method": "Phương thức",
           "status": "Trạng thái",
           "paymentDate": "Ngày thanh toán"
+        },
+        "errors": {
+          "invalidReturnUrl": "Đường dẫn Return URL không được sử dụng localhost. Vui lòng đặt NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL là domain https công khai.",
+          "createPaymentLinkFailed": "Không thể tạo link thanh toán. Vui lòng thử lại.",
+          "missingCheckoutUrl": "Không nhận được link thanh toán từ hệ thống."
         },
         "actions": {
           "openDocument": "Mở tài liệu",
