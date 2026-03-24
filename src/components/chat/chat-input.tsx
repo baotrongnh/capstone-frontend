@@ -71,8 +71,6 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
 
           if (files.length === 0) return
 
-          console.log(files)
-
           const results = await Promise.allSettled(files.map(fileToDataUrl))
           const nextImages = results
                .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')

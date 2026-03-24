@@ -45,7 +45,6 @@ export function AdditionalInfoCard({ apartment, t }: AdditionalInfoCardProps) {
                 <Descriptions.Item label={t('maxConcurrentViewings')}>{toDisplayText(apartment?.maxConcurrentViewings)}</Descriptions.Item>
 
                 <Descriptions.Item label={t('newWardCode')}>{toDisplayText(apartment?.newWardCode)}</Descriptions.Item>
-                <Descriptions.Item label={t('oldWardCode')}>{toDisplayText(apartment?.oldWardCode)}</Descriptions.Item>
                 <Descriptions.Item label={t('rating')}>{toDisplayText(apartment?.rating)}</Descriptions.Item>
 
                 <Descriptions.Item label={t('latitude')}>{toDisplayText(apartment?.latitude)}</Descriptions.Item>
