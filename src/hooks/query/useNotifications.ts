@@ -1,9 +1,14 @@
-import { notificationService } from "@/lib/services/notifications.service"
+import { NotificationItem, notificationService } from "@/lib/services/notifications.service"
 import { useQuery } from "@tanstack/react-query"
 
-export const useNotification = () => {
+export const NOTIFICATIONS_QUERY_KEY = ['notifications'] as const
+
+export const useNotifications = () => {
      return useQuery({
-          queryKey: ['notifications'],
-          queryFn: () => notificationService.getAll()
+          queryKey: NOTIFICATIONS_QUERY_KEY,
+          queryFn: () => notificationService.getAll(),
+          select: (response): NotificationItem[] => response.data ?? []
      })
 }
+
+export const useNotification = useNotifications
