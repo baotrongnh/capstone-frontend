@@ -1,4 +1,4 @@
-import type { ApartmentQueryParams } from '@/types/apartment'
+import { ApartmentQueryParams } from "@/lib/services/apartment.service"
 
 export const FILTER_PRICE_RANGE = { MIN: 1_000_000, MAX: 50_000_000, STEP: 500_000 }
 export const FILTER_AREA_RANGE = { MIN: 10, MAX: 200, STEP: 5 }

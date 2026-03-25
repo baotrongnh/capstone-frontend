@@ -1,6 +1,6 @@
 import { IMG_URL, ROUTES } from '@/constants/routes'
-import type { ApartmentItem } from '@/types/apartment'
-import { getApartmentDisplayAddress } from '@/utils/apartment-address'
+import { useFullAddress } from '@/hooks/query/useAddress'
+import type { ApartmentItem } from '@/lib/services/apartment.service'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -19,7 +19,13 @@ function InfoChip({ icon, children }: { icon: string; children: React.ReactNode 
 export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
      const tFurnishing = useTranslations('ApartmentLabels.furnishing')
      const t = useTranslations('ApartmentListPage')
-     const displayAddress = getApartmentDisplayAddress(apartment)
+     const displayAddress = useFullAddress(
+          apartment?.streetAddress ?? undefined,
+          apartment?.provinceCode ?? undefined,
+          apartment?.wardCode ?? undefined,
+     )
+
+     console.log(displayAddress);
 
      return (
           <Link
