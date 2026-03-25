@@ -2580,9 +2580,7 @@ export interface components {
             /** @example A101 */
             apartmentNumber: string;
             /** @example 26728 */
-            newWardCode?: number | null;
-            /** @example 26731 */
-            oldWardCode?: number | null;
+            wardCode?: number | null;
         };
         ContractSummaryDto: {
             id: string;
@@ -3123,15 +3121,15 @@ export interface components {
             /** @example 8 */
             floorNumber?: number | null;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number | null;
+            wardCode?: number | null;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number | null;
+            streetAddress?: string | null;
             /** @example 55 */
             totalArea: string;
             /** @example 1 */
@@ -3163,11 +3161,9 @@ export interface components {
              *     ]
              */
             cooperationContracts?: components["schemas"]["ApartmentCooperationContractDto"][] | null;
-            /** @description Địa chỉ đã resolve từ mã địa chỉ sau sáp nhập (v2) */
-            newAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Địa chỉ đã resolve từ mã địa chỉ trước sáp nhập (v1) */
-            oldAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Dia chi hien thi theo addressType dang filter (new/old/both) */
+            /** @description Địa chỉ đã resolve từ mã địa chỉ (v2) */
+            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Dia chi hien thi */
             address?: string | null;
             /** Format: date-time */
             createdAt: string;
@@ -3257,15 +3253,15 @@ export interface components {
             /** @example 8 */
             floorNumber?: number | null;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number | null;
+            wardCode?: number | null;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number | null;
+            streetAddress?: string | null;
             /** @example 10.788 */
             latitude?: string | null;
             /** @example 106.7195 */
@@ -3302,11 +3298,9 @@ export interface components {
             images?: string[] | null;
             videoTourUrl?: string | null;
             yearBuilt?: number | null;
-            /** @description Dia chi resolve theo ma phuong/xa sau sap nhap (v2) */
-            newAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Dia chi resolve theo ma phuong/xa truoc sap nhap (v1) */
-            oldAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Dia chi hien thi theo addressType query (new/old/both) khi lay chi tiet can ho */
+            /** @description Dia chi resolve theo ma phuong/xa (v2) */
+            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
+            /** @description Dia chi hien thi */
             address?: string | null;
             ownerId?: string | null;
             approvedByOperatorId?: string | null;
@@ -3364,30 +3358,20 @@ export interface components {
             /** @example R1-801 */
             apartmentNumber: string;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number | null;
+            wardCode?: number | null;
             /**
-             * @description Mã tỉnh/thành sau sáp nhập (v2), auto-resolved từ wardCode
+             * @description Mã tỉnh/thành (v2), auto-resolved từ wardCode
              * @example 79
              */
-            newProvinceCode?: number | null;
+            provinceCode?: number | null;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number | null;
-            /**
-             * @description Mã quận/huyện trước sáp nhập (v1), auto-resolved từ wardCode
-             * @example 760
-             */
-            oldDistrictCode?: number | null;
-            /**
-             * @description Mã tỉnh/thành trước sáp nhập (v1), auto-resolved từ wardCode
-             * @example 77
-             */
-            oldProvinceCode?: number | null;
+            streetAddress?: string | null;
             /** @example 12000000 */
             baseRentPrice: string;
             /** @example available */
@@ -3403,15 +3387,15 @@ export interface components {
             /** @example 15 */
             floorNumber?: number;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number;
+            wardCode?: number;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number;
+            streetAddress?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -3511,15 +3495,15 @@ export interface components {
             /** @example 15 */
             floorNumber?: number;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number;
+            wardCode?: number;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number;
+            streetAddress?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -3665,15 +3649,15 @@ export interface components {
             /** @example 15 */
             floorNumber?: number;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number;
+            wardCode?: number;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number;
+            streetAddress?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -3737,15 +3721,15 @@ export interface components {
             /** @example 15 */
             floorNumber?: number;
             /**
-             * @description Mã phường/xã sau sáp nhập (v2)
+             * @description Mã phường/xã (v2)
              * @example 26728
              */
-            newWardCode?: number;
+            wardCode?: number;
             /**
-             * @description Mã phường/xã trước sáp nhập (v1)
-             * @example 26731
+             * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
+             * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
-            oldWardCode?: number;
+            streetAddress?: string;
             /** @example 10.8012 */
             latitude?: number;
             /** @example 106.72 */
@@ -3991,13 +3975,9 @@ export interface components {
             /** @example A101 */
             apartmentNumber: string;
             /** @example 26728 */
-            newWardCode?: number | null;
-            /** @example 26731 */
-            oldWardCode?: number | null;
-            /** @description Resolved address from new ward code (v2) */
-            newAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Resolved address from old ward code (v1) */
-            oldAddress?: components["schemas"]["WardAddressDto"] | null;
+            wardCode?: number | null;
+            /** @description Resolved address (v2) */
+            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
             /** @description Display address derived from resolved ward data */
             displayAddress?: string | null;
         };
@@ -4998,9 +4978,7 @@ export interface components {
             /** @example Intelli Tower A */
             buildingName?: string | null;
             /** @example 26728 */
-            newWardCode?: number | null;
-            /** @example 26731 */
-            oldWardCode?: number | null;
+            wardCode?: number | null;
         };
         UserMyViewingContactRequestDto: {
             /** @example d7a8e15e-e4b7-4df5-83d4-f7d7e4d4a31a */
@@ -7371,14 +7349,10 @@ export interface operations {
     ApartmentsController_search: {
         parameters: {
             query?: {
-                /** @description Province code filter. Matches apartments by newProvinceCode (v2) OR oldProvinceCode (v1). */
+                /** @description Province code filter. */
                 provinceCode?: number;
-                /** @description District code filter (v1 - pre-merger only). Filters apartments by oldDistrictCode. */
-                districtCode?: number;
-                /** @description Ward code filter. Uses newWardCode when addressType=new, oldWardCode when addressType=old, both when addressType=both */
+                /** @description Ward code filter. */
                 wardCode?: number;
-                /** @description Address type to search: new (post-merger), old (pre-merger), both (default: both) */
-                addressType?: "new" | "old" | "both";
                 keyword?: string;
                 /** @description Minimum bedrooms */
                 minBedrooms?: number;
@@ -7437,10 +7411,7 @@ export interface operations {
     };
     ApartmentsController_findOne: {
         parameters: {
-            query?: {
-                /** @description Address type for display address: new (v2), old (v1), both (default) */
-                addressType?: "new" | "old" | "both";
-            };
+            query?: never;
             header?: never;
             path: {
                 id: string;

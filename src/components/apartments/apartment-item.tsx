@@ -1,6 +1,5 @@
 import { IMG_URL, ROUTES } from '@/constants/routes'
 import type { ApartmentItem } from '@/types/apartment'
-import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -19,7 +18,7 @@ function InfoChip({ icon, children }: { icon: string; children: React.ReactNode 
 export default function ApartmentItem({ apartment }: { apartment: ApartmentItem }) {
      const tFurnishing = useTranslations('ApartmentLabels.furnishing')
      const t = useTranslations('ApartmentListPage')
-     const displayAddress = getApartmentDisplayAddress(apartment)
+     const displayAddress = apartment?.address
 
      return (
           <Link

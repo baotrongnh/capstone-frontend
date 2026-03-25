@@ -7,7 +7,6 @@ import { APARTMENT_STATUS } from "@/constants/apartment"
 import { ROUTES } from "@/constants/routes"
 import { useApartment } from "@/hooks/query/useApartments"
 import { useAuthStore } from "@/stores/auth.store"
-import { getApartmentDisplayAddress } from "@/utils/apartment-address"
 import { formatVND } from "@/utils/format"
 import {
   Breadcrumb,
@@ -91,7 +90,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const apt = apartmentData.data
 
   const images = apt?.images?.length ? apt.images : []
-  const fullAddress = getApartmentDisplayAddress(apt)
+  const fullAddress = apt?.address
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {
