@@ -3,46 +3,58 @@ import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
 import bg from "../../../public/img/banner10.jpg";
 import { useForm } from "antd/es/form/Form";
-import { Button, Form, Input, Select, Upload } from "antd";
+import { Button, Form, Input, InputNumber, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "@/utils/uploadFile";
 import Image from "next/image";
+import banner from "../../../public/img/partner.jpg";
+import { useCreateCooperation } from "@/hooks/query/useApartments";
 
 export default function PartnerContact() {
   const [form] = useForm();
+
+  const { mutateAsync: createCooperation } = useCreateCooperation();
   const handleRegister = async () => {
     try {
       const data = await form.validateFields();
       const currentImage = data.images || [];
-      const newImageFiles = currentImage.filter(
-        (file: { originFileObj: File }) => file.originFileObj,
-      );
 
-      const uploadedImages = await Promise.all(
-        newImageFiles.map(async (fileObj: { originFileObj: File }) => {
-          const uploaded = await uploadFile(fileObj.originFileObj);
-          return { imageUrl: uploaded.url };
-        }),
-      );
-      const payload = {
-        fullname: data.fullName,
-        phone: data.phone,
-        email: data.email,
-        role: data.role,
-        address: data.address,
-        totalRooms: Number(data.totalRooms),
-        propertyType: data.propertyType,
-        expectedPrice: Number(data.expectedPrice),
-        description: data.description,
-        status: data.status,
-        images: uploadedImages,
-      };
+      const formData = new FormData();
 
-      console.log("Payload to submit:", payload);
+      formData.append("buildingName", data.buildingName);
+      formData.append("apartmentNumber", data.apartmentNumber);
+
+      formData.append("totalArea", String(data.totalArea));
+      formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
+      formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
+
+      formData.append("baseRentPrice", String(data.baseRentPrice));
+      formData.append("description", data.description);
+
+      currentImage.forEach((file: any) => {
+        if (file.originFileObj) {
+          formData.append("images", file.originFileObj);
+        }
+      });
+
+      console.log("FormData:", formData);
+
+      await createCooperation(formData);
+
       form.resetFields();
     } catch (error) {
       console.log("Validate / Upload error:", error);
     }
+  };
+
+  const formatter = (value?: number | string) => {
+    if (!value) return "";
+    return new Intl.NumberFormat("vi-VN").format(Number(value));
+  };
+
+  const parser = (value?: string) => {
+    if (!value) return "";
+    return value.replace(/\D/g, "");
   };
 
   return (
@@ -103,64 +115,13 @@ export default function PartnerContact() {
               </p>
             </div>
 
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <h3 className="text-xl font-semibold mb-6">
-                Thông Tin Người Liên Hệ
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <Form.Item
-                  className="mb-2!"
-                  label="Họ và tên"
-                  name="fullName"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập họ và tên" },
-                  ]}
-                >
-                  <Input placeholder="Nhập tên người liên hệ" />
-                </Form.Item>
-
-                <Form.Item
-                  className="mb-2!"
-                  label="Số điện thoại"
-                  name="phone"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập số điện thoại" },
-                    {
-                      pattern: /^[0-9]{9,11}$/,
-                      message: "Số điện thoại không hợp lệ",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập số điện thoại" />
-                </Form.Item>
-
-                <Form.Item
-                  className="mb-2!"
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập email" },
-                    { type: "email", message: "Email không hợp lệ" },
-                  ]}
-                >
-                  <Input placeholder="Nhập địa chỉ email" />
-                </Form.Item>
-
-                <Form.Item
-                  className="mb-2!"
-                  label="Vai trò"
-                  name="role"
-                  rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
-                >
-                  <Select placeholder="Chọn vai trò" className="h-11">
-                    <Select.Option value="owner">Chủ căn hộ</Select.Option>
-                    <Select.Option value="partner">Đối tác</Select.Option>
-                    <Select.Option value="tenant">Người thuê</Select.Option>
-                    <Select.Option value="other">Khác</Select.Option>
-                  </Select>
-                </Form.Item>
-              </div>
+            <div className="w-full h-85 relative ">
+              <Image
+                src={banner}
+                alt="Banner"
+                fill
+                className="object-cover rounded-xl"
+              />
             </div>
           </div>
 
@@ -172,7 +133,25 @@ export default function PartnerContact() {
               Thông Tin Căn Hộ
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 ">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 ">
+              <Form.Item
+                label="Tên căn hộ"
+                name="buildingName"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên căn hộ" },
+                ]}
+              >
+                <Input placeholder="VD: 123 Nguyễn Văn Linh, Q.7" />
+              </Form.Item>
+
+              <Form.Item
+                label="Số căn hộ"
+                name="apartmentNumber"
+                rules={[{ required: true, message: "Vui lòng nhập số căn hộ" }]}
+              >
+                <Input placeholder="VD: 123 Nguyễn Văn Linh, Q.7" />
+              </Form.Item>
+
               <Form.Item
                 label="Địa chỉ căn hộ"
                 name="address"
@@ -182,72 +161,66 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
-                label="Tổng số phòng"
-                name="totalRooms"
+                label="Tổng diện tích"
+                name="totalArea"
                 rules={[
-                  { required: true, message: "Vui lòng nhập tổng số phòng" },
+                  { required: true, message: "Vui lòng nhập tổng diện tích" },
                   {
                     pattern: /^[1-9][0-9]*$/,
-                    message: "Số phòng phải là số nguyên > 0",
+                    message: "Diện tích phải là số nguyên > 0",
                   },
                 ]}
               >
-                <Input placeholder="VD: 10" />
+                <Input type={"number"} placeholder="VD: 100m2" />
               </Form.Item>
 
               <Form.Item
-                label="Loại hình tài sản"
-                name="propertyType"
+                label="Tổng số phòng tắm"
+                name="numberOfBathrooms"
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng chọn loại hình tài sản",
+                    message: "Vui lòng nhập tổng số phòng tắm",
+                  },
+                  {
+                    pattern: /^[1-9][0-9]*$/,
+                    message: "Số phòng tắm phải là số nguyên > 0",
                   },
                 ]}
               >
-                <Select
-                  className="h-10"
-                  placeholder="Chọn loại hình"
-                  options={[
-                    { value: "apartment", label: "Căn hộ" },
-                    { value: "house", label: "Nhà phố" },
-                    { value: "villa", label: "Villa" },
-                  ]}
-                />
+                <Input type={"number"} placeholder="VD: 10" />
               </Form.Item>
 
               <Form.Item
-                label="Tình trạng vận hành"
-                name="status"
+                label="Tổng số phòng ngủ"
+                name="numberOfBedrooms"
                 rules={[
                   {
                     required: true,
-                    message: "Vui lòng chọn tình trạng vận hành",
+                    message: "Vui lòng nhập tổng số phòng ngủ",
+                  },
+                  {
+                    pattern: /^[1-9][0-9]*$/,
+                    message: "Số phòng ngủ phải là số nguyên > 0",
                   },
                 ]}
               >
-                <Select
-                  className="h-10"
-                  placeholder="Chọn tình trạng"
-                  options={[
-                    { value: "renting", label: "Đang cho thuê" },
-                    { value: "idle", label: "Chưa vận hành" },
-                  ]}
-                />
+                <Input type={"number"} placeholder="VD: 10" />
               </Form.Item>
 
               <Form.Item
                 label="Giá thuê dự kiến (VNĐ / tháng)"
-                name="expectedPrice"
-                rules={[
-                  { required: true, message: "Vui lòng nhập giá thuê" },
-                  {
-                    pattern: /^[0-9]+$/,
-                    message: "Giá thuê phải là số",
-                  },
-                ]}
+                name="baseRentPrice"
+                rules={[{ required: true, message: "Vui lòng nhập giá thuê" }]}
               >
-                <Input placeholder="VD: 15000000" />
+                <InputNumber
+                  className="w-full h-11"
+                  style={{ width: "100%" }}
+                  min={0}
+                  formatter={formatter}
+                  parser={parser}
+                  placeholder="VD: 15.000.000"
+                />
               </Form.Item>
 
               <Form.Item

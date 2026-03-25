@@ -1,79 +1,81 @@
-'use client'
+"use client";
 
-import { APP_NAME } from "@/constants"
-import { IMG_URL, ROUTES } from "@/constants/routes"
-import { useLogout } from "@/hooks/query/useAuth"
-import { useAddressTypePreference } from "@/hooks/useAddressTypePreference"
-import { useAuthStore } from "@/stores/auth.store"
-import { Icon } from "@iconify/react"
-import type { MenuProps } from "antd"
-import { Button } from "antd"
-import { Check, LogOut, MapPin, Menu, User } from "lucide-react"
-import { useLocale, useTranslations } from "next-intl"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { startTransition, useEffect, useState } from "react"
-import AuthModal from "../modal/auth-modal"
-import HeaderDesktopActions from "./header-desktop-actions"
-import HeaderMobileDrawer from "./header-mobile-drawer"
+import { APP_NAME } from "@/constants";
+import { IMG_URL, ROUTES } from "@/constants/routes";
+import { useLogout } from "@/hooks/query/useAuth";
+import { useAddressTypePreference } from "@/hooks/useAddressTypePreference";
+import { useAuthStore } from "@/stores/auth.store";
+import { Icon } from "@iconify/react";
+import type { MenuProps } from "antd";
+import { Button } from "antd";
+import { Check, LogOut, MapPin, Menu, User } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useState } from "react";
+import AuthModal from "../modal/auth-modal";
+import HeaderDesktopActions from "./header-desktop-actions";
+import HeaderMobileDrawer from "./header-mobile-drawer";
 
 export default function Header() {
-  const searchParams = useSearchParams()
-  const t = useTranslations('Header')
-  const router = useRouter()
-  const { addressType, setAddressType } = useAddressTypePreference()
-  const { user, isAuthenticated, isHydrated } = useAuthStore()
-  const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME))
+  const searchParams = useSearchParams();
+  const t = useTranslations("Header");
+  const router = useRouter();
+  const { addressType, setAddressType } = useAddressTypePreference();
+  const { user, isAuthenticated, isHydrated } = useAuthStore();
+  const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME));
 
-  const [authOpen, setAuthOpen] = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const locale = useLocale()
+  const locale = useLocale();
   const navLinks = [
-    { href: ROUTES.APARTMENT, label: t('findApartment') },
+    { href: ROUTES.APARTMENT, label: t("findApartment") },
     // { href: '/', label: t('yourApartment') },
     // { href: '/', label: t('bills') },
-    { href: '/', label: t('support') },
-    { href: '/', label: t('contact') },
-  ]
-  const isLoggedIn = Boolean(isHydrated && isAuthenticated && user)
-  const userFullName = user?.fullName || ''
-  const becomePartnerLabel = t('becomePartner')
-  const loginLabel = t('login')
-  const profileLabel = t('profile')
-  const logoutLabel = t('logout')
-  const currentAddressTypeLabel = addressType === 'new' ? t('addressTypeNew') : t('addressTypeOld')
+    { href: "/", label: t("support") },
+    { href: "/contact", label: t("contact") },
+  ];
+  const isLoggedIn = Boolean(isHydrated && isAuthenticated && user);
+  const userFullName = user?.fullName || "";
+  const becomePartnerLabel = t("becomePartner");
+  const loginLabel = t("login");
+  const profileLabel = t("profile");
+  const logoutLabel = t("logout");
+  const currentAddressTypeLabel =
+    addressType === "new" ? t("addressTypeNew") : t("addressTypeOld");
 
   useEffect(() => {
-    if (searchParams.get('openAuthModal') === 'true') {
-      startTransition(() => setAuthOpen(true))
+    if (searchParams.get("openAuthModal") === "true") {
+      startTransition(() => setAuthOpen(true));
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   function toggleLanguage() {
-    const next = locale === 'vi' ? 'en' : 'vi'
-    document.cookie = `${APP_NAME}_LOCALE=${next}; path=/`
-    router.refresh()
+    const next = locale === "vi" ? "en" : "vi";
+    document.cookie = `${APP_NAME}_LOCALE=${next}; path=/`;
+    router.refresh();
   }
 
   function openAuth() {
-    setAuthOpen(true)
-    setDrawerOpen(false)
+    setAuthOpen(true);
+    setDrawerOpen(false);
   }
 
   function goProfile() {
-    router.push(ROUTES.PROFILE)
-    setDrawerOpen(false)
+    router.push(ROUTES.PROFILE);
+    setDrawerOpen(false);
   }
 
   function logout() {
-    setDrawerOpen(false)
-    logoutApi()
+    setDrawerOpen(false);
+    logoutApi();
   }
 
-  const flagIcon = locale === 'vi' ? 'flag:vn-4x3' : 'flag:us-4x3'
-  const toggleAddressType = () => setAddressType(addressType === 'new' ? 'old' : 'new')
+  const flagIcon = locale === "vi" ? "flag:vn-4x3" : "flag:us-4x3";
+  const toggleAddressType = () =>
+    setAddressType(addressType === "new" ? "old" : "new");
 
   const addressTypeButton = (
     <Button
@@ -81,57 +83,70 @@ export default function Header() {
       size="small"
       icon={<MapPin size={14} />}
       onClick={toggleAddressType}
-      title={t('addressTypeLabel')}
+      title={t("addressTypeLabel")}
     >
       {currentAddressTypeLabel}
     </Button>
-  )
+  );
 
-  const addressTypeMenuItems: MenuProps['items'] = [
+  const addressTypeMenuItems: MenuProps["items"] = [
     {
-      key: 'address-type-new',
+      key: "address-type-new",
       label: (
         <div className="flex items-center justify-between min-w-40">
-          <span>{t('addressTypeNew')}</span>
-          {addressType === 'new' && <Check size={14} />}
+          <span>{t("addressTypeNew")}</span>
+          {addressType === "new" && <Check size={14} />}
         </div>
       ),
-      onClick: () => setAddressType('new'),
+      onClick: () => setAddressType("new"),
     },
     {
-      key: 'address-type-old',
+      key: "address-type-old",
       label: (
         <div className="flex items-center justify-between min-w-40">
-          <span>{t('addressTypeOld')}</span>
-          {addressType === 'old' && <Check size={14} />}
+          <span>{t("addressTypeOld")}</span>
+          {addressType === "old" && <Check size={14} />}
         </div>
       ),
-      onClick: () => setAddressType('old'),
+      onClick: () => setAddressType("old"),
     },
-  ]
+  ];
 
-  const userMenuItems: MenuProps['items'] = [
-    { key: 'profile', label: profileLabel, icon: <User size={16} />, onClick: () => goProfile() },
+  const userMenuItems: MenuProps["items"] = [
     {
-      key: 'address-type',
-      label: t('addressTypeLabel'),
+      key: "profile",
+      label: profileLabel,
+      icon: <User size={16} />,
+      onClick: () => goProfile(),
+    },
+    {
+      key: "address-type",
+      label: t("addressTypeLabel"),
       icon: <MapPin size={16} />,
       children: addressTypeMenuItems,
     },
-    { type: 'divider' },
-    { key: 'logout', label: logoutLabel, icon: <LogOut size={16} />, danger: true, onClick: () => logout() },
-  ]
+    { type: "divider" },
+    {
+      key: "logout",
+      label: logoutLabel,
+      icon: <LogOut size={16} />,
+      danger: true,
+      onClick: () => logout(),
+    },
+  ];
 
   const langBtn = (
-    <button onClick={toggleLanguage} className="hover:opacity-75 cursor-pointer">
+    <button
+      onClick={toggleLanguage}
+      className="hover:opacity-75 cursor-pointer"
+    >
       <Icon icon={flagIcon} width={24} height={24} />
     </button>
-  )
+  );
 
   return (
     <header className="flex justify-center items-center h-22 w-full fixed top-0 left-0 z-50 bg-white shadow-sm">
       <div className="container flex justify-between items-center">
-
         <Link href={ROUTES.HOME}>
           <Image alt="Logo" src={IMG_URL.LOGO} width={100} height={100} />
         </Link>
@@ -139,7 +154,9 @@ export default function Header() {
         {/* Desktop nav */}
         <nav className="hidden lg:flex gap-10 font-medium">
           {navLinks.map(({ href, label }) => (
-            <Link key={label} href={href} className="hover:opacity-75">{label}</Link>
+            <Link key={label} href={href} className="hover:opacity-75">
+              {label}
+            </Link>
           ))}
         </nav>
 
@@ -155,7 +172,10 @@ export default function Header() {
         />
 
         {/* Mobile hamburger */}
-        <button className="lg:hidden p-2 text-gray-600" onClick={() => setDrawerOpen(true)}>
+        <button
+          className="lg:hidden p-2 text-gray-600"
+          onClick={() => setDrawerOpen(true)}
+        >
           <Menu size={24} />
         </button>
       </div>
@@ -179,5 +199,5 @@ export default function Header() {
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </header>
-  )
+  );
 }
