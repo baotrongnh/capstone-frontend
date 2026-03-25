@@ -41,15 +41,13 @@ const toApartmentStatus = (status: unknown): ApartmentStatus => {
 }
 
 const mapToUserApartment = (item: OwnerApartmentItem): UserApartment => {
-    const resolvedAddress = item.newAddress ?? item.oldAddress
-
     return {
         id: item.id ?? '',
         buildingName: item.buildingName ?? '',
         apartmentNumber: item.apartmentNumber ?? '',
-        address: item.address ?? resolvedAddress?.fullAddress ?? '',
-        city: resolvedAddress?.provinceName ?? '',
-        district: resolvedAddress?.districtName ?? '',
+        address: item.address ?? item?.newAddress?.fullAddress ?? '',
+        city: item?.newAddress?.provinceName ?? '',
+        district: item?.newAddress?.districtName ?? '',
         totalArea: String(item.totalArea ?? ''),
         numberOfBedrooms: toNumber(item.numberOfBedrooms),
         numberOfBathrooms: toNumber(item.numberOfBathrooms),
