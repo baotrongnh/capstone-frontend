@@ -1,9 +1,10 @@
 'use client'
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
-import { useProvinces, useWards } from '@/hooks/query/useProvinces'
-import { ApartmentFilterPatch, FurnishingType } from '@/types/apartment'
-import { formatArea, formatPrice, normalizeText } from '@/utils/format'
+import { useProvinces, useWards } from '@/hooks/query/useAddress'
+import { ApartmentSearchQueryParams, FurnishingType } from '@/lib/services/apartment.service'
+import { formatArea, formatPrice } from '@/utils/format'
+import { normalizeVietnamese } from '@/utils/text'
 import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -16,7 +17,7 @@ const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
 }
 
 export default function Filter({ onFilterChange }:
-     { onFilterChange: (filters: ApartmentFilterPatch | null) => void }) {
+     { onFilterChange: (filters: ApartmentSearchQueryParams | null) => void }) {
      const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
 
@@ -43,7 +44,7 @@ export default function Filter({ onFilterChange }:
      const wardOptions = wards?.map(d => ({ label: d.name, value: d.code })) ?? []
 
      const filterByLabel = (input: string, option?: { label?: string | number }) =>
-          normalizeText(String(option?.label ?? '').toLowerCase()).includes(input.toLowerCase())
+          normalizeVietnamese(String(option?.label || '')).includes(normalizeVietnamese(input))
 
      const clearLocationFilter = () => {
           setWardCode(undefined)
@@ -71,6 +72,7 @@ export default function Filter({ onFilterChange }:
      const handleProvinceChange = (code?: number) => {
           setProvinceCode(code)
           clearLocationFilter()
+          onFilterChange({ provinceCode: code })
      }
 
      const handleWardChange = (value?: number) => {
@@ -139,9 +141,7 @@ export default function Filter({ onFilterChange }:
                          disabled={!provinceCode}
                          loading={isWardSelectLoading}
                          notFoundContent={isWardSelectLoading ? <span>Đang tải...</span> : undefined}
-                         showSearch={{
-                              filterOption: filterByLabel
-                         }}
+                         showSearch={{ filterOption: filterByLabel }}
                          allowClear
                          style={{ marginTop: 15 }}
                     />

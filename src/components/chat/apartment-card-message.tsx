@@ -1,7 +1,6 @@
 'use client'
 
 import { useApartment } from '@/hooks/query/useApartments'
-import { getApartmentDisplayAddress } from '@/utils/apartment-address'
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
@@ -16,15 +15,15 @@ export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
      if (!apt) return <div className="text-xs text-red-400">Không tìm thấy căn hộ</div>
 
      const thumb = apt.images?.[0] ?? null
-     const displayAddress = getApartmentDisplayAddress(apt)
+     const displayAddress = apt?.address
 
-     const thumbnail = thumb ? (
-          <Image src={thumb} alt="" width={64} height={64} className="w-16 h-16 object-cover rounded-md shrink-0" />
-     ) : (
-          <div className="w-16 h-16 bg-gray-100 rounded-md shrink-0 flex items-center justify-center">
+     const thumbnail = thumb
+          ?
+          (<Image src={thumb} alt="" width={64} height={64} className="w-16 h-16 object-cover rounded-md shrink-0" />)
+          :
+          (<div className="w-16 h-16 bg-gray-100 rounded-md shrink-0 flex items-center justify-center">
                <Icon icon="lucide:building-2" className="text-gray-400" width={20} />
-          </div>
-     )
+          </div>)
 
      return (
           <button

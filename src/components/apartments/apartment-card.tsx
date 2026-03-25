@@ -1,7 +1,7 @@
 'use client'
 
 import { IMG_URL, ROUTES } from '@/constants/routes'
-import { ApartmentItem } from '@/types/apartment'
+import { ApartmentItem } from '@/lib/services/apartment.service' 
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import { useTranslations } from 'next-intl'
@@ -13,7 +13,6 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentItem 
      const t = useTranslations('ApartmentLabels')
      const [imageSrc, setImageSrc] = useState(apartment.images?.[0] ?? IMG_URL.APARTMENT_PLACEHOLDER)
 
-     console.log(imageSrc);
      return (
           <Link href={`${ROUTES.APARTMENT}/${apartment.id}`} className='bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer group block'>
                {/* Image */}
@@ -26,7 +25,7 @@ export default function ApartmentCard({ apartment }: { apartment: ApartmentItem 
                          className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
                          priority
                          onError={() => setImageSrc(IMG_URL.APARTMENT_PLACEHOLDER)}
-                    /> 
+                    />
                </div>
 
                {/* Content */}

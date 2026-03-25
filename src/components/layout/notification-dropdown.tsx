@@ -1,8 +1,10 @@
 'use client'
 
+import { useNotifications } from '@/hooks/query/useNotifications'
 import { ROUTES } from '@/constants/routes'
 import type { MenuProps } from 'antd'
 import { Badge, Dropdown } from 'antd'
+import dayjs from 'dayjs'
 import { BellRing } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -14,13 +16,30 @@ type NotificationDropdownProps = {
 
 export default function NotificationDropdown({ iconSize = 20, className = '' }: NotificationDropdownProps) {
      const t = useTranslations('Header')
-     const notifications = [
-          { key: 'n-1', message: t('notificationSample1'), time: t('notificationTime1'), unread: true },
-          { key: 'n-2', message: t('notificationSample2'), time: t('notificationTime2'), unread: true },
-          { key: 'n-3', message: t('notificationSample3'), time: t('notificationTime3'), unread: false },
-     ]
+     const { data: notifications = [], isLoading } = useNotifications()
 
-     const unreadCount = notifications.filter(item => item.unread).length
+     const unreadCount = notifications.filter(item => !item.isRead).length
+     const recentNotifications = notifications.slice(0, 5)
+
+     const contentItems: MenuProps['items'] = isLoading
+          ? [{ key: 'loading', disabled: true, label: <p className='px-1 py-0.5 text-sm text-gray-500'>Đang tải...</p> }]
+          : recentNotifications.length === 0
+               ? [{ key: 'empty', disabled: true, label: <p className='px-1 py-0.5 text-sm text-gray-500'>Chưa có thông báo</p> }]
+               : recentNotifications.map(item => ({
+                    key: item.id,
+                    label: (
+                         <div className='w-76 max-w-full py-1'>
+                              <div className='flex items-start gap-2'>
+                                   <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${item.isRead ? 'bg-gray-300' : 'bg-sky-500'}`} />
+                                   <div className='min-w-0'>
+                                        <p className='text-sm font-medium leading-5 text-gray-900 line-clamp-1'>{item.title || 'Thông báo mới'}</p>
+                                        <p className='mt-0.5 text-sm leading-5 text-gray-800 line-clamp-2'>{item.message}</p>
+                                        <p className='mt-1 text-xs text-gray-400'>{dayjs(item.createdAt).format('DD/MM/YYYY HH:mm')}</p>
+                                   </div>
+                              </div>
+                         </div>
+                    ),
+               }))
 
      const menuItems: MenuProps['items'] = [
           {
@@ -28,21 +47,7 @@ export default function NotificationDropdown({ iconSize = 20, className = '' }: 
                disabled: true,
                label: <p className='text-sm font-semibold text-gray-700 px-1 py-0.5'>{t('notifications')}</p>,
           },
-          ...notifications.map(item => ({
-               key: item.key,
-               label: (
-                    <div className='w-76 max-w-full py-1'>
-                         <div className='flex items-start gap-2'>
-                              {item.unread && <span className='mt-1.5 h-2 w-2 rounded-full bg-sky-500 shrink-0' />}
-                              {!item.unread && <span className='mt-1.5 h-2 w-2 rounded-full bg-gray-300 shrink-0' />}
-                              <div className='min-w-0'>
-                                   <p className='text-sm leading-5 text-gray-800 line-clamp-2'>{item.message}</p>
-                                   <p className='text-xs text-gray-400 mt-1'>{item.time}</p>
-                              </div>
-                         </div>
-                    </div>
-               ),
-          })),
+          ...contentItems,
           { type: 'divider' },
           {
                key: 'view-all',
