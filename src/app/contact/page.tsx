@@ -28,41 +28,33 @@ export default function PartnerContact() {
   const handleRegister = async () => {
     try {
       const data = await form.validateFields();
-      const currentImage = data.images || [];
 
-      const uploadedImages = await Promise.all(
-        currentImage.map(async (file: any) => {
-          if (file.originFileObj) {
-            const res = await uploadFile(file.originFileObj);
-            return res.url;
-          }
-          return null;
-        }),
-      );
+      const formData = new FormData();
+      formData.append("buildingName", data.buildingName);
+      formData.append("apartmentNumber", data.apartmentNumber);
+      formData.append("totalArea", String(data.totalArea));
+      formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
+      formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
+      formData.append("baseRentPrice", String(data.baseRentPrice));
+      formData.append("description", data.description);
+      formData.append("newWardCode", String(data.newWardCode));
+      formData.append("latitude", "0");
+      formData.append("longitude", "0");
 
-      const payload = {
-        buildingName: data.buildingName,
-        apartmentNumber: data.apartmentNumber,
+      // Thêm files
+      const currentImages = data.images || [];
+      currentImages.forEach((file: any) => {
+        if (file.originFileObj) {
+          formData.append("images", file.originFileObj);
+        }
+      });
 
-        totalArea: Number(data.totalArea),
-        numberOfBathrooms: Number(data.numberOfBathrooms),
-        numberOfBedrooms: Number(data.numberOfBedrooms),
+      console.log("FormData entries:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
-        baseRentPrice: Number(data.baseRentPrice),
-
-        description: data.description,
-
-        newWardCode: Number(data.newWardCode),
-
-        latitude: 0,
-        longitude: 0,
-
-        images: uploadedImages.filter(Boolean),
-      };
-
-      console.log("Payload:", payload);
-
-      await createCooperation(payload);
+      await createCooperation(formData);
 
       form.resetFields();
     } catch (error) {

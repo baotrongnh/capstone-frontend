@@ -1,10 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useApartment } from "@/hooks/query/useApartments";
 import { useCreateReservations } from "@/hooks/query/useReservations";
-import { useUserProfile } from "@/hooks/query/useUser";
 import {
   CheckCircleOutlined,
   FileTextOutlined,
@@ -27,15 +24,18 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import ModalWaitingVerify from "./modal-waiting-verify";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { ROUTES } from "@/constants/routes";
-import { useAuthStore } from "@/stores/auth.store";
+import { ApartmentItem } from "@/types/apartment";
+import { getApartmentDisplayAddress } from "@/utils/apartment-address";
 
 interface ModalBookingProps {
   open: boolean;
   onClose: () => void;
   apartmentId?: string | number | null;
+  apartmentData?: ApartmentItem;
 }
 
 const durationOptions = [
@@ -52,12 +52,14 @@ export default function ModalBooking({
   open,
   onClose,
   apartmentId,
+  apartmentData,
 }: ModalBookingProps) {
   const router = useRouter();
   const [formReservations] = useForm();
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
+  const address = getApartmentDisplayAddress(apartmentData);
 
   const { mutateAsync: createReservation } = useCreateReservations();
 

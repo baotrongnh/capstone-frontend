@@ -27,6 +27,10 @@ export default function PropertiesSection() {
     string | number | null
   >(null);
 
+  const [selectedApartmentData, setSelectedApartmentData] = useState<
+    ApartmentItem | undefined
+  >();
+
   const params = useMemo<ApartmentQueryParams>(
     () => ({
       sortBy: "baseRentPrice",
@@ -197,7 +201,10 @@ export default function PropertiesSection() {
                       size="middle"
                       shape="round"
                       type="primary"
-                      onClick={() => handleReservation(apartment.id)}
+                      onClick={() => {
+                        handleReservation(apartment.id);
+                        setSelectedApartmentData(apartment);
+                      }}
                       style={{ minWidth: 110, height: 30 }}
                     >
                       Đặt thuê
@@ -226,6 +233,7 @@ export default function PropertiesSection() {
           open={modalReservation}
           onClose={() => setModalReservation(false)}
           apartmentId={selectedApartmentId}
+          apartmentData={selectedApartmentData}
         />
 
         <ModalBookingSchedule
