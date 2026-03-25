@@ -1,7 +1,7 @@
 'use client'
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
-import { useProvinces, useWards } from '@/hooks/query/useProvinces'
+import { useProvinces, useWards } from '@/hooks/query/useAddress'
 import { ApartmentSearchQueryParams, FurnishingType } from '@/lib/services/apartment.service'
 import { formatArea, formatPrice } from '@/utils/format'
 import { normalizeVietnamese } from '@/utils/text'

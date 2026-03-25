@@ -3095,22 +3095,6 @@ export interface components {
             /** @example pending */
             status: string;
         };
-        WardAddressDto: {
-            /** @example 26728 */
-            wardCode: number;
-            /** @example Xã Châu Pha */
-            wardName?: string | null;
-            /** @example 754 */
-            districtCode?: number | null;
-            /** @example Thị xã Phú Mỹ */
-            districtName?: string | null;
-            /** @example 79 */
-            provinceCode?: number | null;
-            /** @example Thành phố Hồ Chí Minh */
-            provinceName?: string | null;
-            /** @example Xã Châu Pha, Thành phố Hồ Chí Minh */
-            fullAddress?: string | null;
-        };
         ApartmentListItemDto: {
             /** @example d6e0a098-c1e9-4b5d-9207-e507e9a5974d */
             id: string;
@@ -3125,6 +3109,11 @@ export interface components {
              * @example 26728
              */
             wardCode?: number | null;
+            /**
+             * @description Mã tỉnh/thành (v2), auto-resolved từ wardCode
+             * @example 79
+             */
+            provinceCode?: number | null;
             /**
              * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
              * @example 12 Nguyễn Huệ, Phường Bến Nghé
@@ -3161,10 +3150,6 @@ export interface components {
              *     ]
              */
             cooperationContracts?: components["schemas"]["ApartmentCooperationContractDto"][] | null;
-            /** @description Địa chỉ đã resolve từ mã địa chỉ (v2) */
-            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Dia chi hien thi */
-            address?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -3258,6 +3243,11 @@ export interface components {
              */
             wardCode?: number | null;
             /**
+             * @description Mã tỉnh/thành (v2), auto-resolved từ wardCode
+             * @example 79
+             */
+            provinceCode?: number | null;
+            /**
              * @description Địa chỉ cụ thể (số nhà, ngõ, hẻm, đường...)
              * @example 12 Nguyễn Huệ, Phường Bến Nghé
              */
@@ -3298,10 +3288,6 @@ export interface components {
             images?: string[] | null;
             videoTourUrl?: string | null;
             yearBuilt?: number | null;
-            /** @description Dia chi resolve theo ma phuong/xa (v2) */
-            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Dia chi hien thi */
-            address?: string | null;
             ownerId?: string | null;
             approvedByOperatorId?: string | null;
             /** Format: date-time */
@@ -3976,10 +3962,10 @@ export interface components {
             apartmentNumber: string;
             /** @example 26728 */
             wardCode?: number | null;
-            /** @description Resolved address (v2) */
-            resolvedAddress?: components["schemas"]["WardAddressDto"] | null;
-            /** @description Display address derived from resolved ward data */
-            displayAddress?: string | null;
+            /** @example 79 */
+            provinceCode?: number | null;
+            /** @example 12 Nguyễn Huệ, Phường Bến Nghé */
+            streetAddress?: string | null;
         };
         ContractListMemberUserDto: {
             id: string;

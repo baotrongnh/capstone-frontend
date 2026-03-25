@@ -1,10 +1,12 @@
 "use client"
 
 import SimilarApartments from "@/components/apartments/similar-apartments"
+import ModalBooking from "@/components/modal/modal-booking"
 import ModalBookingSchedule from "@/components/modal/modal-booking-schedule"
 import ModalLoginRequired from "@/components/modal/modal-login-required"
 import { APARTMENT_STATUS } from "@/constants/apartment"
 import { ROUTES } from "@/constants/routes"
+import { useFullAddress } from "@/hooks/query/useAddress"
 import { useApartment } from "@/hooks/query/useApartments"
 import { useAuthStore } from "@/stores/auth.store"
 import { formatVND } from "@/utils/format"
@@ -41,6 +43,12 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
 
   const { id } = use(params)
   const { data: apartmentData, isLoading, isError } = useApartment(id)
+  const apt = apartmentData?.data
+  const fullAddress = useFullAddress(
+    apt?.streetAddress ?? undefined,
+    apt?.provinceCode ?? undefined,
+    apt?.wardCode ?? undefined,
+  )
 
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
@@ -87,10 +95,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
     )
   }
 
-  const apt = apartmentData.data
-
   const images = apt?.images?.length ? apt.images : []
-  const fullAddress = apt?.address
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {
@@ -118,6 +123,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         onClose={() => setIsScheduleModalOpen(false)}
         apartmentId={id}
       />
+
+      <ModalBooking open={isModalBookingApartmentOpen} apartmentId={id} onClose={() => setIsModalBookingApartmentOpen(false)} />
 
       <Breadcrumb
         className="py-4"

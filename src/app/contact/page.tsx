@@ -9,7 +9,7 @@ import { uploadFile } from "@/utils/uploadFile";
 import Image from "next/image";
 import banner from "../../../public/img/partner.jpg";
 import { useCreateCooperation } from "@/hooks/query/useApartments";
-import { useProvinces, useWards } from "@/hooks/query/useProvinces";
+import { useProvinces, useWards } from "@/hooks/query/useAddress";
 import { useState } from "react";
 
 export default function PartnerContact() {
