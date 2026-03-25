@@ -8,7 +8,7 @@ import AppPromoSection from '@/components/sections/app-promo'
 import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartments } from '@/hooks/query/useApartments'
-import { ApartmentFilterPatch, ApartmentQueryParams } from '@/types/apartment'
+import { ApartmentQueryParams, ApartmentSearchQueryParams } from '@/types/apartment'
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useTranslations } from 'next-intl'
@@ -23,7 +23,7 @@ export default function ApartmentList() {
   const apartments = dataApartment?.data ?? []
   const meta = dataApartment?.meta
 
-  const updateFilters = useCallback((patch: ApartmentFilterPatch | null) => {
+  const updateFilters = useCallback((patch: ApartmentSearchQueryParams | null) => {
     if (!patch) {
       setFilters(DEFAULT_APARTMENT_FILTERS)
       return
