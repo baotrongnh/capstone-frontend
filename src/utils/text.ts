@@ -22,3 +22,11 @@ export const getObjectText = (value: unknown, key: string) => {
     const fieldValue = (value as Record<string, unknown>)[key]
     return normalizeText(fieldValue)
 }
+
+export const normalizeVietnamese = (str: string) =>
+    str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase();

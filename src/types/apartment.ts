@@ -10,7 +10,5 @@ export type ApartmenList = ApartmentItem[]
 export type ApartmentQueryParams = NonNullable<ApartmentSearchQueryParams>
 export type FurnishingType = NonNullable<ApartmentQueryParams['furnishingStatus']>
 
-export type ApartmentFilterPatch = paths["/api/v1/apartments/search"]["get"]["parameters"]["query"]
-
 export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
 export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
