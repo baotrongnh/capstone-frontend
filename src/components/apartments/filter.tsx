@@ -2,7 +2,7 @@
 
 import { DEBOUNCE_DELAY, FILTER_AREA_RANGE, FILTER_PRICE_RANGE } from '@/constants/apartment'
 import { useProvinces, useWards } from '@/hooks/query/useProvinces'
-import { ApartmentSearchQueryParams, FurnishingType } from '@/types/apartment'
+import { ApartmentSearchQueryParams, FurnishingType } from '@/lib/services/apartment.service'
 import { formatArea, formatPrice } from '@/utils/format'
 import { normalizeVietnamese } from '@/utils/text'
 import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'

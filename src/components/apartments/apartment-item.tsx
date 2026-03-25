@@ -1,5 +1,5 @@
 import { IMG_URL, ROUTES } from '@/constants/routes'
-import type { ApartmentItem } from '@/types/apartment'
+import type { ApartmentItem } from '@/lib/services/apartment.service'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
 import { useTranslations } from 'next-intl'
