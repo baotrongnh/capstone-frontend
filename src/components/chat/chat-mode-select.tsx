@@ -34,7 +34,8 @@ export function ChatModeSelect({ onSelect }: {onSelect: (mode: 'support' | 'ai')
                     <button
                          key={option.mode}
                          onClick={() => onSelect(option.mode)}
-                         className={`flex items-center gap-4 p-5 border border-gray-200 rounded-xl transition-all text-left ${option.cardClassName}`}
+                         className={`flex items-center gap-4 p-5 border border-gray-200 rounded-xl transition-all text-left ${option.cardClassName} ${option.mode == 'ai' && 'opacity-30 cursor-not-allowed'}`}
+                         disabled={option.mode == 'ai'}
                     >
                          <Avatar
                               size={52}

@@ -6,7 +6,6 @@ import ModalLoginRequired from "@/components/modal/modal-login-required"
 import { APARTMENT_STATUS } from "@/constants/apartment"
 import { ROUTES } from "@/constants/routes"
 import { useApartment } from "@/hooks/query/useApartments"
-import { useAddressTypePreference } from "@/hooks/useAddressTypePreference"
 import { useAuthStore } from "@/stores/auth.store"
 import { getApartmentDisplayAddress } from "@/utils/apartment-address"
 import { formatVND } from "@/utils/format"
@@ -40,7 +39,6 @@ import { use, useState } from "react"
 export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
   const t = useTranslations("ApartmentDetailPage")
   const tLabels = useTranslations("ApartmentLabels")
-  const { addressType } = useAddressTypePreference()
 
   const { id } = use(params)
   const { data: apartmentData, isLoading, isError } = useApartment(id)
@@ -93,7 +91,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const apt = apartmentData.data
 
   const images = apt?.images?.length ? apt.images : []
-  const fullAddress = getApartmentDisplayAddress(apt, addressType)
+  const fullAddress = getApartmentDisplayAddress(apt)
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
 
   const handleFindDirection = () => {

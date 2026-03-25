@@ -32,14 +32,15 @@ interface Props {
      onSend: (content: string, images?: string[]) => void
      currentApartment?: ChatApartmentRef
      onSendApartment: () => void
+     disabled?: boolean
 }
 
-export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) {
+export function ChatInput({ onSend, currentApartment, onSendApartment, disabled = false }: Props) {
      const t = useTranslations('Chat')
      const [message, setMessage] = useState('')
      const [pendingImages, setPendingImages] = useState<string[]>([])
 
-     const canSend = message.trim().length > 0 || pendingImages.length > 0
+     const canSend = !disabled && (message.trim().length > 0 || pendingImages.length > 0)
 
      function handleSend() {
           const text = message.trim()
@@ -121,6 +122,7 @@ export function ChatInput({ onSend, currentApartment, onSendApartment }: Props) 
                          placeholder={t('inputPlaceholder')}
                          autoSize={{ minRows: 1, maxRows: 4 }}
                          className="flex-1"
+                         disabled={disabled}
                     />
                     <Button
                          type="primary"

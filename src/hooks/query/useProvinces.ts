@@ -1,17 +1,17 @@
 import { provincesService } from '@/lib/services/provinces.service'
 import { useQuery } from '@tanstack/react-query'
 
-export const useProvinces = (afterMerge: boolean) =>
+export const useProvinces = () =>
      useQuery({
-          queryKey: ['provinces', afterMerge],
-          queryFn: () => provincesService.getAll(afterMerge),
+          queryKey: ['provinces'],
+          queryFn: provincesService.getAll,
           staleTime: Infinity,
      })
 
-export const useDistricts = (provinceCode: number | undefined, afterMerge: boolean) =>
+export const useWards = (provinceCode: number | undefined) =>
      useQuery({
-          queryKey: afterMerge ? ['districts', provinceCode, afterMerge] : ['wards', provinceCode, afterMerge],
-          queryFn: () => provincesService.getDistricts(provinceCode!, afterMerge),
+          queryKey: ['wards', provinceCode],
+          queryFn: () => provincesService.getWards(provinceCode!),
           enabled: !!provinceCode,
           staleTime: 0,
      })

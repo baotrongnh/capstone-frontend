@@ -23,5 +23,4 @@ export const PAYMENT_STATUS_TABS: PaymentStatus[] = [
     'completed',
     'failed',
     'refunded',
-    'cancelled',
 ]

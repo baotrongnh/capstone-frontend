@@ -1,5 +1,3 @@
-import type { AddressTypePreference } from '@/hooks/useAddressTypePreference'
-
 type AddressDto = {
      fullAddress?: string | null
      wardName?: string | null
@@ -10,7 +8,6 @@ type AddressDto = {
 type ApartmentAddressSource = Record<string, unknown> & {
      displayAddress?: string | null
      newAddress?: AddressDto | null
-     oldAddress?: AddressDto | null
      ward?: string | null
      district?: string | null
      city?: string | null
@@ -49,18 +46,13 @@ function legacyAddress(apartment?: ApartmentAddressSource | null): string {
 
 export function getApartmentDisplayAddress(
      apartment: ApartmentAddressSource | null | undefined,
-     addressType: AddressTypePreference,
 ): string {
      if (!apartment) {
           return ''
      }
 
-     const preferred = addressType === 'new' ? apartment.newAddress : apartment.oldAddress
-     const fallback = addressType === 'new' ? apartment.oldAddress : apartment.newAddress
-
      return (
-          fromDto(preferred)
-          || fromDto(fallback)
+          fromDto(apartment.newAddress)
           || clean(apartment.displayAddress)
           || legacyAddress(apartment)
      )

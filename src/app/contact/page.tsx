@@ -9,37 +9,60 @@ import { uploadFile } from "@/utils/uploadFile";
 import Image from "next/image";
 import banner from "../../../public/img/partner.jpg";
 import { useCreateCooperation } from "@/hooks/query/useApartments";
+import { useProvinces, useWards } from "@/hooks/query/useProvinces";
+import { useState } from "react";
 
 export default function PartnerContact() {
   const [form] = useForm();
 
   const { mutateAsync: createCooperation } = useCreateCooperation();
+
+  const { data: provinces } = useProvinces();
+
+  const [selectedProvince, setSelectedProvince] = useState<
+    number | undefined
+  >();
+
+  const { data: wardCode } = useWards(selectedProvince);
+
   const handleRegister = async () => {
     try {
       const data = await form.validateFields();
       const currentImage = data.images || [];
 
-      const formData = new FormData();
+      const uploadedImages = await Promise.all(
+        currentImage.map(async (file: any) => {
+          if (file.originFileObj) {
+            const res = await uploadFile(file.originFileObj);
+            return res.url;
+          }
+          return null;
+        }),
+      );
 
-      formData.append("buildingName", data.buildingName);
-      formData.append("apartmentNumber", data.apartmentNumber);
+      const payload = {
+        buildingName: data.buildingName,
+        apartmentNumber: data.apartmentNumber,
 
-      formData.append("totalArea", String(data.totalArea));
-      formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
-      formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
+        totalArea: Number(data.totalArea),
+        numberOfBathrooms: Number(data.numberOfBathrooms),
+        numberOfBedrooms: Number(data.numberOfBedrooms),
 
-      formData.append("baseRentPrice", String(data.baseRentPrice));
-      formData.append("description", data.description);
+        baseRentPrice: Number(data.baseRentPrice),
 
-      currentImage.forEach((file: any) => {
-        if (file.originFileObj) {
-          formData.append("images", file.originFileObj);
-        }
-      });
+        description: data.description,
 
-      console.log("FormData:", formData);
+        newWardCode: Number(data.newWardCode),
 
-      await createCooperation(formData);
+        latitude: 0,
+        longitude: 0,
+
+        images: uploadedImages.filter(Boolean),
+      };
+
+      console.log("Payload:", payload);
+
+      await createCooperation(payload);
 
       form.resetFields();
     } catch (error) {
@@ -153,11 +176,47 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
-                label="Địa chỉ căn hộ"
-                name="address"
-                rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
+                label="Tỉnh / Thành phố"
+                name="province"
+                rules={[
+                  { required: true, message: "Vui lòng chọn tỉnh/thành" },
+                ]}
               >
-                <Input placeholder="VD: 123 Nguyễn Văn Linh, Q.7" />
+                <Select
+                  placeholder="Chọn tỉnh/thành"
+                  options={provinces?.map((p: any) => ({
+                    label: p.name,
+                    value: p.code,
+                  }))}
+                  onChange={(value) => {
+                    setSelectedProvince(value);
+                    form.setFieldValue("newWardCode", undefined);
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Phường / Xã"
+                name="newWardCode"
+                rules={[{ required: true, message: "Vui lòng chọn phường/xã" }]}
+              >
+                <Select
+                  placeholder="Chọn phường/xã"
+                  showSearch
+                  virtual
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={wardCode?.map((w: any) => ({
+                    label: w.name,
+                    value: w.code,
+                  }))}
+                  onChange={(value) => {
+                    form.setFieldValue("newWardCode", value);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
