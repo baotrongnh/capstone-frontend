@@ -18,6 +18,7 @@ import { ApartmentGallery } from './components/apartment-gallery'
 import type { OwnerApartmentExtra, OwnerApartmentItem } from './components/types'
 import { UtilityUsageCard } from './components/utility-usage-card'
 import { useTranslations } from 'next-intl'
+import { useFullAddress } from '@/hooks/query/useAddress'
 
 const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
     available: 'green',
@@ -30,6 +31,11 @@ const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
 const toNumber = (value: unknown, fallback = 0) => {
     const parsed = typeof value === 'number' ? value : Number(value)
     return Number.isFinite(parsed) ? parsed : fallback
+}
+
+const toOptionalNumber = (value: unknown): number | undefined => {
+    const parsed = typeof value === 'number' ? value : Number(value)
+    return Number.isFinite(parsed) ? parsed : undefined
 }
 
 const toApartmentStatus = (status: unknown): ApartmentStatus => {
@@ -73,6 +79,10 @@ export default function MyApartmentPage() {
     const apartment = ownerApartments?.length
         ? mapToUserApartment(ownerApartments[0])
         : null
+    const streetAddress = rawApartment?.streetAddress ?? rawApartment?.address ?? undefined
+    const provinceCode = toOptionalNumber(rawApartment?.provinceCode)
+    const wardCode = toOptionalNumber(rawApartment?.wardCode ?? rawApartment?.newWardCode)
+    const fullAddress = useFullAddress(streetAddress, provinceCode, wardCode)
 
     const loading = !isHydrated || isLoading
 
@@ -107,6 +117,7 @@ export default function MyApartmentPage() {
     const waterCost = waterUsage * apartment.waterUnitPrice
     const totalUtilityCost = electricityCost + waterCost
     const totalThisMonth = apartment.baseRentPrice + totalUtilityCost
+    const displayAddress = fullAddress || [apartment.address, apartment.district, apartment.city].filter(Boolean).join(', ')
 
     return (
         <div className="space-y-6">
@@ -175,7 +186,7 @@ export default function MyApartmentPage() {
                     <Descriptions.Item label={t('address')} span={{ xs: 1, sm: 2, md: 3, lg: 3 }}>
                         <div className="flex items-start gap-2">
                             <EnvironmentOutlined className="mt-1 text-stone-500" />
-                            <span>{apartment.address}, {apartment.district}, {apartment.city}</span>
+                            <span>{displayAddress}</span>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label={t('totalArea')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{apartment.totalArea} m²</Descriptions.Item>

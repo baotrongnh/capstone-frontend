@@ -34,6 +34,7 @@ export default function AccountPage() {
   const { message } = App.useApp();
   const t = useTranslations("Profile.account");
 
+  console.log(user) 
   const {
     data: profile,
     isLoading,
