@@ -11,7 +11,7 @@ export const useGetContracts = () =>
 export const useUploadContractPdf = (contractId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (contractData: Object) =>
+    mutationFn: (contractData: object) =>
       contractsService.create(contractId, contractData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });

@@ -5,6 +5,9 @@ import { useState } from "react";
 import { ChevronUp, ChevronDown, Quote } from "lucide-react";
 import banner3 from "../../../public/img/banner5.jpg";
 import { StarOutlined } from "@ant-design/icons";
+import { useApartments } from "@/hooks/query/useApartments";
+import { ROUTES } from "@/constants/routes";
+import { useRouter } from "next/navigation";
 
 const TestimonialCard = ({
   item,
@@ -38,7 +41,6 @@ const TestimonialCard = ({
       </div>
 
       <div className={`${!isActive ? "opacity-70 grayscale-0" : ""}`}>
-        {" "}
         <p
           className={`text-gray-700 font-medium leading-relaxed italic mb-6 
             ${isActive ? "text-base md:text-lg" : "text-sm line-clamp-2"}
@@ -62,35 +64,21 @@ const TestimonialCard = ({
 export default function TestimonialsSection() {
   const t = useTranslations("HomePage");
 
+  // Lấy dữ liệu từ API
+  const { data: apartmentsResponse } = useApartments({ limit: 4 });
+  const projects = apartmentsResponse?.data || [];
+
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
-  const projects = [
-    {
-      id: 1,
-      name: "Vinhomes Golden River",
-      location: "Trung tâm Hồ Chí Minh",
-      description:
-        "Vinhomes Golden River Residences là dự án bất động sản hạng A tại trung tâm thành phố...",
-      rating: 4.5,
-      image:
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      name: "Vinhomes Riverside",
-      location: "Quận 7, TP.HCM",
-      description: "Dự án căn hộ cao cấp với view sông, đầy đủ tiện ích...",
-      rating: 5,
-      image:
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop",
-    },
-  ];
+
+  // Fallback an toàn nếu projects rỗng (đang loading hoặc API lỗi)
+  const project = projects[currentProjectIndex] || null;
+
   const handlePrevProject = () =>
     setCurrentProjectIndex(
       (prev) => (prev - 1 + projects.length) % projects.length,
     );
   const handleNextProject = () =>
     setCurrentProjectIndex((prev) => (prev + 1) % projects.length);
-  const project = projects[currentProjectIndex];
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const testimonials = [
@@ -126,13 +114,19 @@ export default function TestimonialsSection() {
     },
   ];
 
+  const router = useRouter();
+
   const handleNextTestimonial = () =>
     setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
   const handlePrevTestimonial = () =>
     setActiveTestimonial(
       (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
-  const nextTestimonialIndex = (activeTestimonial + 1) % testimonials.length;
+
+  // Fix lỗi loop nếu activeTestimonial không tồn tại do mảng thay đổi
+  const validActiveTestimonial = activeTestimonial % testimonials.length;
+  const nextTestimonialIndex =
+    (validActiveTestimonial + 1) % testimonials.length;
 
   return (
     <div>
@@ -145,68 +139,97 @@ export default function TestimonialsSection() {
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex items-center justify-between gap-4 md:gap-8">
-            <button
-              onClick={handlePrevProject}
-              className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition backdrop-blur-sm"
-            >
-              ←
-            </button>
+          {project ? (
+            <div className="flex items-center justify-between gap-4 md:gap-8">
+              <button
+                onClick={handlePrevProject}
+                className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition backdrop-blur-sm"
+              >
+                ←
+              </button>
 
-            <div className="flex-1 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-              <div className="w-48 h-48 md:w-64 md:h-64 shrink-0 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
-                <img
-                  src={project.image}
-                  alt={project.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="text-white flex-1 text-center md:text-left">
-                <div className="inline-block bg-[#AFFFF0] text-teal-900 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide">
-                  DỰ ÁN NỔI BẬT
+              <div className="flex-1 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div className="w-48 h-48 md:w-64 md:h-64 shrink-0 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
+                  <img
+                    src={
+                      project.images?.[0] ||
+                      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=400&fit=crop"
+                    }
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <h3 className="text-2xl md:text-4xl font-bold mb-2">
-                  {project.name}
-                </h3>
-                <p className="text-sm text-white/80 mb-4 flex items-center justify-center md:justify-start gap-1">
-                  <span className="opacity-70">📍</span> {project.location}
-                </p>
-                <p className="text-sm md:text-base leading-relaxed mb-5 line-clamp-3 text-gray-100 max-w-2xl">
-                  {project.description}
-                </p>
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <StarOutlined
-                        key={i}
-                        className={
-                          i < Math.floor(project.rating)
-                            ? "text-yellow-400 text-lg"
-                            : "text-gray-500 text-lg"
-                        }
-                      />
-                    ))}
-                    <span className="text-sm text-white/90 ml-2 font-medium">
-                      ({project.rating}/5)
-                    </span>
+                <div className="text-white flex-1 text-center md:text-left">
+                  <div className="inline-block bg-[#AFFFF0] text-teal-900 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide">
+                    DỰ ÁN NỔI BẬT
                   </div>
-                  <button className="bg-[#FFDA32] py-2 hover:bg-yellow-400 text-gray-900 border-0 font-bold rounded-full px-8 shadow-lg shadow-yellow-500/20">
-                    Xem chi tiết
-                  </button>
+                  <h3 className="text-2xl md:text-4xl font-bold mb-2">
+                    {project.buildingName} - {project.apartmentNumber}
+                  </h3>
+                  <p className="text-sm text-white/80 mb-4 flex items-center justify-center md:justify-start gap-1">
+                    <span className="opacity-70">📍</span>
+                    {project.streetAddress ||
+                      `Phường/Xã: ${project.wardCode || "Đang cập nhật"}`}
+                  </p>
+
+                  {/* Generate mô tả từ dữ liệu thực */}
+                  <p className="text-sm md:text-base leading-relaxed mb-5 line-clamp-3 text-gray-100 max-w-2xl">
+                    Căn hộ cao cấp với diện tích {project.totalArea}m², thiết kế
+                    bao gồm {project.numberOfBedrooms} phòng ngủ và{" "}
+                    {project.numberOfBathrooms} phòng tắm. Tình trạng nội thất:{" "}
+                    {project.furnishingStatus === "unfurnished"
+                      ? "Cơ bản/Trống"
+                      : "Đầy đủ"}
+                    .
+                    {project.baseRentPrice &&
+                      ` Giá thuê cơ bản: ${project.baseRentPrice} triệu.`}
+                  </p>
+
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <StarOutlined
+                          key={i}
+                          className={
+                            // Lấy rating thực tế hoặc mặc định là 5 sao nếu rỗng
+                            i < Math.floor(project.rating || 5)
+                              ? "text-yellow-400 text-lg"
+                              : "text-gray-500 text-lg"
+                          }
+                        />
+                      ))}
+                      <span className="text-sm text-white/90 ml-2 font-medium">
+                        ({project.rating || 5}/5)
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        router.push(`${ROUTES.APARTMENT}`);
+                      }}
+                      className="bg-[#FFDA32] py-2 hover:bg-yellow-400 text-gray-900 border-0 font-bold rounded-full px-8 shadow-lg shadow-yellow-500/20"
+                    >
+                      Xem chi tiết
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              onClick={handleNextProject}
-              className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition backdrop-blur-sm"
-            >
-              →
-            </button>
-          </div>
+              <button
+                onClick={handleNextProject}
+                className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center transition backdrop-blur-sm"
+              >
+                →
+              </button>
+            </div>
+          ) : (
+            // Skeleton / Loading state khi dữ liệu chưa về
+            <div className="text-center text-white py-20">
+              Đang tải dữ liệu dự án...
+            </div>
+          )}
         </div>
       </div>
 
+      {/* ===== PHẦN TESTIMONIALS GIỮ NGUYÊN HOẶC ĐỢI API SAU ===== */}
       <div className="bg-white py-24 relative overflow-hidden ">
         <div className="absolute top-0 left-0 w-full z-1">
           <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
@@ -224,7 +247,7 @@ export default function TestimonialsSection() {
                   <button
                     key={index}
                     onClick={() => setActiveTestimonial(index)}
-                    className={`h-3 rounded-full transition-all duration-300 ${index === activeTestimonial ? "w-8 bg-blue-500" : "w-3 bg-gray-200 hover:bg-gray-300"}`}
+                    className={`h-3 rounded-full transition-all duration-300 ${index === validActiveTestimonial ? "w-8 bg-blue-500" : "w-3 bg-gray-200 hover:bg-gray-300"}`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
@@ -237,7 +260,7 @@ export default function TestimonialsSection() {
               <div className="flex items-start gap-6">
                 <div className="flex-1 flex flex-col">
                   <TestimonialCard
-                    item={testimonials[activeTestimonial]}
+                    item={testimonials[validActiveTestimonial]}
                     type="active"
                   />
 
