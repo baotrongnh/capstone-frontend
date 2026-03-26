@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
 import {
-  ApartmentQueryParams,
+  ApartmentSearchQueryParams,
   apartmentService,
-} from "@/lib/services/apartment.service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+} from "@/lib/services/apartment.service"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { message } from "antd"
 
 // QUERIES
 export const useApartments = (params?: ApartmentSearchQueryParams) => {
