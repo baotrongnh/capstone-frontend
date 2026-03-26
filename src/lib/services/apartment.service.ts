@@ -10,9 +10,6 @@ export type ApartmentItem = NonNullable<ApartmentListResponse['data']>[number]
 export type ApartmentQueryParams = NonNullable<ApartmentSearchQueryParams>
 export type FurnishingType = NonNullable<ApartmentQueryParams['furnishingStatus']>
 
-export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
-export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
-
 export type OwnerApartmentResponse = paths["/api/v1/apartments/owner/{ownerId}"]["get"]["responses"]["200"]["content"]["application/json"]
 
 export const apartmentService = {

@@ -1,6 +1,11 @@
-import { ViewingRequestBody, ViewingRequestRespone } from "@/types/apartment";
+
+import { paths } from "@/types/api";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
+
+export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
+export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
+
 
 export const viewRequestService = {
   create: async (viewRequestData: ViewingRequestBody): Promise<ViewingRequestRespone> => {
