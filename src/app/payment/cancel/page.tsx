@@ -71,7 +71,7 @@ export default function PaymentCancelPage() {
                 </Descriptions>
             )}
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-6">
                 <Button type="primary" size="large" onClick={goToInvoice}>
                     {t('cancel.backToInvoice')}
                 </Button>

@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 
 // QUERIES
-export const useApartments = (params?: ApartmentQueryParams) => {
+export const useApartments = (params?: ApartmentSearchQueryParams) => {
   return useQuery({
     queryKey: ["apartments", params],
     queryFn: () => apartmentService.getList(params),

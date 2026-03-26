@@ -29,12 +29,27 @@ export const useUserById = (id: string, enabled = true) => {
 export const useUpdateUser = (id: string) => {
   const { message } = App.useApp();
   const queryClient = useQueryClient();
+  const tokens = useAuthStore((s) => s.tokens);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  const syncAuthUser = async () => {
+    if (!tokens) {
+      return;
+    }
+
+    const user = await queryClient.fetchQuery({
+      queryKey: ["user", "profile"],
+      queryFn: () => userService.getProfile(),
+    });
+
+    setAuth(user, tokens);
+  };
 
   return useMutation({
     mutationFn: (data: UpdateUserDto) => userService.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-      message.success("Profile updated successfully!");
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+      await syncAuthUser();
     },
     onError: (error: Error) => {
       message.error(error?.message || "Failed to update profile");
@@ -44,11 +59,28 @@ export const useUpdateUser = (id: string) => {
 
 export const useUpdateUserCardImages = () => {
   const queryClient = useQueryClient();
+  const tokens = useAuthStore((s) => s.tokens);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  const syncAuthUser = async () => {
+    if (!tokens) {
+      return;
+    }
+
+    const user = await queryClient.fetchQuery({
+      queryKey: ["user", "profile"],
+      queryFn: () => userService.getProfile(),
+    });
+
+    setAuth(user, tokens);
+  };
+
   return useMutation({
     mutationFn: (profileImageUrl: string) =>
       userService.updateCardImages(profileImageUrl),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+      await syncAuthUser();
     },
     onError: (error: Error) => {
       console.log(error);
@@ -56,24 +88,30 @@ export const useUpdateUserCardImages = () => {
   });
 };
 
-export const useUpdateIdentityCard = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: { front: File; back?: File }) =>
-      userService.uploadIdentityCard(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-    },
-  });
-};
-
 export const useVerifyIdentity = () => {
   const queryClient = useQueryClient();
+  const tokens = useAuthStore((s) => s.tokens);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  const syncAuthUser = async () => {
+    if (!tokens) {
+      return;
+    }
+
+    const user = await queryClient.fetchQuery({
+      queryKey: ["user", "profile"],
+      queryFn: () => userService.getProfile(),
+    });
+
+    setAuth(user, tokens);
+  };
+
   return useMutation({
     mutationFn: (data: { identityCardFront: File; identityCardBack: File }) =>
       userService.verifyIdentity(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
+      await syncAuthUser();
     },
   });
 };
