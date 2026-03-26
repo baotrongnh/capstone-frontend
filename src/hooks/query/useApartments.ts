@@ -1,7 +1,9 @@
 "use client";
 
-import { apartmentService } from "@/lib/services/apartment.service";
-import { ApartmentSearchQueryParams } from "@/lib/services/apartment.service"; 
+import {
+  ApartmentQueryParams,
+  apartmentService,
+} from "@/lib/services/apartment.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 
