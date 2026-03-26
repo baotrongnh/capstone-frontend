@@ -1,30 +1,31 @@
 'use client'
 
-import { Card, Descriptions, Tag, Statistic, Row, Col, Empty } from 'antd'
+import { Card, Col, Descriptions, Empty, Row, Statistic, Tag } from 'antd'
 import {
-    BgColorsOutlined,
     HomeOutlined,
-    ThunderboltOutlined,
+    EnvironmentOutlined,
+    StarOutlined,
     DollarOutlined,
-    CalendarOutlined,
-    EnvironmentOutlined
+    BorderOutlined,
 } from '@ant-design/icons'
 import { useMyApartment } from '@/hooks/query/useMyApartment'
-import type { ApartmentStatus, UserApartment } from '@/types/profile'
 import { useAuthStore } from '@/stores/auth.store'
 import { formatPaymentAmount } from '@/utils/payment'
 import { AdditionalInfoCard } from './components/additional-info-card'
 import { ApartmentGallery } from './components/apartment-gallery'
-import type { OwnerApartmentExtra, OwnerApartmentItem } from './components/types'
-import { UtilityUsageCard } from './components/utility-usage-card'
+import type { OwnerApartmentItem } from './components/types'
 import { useTranslations } from 'next-intl'
 import { useFullAddress } from '@/hooks/query/useAddress'
+
+type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'
 
 const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
     available: 'green',
     occupied: 'blue',
+    rented: 'geekblue',
     maintenance: 'orange',
     reserved: 'purple',
+    unavailable: 'volcano',
     inactive: 'red',
 }
 
@@ -46,43 +47,22 @@ const toApartmentStatus = (status: unknown): ApartmentStatus => {
     return status in APARTMENT_STATUS_COLORS ? (status as ApartmentStatus) : 'inactive'
 }
 
-const mapToUserApartment = (item: OwnerApartmentItem): UserApartment => {
-    return {
-        id: item.id ?? '',
-        buildingName: item.buildingName ?? '',
-        apartmentNumber: item.apartmentNumber ?? '',
-        address: item.address ?? item?.newAddress?.fullAddress ?? '',
-        city: item?.newAddress?.provinceName ?? '',
-        district: item?.newAddress?.districtName ?? '',
-        totalArea: String(item.totalArea ?? ''),
-        numberOfBedrooms: toNumber(item.numberOfBedrooms),
-        numberOfBathrooms: toNumber(item.numberOfBathrooms),
-        status: toApartmentStatus(item.status),
-        images: item.images ?? null,
-        baseRentPrice: toNumber(item.baseRentPrice),
-        currentElectricReading: 0,
-        previousElectricReading: 0,
-        currentWaterReading: 0,
-        previousWaterReading: 0,
-        electricityUnitPrice: 0,
-        waterUnitPrice: 0,
-    }
-}
-
 export default function MyApartmentPage() {
     const user = useAuthStore((s) => s.user)
     const isHydrated = useAuthStore((s) => s.isHydrated)
     const id = user?.id ?? ''
     const t = useTranslations('Profile.apartment')
     const { data: ownerApartments, isLoading } = useMyApartment(isHydrated ? id : '')
-    const rawApartment = ownerApartments?.[0] as OwnerApartmentExtra | undefined
-    const apartment = ownerApartments?.length
-        ? mapToUserApartment(ownerApartments[0])
-        : null
-    const streetAddress = rawApartment?.streetAddress ?? rawApartment?.address ?? undefined
+    const rawApartment = ownerApartments?.[0] as OwnerApartmentItem | undefined
+    const streetAddress = rawApartment?.streetAddress ?? undefined
     const provinceCode = toOptionalNumber(rawApartment?.provinceCode)
-    const wardCode = toOptionalNumber(rawApartment?.wardCode ?? rawApartment?.newWardCode)
+    const wardCode = toOptionalNumber(rawApartment?.wardCode)
     const fullAddress = useFullAddress(streetAddress, provinceCode, wardCode)
+    const status = toApartmentStatus(rawApartment?.status)
+    const displayAddress = fullAddress || streetAddress || '-'
+    const rentPrice = toNumber(rawApartment?.baseRentPrice)
+    const totalArea = toNumber(rawApartment?.totalArea)
+    const rating = rawApartment?.rating ?? '-'
 
     const loading = !isHydrated || isLoading
 
@@ -94,7 +74,7 @@ export default function MyApartmentPage() {
         )
     }
 
-    if (!apartment) {
+    if (!rawApartment) {
         return (
             <div className="space-y-6">
                 <div className="rounded-2xl border border-amber-200/80 bg-linear-to-br from-amber-50 via-orange-50 to-rose-50 p-6 shadow-sm">
@@ -111,14 +91,6 @@ export default function MyApartmentPage() {
         )
     }
 
-    const electricityUsage = apartment.currentElectricReading - apartment.previousElectricReading
-    const waterUsage = apartment.currentWaterReading - apartment.previousWaterReading
-    const electricityCost = electricityUsage * apartment.electricityUnitPrice
-    const waterCost = waterUsage * apartment.waterUnitPrice
-    const totalUtilityCost = electricityCost + waterCost
-    const totalThisMonth = apartment.baseRentPrice + totalUtilityCost
-    const displayAddress = fullAddress || [apartment.address, apartment.district, apartment.city].filter(Boolean).join(', ')
-
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -126,8 +98,8 @@ export default function MyApartmentPage() {
                     <h2 className="text-2xl font-bold text-foreground">{t('title')}</h2>
                     <p className="mt-1 text-sm text-muted">{t('subtitle')}</p>
                 </div>
-                <Tag color={APARTMENT_STATUS_COLORS[apartment.status]} className="px-3! py-1! text-sm! font-medium!">
-                    {t('statusLabel')}: {t(`status.${apartment.status}`)}
+                <Tag color={APARTMENT_STATUS_COLORS[status]} className="px-3! py-1! text-sm! font-medium!">
+                    {t('statusLabel')}: {t(`status.${status}`)}
                 </Tag>
             </div>
 
@@ -137,7 +109,7 @@ export default function MyApartmentPage() {
                         <Card className="h-full border-blue-200 bg-blue-50/60" style={{ margin: 0 }}>
                             <Statistic
                                 title={t('rentPrice')}
-                                value={apartment.baseRentPrice}
+                                value={rentPrice}
                                 formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
                                 suffix={t('perMonth')}
                                 styles={{ content: { color: '#3b82f6', fontWeight: 700 } }}
@@ -147,9 +119,10 @@ export default function MyApartmentPage() {
                     <Col xs={24} md={8}>
                         <Card className="h-full border-yellow-300 bg-yellow-50/70" style={{ margin: 0 }}>
                             <Statistic
-                                title={t('totalUtilityCost')}
-                                value={totalUtilityCost}
-                                formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
+                                title={t('totalArea')}
+                                value={totalArea}
+                                prefix={<BorderOutlined />}
+                                suffix="m²"
                                 styles={{ content: { color: '#efc103', fontWeight: 700 } }}
                             />
                         </Card>
@@ -157,9 +130,9 @@ export default function MyApartmentPage() {
                     <Col xs={24} md={8}>
                         <Card className="h-full border-emerald-300 bg-emerald-50/70" style={{ margin: 0 }}>
                             <Statistic
-                                title={t('thisMonth')}
-                                value={totalThisMonth}
-                                formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
+                                title={t('rating')}
+                                value={rating}
+                                prefix={<StarOutlined />}
                                 styles={{ content: { color: '#15803d', fontWeight: 700 } }}
                             />
                         </Card>
@@ -168,7 +141,7 @@ export default function MyApartmentPage() {
             </div>
 
             <Card className="overflow-hidden border-blue-200 bg-white" styles={{ body: { padding: 0 } }}>
-                <ApartmentGallery buildingName={apartment.buildingName} images={apartment.images} />
+                <ApartmentGallery buildingName={rawApartment.buildingName ?? rawApartment.apartmentNumber} images={rawApartment.images ?? null} />
             </Card>
 
             <Card
@@ -176,12 +149,14 @@ export default function MyApartmentPage() {
                 title={<span className="flex items-center gap-2 text-blue-900"><HomeOutlined /> {t('apartmentInfo')}</span>}
             >
                 <Descriptions bordered column={{ xs: 1, sm: 2, md: 3, lg: 3 }} size="middle">
-                    <Descriptions.Item label={t('buildingName')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{apartment.buildingName}</Descriptions.Item>
+                    <Descriptions.Item label={t('buildingName')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                        {rawApartment.buildingName ?? '-'}
+                    </Descriptions.Item>
                     <Descriptions.Item label={t('apartmentNumber')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
-                        <span className="font-semibold">{apartment.apartmentNumber}</span>
+                        <span className="font-semibold">{rawApartment.apartmentNumber}</span>
                     </Descriptions.Item>
                     <Descriptions.Item label={t('statusLabel')} span={{ xs: 1, sm: 2, md: 1, lg: 1 }}>
-                        <Tag color={APARTMENT_STATUS_COLORS[apartment.status]}>{t(`status.${apartment.status}`)}</Tag>
+                        <Tag color={APARTMENT_STATUS_COLORS[status]}>{t(`status.${status}`)}</Tag>
                     </Descriptions.Item>
                     <Descriptions.Item label={t('address')} span={{ xs: 1, sm: 2, md: 3, lg: 3 }}>
                         <div className="flex items-start gap-2">
@@ -189,12 +164,15 @@ export default function MyApartmentPage() {
                             <span>{displayAddress}</span>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('totalArea')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{apartment.totalArea} m²</Descriptions.Item>
-                    <Descriptions.Item label={t('bedrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{apartment.numberOfBedrooms}</Descriptions.Item>
-                    <Descriptions.Item label={t('bathrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{apartment.numberOfBathrooms}</Descriptions.Item>
+                    <Descriptions.Item label={t('totalArea')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.totalArea} m²</Descriptions.Item>
+                    <Descriptions.Item label={t('bedrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.numberOfBedrooms}</Descriptions.Item>
+                    <Descriptions.Item label={t('bathrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.numberOfBathrooms}</Descriptions.Item>
+                    <Descriptions.Item label={t('furnishingStatus')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                        {rawApartment.furnishingStatus}
+                    </Descriptions.Item>
                     <Descriptions.Item label={t('rentPrice')} span={{ xs: 1, sm: 1, md: 3, lg: 3 }}>
                         <span className="text-lg font-semibold text-primary">
-                            {formatPaymentAmount(apartment.baseRentPrice, 'vi')}{t('perMonth')}
+                            {formatPaymentAmount(rentPrice, 'vi')}{t('perMonth')}
                         </span>
                     </Descriptions.Item>
                 </Descriptions>
@@ -202,89 +180,14 @@ export default function MyApartmentPage() {
 
             <AdditionalInfoCard apartment={rawApartment} t={t} />
 
-            <Card
-                className="border-blue-200 bg-linear-to-b from-blue-50 to-cyan-50"
-                title={t('totalUtilityCost')}
-                style={{ marginTop: 16, marginBottom: 16 }}
-            >
-                <div className="flex w-full flex-row items-stretch justify-between gap-2 overflow-x-auto">
-                    <Statistic
-                        title={t('electricity')}
-                        value={electricityCost}
-                        prefix={<ThunderboltOutlined />}
-                        formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
-                        styles={{ content: { color: '#a16207', fontWeight: 700, fontSize: 20 } }}
-                    />
-                    <div className="mx-1 w-px self-stretch bg-slate-200" />
-                    <Statistic
-                        title={t('water')}
-                        value={waterCost}
-                        prefix={<BgColorsOutlined />}
-                        formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
-                        styles={{ content: { color: '#0369a1', fontWeight: 700, fontSize: 20 } }}
-                    />
-                    <div className="mx-1 w-px self-stretch bg-slate-200" />
-                    <Statistic
-                        title={t('totalUtilityCost')}
-                        value={totalUtilityCost}
-                        prefix={<DollarOutlined />}
-                        formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
-                        styles={{ content: { color: '#efc103', fontWeight: 700, fontSize: 20 } }}
-                    />
-                    <div className="mx-1 w-px self-stretch bg-slate-200" />
-                    <Statistic
-                        title={t('thisMonth')}
-                        value={totalThisMonth}
-                        prefix={<DollarOutlined />}
-                        formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
-                        styles={{ content: { color: '#15803d', fontWeight: 700, fontSize: 22 } }}
-                    />
-                </div>
+            <Card className="border-emerald-200 bg-emerald-50/60">
+                <Statistic
+                    title={t('depositAmount')}
+                    value={toNumber(rawApartment.depositAmount)}
+                    prefix={<DollarOutlined />}
+                    formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
+                />
             </Card>
-
-            {apartment.contract && (
-                <Card
-                    className="border-amber-200 bg-linear-to-br from-[#f5edde] to-[#ebdcc4]"
-                    title={<span className="flex items-center gap-2 text-amber-900"><CalendarOutlined /> {t('contractInfo')}</span>}
-                >
-                    <Descriptions bordered column={{ xs: 1, sm: 1, md: 2 }}>
-                        <Descriptions.Item label={t('startDate')}>
-                            {new Date(apartment.contract.startDate).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('endDate')}>
-                            {new Date(apartment.contract.endDate).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('monthlyRent')}>
-                            {formatPaymentAmount(apartment.contract.monthlyRent, 'vi')}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('depositAmount')}>
-                            {formatPaymentAmount(apartment.contract.depositAmount, 'vi')}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('contractStatus')}>
-                            <Tag color={apartment.contract.status === 'active' ? 'green' : 'red'}>
-                                {apartment.contract.status.toUpperCase()}
-                            </Tag>
-                        </Descriptions.Item>
-                    </Descriptions>
-                </Card>
-            )}
-
-            <UtilityUsageCard
-                apartment={apartment}
-                electricityUsage={electricityUsage}
-                waterUsage={waterUsage}
-                electricityCost={electricityCost}
-                waterCost={waterCost}
-                t={t}
-            />
         </div>
     )
 }
