@@ -124,7 +124,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         apartmentId={id}
       />
 
-      <ModalBooking open={isModalBookingApartmentOpen} apartmentId={id} onClose={() => setIsModalBookingApartmentOpen(false)} />
+      <ModalBooking apartmentData={apartmentData?.data} open={isModalBookingApartmentOpen} apartmentId={id} onClose={() => setIsModalBookingApartmentOpen(false)} />
 
       <Breadcrumb
         className="py-4"
