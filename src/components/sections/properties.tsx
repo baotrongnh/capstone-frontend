@@ -5,7 +5,6 @@ import { useState, useRef, useMemo } from "react";
 import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
 import { Button, Image } from "antd";
-import { ApartmentItem, ApartmentQueryParams } from "@/types/apartment";
 import { useAuthStore } from "@/stores/auth.store";
 import ModalBookingSchedule from "../modal/modal-booking-schedule";
 import ModalBooking from "../modal/modal-booking";
@@ -13,6 +12,11 @@ import ModalLoginRequired from "../modal/modal-login-required";
 import ModalVerify from "../modal/modal-verify";
 import { ROUTES } from "@/constants/routes";
 import { UserDetail } from "@/types/user";
+import {
+  ApartmentItem,
+  ApartmentQueryParams,
+} from "@/lib/services/apartment.service";
+import { useFullAddress } from "@/hooks/query/useAddress";
 export default function PropertiesSection() {
   const router = useRouter();
 
@@ -113,106 +117,105 @@ export default function PropertiesSection() {
               msOverflowStyle: "none",
             }}
           >
-            {apartmentsList.map((apartment: ApartmentItem) => (
-              <div
-                key={apartment.id}
-                className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
-              >
-                <div className="h-40 overflow-hidden relative">
-                  <Image
-                    src={
-                      apartment.images?.[0] ??
-                      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
-                    }
-                    alt={apartment.buildingName ?? "Apartment"}
-                    className="object-cover"
-                  />
-                </div>
+            {apartmentsList.map((apartment: ApartmentItem) => {
+              return (
+                <div
+                  key={apartment.id}
+                  className="shrink-0 w-65 bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden cursor-pointer"
+                >
+                  <div className="h-40 overflow-hidden relative">
+                    <Image
+                      src={
+                        apartment.images?.[0] ??
+                        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop"
+                      }
+                      alt={apartment.buildingName ?? "Apartment"}
+                      className="object-cover"
+                    />
+                  </div>
 
-                <div className="p-3">
-                  <div onClick={() => handleDetail(apartment.id)}>
-                    <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                      {apartment.buildingName} – {apartment.apartmentNumber}
-                    </h4>
+                  <div className="p-3">
+                    <div onClick={() => handleDetail(apartment.id)}>
+                      <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
+                        {apartment.buildingName} – {apartment.apartmentNumber}
+                      </h4>
 
-                    <div className="space-y-1 text-xs text-gray-500 mb-2">
-                      <div>{apartment.totalArea} m²</div>
-                      <div>
-                        {apartment.newAddress?.wardName},{" "}
-                        {apartment.newAddress?.provinceName}
+                      <div className="space-y-1 text-xs text-gray-500 mb-2">
+                        <div>{apartment.totalArea} m²</div>
+                        <div>{}</div>
+                        <div>
+                          {apartment.numberOfBedrooms} PN ·{" "}
+                          {apartment.numberOfBathrooms} WC
+                        </div>
+                        <div>Tầng {apartment.floorNumber}</div>
+                        <div>
+                          Nội thất:{" "}
+                          {apartment.furnishingStatus === "fully_furnished" &&
+                            "Đầy đủ"}
+                          {apartment.furnishingStatus === "semi_furnished" &&
+                            "Bán đạo"}
+                          {apartment.furnishingStatus === "unfurnished" &&
+                            "Không"}
+                        </div>
+                        <div>
+                          Cọc:{" "}
+                          {Number(apartment.depositAmount).toLocaleString(
+                            "vi-VN",
+                          )}{" "}
+                          ₫
+                        </div>
                       </div>
-                      <div>
-                        {apartment.numberOfBedrooms} PN ·{" "}
-                        {apartment.numberOfBathrooms} WC
+
+                      <div className="flex justify-between w-full border-t border-gray-200 pt-2">
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <StarFilled
+                              key={i}
+                              className="text-[11px] text-yellow-400!"
+                            />
+                          ))}
+                        </div>
+
+                        <p className="text-xl font-semibold text-[#A3D5FF]">
+                          {Number(apartment.baseRentPrice).toLocaleString(
+                            "vi-VN",
+                          )}{" "}
+                          ₫
+                        </p>
                       </div>
-                      <div>Tầng {apartment.floorNumber}</div>
-                      <div>
-                        Nội thất:{" "}
-                        {apartment.furnishingStatus === "fully_furnished" &&
-                          "Đầy đủ"}
-                        {apartment.furnishingStatus === "semi_furnished" &&
-                          "Bán đạo"}
-                        {apartment.furnishingStatus === "unfurnished" &&
-                          "Không"}
-                      </div>
-                      <div>
-                        Cọc:{" "}
-                        {Number(apartment.depositAmount).toLocaleString(
-                          "vi-VN",
-                        )}{" "}
-                        ₫
+
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>{0} đánh giá</span>
+                        <span>/tháng</span>
                       </div>
                     </div>
+                    <div className="flex mt-3 gap-2">
+                      <Button
+                        size="middle"
+                        shape="round"
+                        style={{ minWidth: 110, height: 30 }}
+                        onClick={() => handleButtonRedirect()}
+                      >
+                        Đặt lịch xem
+                      </Button>
 
-                    <div className="flex justify-between w-full border-t border-gray-200 pt-2">
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <StarFilled
-                            key={i}
-                            className="text-[11px] text-yellow-400!"
-                          />
-                        ))}
-                      </div>
-
-                      <p className="text-xl font-semibold text-[#A3D5FF]">
-                        {Number(apartment.baseRentPrice).toLocaleString(
-                          "vi-VN",
-                        )}{" "}
-                        ₫
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>{0} đánh giá</span>
-                      <span>/tháng</span>
+                      <Button
+                        size="middle"
+                        shape="round"
+                        type="primary"
+                        onClick={() => {
+                          handleReservation(apartment.id);
+                          setSelectedApartmentData(apartment);
+                        }}
+                        style={{ minWidth: 110, height: 30 }}
+                      >
+                        Đặt thuê
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex mt-3 gap-2">
-                    <Button
-                      size="middle"
-                      shape="round"
-                      style={{ minWidth: 110, height: 30 }}
-                      onClick={() => handleButtonRedirect()}
-                    >
-                      Đặt lịch xem
-                    </Button>
-
-                    <Button
-                      size="middle"
-                      shape="round"
-                      type="primary"
-                      onClick={() => {
-                        handleReservation(apartment.id);
-                        setSelectedApartmentData(apartment);
-                      }}
-                      style={{ minWidth: 110, height: 30 }}
-                    >
-                      Đặt thuê
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <button

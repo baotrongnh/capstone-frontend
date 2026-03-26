@@ -1,11 +1,19 @@
-import {
-  ApartmentDetailResponse,
-  ApartmentListResponse,
-  ApartmentSearchQueryParams,
-  OwnerApartmentResponse,
-} from "@/types/apartment";
-import { apiClient } from "../apis/client";
-import { endpoints } from "../apis/endpoints";
+import { apiClient } from "../apis/client"
+import { endpoints } from "../apis/endpoints"
+import type { paths } from "@/types/api"
+
+export type ApartmentListResponse = paths["/api/v1/apartments/search"]["get"]["responses"]["200"]["content"]["application/json"]
+export type ApartmentDetailResponse = paths["/api/v1/apartments/{id}"]["get"]["responses"]["200"]["content"]["application/json"]
+export type ApartmentSearchQueryParams = paths["/api/v1/apartments/search"]["get"]["parameters"]["query"]
+
+export type ApartmentItem = NonNullable<ApartmentListResponse['data']>[number]
+export type ApartmentQueryParams = NonNullable<ApartmentSearchQueryParams>
+export type FurnishingType = NonNullable<ApartmentQueryParams['furnishingStatus']>
+
+export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
+export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
+
+export type OwnerApartmentResponse = paths["/api/v1/apartments/owner/{ownerId}"]["get"]["responses"]["200"]["content"]["application/json"]
 
 export const apartmentService = {
   getList: async (

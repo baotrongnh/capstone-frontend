@@ -41,7 +41,7 @@ const toApartmentStatus = (status: unknown): ApartmentStatus => {
 }
 
 const mapToUserApartment = (item: OwnerApartmentItem): UserApartment => {
-    const resolvedAddress = item.newAddress ?? item.oldAddress
+    const resolvedAddress = item.newAddress
 
     return {
         id: item.id ?? '',

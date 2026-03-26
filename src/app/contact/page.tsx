@@ -3,18 +3,39 @@ import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
 import bg from "../../../public/img/banner10.jpg";
 import { useForm } from "antd/es/form/Form";
-import { Button, Form, Input, InputNumber, Select, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Upload,
+  message,
+  Alert,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadFile } from "@/utils/uploadFile";
 import Image from "next/image";
 import banner from "../../../public/img/partner.jpg";
 import { useCreateCooperation } from "@/hooks/query/useApartments";
-import { useProvinces, useWards } from "@/hooks/query/useProvinces";
+import { useProvinces, useWards } from "@/hooks/query/useAddress";
 import { useState } from "react";
+import { useAuthStore } from "@/stores/auth.store";
+import ModalVerify from "@/components/modal/modal-verify";
+import { useRouter } from "next/navigation";
+import { Route } from "lucide-react";
+import { ROUTES } from "@/constants/routes";
 
 export default function PartnerContact() {
   const [form] = useForm();
+  const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  console.log("USER", user);
+
+  const [modalVerify, setModalVerify] = useState(false);
   const { mutateAsync: createCooperation } = useCreateCooperation();
 
   const { data: provinces } = useProvinces();
@@ -24,41 +45,57 @@ export default function PartnerContact() {
   >();
 
   const { data: wardCode } = useWards(selectedProvince);
-
   const handleRegister = async () => {
-    try {
-      const data = await form.validateFields();
+    if (user?.isVerified === true && user?.identity !== null) {
+      try {
+        setIsLoading(true);
+        setErrorMessage(null);
+        const data = await form.validateFields();
 
-      const formData = new FormData();
-      formData.append("buildingName", data.buildingName);
-      formData.append("apartmentNumber", data.apartmentNumber);
-      formData.append("totalArea", String(data.totalArea));
-      formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
-      formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
-      formData.append("baseRentPrice", String(data.baseRentPrice));
-      formData.append("description", data.description);
-      formData.append("newWardCode", String(data.newWardCode));
-      formData.append("latitude", "0");
-      formData.append("longitude", "0");
+        const formData = new FormData();
+        formData.append("buildingName", data.buildingName);
+        formData.append("apartmentNumber", data.apartmentNumber);
+        formData.append("totalArea", String(data.totalArea));
+        formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
+        formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
+        formData.append("baseRentPrice", String(data.baseRentPrice));
+        formData.append("description", data.description);
+        formData.append("streetAddress", data.streetAddress);
+        formData.append("depositAmount", data.depositAmount);
+        formData.append("yearBuilt", String(data.yearBuilt));
+        formData.append("floorNumber", String(data.floorNumber));
 
-      // Thêm files
-      const currentImages = data.images || [];
-      currentImages.forEach((file: any) => {
-        if (file.originFileObj) {
-          formData.append("images", file.originFileObj);
-        }
-      });
+        formData.append("wardCode", String(data.newWardCode));
+        formData.append("latitude", "0");
+        formData.append("longitude", "0");
 
-      console.log("FormData entries:");
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+        const currentImages = data.images || [];
+        currentImages.forEach((file: any) => {
+          if (file.originFileObj) {
+            formData.append("images", file.originFileObj);
+          }
+        });
+
+        const obj = Object.fromEntries(formData.entries());
+        console.log(obj);
+
+        await createCooperation(formData);
+        form.resetFields();
+      } catch (error: any) {
+        console.log("Validate / Upload error:", error);
+        const backendError =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Lỗi không xác định";
+        const errorMsg = Array.isArray(backendError)
+          ? backendError.join(", ")
+          : backendError;
+        setErrorMessage(errorMsg);
+      } finally {
+        setIsLoading(false);
       }
-
-      await createCooperation(formData);
-
-      form.resetFields();
-    } catch (error) {
-      console.log("Validate / Upload error:", error);
+    } else {
+      setModalVerify(true);
     }
   };
 
@@ -72,6 +109,9 @@ export default function PartnerContact() {
     return value.replace(/\D/g, "");
   };
 
+  const handleVerify = () => {
+    router.push(`${ROUTES.PROFILE}`);
+  };
   return (
     <>
       <div className="relative bottom-7 h-130 w-full overflow-hidden">
@@ -176,13 +216,14 @@ export default function PartnerContact() {
               >
                 <Select
                   placeholder="Chọn tỉnh/thành"
+                  className="h-11"
                   options={provinces?.map((p: any) => ({
                     label: p.name,
                     value: p.code,
                   }))}
                   onChange={(value) => {
                     setSelectedProvince(value);
-                    form.setFieldValue("newWardCode", undefined);
+                    form.setFieldValue("wardCode", undefined);
                   }}
                 />
               </Form.Item>
@@ -194,6 +235,7 @@ export default function PartnerContact() {
               >
                 <Select
                   placeholder="Chọn phường/xã"
+                  className="h-11"
                   showSearch
                   virtual
                   filterOption={(input, option) =>
@@ -212,6 +254,14 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
+                label="Địa chỉ"
+                name="streetAddress"
+                rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
+              >
+                <Input placeholder="VD: 123 Nguyễn Văn A, Quận 1" />
+              </Form.Item>
+
+              <Form.Item
                 label="Tổng diện tích"
                 name="totalArea"
                 rules={[
@@ -223,6 +273,34 @@ export default function PartnerContact() {
                 ]}
               >
                 <Input type={"number"} placeholder="VD: 100m2" />
+              </Form.Item>
+
+              <Form.Item
+                label="Năm xây dựng"
+                name="yearBuilt"
+                rules={[
+                  { required: true, message: "Vui lòng nhập năm xây dựng" },
+                  {
+                    pattern: /^[1-9][0-9]*$/,
+                    message: "Năm xây dựng phải là số nguyên > 0",
+                  },
+                ]}
+              >
+                <Input type={"number"} placeholder="VD: 100m2" />
+              </Form.Item>
+
+              <Form.Item
+                label="Số tầng"
+                name="floorNumber"
+                rules={[
+                  { required: true, message: "Vui lòng nhập số tầng" },
+                  {
+                    pattern: /^[1-9][0-9]*$/,
+                    message: "Số tầng phải là số nguyên > 0",
+                  },
+                ]}
+              >
+                <Input type={"number"} placeholder="VD: 2" />
               </Form.Item>
 
               <Form.Item
@@ -273,7 +351,22 @@ export default function PartnerContact() {
                   placeholder="VD: 15.000.000"
                 />
               </Form.Item>
-
+              <Form.Item
+                label="Số tiền cọc"
+                name="depositAmount"
+                rules={[
+                  { required: true, message: "Vui lòng nhập số tiền cọc" },
+                ]}
+              >
+                <InputNumber
+                  className="w-full h-11"
+                  style={{ width: "100%" }}
+                  min={0}
+                  formatter={formatter}
+                  parser={parser}
+                  placeholder="VD: 15.000.000"
+                />
+              </Form.Item>
               <Form.Item
                 label="Mô tả tài sản"
                 name="description"
@@ -312,9 +405,17 @@ export default function PartnerContact() {
               </Upload>
             </Form.Item>
 
+            {errorMessage && (
+              <>
+                <p className="text-red-500 mb-3">{errorMessage}</p>
+              </>
+            )}
+
             <Button
               type="primary"
               onClick={handleRegister}
+              loading={isLoading}
+              disabled={isLoading}
               className="
         h-12! px-12! w-full!
         bg-primary hover:bg-blue-600
@@ -329,6 +430,12 @@ export default function PartnerContact() {
       </Form>
       <ServicesSection />
       <AppPromoSection />
+
+      <ModalVerify
+        isOpen={modalVerify}
+        onClose={() => setModalVerify(false)}
+        onVerify={() => handleVerify()}
+      />
     </>
   );
 }

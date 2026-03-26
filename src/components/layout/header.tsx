@@ -6,7 +6,7 @@ import { useLogout } from "@/hooks/query/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
 import { Icon } from "@iconify/react";
 import type { MenuProps } from "antd";
-import { LogOut, Menu, User } from "lucide-react";
+import { House, LogOut, Menu, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,10 +29,8 @@ export default function Header() {
   const locale = useLocale();
   const navLinks = [
     { href: ROUTES.APARTMENT, label: t("findApartment") },
-    // { href: '/', label: t('yourApartment') },
-    // { href: '/', label: t('bills') },
     { href: "/", label: t("support") },
-    { href: "/", label: t("contact") },
+    { href: "/contact", label: t("contact") },
   ];
   const isLoggedIn = Boolean(isHydrated && isAuthenticated && user);
   const userFullName = user?.fullName || "";
@@ -63,6 +61,11 @@ export default function Header() {
     setDrawerOpen(false);
   }
 
+  function goApartment() {
+    router.push(ROUTES.MY_APARTMENT);
+    setDrawerOpen(false);
+  }
+
   function logout() {
     setDrawerOpen(false);
     logoutApi();
@@ -75,6 +78,12 @@ export default function Header() {
       label: profileLabel,
       icon: <User size={16} />,
       onClick: () => goProfile(),
+    },
+    {
+      key: "my-apartment",
+      label: "Căn hộ của tôi",
+      icon: <House size={16} />,
+      onClick: () => goApartment(),
     },
     { type: "divider" },
     {

@@ -8,14 +8,15 @@ import AppPromoSection from '@/components/sections/app-promo'
 import { APARTMENT_SORT_OPTIONS, DEFAULT_APARTMENT_FILTERS } from '@/constants/apartment'
 import { ROUTES } from '@/constants/routes'
 import { useApartments } from '@/hooks/query/useApartments'
-import { ApartmentFilterPatch, ApartmentQueryParams } from '@/types/apartment'
+import { ApartmentQueryParams, ApartmentSearchQueryParams } from '@/lib/services/apartment.service'
+
 import { Icon } from '@iconify/react'
 import { Breadcrumb, Button, Drawer, Pagination, Select } from 'antd'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
 
 export default function ApartmentList() {
-  const [filters, setFilters] = useState(DEFAULT_APARTMENT_FILTERS)
+  const [filters, setFilters] = useState<ApartmentQueryParams>(DEFAULT_APARTMENT_FILTERS)
   const [filterOpen, setFilterOpen] = useState(false)
   const { data: dataApartment, isLoading, isError, refetch } = useApartments(filters)
   const t = useTranslations('ApartmentListPage')
@@ -23,22 +24,22 @@ export default function ApartmentList() {
   const apartments = dataApartment?.data ?? []
   const meta = dataApartment?.meta
 
-  const updateFilters = useCallback((patch: ApartmentFilterPatch | null) => {
+  const updateFilters = useCallback((patch: ApartmentSearchQueryParams | null) => {
     if (!patch) {
       setFilters(DEFAULT_APARTMENT_FILTERS)
       return
     }
 
-    setFilters(prev => ({ ...prev, ...patch, page: 1 }))
+    setFilters((prev: ApartmentQueryParams) => ({ ...prev, ...patch, page: 1 }))
   }, [])
 
   function handleSortChange(val: string) {
     const [sortBy, sortOrder] = val.split('-') as [ApartmentQueryParams['sortBy'], ApartmentQueryParams['sortOrder']]
-    setFilters(prev => ({ ...prev, sortBy, sortOrder }))
+    setFilters((prev: ApartmentQueryParams) => ({ ...prev, sortBy, sortOrder }))
   }
 
   function handlePageChange(page: number, pageSize: number) {
-    setFilters(prev => ({ ...prev, page, limit: pageSize }))
+    setFilters((prev: ApartmentQueryParams) => ({ ...prev, page, limit: pageSize }))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
