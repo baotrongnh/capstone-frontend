@@ -21,6 +21,8 @@ import { useUserProfile, useUpdateUser } from "@/hooks/query/useUser";
 
 export default function AccountPage() {
   const user = useAuthStore((s) => s.user);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const id = user?.id ?? "";
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
@@ -32,10 +34,13 @@ export default function AccountPage() {
   const { message } = App.useApp();
   const t = useTranslations("Profile.account");
 
+  console.log(user) 
   const {
     data: profile,
     isLoading,
     isError,
+    isPending,
+    isFetching,
   } = useUserProfile();
 
   const { mutateAsync: updateUser } = useUpdateUser(id);
@@ -57,7 +62,10 @@ export default function AccountPage() {
     await updateUser(values);
   };
 
-  if (isLoading) {
+  const showLoading =
+    !isHydrated || (isAuthenticated && (isLoading || isPending || isFetching));
+
+  if (showLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Spin size="large" />

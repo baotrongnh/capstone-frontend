@@ -114,7 +114,17 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
         try {
             const url = await authService.getSupabaseUrl()
 
-            const popup = window.open(url, 'GoogleOAuth', 'width=600,height=700,scrollbars=yes,resizable=yes')
+            const popupWidth = 600
+            const popupHeight = 700
+            const dualScreenLeft = window.screenLeft ?? window.screenX ?? 0
+            const dualScreenTop = window.screenTop ?? window.screenY ?? 0
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || screen.width
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || screen.height
+            const left = Math.max(0, dualScreenLeft + (viewportWidth - popupWidth) / 2)
+            const top = Math.max(0, dualScreenTop + (viewportHeight - popupHeight) / 2)
+            const popupFeatures = `width=${popupWidth},height=${popupHeight},left=${Math.floor(left)},top=${Math.floor(top)},scrollbars=yes,resizable=yes`
+
+            const popup = window.open(url, 'GoogleOAuth', popupFeatures)
             if (!popup) {
                 message.error('Popup blocked. Please allow popups for this site.')
                 setLoading(false)
@@ -139,7 +149,7 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
                             else reject(new Error('No access token found in redirect URL'))
                         }
                     } catch {
-                        // Cross-origin error while popup is on OAuth/Supabase domain — expected, keep polling
+                        message.error("Somethings went wrong!")
                     }
                 }, 500)
             })

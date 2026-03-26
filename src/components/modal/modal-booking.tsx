@@ -1,10 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useApartment } from "@/hooks/query/useApartments";
 import { useCreateReservations } from "@/hooks/query/useReservations";
-import { useUserProfile } from "@/hooks/query/useUser";
 import {
   CheckCircleOutlined,
   FileTextOutlined,
@@ -27,15 +24,18 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import ModalWaitingVerify from "./modal-waiting-verify";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { ROUTES } from "@/constants/routes";
-import { useAuthStore } from "@/stores/auth.store";
+import { useFullAddress } from "@/hooks/query/useAddress";
+import { ApartmentItem } from "@/lib/services/apartment.service";
 
 interface ModalBookingProps {
   open: boolean;
   onClose: () => void;
   apartmentId?: string | number | null;
+  apartmentData: ApartmentItem | undefined;
 }
 
 const durationOptions = [
@@ -52,12 +52,19 @@ export default function ModalBooking({
   open,
   onClose,
   apartmentId,
+  apartmentData,
 }: ModalBookingProps) {
   const router = useRouter();
   const [formReservations] = useForm();
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
+
+  const displayAddress = useFullAddress(
+    apartmentData?.streetAddress ?? undefined,
+    apartmentData?.provinceCode ?? undefined,
+    apartmentData?.wardCode ?? undefined,
+  );
 
   const { mutateAsync: createReservation } = useCreateReservations();
 
@@ -122,7 +129,7 @@ export default function ModalBooking({
         centered
         width={560}
       >
-        <div className="bg-blue-50/50 px-10 mt-2  py-5 border-b border-blue-100">
+        <div className="bg-blue-50/50 px-10   py-5 border-b border-blue-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
               <FileTextOutlined className="text-lg" />
@@ -138,7 +145,7 @@ export default function ModalBooking({
           </div>
         </div>
 
-        <div className="p-6 max-h-[74vh]">
+        <div className="p-3 max-h-[76vh]">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -149,13 +156,16 @@ export default function ModalBooking({
                 color="blue"
                 className="m-0 border-none bg-blue-100 text-blue-700 font-medium px-2 py-0.5"
               >
-                Phòng {apartment?.data?.address?.at(-1)?.split(",")[0].trim()}
+                Phòng cho thuê
               </Tag>
             </div>
 
-            <Divider className="my-3 border-gray-200" />
+            <span className="text-gray-500 text-sm flex items-center gap-1">
+              Địa chỉ: {displayAddress || "Chưa có địa chỉ"}
+            </span>
+            <Divider className=" border-gray-200" />
 
-            <div className="space-y-3">
+            <div className="">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">Giá thuê mỗi tháng:</span>
                 <span className="font-semibold text-gray-900 text-base">
@@ -181,7 +191,7 @@ export default function ModalBooking({
             form={formReservations}
             layout="vertical"
             requiredMark={false}
-            className="mb-5"
+            className=""
             onFinish={handleReservations}
           >
             <Row gutter={16}>
@@ -293,7 +303,7 @@ export default function ModalBooking({
                 placeholder="Ví dụ: Need parking spot..."
               />
             </Form.Item>
-            <div className="bg-blue-50/50 rounded-lg p-3 mb-5 flex gap-3 text-sm text-blue-800 mt-5">
+            <div className="bg-blue-50/50 rounded-lg p-3 mb-2 flex gap-3 text-sm text-blue-800 mt-5">
               <InfoCircleOutlined className="text-blue-500 mt-0.5" />
               <div className="flex-1 space-y-1">
                 <p className="font-medium m-0">Lưu ý!</p>

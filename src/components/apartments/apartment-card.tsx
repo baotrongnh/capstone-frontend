@@ -1,7 +1,7 @@
 'use client'
 
 import { IMG_URL, ROUTES } from '@/constants/routes'
-import { ApartmentItem } from '@/types/apartment'
+import { ApartmentItem } from '@/lib/services/apartment.service' 
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
 import { useTranslations } from 'next-intl'

@@ -1,5 +1,5 @@
 import { apartmentService } from "@/lib/services/apartment.service"
-import type { OwnerApartmentResponse } from "@/types/apartment"
+import type { OwnerApartmentResponse } from "@/lib/services/apartment.service" 
 import { useQuery } from "@tanstack/react-query"
 
 type OwnerApartmentItem = NonNullable<OwnerApartmentResponse["data"]>[number]

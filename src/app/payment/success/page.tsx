@@ -62,7 +62,7 @@ export default function PaymentSuccessPage() {
                 </Descriptions>
             )}
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-6">
                 <Button type="primary" size="large" onClick={() => router.push('/profile/payment-history')}>
                     {t('success.backToHistory')}
                 </Button>
