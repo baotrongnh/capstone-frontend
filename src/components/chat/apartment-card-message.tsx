@@ -1,5 +1,6 @@
 'use client'
 
+import { useFullAddress } from '@/hooks/query/useAddress'
 import { useApartment } from '@/hooks/query/useApartments'
 import { formatVND } from '@/utils/format'
 import { Icon } from '@iconify/react'
@@ -11,11 +12,15 @@ export function ApartmentCardMessage({ apartmentId }: { apartmentId: string }) {
      const { data, isLoading } = useApartment(apartmentId)
      const apt = data?.data
 
+     const displayAddress = useFullAddress(
+          apt?.streetAddress ?? undefined,
+          apt?.provinceCode ?? undefined,
+          apt?.wardCode ?? undefined,
+     )
      if (isLoading) return <div className="text-xs text-gray-400 italic">Đang tải...</div>
      if (!apt) return <div className="text-xs text-red-400">Không tìm thấy căn hộ</div>
 
      const thumb = apt.images?.[0] ?? null
-     const displayAddress = apt?.address
 
      const thumbnail = thumb
           ?
