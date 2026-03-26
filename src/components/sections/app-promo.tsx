@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import banner from "../../../public/img/banner7.jpg";
 import { Bell, MapPin, Star, Calendar, User } from "lucide-react";
+import { APP_PROMO_I18N_KEYS, UI_BRAND } from "@/constants";
 
 import app1 from "../../../public/img/app1.jpg";
 import app2 from "../../../public/img/app2.jpg";
@@ -16,16 +17,18 @@ export default function AppPromoSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
           <div className="relative bottom-15 z-10 order-2 lg:order-1">
             <div className="inline-block bg-[#A3D5FF] text-white px-4 py-2 rounded-lg text-sm font-medium mb-6">
-              {t("badge")}
+              {t(APP_PROMO_I18N_KEYS.BADGE)}
             </div>
 
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              {t("title")}
-              <span className="text-[#0D4E73]">{t("free") || "Miễn phí"}</span>
+              {t(APP_PROMO_I18N_KEYS.TITLE)}
+              <span className="text-[#0D4E73]">
+                {t(APP_PROMO_I18N_KEYS.FREE) || "Miễn phí"}
+              </span>
             </h2>
 
             <p className="text-gray-600 mb-8 leading-relaxed text-base md:text-lg max-w-lg">
-              {t("subtitle") ||
+              {t(APP_PROMO_I18N_KEYS.SUBTITLE) ||
                 "Tìm kiếm và đặt phòng dễ dàng hơn bao giờ hết với ứng dụng di động của chúng tôi. Trải nghiệm mượt mà, ưu đãi độc quyền."}
             </p>
 
@@ -53,10 +56,10 @@ export default function AppPromoSection() {
                 </div>
                 <div>
                   <p className="text-sm  text-white font-light">
-                    {t("notification.title")}
+                    {t(APP_PROMO_I18N_KEYS.NOTIFICATION.TITLE)}
                   </p>
                   <p className="text-xs text-white mt-1">
-                    {t("notification.description")}
+                    {t(APP_PROMO_I18N_KEYS.NOTIFICATION.DESCRIPTION)}
                   </p>
                 </div>
               </div>

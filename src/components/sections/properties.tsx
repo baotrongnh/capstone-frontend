@@ -22,7 +22,6 @@ export default function PropertiesSection() {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [modalReservation, setModalReservation] = useState(false);
-  const [modalVerify, setModalVerify] = useState(false);
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
     useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -93,10 +92,8 @@ export default function PropertiesSection() {
     setSelectedApartmentId(apartmentId);
     if (!user) {
       setIsModalLoginRequiredLogin(true);
-    } else if (user?.isVerified === true && user?.identity !== null) {
-      setModalReservation(true);
     } else {
-      setModalVerify(true);
+      setModalReservation(true);
     }
   };
 
@@ -142,12 +139,15 @@ export default function PropertiesSection() {
 
                       <div className="space-y-1 text-xs text-gray-500 mb-2">
                         <div>{apartment.totalArea} m²</div>
-                        <div>{}</div>
                         <div>
                           {apartment.numberOfBedrooms} PN ·{" "}
                           {apartment.numberOfBathrooms} WC
                         </div>
-                        <div>Tầng {apartment.floorNumber}</div>
+                        <div>
+                          Tầng {apartment.floorNumber} ·{" "}
+                          {apartment.streetAddress}
+                        </div>
+
                         <div>
                           Nội thất:{" "}
                           {apartment.furnishingStatus === "fully_furnished" &&
@@ -248,12 +248,6 @@ export default function PropertiesSection() {
         <ModalLoginRequired
           isModalOpen={isModalLoginRequiredOpen}
           setIsModalOpen={setIsModalLoginRequiredLogin}
-        />
-
-        <ModalVerify
-          isOpen={modalVerify}
-          onClose={() => setModalVerify(false)}
-          onVerify={() => handleVerify()}
         />
       </div>
     </div>
