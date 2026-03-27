@@ -2,13 +2,13 @@
 
 import { useState, useMemo } from "react";
 import { Card, Typography, Select, Spin, Empty } from "antd";
-import { Files, FileEdit, FileCheck, Wallet, AlertCircle } from "lucide-react";
+import { Files, FileEdit, FileCheck, AlertCircle } from "lucide-react";
 
 import { useGetContracts } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { ContractCard } from "../components/card-contracts-layout";
-import ModalAssignContract from "../components/modal/modal-assign-contract";
-import ModalCancelContract from "../components/modal/modal-cancel-contract";
+import { ContractCard } from "../../../components/layout/card-contracts-layout";
+import ModalAssignContract from "../../../components/modal/modal-assign-contract";
+import ModalCancelContract from "../../../components/modal/modal-cancel-contract";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 
@@ -117,7 +117,9 @@ export default function ContractsPage() {
     },
     {
       title: "Chưa ký",
-      value: contractsList.filter((c: any) => c.status === "draft").length,
+      value: contractsList.filter(
+        (c: ContractWithMembers) => c.status === "draft",
+      ).length,
       icon: <FileEdit size={24} />,
       textColor: "text-amber-600",
       bgColor: "bg-amber-50",
@@ -125,7 +127,8 @@ export default function ContractsPage() {
     {
       title: "Đã ký",
       value: contractsList.filter(
-        (c: any) => c.status === "signed" || c.status === "active",
+        (c: ContractWithMembers) =>
+          c.status === "signed" || c.status === "active",
       ).length,
       icon: <FileCheck size={24} />,
       textColor: "text-emerald-600",
@@ -134,7 +137,9 @@ export default function ContractsPage() {
 
     {
       title: "Đã hủy",
-      value: contractsList.filter((c: any) => c.status === "terminated").length,
+      value: contractsList.filter(
+        (c: ContractWithMembers) => c.status === "terminated",
+      ).length,
       icon: <AlertCircle size={24} />,
       textColor: "text-rose-600",
       bgColor: "bg-rose-50",

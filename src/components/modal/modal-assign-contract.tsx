@@ -1,13 +1,12 @@
-import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { contractsService } from "@/lib/services/contracts.service";
-import { Alert, Modal, Button, Checkbox, Divider, message } from "antd";
-import React, { useRef, useState, useEffect } from "react";
-import SignatureCanvas from "react-signature-canvas";
-import { Pen, Check } from "lucide-react";
-import { PDFDocument } from "pdf-lib";
-import { useUploadContractPdf } from "@/hooks/query/useContracts";
 import { ROUTES } from "@/constants/routes";
+import { useUploadContractPdf } from "@/hooks/query/useContracts";
+import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
+import { Check, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { PDFDocument } from "pdf-lib";
+import { useRef, useState } from "react";
+import SignatureCanvas from "react-signature-canvas";
 
 interface ModalAssignContractProps {
   showDetailModal: boolean;
@@ -60,7 +59,7 @@ export default function ModalAssignContract({
 
       const pages = pdfDoc.getPages();
       const lastPage = pages[pages.length - 1];
-      const { width, height } = lastPage.getSize();
+      const { width } = lastPage.getSize();
 
       const signatureBytes = dataUrlToBytes(signatureDataUrl);
 
@@ -181,7 +180,9 @@ export default function ModalAssignContract({
         width={900}
         centered
         footer={null}
-        bodyStyle={{ maxHeight: "80vh", overflowY: "auto", padding: "20px" }}
+        styles={{
+          body: { maxHeight: "80vh", overflowY: "auto", padding: "20px" },
+        }}
         style={{ maxWidth: "95vw" }}
       >
         {selectedContract && (
@@ -343,7 +344,7 @@ export default function ModalAssignContract({
           </div>
 
           <div style={{ fontSize: "12px", color: "#666", textAlign: "center" }}>
-            Bạn có thể vẽ lại. Ấn nút "Xóa" để xoá và thử lại.
+            Bạn có thể vẽ lại. Ấn nút Xóa để xoá và thử lại.
           </div>
         </div>
       </Modal>
