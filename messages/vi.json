@@ -743,6 +743,15 @@
     "rentBtn": "Đặt thuê căn hộ",
     "noAddress": "Chưa có địa chỉ",
     "noReview": "Chưa có đánh giá",
+    "rating": {
+      "title": "Đánh giá căn hộ",
+      "subtitle": "Chia sẻ trải nghiệm của bạn để giúp người thuê khác có thêm thông tin.",
+      "average": "Điểm trung bình",
+      "yourRating": "Đánh giá của bạn",
+      "placeholder": "Viết cảm nhận ngắn của bạn về căn hộ (không bắt buộc)",
+      "submit": "Gửi đánh giá",
+      "submitting": "Đang gửi..."
+    },
     "specs": {
       "bedrooms": "Phòng ngủ",
       "bathrooms": "Phòng tắm",
