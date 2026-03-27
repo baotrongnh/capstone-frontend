@@ -6,11 +6,11 @@ import { Files, FileEdit, FileCheck } from "lucide-react";
 
 import { useGetContracts } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { ContractCard } from "./card-contracts-layout";
-import ModalAssignContract from "./modal/modal-assign-contract";
-import ModalCancelContract from "./modal/modal-cancel-contract";
+import ModalAssignContract from "../modal/modal-assign-contract";
+import ModalCancelContract from "../modal/modal-cancel-contract";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import { ContractCard } from "./card-contracts-layout";
 
 const { Title, Text } = Typography;
 
@@ -117,14 +117,18 @@ export default function ContractLayout() {
     },
     {
       title: "Chưa ký",
-      value: contractsList.filter((c: any) => c.status === "draft").length,
+      value: contractsList.filter(
+        (c: ContractWithMembers) => c.status === "draft",
+      ).length,
       icon: <FileEdit size={24} />,
       textColor: "text-amber-600",
       bgColor: "bg-amber-50",
     },
     {
       title: "Đã ký",
-      value: contractsList.filter((c: any) => c.status === "active").length,
+      value: contractsList.filter(
+        (c: ContractWithMembers) => c.status === "active",
+      ).length,
       icon: <FileCheck size={24} />,
       textColor: "text-emerald-600",
       bgColor: "bg-emerald-50",
