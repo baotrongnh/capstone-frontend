@@ -6,30 +6,15 @@ import { Icon } from '@iconify/react'
 import { Button, Input } from 'antd'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { useState, type ClipboardEvent, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent } from 'react'
 
 const { TextArea } = Input
+const MAX_PENDING_IMAGES = 5
 
-function fileToDataUrl(file: File): Promise<string> {
-     return new Promise((resolve, reject) => {
-          const reader = new FileReader()
-
-          reader.onload = () => {
-               if (typeof reader.result === 'string') {
-                    resolve(reader.result)
-                    return
-               }
-
-               reject(new Error('Failed to read image data'))
-          }
-
-          reader.onerror = () => reject(reader.error ?? new Error('Failed to read image data'))
-          reader.readAsDataURL(file)
-     })
-}
+type PendingImage = { file: File; previewUrl: string }
 
 interface Props {
-     onSend: (content: string, images?: string[]) => void
+     onSend: (content: string, images?: File[]) => Promise<void> | void
      currentApartment?: ChatApartmentRef
      onSendApartment: () => void
      disabled?: boolean
@@ -38,17 +23,40 @@ interface Props {
 export function ChatInput({ onSend, currentApartment, onSendApartment, disabled = false }: Props) {
      const t = useTranslations('Chat')
      const [message, setMessage] = useState('')
-     const [pendingImages, setPendingImages] = useState<string[]>([])
+     const [pendingImages, setPendingImages] = useState<PendingImage[]>([])
+     const [isSending, setIsSending] = useState(false)
+     const pendingImagesRef = useRef<PendingImage[]>([])
 
-     const canSend = !disabled && (message.trim().length > 0 || pendingImages.length > 0)
+     const canSend = !disabled && !isSending && (message.trim().length > 0 || pendingImages.length > 0)
 
-     function handleSend() {
+     useEffect(() => {
+          pendingImagesRef.current = pendingImages
+     }, [pendingImages])
+
+     useEffect(() => {
+          return () => {
+               pendingImagesRef.current.forEach((item) => URL.revokeObjectURL(item.previewUrl))
+          }
+     }, [])
+
+     async function handleSend() {
           const text = message.trim()
           if (!text && pendingImages.length === 0) return
 
-          onSend(text, pendingImages.length > 0 ? pendingImages : undefined)
-          setMessage('')
-          setPendingImages([])
+          setIsSending(true)
+
+          try {
+               await onSend(
+                    text,
+                    pendingImages.length > 0 ? pendingImages.map((item) => item.file) : undefined,
+               )
+
+               pendingImages.forEach((item) => URL.revokeObjectURL(item.previewUrl))
+               setMessage('')
+               setPendingImages([])
+          } finally {
+               setIsSending(false)
+          }
      }
 
      function handlePressEnter(e: KeyboardEvent<HTMLTextAreaElement>) {
@@ -71,27 +79,38 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
 
           if (files.length === 0) return
 
-          const results = await Promise.allSettled(files.map(fileToDataUrl))
-          const nextImages = results
-               .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
-               .map((result) => result.value)
+          setPendingImages((prev) => {
+               if (prev.length >= MAX_PENDING_IMAGES) {
+                    return prev
+               }
 
-          if (nextImages.length === 0) return
+               const availableSlots = MAX_PENDING_IMAGES - prev.length
+               const accepted = files.slice(0, availableSlots).map((file) => ({
+                    file,
+                    previewUrl: URL.createObjectURL(file),
+               }))
 
-          setPendingImages((prev) => [...prev, ...nextImages])
+               return [...prev, ...accepted]
+          })
      }
 
      function removePendingImage(index: number) {
-          setPendingImages((prev) => prev.filter((_, itemIndex) => itemIndex !== index))
+          setPendingImages((prev) => {
+               const target = prev[index]
+               if (target) {
+                    URL.revokeObjectURL(target.previewUrl)
+               }
+               return prev.filter((_, itemIndex) => itemIndex !== index)
+          })
      }
 
      return (
           <div className="p-3 flex flex-col gap-2">
                {pendingImages.length > 0 && (
                     <div className="flex gap-2 flex-wrap">
-                         {pendingImages.map((src, index) => (
-                              <div key={`${src}-${index}`} className="relative">
-                                   <Image src={src} alt="preview" width={64} height={64} unoptimized className="h-16 w-16 object-cover rounded border" />
+                         {pendingImages.map((item, index) => (
+                              <div key={`${item.previewUrl}-${index}`} className="relative">
+                                   <Image src={item.previewUrl} alt="preview" width={64} height={64} unoptimized className="h-16 w-16 object-cover rounded border" />
                                    <button
                                         onClick={() => removePendingImage(index)}
                                         className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center leading-none"
@@ -120,13 +139,14 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
                          placeholder={t('inputPlaceholder')}
                          autoSize={{ minRows: 1, maxRows: 4 }}
                          className="flex-1"
-                         disabled={disabled}
+                         disabled={disabled || isSending}
                     />
                     <Button
                          type="primary"
                          icon={<SendOutlined />}
                          onClick={handleSend}
                          disabled={!canSend}
+                         loading={isSending}
                     >
                          {t('send')}
                     </Button>
