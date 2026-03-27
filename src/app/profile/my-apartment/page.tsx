@@ -117,23 +117,22 @@ export default function MyApartmentPage() {
                         </Card>
                     </Col>
                     <Col xs={24} md={8}>
-                        <Card className="h-full border-yellow-300 bg-yellow-50/70" style={{ margin: 0 }}>
+                        <Card className="h-full border-emerald-300 bg-yellow-50/70" style={{ margin: 0 }}>
                             <Statistic
                                 title={t('totalArea')}
                                 value={totalArea}
-                                prefix={<BorderOutlined />}
                                 suffix="m²"
-                                styles={{ content: { color: '#efc103', fontWeight: 700 } }}
+                                styles={{ content: { color: '#15803d', fontWeight: 700 } }}
                             />
                         </Card>
                     </Col>
                     <Col xs={24} md={8}>
-                        <Card className="h-full border-emerald-300 bg-emerald-50/70" style={{ margin: 0 }}>
+                        <Card className="h-full border-yellow-300 bg-emerald-50/70" style={{ margin: 0 }}>
                             <Statistic
                                 title={t('rating')}
                                 value={rating}
                                 prefix={<StarOutlined />}
-                                styles={{ content: { color: '#15803d', fontWeight: 700 } }}
+                                styles={{ content: { color: '#efc103', fontWeight: 700 } }}
                             />
                         </Card>
                     </Col>
@@ -146,31 +145,32 @@ export default function MyApartmentPage() {
 
             <Card
                 className="border-blue-200 bg-linear-to-br from-blue-50 to-sky-50"
+                style={{marginBottom: 12, marginTop: 12}}
                 title={<span className="flex items-center gap-2 text-blue-900"><HomeOutlined /> {t('apartmentInfo')}</span>}
             >
-                <Descriptions bordered column={{ xs: 1, sm: 2, md: 3, lg: 3 }} size="middle">
-                    <Descriptions.Item label={t('buildingName')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                <Descriptions bordered column={1} size="middle">
+                    <Descriptions.Item label={t('buildingName')}>
                         {rawApartment.buildingName ?? '-'}
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('apartmentNumber')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                    <Descriptions.Item label={t('apartmentNumber')}>
                         <span className="font-semibold">{rawApartment.apartmentNumber}</span>
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('statusLabel')} span={{ xs: 1, sm: 2, md: 1, lg: 1 }}>
+                    <Descriptions.Item label={t('statusLabel')}>
                         <Tag color={APARTMENT_STATUS_COLORS[status]}>{t(`status.${status}`)}</Tag>
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('address')} span={{ xs: 1, sm: 2, md: 3, lg: 3 }}>
+                    <Descriptions.Item label={t('address')}>
                         <div className="flex items-start gap-2">
                             <EnvironmentOutlined className="mt-1 text-stone-500" />
                             <span>{displayAddress}</span>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('totalArea')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.totalArea} m²</Descriptions.Item>
-                    <Descriptions.Item label={t('bedrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.numberOfBedrooms}</Descriptions.Item>
-                    <Descriptions.Item label={t('bathrooms')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>{rawApartment.numberOfBathrooms}</Descriptions.Item>
-                    <Descriptions.Item label={t('furnishingStatus')} span={{ xs: 1, sm: 1, md: 1, lg: 1 }}>
+                    <Descriptions.Item label={t('totalArea')}>{rawApartment.totalArea} m²</Descriptions.Item>
+                    <Descriptions.Item label={t('bedrooms')}>{rawApartment.numberOfBedrooms}</Descriptions.Item>
+                    <Descriptions.Item label={t('bathrooms')}>{rawApartment.numberOfBathrooms}</Descriptions.Item>
+                    <Descriptions.Item label={t('furnishingStatus')}>
                         {rawApartment.furnishingStatus}
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('rentPrice')} span={{ xs: 1, sm: 1, md: 3, lg: 3 }}>
+                    <Descriptions.Item label={t('rentPrice')}>
                         <span className="text-lg font-semibold text-primary">
                             {formatPaymentAmount(rentPrice, 'vi')}{t('perMonth')}
                         </span>
@@ -180,7 +180,10 @@ export default function MyApartmentPage() {
 
             <AdditionalInfoCard apartment={rawApartment} t={t} />
 
-            <Card className="border-emerald-200 bg-emerald-50/60">
+            <Card 
+            className="border-emerald-200 bg-emerald-50/60"
+            style={{marginBottom: 12, marginTop: 12}}
+            >
                 <Statistic
                     title={t('depositAmount')}
                     value={toNumber(rawApartment.depositAmount)}
