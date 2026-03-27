@@ -121,8 +121,17 @@ export const ContractCard = ({
               <span className="text-sm font-semibold text-gray-800 leading-tight">
                 Phòng {contract.apartment?.apartmentNumber}
               </span>
-              <span className="text-xs text-gray-500 mt-1 line-clamp-2">
-                {contract.apartment.newAddress.fullAddress}
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <div className="flex justify-center w-6 pt-0.5">
+              <MapPin size={18} className="text-gray-400" />
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-xs text-gray-500 mb-0.5">Địa chỉ</span>
+              <span className="text-sm font-semibold text-gray-800 leading-tight">
+                {contract.apartment?.city || "Chưa cập nhật"}
               </span>
             </div>
           </div>

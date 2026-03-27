@@ -742,6 +742,15 @@
     "rentBtn": "Rent This Apartment",
     "noAddress": "No address",
     "noReview": "No reviews yet",
+    "rating": {
+      "title": "Apartment Rating",
+      "subtitle": "Share your experience to help other tenants make better decisions.",
+      "average": "Average score",
+      "yourRating": "Your rating",
+      "placeholder": "Write a short comment about this apartment (optional)",
+      "submit": "Submit rating",
+      "submitting": "Submitting..."
+    },
     "specs": {
       "bedrooms": "Bedrooms",
       "bathrooms": "Bathrooms",

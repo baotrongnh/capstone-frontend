@@ -30,6 +30,8 @@ import { useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import { useFullAddress } from "@/hooks/query/useAddress";
 import { ApartmentItem } from "@/lib/services/apartment.service";
+import { useAuthStore } from "@/stores/auth.store";
+import Link from "next/link";
 
 interface ModalBookingProps {
   open: boolean;
@@ -59,6 +61,8 @@ export default function ModalBooking({
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
+
+  const user = useAuthStore((store) => store.user);
 
   const displayAddress = useFullAddress(
     apartmentData?.streetAddress ?? undefined,
@@ -115,15 +119,18 @@ export default function ModalBooking({
             >
               Hủy bỏ
             </Button>
-            <Button
-              type="primary"
-              onClick={handleReservations}
-              disabled={!agreeTerms}
-              className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <CheckCircleOutlined />
-              Đặt thuê
-            </Button>
+
+            {user?.isVerified == true && user?.identity != null && (
+              <Button
+                type="primary"
+                onClick={handleReservations}
+                disabled={!agreeTerms}
+                className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <CheckCircleOutlined />
+                Đặt thuê
+              </Button>
+            )}
           </>
         }
         centered
@@ -145,7 +152,7 @@ export default function ModalBooking({
           </div>
         </div>
 
-        <div className="p-3 max-h-[76vh]">
+        <div className="p-3 max-h-[80vh]">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -303,34 +310,58 @@ export default function ModalBooking({
                 placeholder="Ví dụ: Need parking spot..."
               />
             </Form.Item>
-            <div className="bg-blue-50/50 rounded-lg p-3 mb-2 flex gap-3 text-sm text-blue-800 mt-5">
-              <InfoCircleOutlined className="text-blue-500 mt-0.5" />
-              <div className="flex-1 space-y-1">
-                <p className="font-medium m-0">Lưu ý!</p>
-                <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">
-                  <li>Thao tác này sẽ tạo hợp đồng thuê và thanh toán.</li>
-                </ul>
-              </div>
-            </div>
 
-            <Form.Item
-              name="agreeTerms"
-              valuePropName="checked"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng đồng ý với điều kiện lưu ý!",
-                },
-              ]}
-              className="mt-4 mb-0"
-            >
-              <Checkbox
-                className="text-gray-700"
-                onChange={(e) => setAgreeTerms(e.target.checked)}
-              >
-                Tôi đồng ý với điều kiện lưu ý trên và sẵn sàng ký hợp đồng thuê
-              </Checkbox>
-            </Form.Item>
+            {user?.isVerified == true && user?.identity != null ? (
+              <>
+                <div className="bg-blue-50/50 rounded-lg p-3 mb-2 flex gap-3 text-sm text-blue-800 mt-5">
+                  <InfoCircleOutlined className="text-blue-500 mt-0.5" />
+                  <div className="flex-1 space-y-1">
+                    <p className="font-medium m-0">Lưu ý!</p>
+                    <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">
+                      <li>Thao tác này sẽ tạo hợp đồng thuê và thanh toán.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <Form.Item
+                  name="agreeTerms"
+                  valuePropName="checked"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng đồng ý với điều kiện lưu ý!",
+                    },
+                  ]}
+                  className="mt-4 mb-0"
+                >
+                  <Checkbox
+                    className="text-gray-700"
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                  >
+                    Tôi đồng ý với điều kiện lưu ý trên và sẵn sàng ký hợp đồng
+                    thuê
+                  </Checkbox>
+                </Form.Item>
+              </>
+            ) : (
+              <>
+                {" "}
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-yellow-800 text-sm font-medium">
+                    ⚠️ Vui lòng cập nhật
+                    {" số điện thoại "}
+                    {" CCCD "}
+                    để đặt lịch xem
+                    <Link href={ROUTES.PROFILE}>
+                      <span className="text-muted underline">
+                        {" "}
+                        (Cập nhật ngay)
+                      </span>
+                    </Link>
+                  </p>
+                </div>
+              </>
+            )}
           </Form>
         </div>
       </Modal>

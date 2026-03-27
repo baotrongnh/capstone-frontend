@@ -3,6 +3,7 @@
 import React from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { UI_BRAND, FOOTER_I18N_KEYS } from "@/constants";
 
 export default function Footer() {
   const t = useTranslations("Footer");
@@ -15,7 +16,7 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-8">
           <div className="lg:w-1/3 space-y-6">
             <div className="flex items-center gap-2 mb-2">
-              <div className="text-2xl font-bold w-auto">TOLETX</div>
+              <div className="text-2xl font-bold w-auto">{UI_BRAND.LOGO}</div>
             </div>
 
             <div className="space-y-4 text-sm leading-relaxed">
@@ -25,9 +26,9 @@ export default function Footer() {
                   strokeWidth={1.5}
                 />
                 <p>
-                  {t("contact.addressLine1")}
+                  {t(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_1)}
                   <br />
-                  {t("contact.addressLine2")}
+                  {t(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_2)}
                 </p>
               </div>
 
@@ -36,7 +37,7 @@ export default function Footer() {
                   className="w-5 h-5 shrink-0 text-slate-600"
                   strokeWidth={1.5}
                 />
-                <p>{t("contact.phone")}</p>
+                <p>{t(FOOTER_I18N_KEYS.CONTACT.PHONE)}</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -44,7 +45,7 @@ export default function Footer() {
                   className="w-5 h-5 shrink-0 text-slate-600"
                   strokeWidth={1.5}
                 />
-                <p>{t("contact.email")}</p>
+                <p>{t(FOOTER_I18N_KEYS.CONTACT.EMAIL)}</p>
               </div>
             </div>
           </div>
@@ -52,27 +53,27 @@ export default function Footer() {
           <div className="lg:w-2/3 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5 text-sm">
             <div>
               <h3 className="font-semibold text-[#0C4A6E] mb-4">
-                {t("sections.mainMenu.title")}
+                {t(FOOTER_I18N_KEYS.SECTIONS.MAIN_MENU.TITLE)}
               </h3>
               <ul className="space-y-3">
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.mainMenu.partner")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.MAIN_MENU.PARTNER)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.mainMenu.post")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.MAIN_MENU.POST)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.mainMenu.request")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.MAIN_MENU.REQUEST)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.mainMenu.valuation")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.MAIN_MENU.VALUATION)}
                   </a>
                 </li>
               </ul>
@@ -80,27 +81,27 @@ export default function Footer() {
 
             <div className="ml-0 md:ml-10 lg:ml-10">
               <h3 className="font-semibold text-[#0C4A6E] mb-4">
-                {t("sections.hive.title")}
+                {t(FOOTER_I18N_KEYS.SECTIONS.HIVE.TITLE)}
               </h3>
               <ul className="space-y-3">
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.hive.buy")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.HIVE.BUY)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.hive.sell")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.HIVE.SELL)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.hive.blog")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.HIVE.BLOG)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.hive.group")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.HIVE.GROUP)}
                   </a>
                 </li>
               </ul>
@@ -108,27 +109,27 @@ export default function Footer() {
 
             <div>
               <h3 className="font-semibold w-40 text-[#0C4A6E] mb-4">
-                {t("sections.categories.title")}
+                {t(FOOTER_I18N_KEYS.SECTIONS.CATEGORIES.TITLE)}
               </h3>
               <ul className="space-y-3">
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.categories.residential")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.CATEGORIES.RESIDENTIAL)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.categories.commercial")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.CATEGORIES.COMMERCIAL)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.categories.entertainment")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.CATEGORIES.ENTERTAINMENT)}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-blue-700 transition">
-                    {t("sections.categories.agricultural")}
+                    {t(FOOTER_I18N_KEYS.SECTIONS.CATEGORIES.AGRICULTURAL)}
                   </a>
                 </li>
               </ul>
@@ -136,50 +137,50 @@ export default function Footer() {
 
             <div className="col-span-2 ml-0 md:ml-10 lg:ml-10">
               <h3 className="font-semibold text-[#0C4A6E] mb-4">
-                {t("sections.about.title")}
+                {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.TITLE)}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <ul className="space-y-3">
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.terms")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.TERMS)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.privacy")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.PRIVACY)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.legal")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.LEGAL)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.contact")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.CONTACT)}
                     </a>
                   </li>
                 </ul>
                 <ul className="space-y-3">
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.aboutUs")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.ABOUT_US)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.team")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.TEAM)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.faq")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.FAQ)}
                     </a>
                   </li>
                   <li>
                     <a href="#" className="hover:text-blue-700 transition">
-                      {t("sections.about.support")}
+                      {t(FOOTER_I18N_KEYS.SECTIONS.ABOUT.SUPPORT)}
                     </a>
                   </li>
                 </ul>
@@ -189,7 +190,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-6 border-t border-slate-400/30 text-center text-xs text-slate-600">
-          {t("copyright", { year: currentYear })}
+          {t(FOOTER_I18N_KEYS.COPYRIGHT, { year: currentYear })}
         </div>
       </div>
     </footer>
