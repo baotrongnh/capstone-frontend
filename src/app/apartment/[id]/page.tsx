@@ -7,7 +7,7 @@ import ModalLoginRequired from "@/components/modal/modal-login-required"
 import { APARTMENT_STATUS } from "@/constants/apartment"
 import { ROUTES } from "@/constants/routes"
 import { useFullAddress } from "@/hooks/query/useAddress"
-import { useApartment } from "@/hooks/query/useApartments"
+import { useApartment, useApartmentRating } from "@/hooks/query/useApartments"
 import { useAuthStore } from "@/stores/auth.store"
 import { formatVND } from "@/utils/format"
 import {
@@ -15,6 +15,7 @@ import {
   Button,
   Divider,
   Image,
+  Input,
   Rate,
   Result,
   Spin,
@@ -53,8 +54,11 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isModalBookingApartmentOpen, setIsModalBookingApartmentOpen] = useState(false)
+  const [ratingValue, setRatingValue] = useState(0)
+  const [ratingComment, setRatingComment] = useState("")
 
   const user = useAuthStore((s) => s.user)
+  const { mutate: submitRating, isPending: isSubmittingRating } = useApartmentRating()
 
   const handleButtonBooking = () => {
     if (!user) {
@@ -97,6 +101,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
 
   const images = apt?.images?.length ? apt.images : []
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
+  const averageRating = Number(apt?.rating ?? 0)
 
   const handleFindDirection = () => {
     if (apt?.latitude && apt?.longitude) {
@@ -110,6 +115,33 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         "_blank",
       )
     }
+  }
+
+  const handleSubmitRating = () => {
+    if (!user) {
+      setIsModalLoginRequiredLogin(true)
+      return
+    }
+
+    if (!ratingValue) {
+      return
+    }
+
+    submitRating(
+      {
+        id,
+        payload: {
+          rating: ratingValue,
+          comment: ratingComment.trim() || undefined,
+        },
+      },
+      {
+        onSuccess: () => {
+          setRatingValue(0)
+          setRatingComment("")
+        },
+      },
+    )
   }
 
   return (
@@ -247,8 +279,57 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           </span>
           <Divider orientation="vertical" className="hidden sm:block" />
           <span className="text-muted flex gap-1 items-center text-sm md:text-base">
-            <Rate disabled value={0} size="small" />({t("noReview")})
+            <Rate disabled allowHalf value={averageRating} size="small" />
+            {averageRating > 0
+              ? `(${averageRating.toFixed(1)}/5)`
+              : `(${t("noReview")})`}
           </span>
+        </div>
+      </div>
+
+      <div className="mt-6 md:mt-8 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="font-semibold text-lg md:text-xl">{t("rating.title")}</h2>
+            <p className="text-sm text-gray-500 mt-1">{t("rating.subtitle")}</p>
+          </div>
+          <div className="rounded-xl bg-white border border-gray-100 px-4 py-3 min-w-52">
+            <p className="text-xs uppercase tracking-wide text-gray-500">{t("rating.average")}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-2xl font-bold text-primary">
+                {averageRating > 0 ? averageRating.toFixed(1) : "-"}
+              </span>
+              <Rate disabled allowHalf value={averageRating} />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-xl bg-white border border-gray-100 p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("rating.yourRating")}</p>
+          <Rate value={ratingValue} onChange={setRatingValue} />
+
+          <Input.TextArea
+            value={ratingComment}
+            onChange={(e) => setRatingComment(e.target.value)}
+            rows={4}
+            maxLength={250}
+            showCount
+            placeholder={t("rating.placeholder")}
+            className="mt-4"
+          />
+
+          <div className="mt-4 flex justify-end">
+            <Button
+              type="primary"
+              shape="round"
+              size="large"
+              disabled={!ratingValue}
+              loading={isSubmittingRating}
+              onClick={handleSubmitRating}
+            >
+              {isSubmittingRating ? t("rating.submitting") : t("rating.submit")}
+            </Button>
+          </div>
         </div>
       </div>
 
