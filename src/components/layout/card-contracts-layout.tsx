@@ -1,7 +1,7 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
-import { Card, Button, Alert } from "antd";
-import { FileText, Eye, User, MapPin, Calendar, Wallet } from "lucide-react";
+import { Button, Card } from "antd";
+import { Calendar, Eye, MapPin, User } from "lucide-react";
 
 interface ContractCardProps {
   contract: ContractWithMembers;
@@ -61,6 +61,8 @@ export const ContractCard = ({
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
   );
+
+  console.log("CON", contract);
 
   const startDate = new Date(contract.startDate).toLocaleDateString("vi-VN");
   const endDate = new Date(contract.endDate).toLocaleDateString("vi-VN");
@@ -131,7 +133,7 @@ export const ContractCard = ({
             <div className="flex flex-col flex-1">
               <span className="text-xs text-gray-500 mb-0.5">Địa chỉ</span>
               <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {contract.apartment?.city || "Chưa cập nhật"}
+                {contract.apartment?.streetAddress || "Chưa cập nhật"}
               </span>
             </div>
           </div>
