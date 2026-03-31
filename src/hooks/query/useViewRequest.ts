@@ -1,6 +1,7 @@
-import { viewRequestService } from "@/lib/services/viewRequest.service"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { message } from "antd"
+import { viewRequestService } from '@/lib/services/viewRequest.service'
+import type { ListMyViewingRequestsQuery } from '@/types/viewRequest'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { message } from 'antd'
 
 export const useCreateViewRequest = () => {
   const queryClient = useQueryClient()
@@ -20,5 +21,12 @@ export const useGetViewRequests = () => {
   return useQuery({
     queryKey: ["viewRequests"],
     queryFn: viewRequestService.get,
-  });
-};
+  })
+}
+
+export const useMyViewingRequests = (params?: ListMyViewingRequestsQuery) => {
+  return useQuery({
+    queryKey: ['my-viewing-requests', params],
+    queryFn: () => viewRequestService.getMyViewingRequests(params),
+  })
+}

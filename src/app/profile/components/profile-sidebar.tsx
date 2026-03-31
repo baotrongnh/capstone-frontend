@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   ApartmentOutlined,
   ContactsOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ProfileNavItem, ProfileRole, ProfileSidebarProps } from "@/types/profile";
@@ -38,6 +39,12 @@ const getNavigationItems = (
       label: t("sidebar.myContracts"),
       icon: <ContactsOutlined />,
       path: "/profile/contracts",
+    },
+    {
+      key: 'my-schedule',
+      label: t('sidebar.mySchedule'),
+      icon: <CalendarOutlined />,
+      path: '/profile/my-schedule',
     },
     {
       key: "Invoices",
