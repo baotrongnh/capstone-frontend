@@ -2,16 +2,25 @@
 
 import { authService } from '@/lib/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
-import { ApiErrorResponse } from '@/types/auth'
+import { ActorType, ApiErrorResponse } from '@/types/auth'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { App } from 'antd'
 import { useState } from 'react'
 import { userService } from '@/lib/services/user.service'
+import { useTranslations } from 'next-intl'
+
+const ALLOWED_LOGIN_ROLES = new Set<string>([ActorType.USER, ActorType.PARTNER])
+
+const isAllowedLoginRole = (role: unknown) => {
+    return typeof role === 'string' && ALLOWED_LOGIN_ROLES.has(role)
+}
 
 export const useLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const t = useTranslations('Auth')
     const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
+    const logoutStore = useAuthStore((s) => s.logout)
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -23,8 +32,16 @@ export const useLogin = (onSuccess?: () => void) => {
                 queryKey: ['user', 'profile'],
                 queryFn: () => userService.getProfile()
             })
+
+            if (!isAllowedLoginRole(user?.role)) {
+                logoutStore()
+                queryClient.clear()
+                message.error(t('loginRoleNotAllowed'))
+                return
+            }
+
             setAuth(user, data.tokens)
-            message.success('Login successful!')
+            message.success(t('loginSuccessful'))
             onSuccess?.()
         },
         onError: (error: ApiErrorResponse) => {
@@ -37,6 +54,7 @@ export const useLogin = (onSuccess?: () => void) => {
 
 export const useRegister = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const t = useTranslations('Auth')
     const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
     const queryClient = useQueryClient()
@@ -51,7 +69,7 @@ export const useRegister = (onSuccess?: () => void) => {
                 queryFn: () => userService.getProfile()
             })
             setAuth(user, data.tokens)
-            message.success('Registration successful!')
+            message.success(t('registrationSuccessful'))
             onSuccess?.()
         },
         onError: (error: ApiErrorResponse) => {
@@ -81,6 +99,7 @@ export const useRefreshToken = () => {
 
 export const useLogout = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const t = useTranslations('Auth')
     const logoutStore = useAuthStore((s) => s.logout)
     const queryClient = useQueryClient()
 
@@ -92,7 +111,7 @@ export const useLogout = (onSuccess?: () => void) => {
         onSuccess: () => {
             logoutStore()
             queryClient.clear()
-            message.success('Logout successful!')
+            message.success(t('logoutSuccessful'))
             onSuccess?.()
         },
         onError: () => {
@@ -104,8 +123,10 @@ export const useLogout = (onSuccess?: () => void) => {
 
 export const useGoogleLogin = (onSuccess?: () => void) => {
     const { message } = App.useApp()
+    const t = useTranslations('Auth')
     const setTokens = useAuthStore((s) => s.setTokens)
     const setAuth = useAuthStore((s) => s.setAuth)
+    const logoutStore = useAuthStore((s) => s.logout)
     const queryClient = useQueryClient()
     const [loading, setLoading] = useState(false)
 
@@ -161,8 +182,16 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
                 queryKey: ['user', 'profile'],
                 queryFn: () => userService.getProfile()
             })
+
+            if (!isAllowedLoginRole(user?.role)) {
+                logoutStore()
+                queryClient.clear()
+                message.error(t('loginRoleNotAllowed'))
+                return
+            }
+
             setAuth(user, data.tokens)
-            message.success('Login successful!')
+            message.success(t('loginSuccessful'))
             onSuccess?.()
         } catch (error: unknown) {
             if (error instanceof Error && error.message !== 'Popup closed by user') {

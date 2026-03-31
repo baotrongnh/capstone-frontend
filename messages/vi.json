@@ -178,6 +178,8 @@
     "privacyPolicy": "Chính sách bảo mật",
     "loginSuccessful": "Đăng nhập thành công!",
     "registrationSuccessful": "Đăng ký thành công!",
+    "logoutSuccessful": "Đăng xuất thành công!",
+    "loginRoleNotAllowed": "Vai trò tài khoản này không được phép đăng nhập vào website này.",
     "loginFailed": "Đăng nhập thất bại!",
     "registrationFailed": "Đăng ký thất bại!",
     "checkFormFields": "Vui lòng kiểm tra các trường!",

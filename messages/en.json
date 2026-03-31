@@ -178,6 +178,8 @@
     "privacyPolicy": "Privacy Policy",
     "loginSuccessful": "Login successful!",
     "registrationSuccessful": "Registration successful!",
+    "logoutSuccessful": "Logout successful!",
+    "loginRoleNotAllowed": "This account role is not allowed to log in to this website.",
     "loginFailed": "Login failed!",
     "registrationFailed": "Registration failed!",
     "checkFormFields": "Please check the form fields!",

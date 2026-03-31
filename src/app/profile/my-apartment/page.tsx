@@ -1,21 +1,20 @@
 'use client'
 
-import { Card, Col, Descriptions, Empty, Row, Statistic, Tag } from 'antd'
-import {
-    HomeOutlined,
-    EnvironmentOutlined,
-    StarOutlined,
-    DollarOutlined,
-    BorderOutlined,
-} from '@ant-design/icons'
+import { useFullAddress } from '@/hooks/query/useAddress'
 import { useMyApartment } from '@/hooks/query/useMyApartment'
 import { useAuthStore } from '@/stores/auth.store'
 import { formatPaymentAmount } from '@/utils/payment'
+import {
+    DollarOutlined,
+    EnvironmentOutlined,
+    HomeOutlined,
+    StarOutlined
+} from '@ant-design/icons'
+import { Card, Col, Descriptions, Empty, Row, Statistic, Tag } from 'antd'
+import { useTranslations } from 'next-intl'
 import { AdditionalInfoCard } from './components/additional-info-card'
 import { ApartmentGallery } from './components/apartment-gallery'
 import type { OwnerApartmentItem } from './components/types'
-import { useTranslations } from 'next-intl'
-import { useFullAddress } from '@/hooks/query/useAddress'
 
 type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'
 
