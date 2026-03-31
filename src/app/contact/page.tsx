@@ -273,7 +273,7 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
-                label="Tổng diện tích"
+                label="Tổng diện tích (m2)"
                 name="totalArea"
                 rules={[
                   { required: true, message: "Vui lòng nhập tổng diện tích" },
@@ -287,7 +287,7 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
-                label="Diện tích sử dụng"
+                label="Diện tích sử dụng (m2)"
                 name="usableArea"
                 rules={[
                   {

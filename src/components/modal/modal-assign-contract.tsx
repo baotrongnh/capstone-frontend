@@ -188,7 +188,7 @@ export default function ModalAssignContract({
         {selectedContract && (
           <div className="space-y-6">
             <Alert
-              message={`Hợp đồng: ${selectedContract.contractNumber}`}
+              title={`Hợp đồng: ${selectedContract.contractNumber}`}
               description={`Người thuê: ${selectedContract.members?.[0]?.user?.fullName}`}
               type="info"
               showIcon
@@ -313,7 +313,7 @@ export default function ModalAssignContract({
       >
         <div className="space-y-4">
           <Alert
-            message="Hướng dẫn ký"
+            title="Hướng dẫn ký"
             description="Vui lòng ký vào ô bên dưới. Sử dụng chuột hoặc thiết bị chạm để ký."
             type="info"
             showIcon
