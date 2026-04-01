@@ -1,5 +1,6 @@
 "use client"
 
+import ApartmentMediaCarousel from "@/components/apartments/apartment-media-carousel"
 import SimilarApartments from "@/components/apartments/similar-apartments"
 import ModalBooking from "@/components/modal/modal-booking"
 import ModalBookingSchedule from "@/components/modal/modal-booking-schedule"
@@ -14,8 +15,8 @@ import {
   Breadcrumb,
   Button,
   Divider,
-  Image,
   Input,
+  Modal,
   Rate,
   Result,
   Spin,
@@ -27,13 +28,12 @@ import {
   BedDouble,
   Building2,
   CalendarDays,
-  ExternalLink,
   Map,
   MapPin,
   Maximize2,
+  PlayCircle,
   Sofa,
   Users,
-  Video,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { use, useState } from "react"
@@ -54,6 +54,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isModalBookingApartmentOpen, setIsModalBookingApartmentOpen] = useState(false)
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [ratingValue, setRatingValue] = useState(0)
   const [ratingComment, setRatingComment] = useState("")
 
@@ -100,6 +101,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   }
 
   const images = apt?.images?.length ? apt.images : []
+  const hasMedia = images.length > 0 || !!apt?.videoTourUrl
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
   const averageRating = Number(apt?.rating ?? 0)
 
@@ -156,6 +158,24 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         apartmentId={id}
       />
 
+      <Modal
+        open={isVideoModalOpen}
+        onCancel={() => setIsVideoModalOpen(false)}
+        footer={null}
+        centered
+        width={900}
+        destroyOnHidden
+      >
+        {apt?.videoTourUrl ? (
+          <video
+            src={apt.videoTourUrl}
+            controls
+            autoPlay
+            className="h-auto max-h-[72vh] w-full rounded-lg bg-black"
+          />
+        ) : null}
+      </Modal>
+
       <ModalBooking apartmentData={apartmentData?.data} open={isModalBookingApartmentOpen} apartmentId={id} onClose={() => setIsModalBookingApartmentOpen(false)} />
 
       <Breadcrumb
@@ -168,50 +188,30 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       />
 
       {/* Gallery */}
-      {images.length > 0 ? (
-        <div className="w-full grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 md:gap-4 mt-5">
-          <div className="col-span-2 md:col-span-3 row-span-2 overflow-hidden rounded-lg h-64 md:h-96">
-            <Image
-              height="100%"
-              width="100%"
-              alt="main"
-              src={images[0]}
-              style={{ objectFit: "cover" }}
-            />
-          </div>
-          {images[1] && (
-            <div className="overflow-hidden rounded-lg h-30 md:h-46.25">
-              <Image
-                height="100%"
-                width="100%"
-                alt="side1"
-                src={images[1]}
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-          )}
-          {images[2] && (
-            <div className="relative overflow-hidden rounded-lg h-30 md:h-46.25">
-              <Image
-                height="100%"
-                width="100%"
-                alt="side2"
-                src={images[2]}
-                style={{ objectFit: "cover" }}
-              />
-              {images.length > 3 && (
-                <div className="bg-black/50 text-center p-3 absolute bottom-0 w-full">
-                  <span className="font-semibold text-white">
-                    {t("morePhotos", { count: images.length - 3 })}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+      {hasMedia ? (
+        <ApartmentMediaCarousel
+          images={images}
+          videoTourUrl={apt?.videoTourUrl ?? undefined}
+          morePhotosText={(count) => t("morePhotos", { count })}
+          imageAltText={(index) => `apartment-${index + 1}`}
+          videoSlideTitle={t("videoTourTitle")}
+          onOpenVideo={() => setIsVideoModalOpen(true)}
+        />
       ) : (
-        <div className="w-full rounded-lg bg-gray-100 h-64 md:h-96 mt-5 flex items-center justify-center text-gray-400">
-          {t("noPhotos")}
+        <div className="mt-5 w-full rounded-2xl border border-gray-200 bg-gray-100 h-64 md:h-96 flex items-center justify-center text-gray-400">
+          <div className="text-center">
+            <p>{t("noPhotos")}</p>
+            {apt?.videoTourUrl ? (
+              <button
+                type="button"
+                onClick={() => setIsVideoModalOpen(true)}
+                className="mt-3 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <PlayCircle size={16} className="text-primary" />
+                {t("watchVideo")}
+              </button>
+            ) : null}
+          </div>
         </div>
       )}
 
@@ -422,16 +422,24 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <h2 className="font-semibold text-lg md:text-xl mb-3">
             {t("videoTourTitle")}
           </h2>
-          <a
-            href={apt.videoTourUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg px-5 py-3 border border-gray-200"
+          <button
+            type="button"
+            onClick={() => setIsVideoModalOpen(true)}
+            className="group relative w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-200 bg-black text-left"
           >
-            <Video size={20} className="text-primary" />
-            <span className="text-sm font-medium">{t("watchVideo")}</span>
-            <ExternalLink size={14} className="text-gray-400" />
-          </a>
+            <video
+              src={apt.videoTourUrl}
+              muted
+              playsInline
+              preload="metadata"
+              className="aspect-video w-full object-cover opacity-80 transition group-hover:opacity-90"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+            <PlayCircle className="absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2 text-white" />
+            <p className="absolute bottom-4 left-4 rounded-full bg-black/45 px-3 py-1 text-sm font-medium text-white">
+              {t("watchVideo")}
+            </p>
+          </button>
         </div>
       )}
 
