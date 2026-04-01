@@ -62,6 +62,8 @@ export default function ModalBooking({
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
+  console.log("DATA", apartment);
+
   const user = useAuthStore((store) => store.user);
 
   const displayAddress = useFullAddress(
@@ -78,7 +80,8 @@ export default function ModalBooking({
       apartmentId: apartmentId,
       desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),
       desiredEndDate: values.desiredEndDate.format("YYYY-MM-DD"),
-      numberOfOccupants: values.numberOfOccupants,
+      // numberOfOccupants: values.numberOfOccupants,
+      additionalMemberNationalIds: values.additionalMemberNationalIds || [],
       specialRequests: values.specialRequests,
     };
 
@@ -152,7 +155,7 @@ export default function ModalBooking({
           </div>
         </div>
 
-        <div className="p-3 max-h-[80vh]">
+        <div className="p-3 max-h-[88vh]">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -202,7 +205,7 @@ export default function ModalBooking({
             onFinish={handleReservations}
           >
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   name="desiredStartDate"
                   label={
@@ -227,7 +230,7 @@ export default function ModalBooking({
                   />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   name="durationMonths"
                   label={
@@ -248,7 +251,25 @@ export default function ModalBooking({
                 </Form.Item>
               </Col>
 
-              <Col span={8}>
+              <Col span={24}>
+                <Form.Item
+                  name="additionalMemberNationalIds"
+                  label={
+                    <span className="font-medium text-gray-700">
+                      Thêm thành viên (nếu có)
+                    </span>
+                  }
+                >
+                  <Select
+                    mode="tags"
+                    className="w-full h-10 rounded-lg"
+                    placeholder="Nhập CCCD của thành viên khác (nếu có)"
+                    tokenSeparators={[",", " "]}
+                  />
+                </Form.Item>
+              </Col>
+
+              {/* <Col span={8}>
                 <Form.Item
                   name="numberOfOccupants"
                   label={
@@ -271,7 +292,7 @@ export default function ModalBooking({
                     placeholder="Nhập số người"
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
 
             <Form.Item
@@ -314,7 +335,6 @@ export default function ModalBooking({
             {user?.isVerified == true && user?.identity != null ? (
               <>
                 <div className="bg-blue-50/50 rounded-lg p-3 mb-2 flex gap-3 text-sm text-blue-800 mt-5">
-                  <InfoCircleOutlined className="text-blue-500 mt-0.5" />
                   <div className="flex-1 space-y-1">
                     <p className="font-medium m-0">Lưu ý!</p>
                     <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">

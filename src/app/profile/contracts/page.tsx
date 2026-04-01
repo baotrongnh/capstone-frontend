@@ -58,7 +58,7 @@ export default function ContractsPage() {
     }
 
     try {
-      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${contract.pdfUrl}`;
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${contract.pdfUrl}`;
 
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
