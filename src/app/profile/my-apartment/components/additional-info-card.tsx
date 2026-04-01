@@ -39,7 +39,7 @@ export function AdditionalInfoCard({ apartment, t }: AdditionalInfoCardProps) {
 
     return (
         <Card className="border-slate-200 bg-white" title={t('additionalInfo')}>
-            <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }} size="middle">
+            <Descriptions bordered column={1} size="middle">
                 <Descriptions.Item label={t('apartmentId')}>{toDisplayText(apartment?.id)}</Descriptions.Item>
                 <Descriptions.Item label={t('floorNumber')}>{toDisplayText(apartment?.floorNumber)}</Descriptions.Item>
                 <Descriptions.Item label={t('newWardCode')}>{toDisplayText(apartment?.wardCode)}</Descriptions.Item>
@@ -47,7 +47,7 @@ export function AdditionalInfoCard({ apartment, t }: AdditionalInfoCardProps) {
                 <Descriptions.Item label={t('statusLabel')}>{toDisplayText(apartment?.status)}</Descriptions.Item>
                 <Descriptions.Item label={t('rating')}>{toDisplayText(apartment?.rating)}</Descriptions.Item>
 
-                <Descriptions.Item label={t('address')} span={{ xs: 1, sm: 2, md: 3 }}>
+                <Descriptions.Item label={t('address')}>
                     {toDisplayText(apartment?.streetAddress)}
                 </Descriptions.Item>
 
@@ -68,11 +68,11 @@ export function AdditionalInfoCard({ apartment, t }: AdditionalInfoCardProps) {
                 <Descriptions.Item label={t('createdAt')}>{formatLocaleDateTime(apartment?.createdAt, 'vi')}</Descriptions.Item>
                 <Descriptions.Item label={t('updatedAt')}>{formatLocaleDateTime(apartment?.updatedAt, 'vi')}</Descriptions.Item>
 
-                <Descriptions.Item label={t('description')} span={{ xs: 1, sm: 2, md: 3 }}>
+                <Descriptions.Item label={t('description')}>
                     {toDisplayText(apartment?.description)}
                 </Descriptions.Item>
 
-                <Descriptions.Item label={t('amenities')} span={{ xs: 1, sm: 2, md: 3 }}>
+                <Descriptions.Item label={t('amenities')}>
                     <div className="flex flex-wrap gap-2">
                         {cooperationContracts.length > 0
                             ? cooperationContracts.map((contract) => (
