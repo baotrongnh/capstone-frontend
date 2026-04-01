@@ -1,6 +1,7 @@
 import { ROUTES } from "@/constants/routes";
-import { useUploadContractPdf } from "@/hooks/query/useContracts";
-import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { useApartmentCooperationContract } from "@/hooks/query/useApartments";
+import { useSignCooperationContract } from "@/hooks/query/useContracts";
+import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
 import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
 import { Check, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,17 +9,17 @@ import { PDFDocument } from "pdf-lib";
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 
-interface ModalAssignContractProps {
+interface ModalAssignCooperationsProps {
   showDetailModal: boolean;
   setShowDetailModal: (value: boolean) => void;
-  selectedContract: ContractWithMembers | null;
+  selectedContract: OwnerApartmentResponse | null;
 }
 
-export default function ModalAssignContract({
+export default function ModalAssignCooperations({
   showDetailModal,
   setShowDetailModal,
   selectedContract,
-}: ModalAssignContractProps) {
+}: ModalAssignCooperationsProps) {
   const sigRef = useRef<SignatureCanvas | null>(null);
 
   const route = useRouter();
@@ -29,9 +30,15 @@ export default function ModalAssignContract({
   const [showSignModal, setShowSignModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const { mutateAsync: uploadContractPdf } = useUploadContractPdf(
+  const { data: cooperation } = useApartmentCooperationContract(
     selectedContract?.id || "",
   );
+
+  const { mutateAsync: signCooperationContract } = useSignCooperationContract(
+    cooperation?.cooperationContractId || "",
+  );
+
+  console.log("DADA", cooperation);
 
   const dataUrlToBytes = (dataUrl: string): Uint8Array => {
     const arr = dataUrl.split(",");
@@ -45,13 +52,13 @@ export default function ModalAssignContract({
   };
 
   const embedSignatureInPDF = async (signatureDataUrl: string) => {
-    if (!selectedContract?.pdfUrl) {
-      message.error("Không tìm thấy URL PDF");
+    if (!cooperation.cooperationContractId) {
+      message.error("Không tìm thấy hợp đồng hợp tác");
       return null;
     }
 
     try {
-      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${selectedContract.pdfUrl}`;
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${cooperation.cooperationContractPublicPdfUrl}`;
       const pdfResponse = await fetch(pdfUrl);
       const pdfArrayBuffer = await pdfResponse.arrayBuffer();
 
@@ -59,16 +66,16 @@ export default function ModalAssignContract({
 
       const pages = pdfDoc.getPages();
       const lastPage = pages[pages.length - 1];
-      const { width } = lastPage.getSize();
+      const { width, height } = lastPage.getSize();
 
       const signatureBytes = dataUrlToBytes(signatureDataUrl);
 
       const signatureImage = await pdfDoc.embedPng(signatureBytes);
 
-      const signatureWidth = 120;
-      const signatureHeight = 30;
-      const xPosition = width - signatureWidth - 120;
-      const yPosition = 220;
+      const signatureWidth = 100;
+      const signatureHeight = 100;
+      const xPosition = width / 2 + 60;
+      const yPosition = height / 2 - signatureHeight / 2 - 100;
 
       lastPage.drawImage(signatureImage, {
         x: xPosition,
@@ -140,7 +147,7 @@ export default function ModalAssignContract({
     setAgreePolicy(false);
   };
 
-  const handleSendContract = async (contractId: string) => {
+  const handleSendCooperationContract = async (contractId: string) => {
     if (!signedPdfBytes) {
       message.error("Không tìm thấy PDF đã ký");
       return;
@@ -150,31 +157,33 @@ export default function ModalAssignContract({
       type: "application/pdf",
     });
 
-    const file = new File([blob], `contract-${contractId}.pdf`, {
+    const file = new File([blob], `cooperation-contract-${contractId}.pdf`, {
       type: "application/pdf",
     });
 
     const formData = new FormData();
     formData.append("contractPdf", file);
     formData.append("signedDate", new Date().toISOString());
-    formData.append("contractDocumentUrl", "");
 
     try {
-      await uploadContractPdf(formData);
-      setShowSignModal(false);
+      setIsSending(true);
+      await signCooperationContract(formData);
 
+      setShowSignModal(false);
       setShowDetailModal(false);
 
-      route.push(`${ROUTES.PROFILE}/invoices`);
+      route.push(`${ROUTES.PROFILE}/cooperations`);
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
+    } finally {
+      setIsSending(false);
     }
   };
 
   return (
     <>
       <Modal
-        title="Chi tiết hợp đồng"
+        title="Chi tiết hợp đồng hợp tác"
         open={showDetailModal}
         onCancel={handleCloseModal}
         width={900}
@@ -188,20 +197,22 @@ export default function ModalAssignContract({
         {selectedContract && (
           <div className="space-y-6">
             <Alert
-              title={`Hợp đồng: ${selectedContract.contractNumber}`}
-              description={`Người thuê: ${selectedContract.members?.[0]?.user?.fullName}`}
+              title={`Hợp đồng hợp tác: ${cooperation?.cooperationContractNumber || "N/A"}`}
+              description={`Căn hộ: ${cooperation?.apartmentNumber || "Chưa cập nhật"}`}
               type="info"
               showIcon
             />
 
-            {selectedContract.hasPdf && (
+            {cooperation?.cooperationContractPublicPdfUrl && (
               <div>
-                <div style={{ marginBottom: 8, fontWeight: 600 }}></div>
+                <div style={{ marginBottom: 8, fontWeight: 600 }}>
+                  Xem hợp đồng
+                </div>
                 <iframe
                   src={
                     signedPdfUrl
                       ? `${signedPdfUrl}#toolbar=0&navpanes=0`
-                      : `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${selectedContract.pdfUrl}#toolbar=0&navpanes=0`
+                      : `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${cooperation.cooperationContractPublicPdfUrl}#toolbar=0&navpanes=0`
                   }
                   style={{
                     width: "100%",
@@ -213,7 +224,7 @@ export default function ModalAssignContract({
               </div>
             )}
 
-            {!selectedContract.hasPdf && (
+            {!cooperation?.cooperationContractPublicPdfUrl && (
               <Alert
                 description="Hợp đồng này hiện chưa có tệp PDF."
                 type="warning"
@@ -223,62 +234,71 @@ export default function ModalAssignContract({
 
             <Divider />
 
-            {selectedContract.status === "draft" && !signature && (
-              <div
-                style={{
-                  backgroundColor: "#f5f5f5",
-                  padding: "16px",
-                  borderRadius: "8px",
-                  border: "1px solid #e8e8e8",
-                }}
-              >
-                <Checkbox
-                  checked={agreePolicy}
-                  onChange={(e) => setAgreePolicy(e.target.checked)}
+            {cooperation?.cooperationContractStatus === "pending" &&
+              !signature && (
+                <div
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    padding: "16px",
+                    borderRadius: "8px",
+                    border: "1px solid #e8e8e8",
+                  }}
                 >
-                  Tôi đồng ý với các điều khoản và điều kiện của hợp đồng này
-                </Checkbox>
-              </div>
-            )}
+                  <Checkbox
+                    checked={agreePolicy}
+                    onChange={(e) => setAgreePolicy(e.target.checked)}
+                  >
+                    Tôi đồng ý với các điều khoản và điều kiện của hợp đồng hợp
+                    tác này
+                  </Checkbox>
+                </div>
+              )}
 
-            {selectedContract.status === "draft" && signature && (
-              <Alert
-                description="Bạn đã ký hợp đồng. Vui lòng gửi để hoàn tất quá trình."
-                type="success"
-                showIcon
-              />
-            )}
+            {cooperation?.cooperationContractStatus === "pending" &&
+              signature && (
+                <Alert
+                  description="Bạn đã ký hợp đồng. Vui lòng gửi để hoàn tất quá trình."
+                  type="success"
+                  showIcon
+                />
+              )}
 
             <div className="flex gap-3 justify-end pt-4 ">
               <Button onClick={handleCloseModal}>Đóng</Button>
-              {selectedContract.status === "draft" && !signature && (
-                <Button
-                  type="primary"
-                  onClick={handleSignClick}
-                  disabled={!agreePolicy}
-                  icon={<Pen size={16} />}
-                >
-                  Ký hợp đồng
-                </Button>
-              )}
-              {selectedContract.status === "draft" && signature && (
-                <>
-                  <Button onClick={handleRedoSign} icon={<Pen size={16} />}>
-                    Ký lại
-                  </Button>
+              {cooperation?.cooperationContractStatus === "pending" &&
+                !signature && (
                   <Button
                     type="primary"
-                    danger
-                    loading={isSending}
-                    onClick={() => {
-                      handleSendContract(selectedContract.id);
-                    }}
-                    icon={<Check size={16} />}
+                    onClick={handleSignClick}
+                    disabled={!agreePolicy}
+                    icon={<Pen size={16} />}
                   >
-                    Gửi hợp đồng
+                    Ký hợp đồng
                   </Button>
-                </>
-              )}
+                )}
+              {cooperation?.cooperationContractStatus === "pending" &&
+                signature && (
+                  <>
+                    <Button onClick={handleRedoSign} icon={<Pen size={16} />}>
+                      Ký lại
+                    </Button>
+                    <Button
+                      type="primary"
+                      danger
+                      loading={isSending}
+                      onClick={() => {
+                        handleSendCooperationContract(
+                          cooperation?.cooperationContractId ||
+                            selectedContract?.id ||
+                            "",
+                        );
+                      }}
+                      icon={<Check size={16} />}
+                    >
+                      Gửi hợp đồng
+                    </Button>
+                  </>
+                )}
             </div>
           </div>
         )}
