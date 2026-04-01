@@ -178,6 +178,8 @@
     "privacyPolicy": "Chính sách bảo mật",
     "loginSuccessful": "Đăng nhập thành công!",
     "registrationSuccessful": "Đăng ký thành công!",
+    "logoutSuccessful": "Đăng xuất thành công!",
+    "loginRoleNotAllowed": "Vai trò tài khoản này không được phép đăng nhập vào website này.",
     "loginFailed": "Đăng nhập thất bại!",
     "registrationFailed": "Đăng ký thất bại!",
     "checkFormFields": "Vui lòng kiểm tra các trường!",
@@ -228,6 +230,7 @@
       "accountInformation": "Thông tin tài khoản",
       "myApartment": "Căn hộ của tôi",
       "myContracts": "Hợp đồng của tôi",
+      "mySchedule": "Lịch hẹn của tôi",
       "paymentHistory": "Lịch sử thanh toán",
       "myBills": "Hóa đơn của tôi",
       "settings": "Cài đặt",
@@ -314,6 +317,43 @@
       "idVerifiedAt": "Thời gian xác minh",
       "verified": "Đã xác minh",
       "pendingVerification": "Chờ xác minh"
+    },
+    "mySchedulePage": {
+      "title": "Lịch hẹn của tôi",
+      "subtitle": "Bấm vào ngày có gạch xanh để xem chi tiết lịch hẹn.",
+      "empty": "Bạn chưa có lịch hẹn nào",
+      "summary": {
+        "upcomingTotal": "Tổng lịch hẹn sắp tới: {count}",
+        "currentFocus": "Đang xem: {date} lúc {time}",
+        "nextAriaLabel": "Lịch hẹn tiếp theo"
+      },
+      "calendar": {
+        "marker": "{count} lịch hẹn",
+        "cancelledMarker": "{count} đã hủy"
+      },
+      "errors": {
+        "loadTitle": "Không thể tải lịch hẹn",
+        "loadDescription": "Đã xảy ra lỗi khi tải dữ liệu."
+      },
+      "modal": {
+        "title": "Chi tiết lịch hẹn ngày {date}"
+      },
+      "fields": {
+        "time": "Giờ hẹn",
+        "minutes": "phút",
+        "staff": "Nhân viên phụ trách",
+        "note": "Ghi chú",
+        "noNote": "Không có",
+        "unknownBuilding": "Tòa nhà chưa cập nhật",
+        "unknownApartment": "Căn hộ chưa cập nhật"
+      },
+      "status": {
+        "scheduled": "Đã lên lịch",
+        "confirmed": "Đã xác nhận",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy",
+        "noShow": "Không đến"
+      }
     },
     "apartment": {
       "title": "Căn hộ của tôi",
