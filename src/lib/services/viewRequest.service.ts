@@ -1,14 +1,15 @@
 
-import { paths } from "@/types/api";
-import { apiClient } from "../apis/client";
-import { endpoints } from "../apis/endpoints";
-
-export type ViewingRequestBody = paths['/api/v1/viewing-requests/user/book']['post']['requestBody']['content']['application/json']
-export type ViewingRequestRespone = paths['/api/v1/viewing-requests/user/book']['post']['responses']['201']['content']['application/json']
-
+import type {
+  CreateViewingRequestBody,
+  CreateViewingRequestRes,
+  ListMyViewingRequestsQuery,
+  ListMyViewingRequestsRes,
+} from '@/types/viewRequest'
+import { apiClient } from '../apis/client'
+import { endpoints } from '../apis/endpoints'
 
 export const viewRequestService = {
-  create: async (viewRequestData: ViewingRequestBody): Promise<ViewingRequestRespone> => {
+  create: async (viewRequestData: CreateViewingRequestBody): Promise<CreateViewingRequestRes> => {
     const { data } = await apiClient.post(
       `${endpoints.viewRequest}/user/book`,
       viewRequestData,
@@ -18,7 +19,13 @@ export const viewRequestService = {
   get: async () => {
     const { data } = await apiClient.get(
       `${endpoints.viewRequest}/my-assigned`,
-    );
-    return data;
+    )
+    return data
+  },
+  getMyViewingRequests: async (params?: ListMyViewingRequestsQuery): Promise<ListMyViewingRequestsRes> => {
+    const { data } = await apiClient.get(`${endpoints.viewRequest}/my`, {
+      params,
+    })
+    return data
   },
 }

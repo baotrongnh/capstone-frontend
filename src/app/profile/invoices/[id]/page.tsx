@@ -146,6 +146,7 @@ export default function InvoiceDetailPage() {
     const invoiceStatusLabel = getStatusLabel(invoiceStatus)
     const invoiceTypeLabel = getTypeLabel(invoiceType)
     const statusColor = getStatusColor(invoiceStatus)
+    const canPayNow = ['issued', 'sent', 'overdue', 'partially_paid'].includes(invoiceStatus)
 
     return (
         <div className="space-y-6">
@@ -168,20 +169,22 @@ export default function InvoiceDetailPage() {
                         <Text type="secondary" className="mt-1 block truncate">{t('invoiceId')}: {normalizeText(invoice.id)}</Text>
                     </div>
 
-                    <Button
-                        type="primary"
-                        size="large"
-                        icon={<CreditCardOutlined />}
-                        loading={isCreatingPayOSPaymentLink}
-                        onClick={() => void handlePayNow()}
-                        style={{
-                            border: 'none',
-                            background: 'linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)',
-                            boxShadow: '0 8px 18px rgba(37, 99, 235, 0.28)',
-                        }}
-                    >
-                        {t('actions.payNow')}
-                    </Button>
+                    {canPayNow && (
+                        <Button
+                            type="primary"
+                            size="large"
+                            icon={<CreditCardOutlined />}
+                            loading={isCreatingPayOSPaymentLink}
+                            onClick={() => void handlePayNow()}
+                            style={{
+                                border: 'none',
+                                background: 'linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)',
+                                boxShadow: '0 8px 18px rgba(37, 99, 235, 0.28)',
+                            }}
+                        >
+                            {t('actions.payNow')}
+                        </Button>
+                    )}
                 </div>
             </div>
 

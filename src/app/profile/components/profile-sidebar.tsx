@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   ApartmentOutlined,
   ContactsOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import {
@@ -19,7 +20,6 @@ import {
 } from "@/types/profile";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Handshake } from "lucide-react";
 
 const getNavigationItems = (
   role: ProfileRole,
@@ -45,10 +45,10 @@ const getNavigationItems = (
       path: "/profile/contracts",
     },
     {
-      key: "cooperations",
-      label: t("sidebar.myCooperations"),
-      icon: <Handshake size={16} />,
-      path: "/profile/cooperations",
+      key: "my-schedule",
+      label: t("sidebar.mySchedule"),
+      icon: <CalendarOutlined />,
+      path: "/profile/my-schedule",
     },
     {
       key: "Invoices",

@@ -178,6 +178,8 @@
     "privacyPolicy": "Privacy Policy",
     "loginSuccessful": "Login successful!",
     "registrationSuccessful": "Registration successful!",
+    "logoutSuccessful": "Logout successful!",
+    "loginRoleNotAllowed": "This account role is not allowed to log in to this website.",
     "loginFailed": "Login failed!",
     "registrationFailed": "Registration failed!",
     "checkFormFields": "Please check the form fields!",
@@ -228,6 +230,7 @@
       "accountInformation": "Account Information",
       "myApartment": "My Apartment",
       "myContracts": "My Contracts",
+      "mySchedule": "My Schedule",
       "paymentHistory": "Payment History",
       "myBills": "My Invoices",
       "settings": "Settings",
@@ -314,6 +317,43 @@
       "idVerifiedAt": "Verified At",
       "verified": "Verified",
       "pendingVerification": "Pending Verification"
+    },
+    "mySchedulePage": {
+      "title": "My Schedule",
+      "subtitle": "Click a date with a blue underline to view appointment details.",
+      "empty": "You do not have any appointments yet",
+      "summary": {
+        "upcomingTotal": "Upcoming appointments: {count}",
+        "currentFocus": "Viewing: {date} at {time}",
+        "nextAriaLabel": "Next appointment"
+      },
+      "calendar": {
+        "marker": "{count} appointment(s)",
+        "cancelledMarker": "{count} cancelled"
+      },
+      "errors": {
+        "loadTitle": "Unable to load appointments",
+        "loadDescription": "An error occurred while loading data."
+      },
+      "modal": {
+        "title": "Appointment details on {date}"
+      },
+      "fields": {
+        "time": "Time",
+        "minutes": "minutes",
+        "staff": "Assigned staff",
+        "note": "Note",
+        "noNote": "No note",
+        "unknownBuilding": "Building not updated",
+        "unknownApartment": "Apartment not updated"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "noShow": "No show"
+      }
     },
     "apartment": {
       "title": "My Apartment",

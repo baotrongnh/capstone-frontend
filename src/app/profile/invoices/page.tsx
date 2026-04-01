@@ -95,8 +95,7 @@ export default function InvoicesPage() {
             width: 140,
             render: (_: unknown, record) => {
                 const number = record.rentalContract?.apartment?.apartmentNumber
-                const address = record.rentalContract?.apartment?.address
-                const text = [number, address].filter(Boolean).join(' - ')
+                const text = number || '-'
                 return (
                     <span
                         style={{
