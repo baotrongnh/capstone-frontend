@@ -6,7 +6,6 @@ import {
   CheckCircleOutlined,
   FileTextOutlined,
   HomeOutlined,
-  InfoCircleOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -16,7 +15,6 @@ import {
   Divider,
   Form,
   Input,
-  InputNumber,
   Modal,
   Row,
   Select,
@@ -59,6 +57,7 @@ export default function ModalBooking({
   const router = useRouter();
   const [formReservations] = useForm();
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
@@ -85,6 +84,7 @@ export default function ModalBooking({
       specialRequests: values.specialRequests,
     };
 
+    setIsLoading(true);
     try {
       await createReservation(payload);
       formReservations.resetFields();
@@ -93,6 +93,8 @@ export default function ModalBooking({
       router.push(`${ROUTES.PROFILE}/contracts`);
     } catch (error) {
       console.error("Error creating reservation:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,7 +129,8 @@ export default function ModalBooking({
               <Button
                 type="primary"
                 onClick={handleReservations}
-                disabled={!agreeTerms}
+                disabled={!agreeTerms || isLoading}
+                loading={isLoading}
                 className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <CheckCircleOutlined />
@@ -268,31 +271,6 @@ export default function ModalBooking({
                   />
                 </Form.Item>
               </Col>
-
-              {/* <Col span={8}>
-                <Form.Item
-                  name="numberOfOccupants"
-                  label={
-                    <span className="font-medium text-gray-700">
-                      Số lượng người ở
-                    </span>
-                  }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số người!",
-                      type: "number",
-                    },
-                  ]}
-                  initialValue={2}
-                >
-                  <InputNumber
-                    min={1}
-                    className="w-full h-10 rounded-lg flex items-center"
-                    placeholder="Nhập số người"
-                  />
-                </Form.Item>
-              </Col> */}
             </Row>
 
             <Form.Item

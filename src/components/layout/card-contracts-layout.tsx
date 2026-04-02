@@ -1,7 +1,7 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { Button, Card } from "antd";
-import { Calendar, Eye, MapPin, User } from "lucide-react";
+import { Calendar, Eye, MapPin, User, WalletCards } from "lucide-react";
 
 interface ContractCardProps {
   contract: ContractWithMembers;
@@ -9,6 +9,7 @@ interface ContractCardProps {
   onDownload: () => void;
   onRedirectInvoice: () => void;
   onCancel: () => void;
+  onExtend: () => void;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -37,6 +38,12 @@ const StatusBadge = ({ status }: { status: string }) => {
       border: "border-rose-200",
       label: "Đã hủy",
     },
+    renewal: {
+      bg: "bg-emerald-50",
+      text: "text-emerald-700",
+      border: "border-emerald-200",
+      label: "Gia hạn",
+    },
   };
 
   const config =
@@ -57,12 +64,11 @@ export const ContractCard = ({
   onDownload,
   onCancel,
   onRedirectInvoice,
+  onExtend,
 }: ContractCardProps) => {
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
   );
-
-  console.log("CON", contract);
 
   const startDate = new Date(contract.startDate).toLocaleDateString("vi-VN");
   const endDate = new Date(contract.endDate).toLocaleDateString("vi-VN");
@@ -93,7 +99,11 @@ export const ContractCard = ({
             </div>
           </div>
           <div className="flex gap-2 items-center flex-wrap justify-end">
-            <StatusBadge status={contract.status} />
+            {contract.category == "renewal" ? (
+              <StatusBadge status={"renewal"} />
+            ) : (
+              <StatusBadge status={contract.status} />
+            )}
           </div>
         </div>
 
@@ -243,6 +253,21 @@ export const ContractCard = ({
             <span className="font-medium">Hủy hợp đồng</span>
           </Button>
         )}
+
+        {(contract.status === "active" || contract.category === "renewal") && (
+          <>
+            <Button
+              block
+              size="large"
+              onClick={onExtend}
+              className=" bg-[#07b873]! text-white! hover:bg-[#059a60]! border-none! mb-3!"
+            >
+              <WalletCards size={18} />
+              <span className="font-medium">Gia hạn hợp đồng</span>
+            </Button>
+          </>
+        )}
+
         <Button
           block
           size="large"

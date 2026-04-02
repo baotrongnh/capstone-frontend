@@ -66,4 +66,11 @@ export const contractsService = {
     );
     return data;
   },
+  renew: async (id: string, extensionMonths: number) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${id}/renew`,
+      { extensionMonths },
+    );
+    return data;
+  },
 };

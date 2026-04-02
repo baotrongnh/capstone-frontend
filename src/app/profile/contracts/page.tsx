@@ -11,10 +11,17 @@ import ModalAssignContract from "../../../components/modal/modal-assign-contract
 import ModalCancelContract from "../../../components/modal/modal-cancel-contract";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import ModalExtendContract from "@/components/modal/modal-extend-contract";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "draft" | "signed" | "terminated" | "active";
+type StatusFilter =
+  | "all"
+  | "draft"
+  | "signed"
+  | "terminated"
+  | "active"
+  | "renewal";
 
 export default function ContractsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -23,6 +30,7 @@ export default function ContractsPage() {
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showModalCancelContract, setShowModalCancelContract] = useState(false);
+  const [showModalExtendContract, setShowModalExtendContract] = useState(false);
   const router = useRouter();
   const { data, isLoading } = useGetContracts();
 
@@ -32,10 +40,23 @@ export default function ContractsPage() {
 
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
-    return contractsList.filter(
-      (c: ContractWithMembers) => c.status === statusFilter,
-    );
+    else if (statusFilter === "renewal") {
+      return contractsList.filter(
+        (c: ContractWithMembers) => c.category === "renewal",
+      );
+    } else if (statusFilter === "signed") {
+      return contractsList.filter(
+        (c: ContractWithMembers) =>
+          c.status === "signed" || c.status === "active",
+      );
+    } else {
+      return contractsList.filter(
+        (c: ContractWithMembers) => c.status === statusFilter,
+      );
+    }
   }, [contractsList, statusFilter]);
+
+  console.log("first", filteredContracts);
 
   const selectedContract = useMemo(() => {
     return (
@@ -79,6 +100,11 @@ export default function ContractsPage() {
   const handleCancelContract = (contractId: string) => {
     setSelectedContractId(contractId);
     setShowModalCancelContract(true);
+  };
+
+  const handleExtendContract = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setShowModalExtendContract(true);
   };
 
   const handleRedirectInvoice = () => {
@@ -197,7 +223,7 @@ export default function ContractsPage() {
               { label: "Chưa ký", value: "draft" },
               { label: "Đã ký", value: "signed" },
               { label: "Đã hủy", value: "terminated" },
-              { label: "Đã kích hoạt", value: "active" },
+              { label: "Gia hạn", value: "renewal" },
             ]}
           />
         </div>
@@ -220,6 +246,7 @@ export default function ContractsPage() {
             onDownload={() => handleDownloadContract(contract.id)}
             onCancel={() => handleCancelContract(contract.id)}
             onRedirectInvoice={() => handleRedirectInvoice()}
+            onExtend={() => handleExtendContract(contract.id)}
           />
         ))}
       </div>
@@ -233,6 +260,12 @@ export default function ContractsPage() {
       <ModalCancelContract
         showModalCancelContract={showModalCancelContract}
         cancel={() => setShowModalCancelContract(false)}
+        selectContract={selectedContract}
+      />
+
+      <ModalExtendContract
+        isOpen={showModalExtendContract}
+        onClose={() => setShowModalExtendContract(false)}
         selectContract={selectedContract}
       />
     </div>
