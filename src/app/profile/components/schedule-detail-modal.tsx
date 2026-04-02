@@ -6,7 +6,7 @@ import {
     STATUS_COLORS,
     toSafeString,
     toVnTime,
-} from '../../../../utils/schedule-utils'
+} from '../../../utils/schedule-utils'
 import { ScheduleDetailModalProps } from '@/types/viewRequest'
 
 export default function ScheduleDetailModal({

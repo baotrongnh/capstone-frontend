@@ -116,7 +116,7 @@ export default function ProfileSidebar({
   }, [pathname, navigationItems, searchParams]);
 
   return (
-    <div className="h-full flex flex-col shadow-sm bg-white">
+    <div className="h-full flex flex-col shadow-sm bg-white rounded-lg overflow-hidden">
       <div className="flex-1 overflow-y-auto p-2">
         <Menu
           mode="inline"
