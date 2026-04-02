@@ -66,4 +66,18 @@ export const contractsService = {
     );
     return data;
   },
+  renew: async (id: string, extensionMonths: number) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${id}/renew`,
+      { extensionMonths },
+    );
+    return data;
+  },
+  addMember: async (nationalId: string, payload: object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${nationalId}/members`,
+      payload,
+    );
+    return data;
+  },
 };

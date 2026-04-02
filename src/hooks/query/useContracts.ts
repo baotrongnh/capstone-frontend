@@ -1,6 +1,7 @@
 import { contractsService } from "@/lib/services/contracts.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
+import { AxiosError } from "axios";
 
 export const useGetContracts = () =>
   useQuery({
@@ -65,6 +66,61 @@ export const useSignCooperationContract = (contractId: string) => {
     },
     onError: (error) => {
       console.error("Error signing cooperation contract:", error);
+    },
+  });
+};
+
+export const useRenewContract = (contractId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (extensionMonths: number) =>
+      contractsService.renew(contractId, extensionMonths),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      message.success("Gia hạn hợp đồng thành công!");
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      const statusCode = error?.response?.status;
+      const backendMessage = error?.response?.data?.message;
+
+      let displayMessage = "Lỗi khi gia hạn hợp đồng";
+
+      if (statusCode === 409) {
+        displayMessage =
+          "Hợp đồng này đã được gia hạn, vui lòng gia hạn hợp đồng 'Gia hạn'.";
+      } else if (backendMessage) {
+        displayMessage = backendMessage;
+      }
+
+      message.error(displayMessage);
+      console.error("Error renewing contract:", error);
+    },
+  });
+};
+
+export const useAddMemberContract = (nationalId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: object) =>
+      contractsService.addMember(nationalId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      message.success("Thêm thành viên vào hợp đồng thành công!");
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      const statusCode = error?.response?.status;
+      const backendMessage = error?.response?.data?.message;
+
+      let displayMessage = "Có lỗi xảy ra khi thêm thành viên vào hợp đồng.";
+
+      if (statusCode === 409) {
+        displayMessage = "Người dùng này đã là thành viên của hợp đồng.";
+      } else if (backendMessage) {
+        displayMessage = backendMessage;
+      }
+
+      message.error(displayMessage);
+      console.error("Error adding member to contract:", error);
     },
   });
 };

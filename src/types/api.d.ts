@@ -969,6 +969,26 @@ export interface paths {
         patch: operations["ContractsController_activate"];
         trace?: never;
     };
+    "/api/v1/contracts/{id}/activate-paid": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Activate contract after deposit paid
+         * @description Activate pending/signed contract when deposit invoice is paid and contract is not expired.
+         */
+        patch: operations["ContractsController_activatePaid"];
+        trace?: never;
+    };
     "/api/v1/contracts/{id}/terminate": {
         parameters: {
             query?: never;
@@ -3672,6 +3692,22 @@ export interface components {
             images?: string[] | null;
             videoTourUrl?: string | null;
             yearBuilt?: number | null;
+            /**
+             * @description Cho biet user hien tai co du dieu kien danh gia apartment hay khong
+             * @example false
+             */
+            canRateApartment: boolean;
+            /**
+             * @description Cho biet user hien tai da danh gia apartment nay chua
+             * @example false
+             */
+            hasRatedApartment: boolean;
+            /**
+             * @description Ly do user hien tai khong the danh gia apartment
+             * @example no_active_contract
+             * @enum {string|null}
+             */
+            ratingEligibilityReason?: "not_authenticated" | "not_user_role" | "no_active_contract" | "already_rated" | null;
             ownerId?: string | null;
             approvedByOperatorId?: string | null;
             /** Format: date-time */
@@ -4330,12 +4366,22 @@ export interface components {
             id: string;
             /** @example A101 */
             apartmentNumber: string;
+            /** @example Toa nha IntelliServOps Tower */
+            buildingName?: string | null;
             /** @example 26728 */
             wardCode?: number | null;
             /** @example 79 */
             provinceCode?: number | null;
             /** @example 12 Nguyễn Huệ, Phường Bến Nghé */
             streetAddress?: string | null;
+            /** @example 2 */
+            numberOfBedrooms?: number | null;
+            /** @example 1 */
+            numberOfBathrooms?: number | null;
+            /** @example 55.5 */
+            totalArea?: number | null;
+            /** @example 50.2 */
+            usableArea?: number | null;
         };
         ContractListMemberUserDto: {
             id: string;
@@ -4356,6 +4402,8 @@ export interface components {
             contractNumber: string;
             /** @example active */
             status: string;
+            /** @example renewal */
+            category: string;
             /** Format: date-time */
             startDate: string;
             /** Format: date-time */
@@ -4366,10 +4414,34 @@ export interface components {
             createdAt: string;
             /** @example true */
             hasPdf: boolean;
+            terminationReason?: string | null;
+            /** @example false */
+            isDepositPaid: boolean;
+            /** Format: date-time */
+            depositPaidAt?: string | null;
+            /** @example false */
+            isRenewed: boolean;
+            latestRenewalContractId?: string | null;
             /** @example /contracts/pdf/view?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 */
             pdfUrl?: string | null;
             apartment: components["schemas"]["ContractApartmentDto"];
             members: components["schemas"]["ContractListMemberDto"][];
+        };
+        ContractCreatorDto: {
+            id: string;
+            /** @example Le Van B */
+            fullName: string;
+        };
+        ContractInvoiceDto: {
+            id: string;
+            /** @example INV-202604-00001 */
+            invoiceNumber: string;
+            /** @example 35000000.00 */
+            totalAmount: string;
+            /** @example pending */
+            status: string;
+            /** Format: date-time */
+            dueDate: string;
         };
         ContractMemberUserDto: {
             id: string;
@@ -4384,6 +4456,8 @@ export interface components {
         };
         ContractMemberDto: {
             id: string;
+            userId: string;
+            rentalContractId: string;
             /** @example primary */
             memberType: string;
             isPrimaryContact: boolean;
@@ -4393,10 +4467,21 @@ export interface components {
             moveOutDate?: string | null;
             /** @example active */
             status: string;
+            /** @example true */
+            notificationEnabled: boolean;
+            /** @example full */
+            accessLevel: string;
+            /** @example 50.00 */
+            sharePercentage?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
             user: components["schemas"]["ContractMemberUserDto"];
         };
         ContractDetailDto: {
             id: string;
+            apartmentId: string;
             /** @example CTR-202601-00001 */
             contractNumber: string;
             /** Format: date-time */
@@ -4429,6 +4514,9 @@ export interface components {
             landlordPhone?: string | null;
             /** @example active */
             status: string;
+            /** @example normal */
+            category: string;
+            renewedFromContractId?: string | null;
             /** Format: date-time */
             signedDate?: string | null;
             contractDocumentUrl?: string | null;
@@ -4442,15 +4530,25 @@ export interface components {
             hasLandlordSignature: boolean;
             /** @example false */
             hasTenantSignature: boolean;
+            /** @example false */
+            isDepositPaid: boolean;
+            /** Format: date-time */
+            depositPaidAt?: string | null;
+            /** @example false */
+            isRenewed: boolean;
+            latestRenewalContractId?: string | null;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
             earlyTerminationFee?: string | null;
+            createdByStaffId?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
             apartment: components["schemas"]["ContractApartmentDto"];
+            createdByStaff?: components["schemas"]["ContractCreatorDto"] | null;
+            invoices: components["schemas"]["ContractInvoiceDto"][];
             members: components["schemas"]["ContractMemberDto"][];
         };
         UploadContractPdfDto: {
@@ -9817,6 +9915,52 @@ export interface operations {
             };
             /** @description Contract not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContractsController_activatePaid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contract activated after deposit payment validation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["ContractDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Contract not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Contract cannot be activated because it is expired, invalid status, or deposit not paid */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
