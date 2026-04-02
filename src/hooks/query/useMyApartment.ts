@@ -1,8 +1,8 @@
 import { apartmentService } from "@/lib/services/apartment.service"
-import type { OwnerApartmentResponse } from "@/lib/services/apartment.service" 
+import type { OwnerApartmentResponse } from "@/lib/services/apartment.service"
 import { useQuery } from "@tanstack/react-query"
 
-type OwnerApartmentItem = NonNullable<OwnerApartmentResponse["data"]>[number]
+type OwnerApartmentItem = OwnerApartmentResponse
 
 export const useMyApartment = (id: string | number) => {
     return useQuery<OwnerApartmentItem[]>({

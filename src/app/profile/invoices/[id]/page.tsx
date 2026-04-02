@@ -4,7 +4,7 @@ import { CreditCardOutlined } from '@ant-design/icons'
 import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
 import { useCreatePayOSPaymentLink } from '@/hooks/query/usePayments'
-import { createDetailRows, createItemColumns, createPaymentColumns } from './components/invoice-detail-config'
+import { createDetailRows, createItemColumns, createPaymentColumns } from '../../components/invoice-detail-config'
 import type { ApiErrorResponse } from '@/types/auth'
 import {
     formatInvoiceAmount,
@@ -60,10 +60,10 @@ export default function InvoiceDetailPage() {
         }
 
         const callbackBaseUrl = process.env.NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || window.location.origin
-        if (callbackBaseUrl.includes('localhost')) {
-            message.error(t('errors.invalidReturnUrl'))
-            return
-        }
+        // if (callbackBaseUrl.includes('localhost')) {
+        //     message.error(t('errors.invalidReturnUrl'))
+        //     return
+        // }
 
         const returnUrl = `${callbackBaseUrl}/payment/success?invoiceId=${encodeURIComponent(invoice.id)}`
         const cancelUrl = `${callbackBaseUrl}/payment/cancel?invoiceId=${encodeURIComponent(invoice.id)}`
