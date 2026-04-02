@@ -60,10 +60,10 @@ export default function InvoiceDetailPage() {
         }
 
         const callbackBaseUrl = process.env.NEXT_PUBLIC_PAYMENT_CALLBACK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || window.location.origin
-        if (callbackBaseUrl.includes('localhost')) {
-            message.error(t('errors.invalidReturnUrl'))
-            return
-        }
+        // if (callbackBaseUrl.includes('localhost')) {
+        //     message.error(t('errors.invalidReturnUrl'))
+        //     return
+        // }
 
         const returnUrl = `${callbackBaseUrl}/payment/success?invoiceId=${encodeURIComponent(invoice.id)}`
         const cancelUrl = `${callbackBaseUrl}/payment/cancel?invoiceId=${encodeURIComponent(invoice.id)}`
