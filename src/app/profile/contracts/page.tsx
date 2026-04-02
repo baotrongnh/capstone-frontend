@@ -12,6 +12,7 @@ import ModalCancelContract from "../../../components/modal/modal-cancel-contract
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import ModalExtendContract from "@/components/modal/modal-extend-contract";
+import ModalAddMember from "@/components/modal/modal-addMember-contract";
 
 const { Title, Text } = Typography;
 
@@ -29,6 +30,7 @@ export default function ContractsPage() {
     null,
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showModalCancelContract, setShowModalCancelContract] = useState(false);
   const [showModalExtendContract, setShowModalExtendContract] = useState(false);
   const router = useRouter();
@@ -105,6 +107,11 @@ export default function ContractsPage() {
   const handleExtendContract = (contractId: string) => {
     setSelectedContractId(contractId);
     setShowModalExtendContract(true);
+  };
+
+  const handleAddMember = (contractId: string) => {
+    setSelectedContractId(contractId);
+    setShowAddMemberModal(true);
   };
 
   const handleRedirectInvoice = () => {
@@ -247,6 +254,7 @@ export default function ContractsPage() {
             onCancel={() => handleCancelContract(contract.id)}
             onRedirectInvoice={() => handleRedirectInvoice()}
             onExtend={() => handleExtendContract(contract.id)}
+            onAddMember={() => handleAddMember(contract.id)}
           />
         ))}
       </div>
@@ -266,6 +274,12 @@ export default function ContractsPage() {
       <ModalExtendContract
         isOpen={showModalExtendContract}
         onClose={() => setShowModalExtendContract(false)}
+        selectContract={selectedContract}
+      />
+
+      <ModalAddMember
+        open={showAddMemberModal}
+        onClose={() => setShowAddMemberModal(false)}
         selectContract={selectedContract}
       />
     </div>

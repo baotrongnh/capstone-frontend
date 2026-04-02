@@ -73,4 +73,11 @@ export const contractsService = {
     );
     return data;
   },
+  addMember: async (nationalId: string, payload: object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${nationalId}/members`,
+      payload,
+    );
+    return data;
+  },
 };

@@ -10,6 +10,7 @@ interface ContractCardProps {
   onRedirectInvoice: () => void;
   onCancel: () => void;
   onExtend: () => void;
+  onAddMember: () => void;
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -65,10 +66,13 @@ export const ContractCard = ({
   onCancel,
   onRedirectInvoice,
   onExtend,
+  onAddMember,
 }: ContractCardProps) => {
   const primaryTenant = contract.members?.find(
     (m) => m.memberType === "primary",
   );
+
+  console.log("DA", contract);
 
   const startDate = new Date(contract.startDate).toLocaleDateString("vi-VN");
   const endDate = new Date(contract.endDate).toLocaleDateString("vi-VN");
@@ -161,7 +165,30 @@ export const ContractCard = ({
             </div>
           </div>
 
-          {contract.status === "signed" && (
+          {contract.members?.length >= 0 && (
+            <div className="flex gap-3.5">
+              <div className="flex justify-center w-6 pt-0.5">
+                <User size={18} className="text-gray-400" />
+              </div>
+              <div className="flex flex-col flex-1 gap-2">
+                <span className="text-xs text-gray-500">Thành viên khác</span>
+                <div className="space-y-2">
+                  {contract.members?.map((member, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="text-sm font-medium text-gray-800 mb-2"
+                      >
+                        {index + 1}/ {member.user?.fullName || "Chưa cập nhật"}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {contract.status === "signed" && contract.isDepositPaid == false && (
             <div className="flex bg-blue-50 border border-blue-100 p-3 rounded-lg shadow-sm">
               <div className="w-full">
                 <div className="flex items-center gap-3">
@@ -186,7 +213,7 @@ export const ContractCard = ({
             </div>
           )}
 
-          {contract.status === "active" && (
+          {contract.status === "active" && contract.isDepositPaid === true && (
             <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
               <div className="w-full">
                 <div className="flex items-center gap-3">
@@ -224,7 +251,7 @@ export const ContractCard = ({
           size="large"
           style={{ marginBottom: 10 }}
           onClick={onView}
-          className="flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
+          className="flex items-center justify-center gap-2 h-9! rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
         >
           <Eye size={18} />
           {(contract.status === "signed" ||
@@ -247,23 +274,37 @@ export const ContractCard = ({
             size="large"
             style={{ marginBottom: 10 }}
             onClick={onCancel}
-            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-11 rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
+            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-9! rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
           >
             <DeleteOutlined size={18} />
             <span className="font-medium">Hủy hợp đồng</span>
           </Button>
         )}
 
-        {(contract.status === "active" || contract.category === "renewal") && (
+        {contract.isRenewed === false && contract.status === "active" && (
           <>
             <Button
               block
               size="large"
               onClick={onExtend}
-              className=" bg-[#07b873]! text-white! hover:bg-[#059a60]! border-none! mb-3!"
+              className=" bg-[#07b873]! text-white! h-9! hover:bg-[#059a60]! border-none! mb-3!"
             >
               <WalletCards size={18} />
               <span className="font-medium">Gia hạn hợp đồng</span>
+            </Button>
+          </>
+        )}
+
+        {contract.status == "draft" && (
+          <>
+            <Button
+              block
+              size="large"
+              onClick={onAddMember}
+              className=" bg-yellow-500! text-white! h-9! hover:bg-yellow-600! border-none! mb-3!"
+            >
+              <User size={18} />
+              <span className="font-medium">Thêm thành viên</span>
             </Button>
           </>
         )}
@@ -272,7 +313,7 @@ export const ContractCard = ({
           block
           size="large"
           onClick={onDownload}
-          className="flex items-center justify-center gap-2 h-11 rounded-xl shadow-sm shadow-blue-200 border-none "
+          className="flex items-center justify-center gap-2 h-9! rounded-xl shadow-sm shadow-blue-200 border-none "
         >
           <DownloadOutlined size={18} />
           <span className="font-medium">Tải hợp đồng</span>

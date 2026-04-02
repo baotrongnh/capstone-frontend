@@ -115,3 +115,11 @@ export const useVerifyIdentity = () => {
     },
   });
 };
+
+export const useSearchNational = (id: string) => {
+  return useQuery({
+    queryKey: ["user", "search-national", id],
+    queryFn: () => userService.searchNational(id),
+    enabled: !!id,
+  });
+};
