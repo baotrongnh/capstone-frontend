@@ -12,9 +12,9 @@ import {
 } from '@ant-design/icons'
 import { Card, Col, Descriptions, Empty, Row, Statistic, Tag } from 'antd'
 import { useTranslations } from 'next-intl'
-import { AdditionalInfoCard } from './components/additional-info-card'
-import { ApartmentGallery } from './components/apartment-gallery'
-import type { OwnerApartmentItem } from './components/types'
+import { AdditionalInfoCard } from '../components/additional-info-card'
+import { ApartmentGallery } from '../components/apartment-gallery'
+import type { OwnerApartmentItem } from '../components/types'
 
 type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'
 
@@ -144,7 +144,7 @@ export default function MyApartmentPage() {
 
             <Card
                 className="border-blue-200 bg-linear-to-br from-blue-50 to-sky-50"
-                style={{marginBottom: 12, marginTop: 12}}
+                style={{ marginBottom: 12, marginTop: 12 }}
                 title={<span className="flex items-center gap-2 text-blue-900"><HomeOutlined /> {t('apartmentInfo')}</span>}
             >
                 <Descriptions bordered column={1} size="middle">
@@ -179,9 +179,9 @@ export default function MyApartmentPage() {
 
             <AdditionalInfoCard apartment={rawApartment} t={t} />
 
-            <Card 
-            className="border-emerald-200 bg-emerald-50/60"
-            style={{marginBottom: 12, marginTop: 12}}
+            <Card
+                className="border-emerald-200 bg-emerald-50/60"
+                style={{ marginBottom: 12, marginTop: 12 }}
             >
                 <Statistic
                     title={t('depositAmount')}

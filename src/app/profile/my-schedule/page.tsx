@@ -6,9 +6,9 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { Alert, Empty } from 'antd'
 import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
-import ScheduleCalendar from './components/schedule-calendar'
-import ScheduleDetailModal from './components/schedule-detail-modal'
-import ScheduleSummary from './components/schedule-summary'
+import ScheduleCalendar from '../components/schedule-calendar'
+import ScheduleDetailModal from '../components/schedule-detail-modal'
+import ScheduleSummary from '../components/schedule-summary'
 import {
     UPCOMING_STATUSES,
     buildAppointmentsByDate,

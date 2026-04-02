@@ -4,7 +4,7 @@ import { CreditCardOutlined } from '@ant-design/icons'
 import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
 import { useCreatePayOSPaymentLink } from '@/hooks/query/usePayments'
-import { createDetailRows, createItemColumns, createPaymentColumns } from './components/invoice-detail-config'
+import { createDetailRows, createItemColumns, createPaymentColumns } from '../../components/invoice-detail-config'
 import type { ApiErrorResponse } from '@/types/auth'
 import {
     formatInvoiceAmount,
