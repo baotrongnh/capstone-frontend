@@ -38,3 +38,33 @@ export const useCancelContract = (contractId: string) => {
     },
   });
 };
+
+export const useCancelCooperation = (cooperationId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (reason: string) =>
+      contractsService.cancelCooperation(cooperationId, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      message.success("Hợp đồng hợp tác hủy thành công!");
+    },
+    onError: (error) => {
+      console.error("Error canceling cooperation:", error);
+    },
+  });
+};
+
+export const useSignCooperationContract = (contractId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (signatureData: object) =>
+      contractsService.signCooperationContract(contractId, signatureData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      message.success("Ký hợp đồng hợp tác thành công!");
+    },
+    onError: (error) => {
+      console.error("Error signing cooperation contract:", error);
+    },
+  });
+};

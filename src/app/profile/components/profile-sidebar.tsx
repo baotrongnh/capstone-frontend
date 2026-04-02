@@ -13,7 +13,11 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { ProfileNavItem, ProfileRole, ProfileSidebarProps } from "@/types/profile";
+import {
+  ProfileNavItem,
+  ProfileRole,
+  ProfileSidebarProps,
+} from "@/types/profile";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 
@@ -41,10 +45,10 @@ const getNavigationItems = (
       path: "/profile/contracts",
     },
     {
-      key: 'my-schedule',
-      label: t('sidebar.mySchedule'),
+      key: "my-schedule",
+      label: t("sidebar.mySchedule"),
       icon: <CalendarOutlined />,
-      path: '/profile/my-schedule',
+      path: "/profile/my-schedule",
     },
     {
       key: "Invoices",
@@ -87,10 +91,7 @@ export default function ProfileSidebar({
   const searchParams = useSearchParams();
   const t = useTranslations("Profile");
 
-  const navigationItems = useMemo(
-    () => getNavigationItems(role, t),
-    [role, t],
-  );
+  const navigationItems = useMemo(() => getNavigationItems(role, t), [role, t]);
 
   const menuItems = navigationItems.map((item) => ({
     key: item.key,
@@ -108,8 +109,8 @@ export default function ProfileSidebar({
       return "Invoices";
     }
 
-    const matchedItem = navigationItems.find((item) =>
-      pathname === item.path || pathname.startsWith(`${item.path}/`),
+    const matchedItem = navigationItems.find(
+      (item) => pathname === item.path || pathname.startsWith(`${item.path}/`),
     );
     return matchedItem?.key || "account";
   }, [pathname, navigationItems, searchParams]);

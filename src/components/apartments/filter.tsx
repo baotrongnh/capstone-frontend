@@ -5,10 +5,12 @@ import { useProvinces, useWards } from '@/hooks/query/useAddress'
 import { ApartmentSearchQueryParams, FurnishingType } from '@/lib/services/apartment.service'
 import { formatArea, formatPrice } from '@/utils/format'
 import { normalizeVietnamese } from '@/utils/text'
-import { Checkbox, Divider, Input, InputNumber, Select, Slider } from 'antd'
+import { Divider, Input, InputNumber, Select, Slider } from 'antd'
 import { Search, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+
+const INVALID_BEDROOM_KEYS = new Set(['e', 'E', '+', '-', '.'])
 
 const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
      unfurnished: 'furnishingOptions.unfurnished',
@@ -16,8 +18,13 @@ const FURNISHING_TRANSLATION_KEY: Record<FurnishingType, string> = {
      fully_furnished: 'furnishingOptions.fully_furnished',
 }
 
-export default function Filter({ onFilterChange }:
-     { onFilterChange: (filters: ApartmentSearchQueryParams | null) => void }) {
+const FURNISHING_OPTIONS: FurnishingType[] = ['unfurnished', 'semi_furnished', 'fully_furnished']
+
+type FilterProps = {
+     onFilterChange: (filters: ApartmentSearchQueryParams | null) => void
+}
+
+export default function Filter({ onFilterChange }: FilterProps) {
      const t = useTranslations('ApartmentFilter')
      const [keyword, setKeyword] = useState('')
 
@@ -85,11 +92,21 @@ export default function Filter({ onFilterChange }:
           onFilterChange({ minBedrooms: value ?? undefined, maxBedrooms: value ?? undefined })
      }
 
-     const handleFurnishingChange = (value: FurnishingType, checked: boolean) => {
-          const next = checked ? value : undefined
-          setFurnishing(next)
-          onFilterChange({ furnishingStatus: next })
+     const handleFurnishingChange = (value?: FurnishingType) => {
+          setFurnishing(value)
+          onFilterChange({ furnishingStatus: value })
      }
+
+     const handleBedroomKeyDown: React.KeyboardEventHandler<HTMLInputElement> = event => {
+          if (INVALID_BEDROOM_KEYS.has(event.key)) {
+               event.preventDefault()
+          }
+     }
+
+     const furnishingOptions = FURNISHING_OPTIONS.map(option => ({
+          label: t(FURNISHING_TRANSLATION_KEY[option]),
+          value: option,
+     }))
 
      return (
           <div className="space-y-5 p-2 h-screen sticky">
@@ -199,9 +216,11 @@ export default function Filter({ onFilterChange }:
                     <InputNumber
                          className="mt-1"
                          min={0}
-                         max={20}
+                         step={1}
+                         precision={0}
                          value={bedrooms}
                          onChange={handleBedroomsChange}
+                         onKeyDown={handleBedroomKeyDown}
                          placeholder="Nhập số phòng ngủ"
                          controls
                          style={{ width: '100%' }}
@@ -213,15 +232,14 @@ export default function Filter({ onFilterChange }:
                {/* Furnishing Status */}
                <div className="space-y-2">
                     <Label>{t('furnishingLabel')}</Label>
-                    {(Object.keys(FURNISHING_TRANSLATION_KEY) as FurnishingType[]).map(option => (
-                         <Checkbox
-                              key={option}
-                              checked={furnishing === option}
-                              onChange={e => handleFurnishingChange(option, e.target.checked)}
-                         >
-                              <span className="text-sm">{t(FURNISHING_TRANSLATION_KEY[option])}</span>
-                         </Checkbox>
-                    ))}
+                    <Select
+                         className="w-full"
+                         value={furnishing}
+                         options={furnishingOptions}
+                         onChange={handleFurnishingChange}
+                         placeholder={t('furnishingLabel')}
+                         allowClear
+                    />
                </div>
           </div>
      )

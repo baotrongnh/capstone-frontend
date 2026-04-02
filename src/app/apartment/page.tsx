@@ -17,6 +17,7 @@ import { useCallback, useState } from 'react'
 
 export default function ApartmentList() {
   const [filters, setFilters] = useState<ApartmentQueryParams>(DEFAULT_APARTMENT_FILTERS)
+  const [filterKey, setFilterKey] = useState(0)
   const [filterOpen, setFilterOpen] = useState(false)
   const { data: dataApartment, isLoading, isError, refetch } = useApartments(filters)
   const t = useTranslations('ApartmentListPage')
@@ -27,6 +28,7 @@ export default function ApartmentList() {
   const updateFilters = useCallback((patch: ApartmentSearchQueryParams | null) => {
     if (!patch) {
       setFilters(DEFAULT_APARTMENT_FILTERS)
+      setFilterKey(prev => prev + 1)
       return
     }
 
@@ -66,7 +68,7 @@ export default function ApartmentList() {
       </div>
 
       <Drawer title='Bộ lọc' placement="left" open={filterOpen} onClose={() => setFilterOpen(false)}>
-        <Filter onFilterChange={updateFilters} />
+        <Filter key={`mobile-${filterKey}`} onFilterChange={updateFilters} />
       </Drawer>
 
       <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 mt-5'>
@@ -74,7 +76,7 @@ export default function ApartmentList() {
         {/* Sidebar Filter (desktop) */}
         <div className='hidden lg:block'>
           <div className='sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2'>
-            <Filter onFilterChange={updateFilters} />
+            <Filter key={`desktop-${filterKey}`} onFilterChange={updateFilters} />
           </div>
         </div>
 
@@ -123,7 +125,7 @@ export default function ApartmentList() {
               <h3 className='text-xl font-semibold mb-2'>Không tìm thấy căn hộ</h3>
               <p className='text-gray-500 mb-6'>Thử thay đổi bộ lọc tìm kiếm.</p>
               <Button
-                onClick={() => setFilters(DEFAULT_APARTMENT_FILTERS)}
+                onClick={() => updateFilters(null)}
               >
                 Xóa bộ lọc
               </Button>
