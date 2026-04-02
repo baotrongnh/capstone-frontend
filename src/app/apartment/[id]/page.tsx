@@ -452,7 +452,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <div className="flex flex-wrap gap-2">
             {apt.amenities.map((item, i) => (
               <Tag key={i} className="px-3 py-1 text-sm">
-                {item}
+                {item.name}
               </Tag>
             ))}
           </div>
