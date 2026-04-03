@@ -44,16 +44,23 @@ export default function ContractsPage() {
     if (statusFilter === "all") return contractsList;
     else if (statusFilter === "renewal") {
       return contractsList.filter(
-        (c: ContractWithMembers) => c.category === "renewal",
+        (c: ContractWithMembers) =>
+          c.category === "renewal" && c.status !== "terminated",
       );
     } else if (statusFilter === "signed") {
       return contractsList.filter(
         (c: ContractWithMembers) =>
-          c.status === "signed" || c.status === "active",
+          (c.status === "signed" || c.status === "active") &&
+          c.category !== "renewal",
+      );
+    } else if (statusFilter === "terminated") {
+      return contractsList.filter(
+        (c: ContractWithMembers) => c.status === "terminated",
       );
     } else {
       return contractsList.filter(
-        (c: ContractWithMembers) => c.status === statusFilter,
+        (c: ContractWithMembers) =>
+          c.status === statusFilter && c.category !== "renewal",
       );
     }
   }, [contractsList, statusFilter]);
