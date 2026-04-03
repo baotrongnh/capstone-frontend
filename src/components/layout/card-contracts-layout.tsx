@@ -103,7 +103,8 @@ export const ContractCard = ({
             </div>
           </div>
           <div className="flex gap-2 items-center flex-wrap justify-end">
-            {contract.category == "renewal" ? (
+            {contract.category == "renewal" &&
+            contract.status !== "terminated" ? (
               <StatusBadge status={"renewal"} />
             ) : (
               <StatusBadge status={contract.status} />
@@ -229,6 +230,23 @@ export const ContractCard = ({
               </div>
             </div>
           )}
+
+          {contract.isDepositPaid === true && contract.status !== "active" && (
+            <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
+              <div className="w-full">
+                <div className="flex items-center gap-3">
+                  <div className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+                  </div>
+                  <p className="text-sm font-medium text-green-800">
+                    <span className="font-bold mr-1">Lưu ý:</span>
+                    Hợp đồng đã thanh toán và đang chờ kích hoạt!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -268,18 +286,20 @@ export const ContractCard = ({
           )}
         </Button>
 
-        {contract.status != "terminated" && contract.status !== "active" && (
-          <Button
-            block
-            size="large"
-            style={{ marginBottom: 10 }}
-            onClick={onCancel}
-            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-9! rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
-          >
-            <DeleteOutlined size={18} />
-            <span className="font-medium">Hủy hợp đồng</span>
-          </Button>
-        )}
+        {contract.status != "terminated" &&
+          contract.status !== "active" &&
+          contract.isDepositPaid === false && (
+            <Button
+              block
+              size="large"
+              style={{ marginBottom: 10 }}
+              onClick={onCancel}
+              className="flex items-center text-white! bg-red-500! justify-center gap-2 h-9! rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
+            >
+              <DeleteOutlined size={18} />
+              <span className="font-medium">Hủy hợp đồng</span>
+            </Button>
+          )}
 
         {contract.isRenewed === false && contract.status === "active" && (
           <>

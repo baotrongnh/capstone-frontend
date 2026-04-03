@@ -66,10 +66,10 @@ export const contractsService = {
     );
     return data;
   },
-  renew: async (id: string, extensionMonths: number) => {
+  renew: async (id: string, body: object) => {
     const { data } = await apiClient.post(
       `${endpoints.contracts}/${id}/renew`,
-      { extensionMonths },
+      body,
     );
     return data;
   },

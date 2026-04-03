@@ -73,8 +73,7 @@ export const useSignCooperationContract = (contractId: string) => {
 export const useRenewContract = (contractId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (extensionMonths: number) =>
-      contractsService.renew(contractId, extensionMonths),
+    mutationFn: (body: object) => contractsService.renew(contractId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       message.success("Gia hạn hợp đồng thành công!");
