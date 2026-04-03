@@ -6,6 +6,8 @@ export const createEndpoints = (resource: string) => {
 
 export const endpoints = {
   apartments: createEndpoints("apartments"),
+  userApartments: createEndpoints("user-apartments"),
+  chat: createEndpoints("chat"),
   viewRequest: createEndpoints("viewing-requests"),
   apartmentPolicies: createEndpoints("apartment-policies/apartment"),
   contracts: createEndpoints("contracts"),

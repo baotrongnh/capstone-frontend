@@ -1,30 +1,34 @@
 "use client";
+import ModalVerify from "@/components/modal/modal-verify";
 import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
-import bg from "../../../public/img/banner10.jpg";
-import { useForm } from "antd/es/form/Form";
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Upload,
-  message,
-  Alert,
-} from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { uploadFile } from "@/utils/uploadFile";
-import Image from "next/image";
-import banner from "../../../public/img/partner.jpg";
-import { useCreateCooperation } from "@/hooks/query/useApartments";
-import { useProvinces, useWards } from "@/hooks/query/useAddress";
-import { useState } from "react";
-import { useAuthStore } from "@/stores/auth.store";
-import ModalVerify from "@/components/modal/modal-verify";
-import { useRouter } from "next/navigation";
-import { Route } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
+import { useProvinces, useWards } from "@/hooks/query/useAddress";
+import { useCreateCooperation } from "@/hooks/query/useApartments";
+import { useAuthStore } from "@/stores/auth.store";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Select, Upload } from "antd";
+import type { UploadFile } from "antd/es/upload/interface"; // Thêm type UploadFile
+import { useForm } from "antd/es/form/Form";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import bg from "../../../public/img/banner10.jpg";
+import banner from "../../../public/img/partner.jpg";
+
+interface LocationData {
+  code: number | string;
+  name: string;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string | string[];
+    };
+  };
+  message?: string;
+}
 
 export default function PartnerContact() {
   const [form] = useForm();
@@ -45,6 +49,7 @@ export default function PartnerContact() {
   >();
 
   const { data: wardCode } = useWards(selectedProvince);
+
   const handleRegister = async () => {
     if (user?.isVerified === true && user?.identity !== null) {
       try {
@@ -56,6 +61,7 @@ export default function PartnerContact() {
         formData.append("buildingName", data.buildingName);
         formData.append("apartmentNumber", data.apartmentNumber);
         formData.append("totalArea", String(data.totalArea));
+        formData.append("usableArea", String(data.usableArea));
         formData.append("numberOfBathrooms", String(data.numberOfBathrooms));
         formData.append("numberOfBedrooms", String(data.numberOfBedrooms));
         formData.append("baseRentPrice", String(data.baseRentPrice));
@@ -69,8 +75,8 @@ export default function PartnerContact() {
         formData.append("latitude", "0");
         formData.append("longitude", "0");
 
-        const currentImages = data.images || [];
-        currentImages.forEach((file: any) => {
+        const currentImages: UploadFile[] = data.images || [];
+        currentImages.forEach((file: UploadFile) => {
           if (file.originFileObj) {
             formData.append("images", file.originFileObj);
           }
@@ -81,15 +87,18 @@ export default function PartnerContact() {
 
         await createCooperation(formData);
         form.resetFields();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.log("Validate / Upload error:", error);
+
+        const err = error as ApiError;
+
         const backendError =
-          error?.response?.data?.message ||
-          error?.message ||
-          "Lỗi không xác định";
+          err?.response?.data?.message || err?.message || "Lỗi không xác định";
+
         const errorMsg = Array.isArray(backendError)
           ? backendError.join(", ")
           : backendError;
+
         setErrorMessage(errorMsg);
       } finally {
         setIsLoading(false);
@@ -112,6 +121,7 @@ export default function PartnerContact() {
   const handleVerify = () => {
     router.push(`${ROUTES.PROFILE}`);
   };
+
   return (
     <>
       <div className="relative bottom-7 h-130 w-full overflow-hidden">
@@ -217,7 +227,7 @@ export default function PartnerContact() {
                 <Select
                   placeholder="Chọn tỉnh/thành"
                   className="h-11"
-                  options={provinces?.map((p: any) => ({
+                  options={provinces?.map((p: LocationData) => ({
                     label: p.name,
                     value: p.code,
                   }))}
@@ -243,7 +253,8 @@ export default function PartnerContact() {
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={wardCode?.map((w: any) => ({
+                  options={wardCode?.map((w: LocationData) => ({
+                    // Fix type any
                     label: w.name,
                     value: w.code,
                   }))}
@@ -262,10 +273,27 @@ export default function PartnerContact() {
               </Form.Item>
 
               <Form.Item
-                label="Tổng diện tích"
+                label="Tổng diện tích (m2)"
                 name="totalArea"
                 rules={[
                   { required: true, message: "Vui lòng nhập tổng diện tích" },
+                  {
+                    pattern: /^[1-9][0-9]*$/,
+                    message: "Diện tích phải là số nguyên > 0",
+                  },
+                ]}
+              >
+                <Input type={"number"} placeholder="VD: 100m2" />
+              </Form.Item>
+
+              <Form.Item
+                label="Diện tích sử dụng (m2)"
+                name="usableArea"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập diện tích sử dụng",
+                  },
                   {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Diện tích phải là số nguyên > 0",

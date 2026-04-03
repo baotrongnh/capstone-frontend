@@ -9,5 +9,5 @@ export const ROUTES = {
 
 export const IMG_URL = {
   APARTMENT_PLACEHOLDER: '/img/apartment-placeholder.png',
-  LOGO: '/img/logo.png'
+  LOGO: '/img/HomeIQ_Logo.png'
 }

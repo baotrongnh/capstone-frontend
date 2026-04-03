@@ -1,22 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useRef, useMemo } from "react";
-import { StarFilled } from "@ant-design/icons";
 import { useApartments } from "@/hooks/query/useApartments";
-import { Button, Image } from "antd";
-import { useAuthStore } from "@/stores/auth.store";
-import ModalBookingSchedule from "../modal/modal-booking-schedule";
-import ModalBooking from "../modal/modal-booking";
-import ModalLoginRequired from "../modal/modal-login-required";
-import ModalVerify from "../modal/modal-verify";
-import { ROUTES } from "@/constants/routes";
-import { UserDetail } from "@/types/user";
 import {
   ApartmentItem,
   ApartmentQueryParams,
 } from "@/lib/services/apartment.service";
-import { useFullAddress } from "@/hooks/query/useAddress";
+import { useAuthStore } from "@/stores/auth.store";
+import { StarFilled } from "@ant-design/icons";
+import { Button, Image } from "antd";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState } from "react";
+import ModalBooking from "../modal/modal-booking";
+import ModalBookingSchedule from "../modal/modal-booking-schedule";
+import ModalLoginRequired from "../modal/modal-login-required";
 export default function PropertiesSection() {
   const router = useRouter();
 
@@ -46,6 +42,8 @@ export default function PropertiesSection() {
   const user = useAuthStore((s) => s.user);
 
   const { data: apartments } = useApartments(params);
+
+  console.log("ADDRE", user);
 
   if (!apartments) {
     return <div>Loading...</div>;
@@ -95,10 +93,6 @@ export default function PropertiesSection() {
     } else {
       setModalReservation(true);
     }
-  };
-
-  const handleVerify = () => {
-    router.push(`${ROUTES.PROFILE}`);
   };
 
   return (

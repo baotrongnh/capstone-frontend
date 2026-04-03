@@ -6,9 +6,9 @@ import {
   CheckCircleOutlined,
   FileTextOutlined,
   HomeOutlined,
-  InfoCircleOutlined,
 } from "@ant-design/icons";
 import {
+  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -16,22 +16,23 @@ import {
   Divider,
   Form,
   Input,
-  InputNumber,
   Modal,
   Row,
   Select,
   Tag,
+  Spin,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ROUTES } from "@/constants/routes";
 import { useFullAddress } from "@/hooks/query/useAddress";
 import { ApartmentItem } from "@/lib/services/apartment.service";
 import { useAuthStore } from "@/stores/auth.store";
 import Link from "next/link";
+import { useSearchNational } from "@/hooks/query/useUser";
 
 interface ModalBookingProps {
   open: boolean;
@@ -59,6 +60,15 @@ export default function ModalBooking({
   const router = useRouter();
   const [formReservations] = useForm();
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState<Map<string, string>>(
+    new Map(),
+  );
+
+  const { data: getNational, isLoading: isSearching } = useSearchNational(
+    searchValue.length === 12 ? searchValue : "",
+  );
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
@@ -72,24 +82,34 @@ export default function ModalBooking({
 
   const { mutateAsync: createReservation } = useCreateReservations();
 
+  useEffect(() => {
+    if (!open) {
+      setSearchValue("");
+      setSelectedMembers(new Map());
+    }
+  }, [open]);
+
   const handleReservations = async () => {
     const values = await formReservations.validateFields();
     const payload = {
       apartmentId: apartmentId,
       desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),
       desiredEndDate: values.desiredEndDate.format("YYYY-MM-DD"),
-      numberOfOccupants: values.numberOfOccupants,
+      additionalMemberNationalIds: values.additionalMemberNationalIds || [],
       specialRequests: values.specialRequests,
     };
+
+    setIsLoading(true);
 
     try {
       await createReservation(payload);
       formReservations.resetFields();
       onClose();
-
       router.push(`${ROUTES.PROFILE}/contracts`);
     } catch (error) {
       console.error("Error creating reservation:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,6 +123,50 @@ export default function ModalBooking({
       const endDate = startDate.add(value, "month");
       formReservations.setFieldValue("desiredEndDate", endDate);
     }
+  };
+
+  const handleSearchChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "");
+    setSearchValue(digitsOnly);
+  };
+
+  const autocompleteOptions = getNational
+    ? [
+        {
+          label: (
+            <div className="flex items-center justify-between w-full">
+              <div>
+                <div className="font-semibold text-gray-900">
+                  {getNational.fullName}
+                </div>
+                <div className="text-sm text-gray-500">
+                  CCCD: {getNational.identity?.nationalId}
+                </div>
+              </div>
+            </div>
+          ),
+          value: getNational.identity?.nationalId || "",
+          nationalId: getNational.identity?.nationalId || "",
+          fullName: getNational.fullName,
+        },
+      ]
+    : [];
+
+  const handleMemberSelect = (
+    value: string,
+    option: { nationalId: string; fullName: string },
+  ) => {
+    const nationalId = option.nationalId;
+    const fullName = option.fullName;
+
+    const newSelected = new Map(selectedMembers);
+    newSelected.set(nationalId, fullName);
+    setSelectedMembers(newSelected);
+
+    const nationalIds = Array.from(newSelected.keys());
+    formReservations.setFieldValue("additionalMemberNationalIds", nationalIds);
+
+    setSearchValue("");
   };
 
   return (
@@ -124,7 +188,8 @@ export default function ModalBooking({
               <Button
                 type="primary"
                 onClick={handleReservations}
-                disabled={!agreeTerms}
+                disabled={!agreeTerms || isLoading}
+                loading={isLoading}
                 className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <CheckCircleOutlined />
@@ -152,7 +217,7 @@ export default function ModalBooking({
           </div>
         </div>
 
-        <div className="p-3 max-h-[80vh]">
+        <div className="p-3 max-h-[88vh]">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -202,7 +267,7 @@ export default function ModalBooking({
             onFinish={handleReservations}
           >
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   name="desiredStartDate"
                   label={
@@ -227,7 +292,7 @@ export default function ModalBooking({
                   />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item
                   name="durationMonths"
                   label={
@@ -248,28 +313,67 @@ export default function ModalBooking({
                 </Form.Item>
               </Col>
 
-              <Col span={8}>
+              <Col span={24}>
                 <Form.Item
-                  name="numberOfOccupants"
+                  name="additionalMemberNationalIds"
                   label={
                     <span className="font-medium text-gray-700">
-                      Số lượng người ở
+                      Thêm thành viên (nếu có)
                     </span>
                   }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số người!",
-                      type: "number",
-                    },
-                  ]}
-                  initialValue={2}
                 >
-                  <InputNumber
-                    min={1}
-                    className="w-full h-10 rounded-lg flex items-center"
-                    placeholder="Nhập số người"
-                  />
+                  <div className="space-y-2">
+                    <AutoComplete
+                      value=""
+                      onSearch={handleSearchChange}
+                      onChange={() => {}}
+                      options={autocompleteOptions}
+                      onSelect={handleMemberSelect}
+                      placeholder="Nhập 12 số CCCD của thành viên"
+                      notFoundContent={
+                        isSearching ? (
+                          <Spin size="small" />
+                        ) : searchValue.length === 12 ? (
+                          <span className="text-gray-500 text-sm">
+                            Không tìm thấy người dùng
+                          </span>
+                        ) : searchValue.length > 0 ? (
+                          <span className="text-gray-500 text-sm">
+                            Vui lòng nhập đủ 12 số
+                          </span>
+                        ) : null
+                      }
+                      className="w-full h-10 rounded-lg"
+                    />
+
+                    {selectedMembers.size > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {Array.from(selectedMembers.entries()).map(
+                          ([nationalId, fullName]) => (
+                            <Tag
+                              key={nationalId}
+                              closable
+                              onClose={() => {
+                                const newSelected = new Map(selectedMembers);
+                                newSelected.delete(nationalId);
+                                setSelectedMembers(newSelected);
+                                const nationalIds = Array.from(
+                                  newSelected.keys(),
+                                );
+                                formReservations.setFieldValue(
+                                  "additionalMemberNationalIds",
+                                  nationalIds,
+                                );
+                              }}
+                              className="bg-blue-50 border-blue-300 text-blue-700"
+                            >
+                              {fullName} ({nationalId})
+                            </Tag>
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </Form.Item>
               </Col>
             </Row>
@@ -314,7 +418,6 @@ export default function ModalBooking({
             {user?.isVerified == true && user?.identity != null ? (
               <>
                 <div className="bg-blue-50/50 rounded-lg p-3 mb-2 flex gap-3 text-sm text-blue-800 mt-5">
-                  <InfoCircleOutlined className="text-blue-500 mt-0.5" />
                   <div className="flex-1 space-y-1">
                     <p className="font-medium m-0">Lưu ý!</p>
                     <ul className="pl-4 m-0 text-blue-700/80 list-disc list-inside">

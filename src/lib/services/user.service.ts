@@ -1,4 +1,10 @@
-import { AiVerification, UpdateUserDto, UpdateUserResponse, UserDetail, UserIdentity } from "@/types/user";
+import {
+  AiVerification,
+  UpdateUserDto,
+  UpdateUserResponse,
+  UserDetail,
+  UserIdentity,
+} from "@/types/user";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
@@ -42,29 +48,38 @@ export const userService = {
     back?: File;
   }): Promise<void> => {
     const formData = new FormData();
-    formData.append('identityCardFront', data.front);
+    formData.append("identityCardFront", data.front);
     if (data.back) {
-      formData.append('identityCardBack', data.back);
+      formData.append("identityCardBack", data.back);
     }
     await apiClient.patch(
       `${endpoints.users}/profile/identity-card`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      { headers: { "Content-Type": "multipart/form-data" } },
     );
   },
 
   verifyIdentity: async (data: {
     identityCardFront: File;
     identityCardBack: File;
-  }): Promise<UserDetail & { identity: UserIdentity; aiVerification: AiVerification }> => {
+  }): Promise<
+    UserDetail & { identity: UserIdentity; aiVerification: AiVerification }
+  > => {
     const formData = new FormData();
-    formData.append('identityCardFront', data.identityCardFront);
-    formData.append('identityCardBack', data.identityCardBack);
+    formData.append("identityCardFront", data.identityCardFront);
+    formData.append("identityCardBack", data.identityCardBack);
     const { data: res } = await apiClient.post(
       `${endpoints.users}/profile/verify-identity`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } },
+      { headers: { "Content-Type": "multipart/form-data" } },
     );
     return res.data;
+  },
+
+  searchNational: async (id: string) => {
+    const { data } = await apiClient.get(
+      `${endpoints.users}/search/by-national-id?nationalId=${id}`,
+    );
+    return data.data;
   },
 };

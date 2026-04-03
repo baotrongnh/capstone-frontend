@@ -25,6 +25,7 @@ export type ContractWithMembers = Omit<
     address: string;
     city: string;
     newAddress: Address;
+    streetAddress: string;
   };
   members: components["schemas"]["ContractMemberDto"][];
   hasPdf?: boolean;
@@ -48,6 +49,34 @@ export const contractsService = {
     const { data } = await apiClient.patch(
       `${endpoints.contracts}/${id}/cancel`,
       { reason },
+    );
+    return data;
+  },
+  cancelCooperation: async (id: string, reason: string) => {
+    const { data } = await apiClient.patch(
+      `${endpoints.contracts}/cooperation/${id}/cancel`,
+      { reason },
+    );
+    return data;
+  },
+  signCooperationContract: async (id: string, signatureData: object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/cooperation/${id}/sign`,
+      signatureData,
+    );
+    return data;
+  },
+  renew: async (id: string, body: object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${id}/renew`,
+      body,
+    );
+    return data;
+  },
+  addMember: async (nationalId: string, payload: object) => {
+    const { data } = await apiClient.post(
+      `${endpoints.contracts}/${nationalId}/members`,
+      payload,
     );
     return data;
   },

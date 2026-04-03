@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Card, Typography, Select, Spin, Empty } from "antd";
-import { Files, FileEdit, FileCheck } from "lucide-react";
+import { Card, Empty, Select, Spin, Typography } from "antd";
+import { AlertCircle, FileCheck, FileEdit, Files } from "lucide-react";
+import { useMemo, useState } from "react";
 
-import { useGetContracts } from "@/hooks/query/useContracts";
-import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { ContractCard } from "./card-contracts-layout";
-import ModalAssignContract from "./modal/modal-assign-contract";
-import ModalCancelContract from "./modal/modal-cancel-contract";
-import { useRouter } from "next/navigation";
+import { CooperationsCard } from "@/components/layout/card-cooperations-layout";
+import ModalAssignCooperations from "@/components/modal/modal-assign-cooperations";
+import ModalCancelCooperations from "@/components/modal/modal-cancel-cooperations";
 import { ROUTES } from "@/constants/routes";
+import { useApartmentOwner } from "@/hooks/query/useApartments";
+import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
+import { useAuthStore } from "@/stores/auth.store";
+import { useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "draft" | "signed" | "terminated" | "active";
+type StatusFilter = "all" | "pending" | "available";
 
-export default function ContractLayout() {
+export default function CooperationsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [selectedContractId, setSelectedContractId] = useState<string | null>(
     null,
@@ -24,48 +25,61 @@ export default function ContractLayout() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showModalCancelContract, setShowModalCancelContract] = useState(false);
   const router = useRouter();
-  const { data, isLoading } = useGetContracts();
 
-  const contractsList = useMemo<ContractWithMembers[]>(() => {
-    return (data?.data ?? []) as ContractWithMembers[];
+  const user = useAuthStore((state) => state.user);
+
+  const { data, isLoading } = useApartmentOwner(user?.id || "");
+
+  const contractsList = useMemo<OwnerApartmentResponse[]>(() => {
+    return (data ?? []) as OwnerApartmentResponse[];
   }, [data]);
 
   const filteredContracts = useMemo(() => {
-    if (statusFilter === "all") return contractsList;
-    return contractsList.filter(
-      (c: ContractWithMembers) => c.status === statusFilter,
+    const baseContracts = contractsList.filter(
+      (c) =>
+        c.status === "pending" ||
+        c.status === "available" ||
+        c.status === "inactive",
     );
+
+    if (statusFilter === "all") {
+      return baseContracts;
+    }
+
+    return baseContracts.filter((c) => c.status === statusFilter);
   }, [contractsList, statusFilter]);
+
+  console.log("MLML", filteredContracts);
 
   const selectedContract = useMemo(() => {
     return (
       contractsList.find(
-        (c: ContractWithMembers) => c.id === selectedContractId,
+        (c: OwnerApartmentResponse) => c.id === selectedContractId,
       ) ?? null
     );
   }, [contractsList, selectedContractId]);
 
-  const handleViewContract = (contractId: string) => {
-    setSelectedContractId(contractId);
+  const handleViewContract = (apartmentId: string) => {
+    setSelectedContractId(apartmentId);
     setShowDetailModal(true);
   };
 
-  const handleDownloadContract = async (contractId: string) => {
-    const contract = contractsList.find((c) => c.id === contractId);
-    if (!contract?.pdfUrl) {
+  const handleDownloadContract = async (apartmentId: string) => {
+    const contract = filteredContracts.find((c) => c.id === apartmentId);
+    if (!contract?.cooperationContract?.cooperationContractPublicPdfUrl) {
       alert("Không tìm thấy file PDF để tải");
       return;
     }
 
     try {
-      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${contract.pdfUrl}`;
+      const pdfUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_API_PREFIX}${contract.cooperationContract.cooperationContractPublicPdfUrl}`;
 
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
 
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `${contract.contractNumber}.pdf`;
+      link.download = `${contract.cooperationContract.contractNumber}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -109,25 +123,38 @@ export default function ContractLayout() {
 
   const stats = [
     {
-      title: "Tổng hợp đồng",
+      title: "Tổng căn hộ",
       value: contractsList.length,
       icon: <Files size={24} />,
       textColor: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      title: "Chưa ký",
-      value: contractsList.filter((c: any) => c.status === "draft").length,
+      title: "Chờ duyệt",
+      value: contractsList.filter(
+        (c: OwnerApartmentResponse) => c.status === "pending",
+      ).length,
       icon: <FileEdit size={24} />,
       textColor: "text-amber-600",
       bgColor: "bg-amber-50",
     },
     {
-      title: "Đã ký",
-      value: contractsList.filter((c: any) => c.status === "active").length,
+      title: "Đã xác nhận",
+      value: contractsList.filter(
+        (c: OwnerApartmentResponse) => c.status === "verified",
+      ).length,
       icon: <FileCheck size={24} />,
       textColor: "text-emerald-600",
       bgColor: "bg-emerald-50",
+    },
+    {
+      title: "Bị từ chối",
+      value: contractsList.filter(
+        (c: OwnerApartmentResponse) => c.status === "rejected",
+      ).length,
+      icon: <AlertCircle size={24} />,
+      textColor: "text-rose-600",
+      bgColor: "bg-rose-50",
     },
   ];
 
@@ -135,14 +162,14 @@ export default function ContractLayout() {
     <div className="space-y-8">
       <div>
         <Title level={2} style={{ marginBottom: 4, color: "#111827" }}>
-          Hợp Đồng Thuê Nhà
+          Hợp Đồng Hợp Tác
         </Title>
         <Text type="secondary" className="text-gray-500">
           Quản lý và ký kỹ thuật số các hợp đồng thuê nhà của bạn
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, index) => (
           <Card
             key={index}
@@ -176,13 +203,12 @@ export default function ContractLayout() {
             size="large"
             style={{ width: "100%", minWidth: "200px" }}
             value={statusFilter}
-            onChange={(value) => setStatusFilter(value)}
+            onChange={(value) => setStatusFilter(value as StatusFilter)}
             options={[
-              { label: "Tất cả hợp đồng", value: "all" },
-              { label: "Chưa ký", value: "draft" },
-              { label: "Đã ký", value: "signed" },
-              { label: "Đã hủy", value: "terminated" },
-              { label: "Đã kích hoạt", value: "active" },
+              { label: "Tất cả căn hộ", value: "all" },
+              { label: "Chưa ký", value: "pending" },
+              { label: "Đã ký", value: "available" },
+              { label: "Đã hủy", value: "inactive" },
             ]}
           />
         </div>
@@ -196,26 +222,35 @@ export default function ContractLayout() {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredContracts.map((contract: ContractWithMembers) => (
-          <ContractCard
-            key={contract.id}
-            contract={contract}
-            onView={() => handleViewContract(contract.id)}
-            onDownload={() => handleDownloadContract(contract.id)}
-            onCancel={() => handleCancelContract(contract.id)}
-            onRedirectInvoice={() => handleRedirectInvoice()}
-          />
-        ))}
-      </div>
+      {filteredContracts.length === 0 ? (
+        <Card className="text-center py-20 border-gray-200 rounded-2xl shadow-sm">
+          <Empty description="Không có căn hộ nào" style={{ marginTop: 24 }} />
+          <Text type="secondary" className="block mt-4">
+            Không có căn hộ phù hợp với bộ lọc được chọn.
+          </Text>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredContracts.map((apartment: OwnerApartmentResponse) => (
+            <CooperationsCard
+              key={apartment.id}
+              contract={apartment}
+              onView={() => handleViewContract(apartment.id)}
+              onCancel={() => handleCancelContract(apartment.id)}
+              onRedirectInvoice={() => handleRedirectInvoice()}
+              onDownload={() => handleDownloadContract(apartment.id)}
+            />
+          ))}
+        </div>
+      )}
 
-      <ModalAssignContract
+      <ModalAssignCooperations
         selectedContract={selectedContract}
         showDetailModal={showDetailModal}
         setShowDetailModal={setShowDetailModal}
       />
 
-      <ModalCancelContract
+      <ModalCancelCooperations
         showModalCancelContract={showModalCancelContract}
         cancel={() => setShowModalCancelContract(false)}
         selectContract={selectedContract}

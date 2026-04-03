@@ -2,6 +2,7 @@
 
 import ModalLoginRequired from '@/components/modal/modal-login-required'
 import { useApartment } from '@/hooks/query/useApartments'
+import { chatService } from '@/lib/services/chat.service'
 import { socket } from '@/lib/socket/socket'
 import { useAuthStore } from '@/stores/auth.store'
 import {
@@ -9,9 +10,10 @@ import {
   ChatConversation,
   ChatConversationDataPayload,
   ChatMessage,
-  ChatMessageDto,
   ChatMode,
+  ChatSocketMessage,
   ChatSendMessagePayload,
+  normalizeChatMessage,
 } from '@/types/chat'
 import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
 import { Avatar, Divider, FloatButton, Space } from 'antd'
@@ -32,11 +34,8 @@ const getInitialChatMode = (): ChatMode => {
   return savedMode === 'support' || savedMode === 'ai' ? savedMode : null
 }
 
-const normalizeMessage = (message: ChatMessageDto | ChatMessage): ChatMessage => {
-  const parsedTimestamp =
-    message.timestamp instanceof Date
-      ? message.timestamp
-      : new Date(message.timestamp)
+const toUiMessage = (message: ChatSocketMessage): ChatMessage => {
+  const parsedTimestamp = new Date(message.timestamp)
 
   return {
     id: message.id,
@@ -50,15 +49,20 @@ const normalizeMessage = (message: ChatMessageDto | ChatMessage): ChatMessage =>
 
 const appendUniqueMessage = (
   currentMessages: ChatMessage[],
-  incomingMessage: ChatMessageDto | ChatMessage,
+  incomingMessage: unknown,
 ) => {
-  const normalized = normalizeMessage(incomingMessage)
-
-  if (currentMessages.some((item) => String(item.id) === String(normalized.id))) {
+  const normalized = normalizeChatMessage(incomingMessage)
+  if (!normalized) {
     return currentMessages
   }
 
-  return [...currentMessages, normalized]
+  const normalizedMessage = toUiMessage(normalized)
+
+  if (currentMessages.some((item) => String(item.id) === String(normalizedMessage.id))) {
+    return currentMessages
+  }
+
+  return [...currentMessages, normalizedMessage]
 }
 
 export default function ChatSupport() {
@@ -71,6 +75,7 @@ export default function ChatSupport() {
   const [mode, setMode] = useState<ChatMode>(getInitialChatMode)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [conversationId, setConversationId] = useState<string | null>(null)
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const isCreatingConversationRef = useRef(false)
 
   const currentApartmentId = pathname.match(/^\/apartment\/([^/]+)$/)?.[1] ?? ''
@@ -81,7 +86,7 @@ export default function ChatSupport() {
   const accentColor = isAiMode ? '#7c3aed' : '#3b82f6'
   const titleText = !mode ? t('selectTitle') : isAiMode ? t('aiTitle') : t('title')
 
-  const pushMessage = useCallback((message: ChatMessageDto | ChatMessage) => {
+  const pushMessage = useCallback((message: unknown) => {
     setMessages((prev) => appendUniqueMessage(prev, message))
   }, [])
 
@@ -92,6 +97,7 @@ export default function ChatSupport() {
 
     isCreatingConversationRef.current = false
     setConversationId(null)
+    setIsLoadingHistory(false)
     setMessages([])
   }, [conversationId])
 
@@ -101,11 +107,12 @@ export default function ChatSupport() {
     }
 
     isCreatingConversationRef.current = true
+    setIsLoadingHistory(true)
 
     socket.emit('chat:create_conversation', {
       title: currentApartment
-        ? `Ho tro can ho ${currentApartment.apartmentNumber}`
-        : 'Hoi dap tu van can ho',
+        ? `Hỗ trợ tư vấn căn hộ ${currentApartment.apartmentNumber}`
+        : 'Hỗ trợ tư vấn căn hộ',
       metadata: currentApartment
         ? { apartmentId: String(currentApartment.id), pagePath: pathname }
         : { pagePath: pathname },
@@ -115,11 +122,18 @@ export default function ChatSupport() {
   const handleConversationCreated = useCallback((conversation: ChatConversation) => {
     isCreatingConversationRef.current = false
     setConversationId(conversation.id)
+    setIsLoadingHistory(true)
     socket.emit('chat:join_conversation', { conversationId: conversation.id })
   }, [])
 
   const handleConversationData = useCallback((payload: ChatConversationDataPayload) => {
-    setMessages(payload.messages.data.map(normalizeMessage))
+    const normalizedMessages = payload.messages.data
+      .map(normalizeChatMessage)
+      .filter((item): item is ChatSocketMessage => Boolean(item))
+      .map(toUiMessage)
+
+    setMessages(normalizedMessages)
+    setIsLoadingHistory(false)
   }, [])
 
   const sendSupportMessage = useCallback((payload: Pick<ChatMessage, 'content' | 'images' | 'apartmentId'>) => {
@@ -158,13 +172,25 @@ export default function ChatSupport() {
 
   const canSendSupportMessage = mode !== 'support' || Boolean(conversationId)
 
+  const ensureSupportConversation = useCallback(() => {
+    if (!isChatOpen || mode !== 'support' || conversationId || isCreatingConversationRef.current || !socket.connected) {
+      return
+    }
+
+    requestSupportConversation()
+  }, [conversationId, isChatOpen, mode, requestSupportConversation])
+
   useEffect(() => {
     const handleConnect = () => {
       console.info('[chat] connected', { socketId: socket.id })
 
       if (mode === 'support' && conversationId) {
+        setIsLoadingHistory(true)
         socket.emit('chat:join_conversation', { conversationId })
+        return
       }
+
+      ensureSupportConversation()
     }
 
     const handleDisconnect = (reason: string) => {
@@ -173,6 +199,7 @@ export default function ChatSupport() {
 
     const handleChatError = (payload: { message: string }) => {
       isCreatingConversationRef.current = false
+      setIsLoadingHistory(false)
       console.error('[chat] server error', payload)
     }
 
@@ -191,15 +218,7 @@ export default function ChatSupport() {
       socket.off('chat:conversation_data', handleConversationData)
       socket.off('chat:new_message', pushMessage)
     }
-  }, [conversationId, handleConversationCreated, handleConversationData, mode, pushMessage])
-
-  useEffect(() => {
-    if (!isChatOpen || mode !== 'support' || conversationId || isCreatingConversationRef.current || !socket.connected) {
-      return
-    }
-
-    requestSupportConversation()
-  }, [conversationId, isChatOpen, mode, requestSupportConversation])
+  }, [conversationId, ensureSupportConversation, handleConversationCreated, handleConversationData, mode, pushMessage])
 
   const handleModeSelect = (selectedMode: 'support' | 'ai') => {
     setMode(selectedMode)
@@ -217,14 +236,28 @@ export default function ChatSupport() {
     }
   }
 
+  const handleOpenChat = () => {
+    if (!user) {
+      setIsLoginModalOpen(true)
+      return
+    }
+
+    setIsChatOpen(true)
+
+    if (mode === 'support' && socket.connected && !conversationId && !isCreatingConversationRef.current) {
+      requestSupportConversation()
+    }
+  }
+
   const handleBack = () => {
     setMode(null)
     resetChatSession()
     localStorage.removeItem(CHAT_MODE_STORAGE_KEY)
   }
 
-  const handleSend = (content: string, images?: string[]) => {
-    sendUserMessage({ content, images })
+  const handleSend = async (content: string, files?: File[]) => {
+    const uploadedImages = files?.length ? await chatService.uploadImages(files) : undefined
+    sendUserMessage({ content, images: uploadedImages })
   }
 
   const handleSendApartment = () => {
@@ -254,7 +287,7 @@ export default function ChatSupport() {
         icon={<CustomerServiceOutlined />}
         type="primary"
         style={{ right: 24, bottom: 24, width: 56, height: 56 }}
-        onClick={() => (user ? setIsChatOpen(true) : setIsLoginModalOpen(true))}
+        onClick={handleOpenChat}
         tooltip={t('supportTooltip')}
       />
 
@@ -277,7 +310,7 @@ export default function ChatSupport() {
               </button>
             </div>
 
-            <ChatMessages messages={messages} />
+            <ChatMessages messages={messages} isLoading={isLoadingHistory} />
             <Divider className="my-0" />
             <ChatInput
               onSend={handleSend}

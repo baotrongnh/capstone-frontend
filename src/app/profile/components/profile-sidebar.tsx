@@ -10,9 +10,14 @@ import {
   FileTextOutlined,
   ApartmentOutlined,
   ContactsOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { ProfileNavItem, ProfileRole, ProfileSidebarProps } from "@/types/profile";
+import {
+  ProfileNavItem,
+  ProfileRole,
+  ProfileSidebarProps,
+} from "@/types/profile";
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 
@@ -38,6 +43,12 @@ const getNavigationItems = (
       label: t("sidebar.myContracts"),
       icon: <ContactsOutlined />,
       path: "/profile/contracts",
+    },
+    {
+      key: "my-schedule",
+      label: t("sidebar.mySchedule"),
+      icon: <CalendarOutlined />,
+      path: "/profile/my-schedule",
     },
     {
       key: "Invoices",
@@ -80,10 +91,7 @@ export default function ProfileSidebar({
   const searchParams = useSearchParams();
   const t = useTranslations("Profile");
 
-  const navigationItems = useMemo(
-    () => getNavigationItems(role, t),
-    [role, t],
-  );
+  const navigationItems = useMemo(() => getNavigationItems(role, t), [role, t]);
 
   const menuItems = navigationItems.map((item) => ({
     key: item.key,
@@ -101,14 +109,14 @@ export default function ProfileSidebar({
       return "Invoices";
     }
 
-    const matchedItem = navigationItems.find((item) =>
-      pathname === item.path || pathname.startsWith(`${item.path}/`),
+    const matchedItem = navigationItems.find(
+      (item) => pathname === item.path || pathname.startsWith(`${item.path}/`),
     );
     return matchedItem?.key || "account";
   }, [pathname, navigationItems, searchParams]);
 
   return (
-    <div className="h-full flex flex-col shadow-sm bg-white">
+    <div className="h-full flex flex-col shadow-sm bg-white rounded-lg overflow-hidden">
       <div className="flex-1 overflow-y-auto p-2">
         <Menu
           mode="inline"
