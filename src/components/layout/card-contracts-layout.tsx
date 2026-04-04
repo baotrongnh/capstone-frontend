@@ -172,7 +172,10 @@ export const ContractCard = ({
                 <User size={18} className="text-gray-400" />
               </div>
               <div className="flex flex-col flex-1 gap-2">
-                <span className="text-xs text-gray-500">Thành viên khác</span>
+                <span className="text-xs text-gray-500">
+                  Thành viên khác (Tối đa:{" "}
+                  {contract.apartment?.numberOfBedrooms} thành viên)
+                </span>
                 <div className="space-y-2">
                   {contract.members?.map((member, index) => {
                     return (

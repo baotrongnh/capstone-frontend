@@ -26,6 +26,7 @@ export type ContractWithMembers = Omit<
     city: string;
     newAddress: Address;
     streetAddress: string;
+    numberOfBedrooms: number;
   };
   members: components["schemas"]["ContractMemberDto"][];
   hasPdf?: boolean;
