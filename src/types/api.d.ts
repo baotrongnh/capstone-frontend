@@ -923,7 +923,7 @@ export interface paths {
         put?: never;
         /**
          * Renew rental contract
-         * @description Create a new draft (unsigned) renewal contract from an existing contract. Request may update important fields, append new members by CCCD, or only provide extensionMonths for automatic new date calculation.
+         * @description Create a new draft (unsigned) renewal contract from an existing contract with 2 options: keep_current (keep old duration and members) or customize (provide extensionMonths and new members by CCCD).
          */
         post: operations["ContractsController_renewContract"];
         delete?: never;
@@ -4537,6 +4537,21 @@ export interface components {
             /** @example false */
             isRenewed: boolean;
             latestRenewalContractId?: string | null;
+            /**
+             * @description Maximum number of additional members that can still be added to this contract based on apartment bedrooms
+             * @example 1
+             */
+            maxAddableMembers: number;
+            /**
+             * @description Maximum occupants allowed for this contract (from apartment bedrooms)
+             * @example 2
+             */
+            maxOccupants: number;
+            /**
+             * @description Current active occupants in this contract
+             * @example 1
+             */
+            currentOccupants: number;
             /** Format: date-time */
             terminationDate?: string | null;
             terminationReason?: string | null;
@@ -4727,87 +4742,35 @@ export interface components {
              * @example 12
              */
             extensionMonths?: number | null;
+            /**
+             * @description Applied renewal option for this request
+             * @example keep_current
+             * @enum {string}
+             */
+            renewalOption: "keep_current" | "customize";
             /** @description New renewed contract in draft status (unsigned) */
             renewedContract: components["schemas"]["ContractDetailDto"];
         };
-        AddContractMemberDto: {
-            /**
-             * @description CCCD number of the user to add into contract
-             * @example 079203001234
-             */
-            nationalId: string;
-            /**
-             * @default co_tenant
-             * @enum {string}
-             */
-            memberType: "primary" | "co_tenant" | "guarantor";
-            /** @example false */
-            isPrimaryContact?: boolean;
-            /**
-             * @description Share percentage
-             * @example 50
-             */
-            sharePercentage?: number;
-        };
         RenewContractDto: {
             /**
-             * @description Contract start date
-             * @example 2026-02-01
-             */
-            startDate?: string;
-            /**
-             * @description Contract end date
-             * @example 2027-02-01
-             */
-            endDate?: string;
-            /**
-             * @description Monthly rent in VND
-             * @example 15000000
-             */
-            monthlyRent?: number;
-            /**
-             * @description Deposit amount in VND
-             * @example 30000000
-             */
-            depositAmount?: number;
-            /**
-             * @description Day of month for payment (1-31)
-             * @example 5
-             */
-            paymentDueDay?: number;
-            /**
-             * @default bank_transfer
+             * @description Renew option. keep_current: keep old duration and members. customize: provide new extensionMonths and optional memberNationalIds.
+             * @example keep_current
              * @enum {string}
              */
-            paymentMethod: "bank_transfer" | "cash" | "e_wallet" | "auto_debit" | "credit_card" | "debit_card";
+            renewalOption: "keep_current" | "customize";
             /**
-             * @description Utilities included in rent
-             * @example {
-             *       "electricity": true,
-             *       "water": true,
-             *       "internet": false
-             *     }
-             */
-            utilitiesIncluded?: Record<string, never>;
-            /**
-             * @description Per-unit utility charges if not included
-             * @example {
-             *       "electricity": 3500,
-             *       "water": 15000
-             *     }
-             */
-            utilitiesCharges?: Record<string, never>;
-            /** @description Contract terms and conditions */
-            contractTerms?: string;
-            /** @description Special conditions */
-            specialConditions?: string;
-            /**
-             * @description Number of months to extend. If startDate/endDate are not provided, system auto-calculates next term from previous endDate.
+             * @description Number of months to extend. Required when renewalOption is customize.
              * @example 12
              */
             extensionMonths?: number;
-            /** @description Additional members to append into renewed contract by CCCD number. */
-            additionalMembers?: components["schemas"]["AddContractMemberDto"][];
+            /**
+             * @description List of member CCCD numbers. Only applied when renewalOption is customize. Final members will be current user + this list, old members are not kept.
+             * @example [
+             *       "079203009999",
+             *       "079203008888"
+             *     ]
+             */
+            memberNationalIds?: string[];
         };
         UpdateContractPdfContentDto: {
             /**
@@ -4953,6 +4916,25 @@ export interface components {
              * @example Khong co nhu cau thue nua
              */
             reason: string;
+        };
+        AddContractMemberDto: {
+            /**
+             * @description CCCD number of the user to add into contract
+             * @example 079203001234
+             */
+            nationalId: string;
+            /**
+             * @default co_tenant
+             * @enum {string}
+             */
+            memberType: "primary" | "co_tenant" | "guarantor";
+            /** @example false */
+            isPrimaryContact?: boolean;
+            /**
+             * @description Share percentage
+             * @example 50
+             */
+            sharePercentage?: number;
         };
         InvoiceContractApartmentDto: {
             /** @example apt-123 */

@@ -312,6 +312,21 @@ export default function PartnerContact() {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Năm xây dựng phải là số nguyên > 0",
                   },
+                  {
+                    validator: (_, value) => {
+                      const year = Number(value);
+
+                      if (!value || (year >= 1950 && year <= 2026)) {
+                        return Promise.resolve();
+                      }
+
+                      return Promise.reject(
+                        new Error(
+                          "Năm xây dựng không được lớn hơn 2026 và nhỏ hơn 1950",
+                        ),
+                      );
+                    },
+                  },
                 ]}
               >
                 <Input type={"number"} placeholder="VD: 100m2" />
@@ -325,6 +340,15 @@ export default function PartnerContact() {
                   {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số tầng phải là số nguyên > 0",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 200)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số tầng không được lớn hơn 200"),
+                      );
+                    },
                   },
                 ]}
               >
@@ -343,6 +367,15 @@ export default function PartnerContact() {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số phòng tắm phải là số nguyên > 0",
                   },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 10)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số phòng tắm không được lớn hơn 10"),
+                      );
+                    },
+                  },
                 ]}
               >
                 <Input type={"number"} placeholder="VD: 10" />
@@ -359,6 +392,15 @@ export default function PartnerContact() {
                   {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số phòng ngủ phải là số nguyên > 0",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 20)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số phòng ngủ không được lớn hơn 20"),
+                      );
+                    },
                   },
                 ]}
               >
