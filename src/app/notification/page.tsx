@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 
 export default function NotificationPage() {
-     const { data: notifications, isLoading } = useNotifications()
+     const { data: notifications = [], isLoading } = useNotifications()
 
      return (
           <div className='container py-10'>
@@ -14,12 +14,12 @@ export default function NotificationPage() {
 
                {isLoading && <p className='text-sm text-gray-500'>Đang tải thông báo...</p>}
 
-               {!isLoading && notifications?.length === 0 && (
+               {!isLoading && notifications.length === 0 && (
                     <p className='text-sm text-gray-500'>Hiện chưa có thông báo nào.</p>
                )}
 
                <div className='space-y-3'>
-                    {notifications?.map((item) => (
+                    {notifications.map((item) => (
                          <article
                               key={item.id}
                               className={`rounded-lg border p-4 transition-colors ${item.isRead ? 'border-gray-200 bg-white' : 'border-sky-200 bg-sky-50/60'}`}

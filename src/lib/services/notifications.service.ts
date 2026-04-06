@@ -6,8 +6,8 @@ export type NotificationsResponse = paths['/api/v1/notifications/my']['get']['re
 export type NotificationItem = NonNullable<NotificationsResponse['data']>[number]
 
 export const notificationService = {
-     getAll: async (): Promise<NotificationsResponse> => {
-          const { data } = await apiClient.get(`${endpoints.notifications}/my`)
-          return data.data
+     getAll: async (): Promise<NotificationItem[]> => {
+          const { data } = await apiClient.get<NotificationsResponse>(`${endpoints.notifications}/my`)
+          return data.data ?? []
      }
 }
