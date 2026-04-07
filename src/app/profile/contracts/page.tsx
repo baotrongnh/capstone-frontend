@@ -238,6 +238,7 @@ export default function ContractsPage() {
               { label: "Đã ký", value: "signed" },
               { label: "Đã hủy", value: "terminated" },
               { label: "Gia hạn", value: "renewal" },
+              { label: "Đã hết hạn", value: "expired" },
             ]}
           />
         </div>

@@ -45,6 +45,12 @@ const StatusBadge = ({ status }: { status: string }) => {
       border: "border-emerald-200",
       label: "Gia hạn",
     },
+    expired: {
+      bg: "bg-orange-50",
+      text: "text-orange-700",
+      border: "border-orange-200",
+      label: "Đã hết hạn",
+    },
   };
 
   const config =
