@@ -3,7 +3,12 @@ import type { paths } from './api'
 export type ListPaymentsQuery = paths['/api/v1/payments']['get']['parameters']['query']
 export type ListPaymentsRes = paths['/api/v1/payments']['get']['responses']['200']['content']['application/json']
 export type ListPaymentsPayload = NonNullable<ListPaymentsRes['data']>
-export type PaymentListItem = ListPaymentsPayload[number]
+export type PaymentListItem =
+    ListPaymentsPayload extends Array<infer Item>
+    ? Item
+    : ListPaymentsPayload extends { items: Array<infer Item> }
+    ? Item
+    : never
 export type PaymentStatus = Exclude<NonNullable<ListPaymentsQuery>['status'], undefined>
 
 export type CreatePayOSPaymentLinkBody = paths['/api/v1/payments/payos/create-link']['post']['requestBody']['content']['application/json']

@@ -146,7 +146,7 @@ export default function InvoiceDetailPage() {
     const invoiceStatusLabel = getStatusLabel(invoiceStatus)
     const invoiceTypeLabel = getTypeLabel(invoiceType)
     const statusColor = getStatusColor(invoiceStatus)
-    const canPayNow = ['issued', 'sent', 'overdue', 'partially_paid'].includes(invoiceStatus)
+    const canPayNow = ['issued', 'overdue'].includes(invoiceStatus)
 
     return (
         <div className="space-y-6">
