@@ -176,7 +176,6 @@ export default function ModalAddMember({
             </label>
             <Select
               showSearch
-              value={searchValue || undefined}
               onSearch={handleSearchChange}
               onSelect={handleMemberSelect}
               options={autocompleteOptions}

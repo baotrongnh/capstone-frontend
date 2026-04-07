@@ -323,13 +323,15 @@ export default function ModalBooking({
                   }
                 >
                   <div className="space-y-2">
-                    <AutoComplete
-                      value=""
+                    <Select
+                      showSearch
                       onSearch={handleSearchChange}
-                      onChange={() => {}}
-                      options={autocompleteOptions}
                       onSelect={handleMemberSelect}
+                      options={autocompleteOptions}
+                      optionLabelProp="value"
                       placeholder="Nhập 12 số CCCD của thành viên"
+                      className="w-full"
+                      filterOption={false}
                       notFoundContent={
                         isSearching ? (
                           <Spin size="small" />
@@ -343,7 +345,6 @@ export default function ModalBooking({
                           </span>
                         ) : null
                       }
-                      className="w-full h-10 rounded-lg"
                     />
 
                     {selectedMembers.size > 0 && (
