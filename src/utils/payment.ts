@@ -1,4 +1,4 @@
-import { PAYMENT_STATUS_COLORS, type PaymentStatus } from '@/types/payment'
+import { PAYMENT_STATUS_COLORS, type ListPaymentsRes, type PaymentListItem, type PaymentStatus } from '@/types/payment'
 import { formatLocaleDate, formatLocaleDateTime, formatVndCurrency } from './format'
 import { normalizeText } from './text'
 
@@ -45,3 +45,43 @@ export const toPaymentMethodTranslationKey = (value?: string | null): PaymentMet
 }
 
 export const normalizePaymentStatus = (value: unknown) => normalizeText(value)
+
+export const extractPaymentItems = (response?: ListPaymentsRes): PaymentListItem[] => {
+    const payload = response?.data
+    if (!payload) return []
+    if (Array.isArray(payload)) return payload
+
+    const paginatedPayload = payload as { items?: PaymentListItem[] }
+    return paginatedPayload.items ?? []
+}
+
+export const extractPaymentTotal = (response?: ListPaymentsRes): number => {
+    if (typeof response?.meta?.total === 'number') return response.meta.total
+
+    const payload = response?.data
+    if (!payload) return 0
+    if (Array.isArray(payload)) return payload.length
+
+    const paginatedPayload = payload as { total?: number }
+    return paginatedPayload.total ?? 0
+}
+
+export const extractPaymentPage = (response?: ListPaymentsRes): number | undefined => {
+    if (typeof response?.meta?.page === 'number') return response.meta.page
+
+    const payload = response?.data
+    if (!payload || Array.isArray(payload)) return undefined
+
+    const paginatedPayload = payload as { page?: number }
+    return paginatedPayload.page
+}
+
+export const extractPaymentLimit = (response?: ListPaymentsRes): number | undefined => {
+    if (typeof response?.meta?.limit === 'number') return response.meta.limit
+
+    const payload = response?.data
+    if (!payload || Array.isArray(payload)) return undefined
+
+    const paginatedPayload = payload as { limit?: number }
+    return paginatedPayload.limit
+}

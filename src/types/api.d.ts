@@ -3752,6 +3752,8 @@ export interface components {
             streetAddress?: string | null;
             /** @example 55 */
             totalArea: string;
+            /** @example 4 */
+            maxOccupants: number;
             /** @example 1 */
             numberOfBedrooms: number;
             /** @example 1 */
@@ -3935,6 +3937,8 @@ export interface components {
             longitude?: string | null;
             /** @example 55 */
             totalArea: string;
+            /** @example 4 */
+            maxOccupants: number;
             /** @example 50 */
             usableArea?: string | null;
             /** @example 1 */
@@ -4103,6 +4107,11 @@ export interface components {
              * @example 70
              */
             usableArea?: number;
+            /**
+             * @description Maximum number of occupants allowed in this apartment
+             * @example 4
+             */
+            maxOccupants: number;
             /** @example 2 */
             numberOfBedrooms: number;
             /** @example 2 */
@@ -4204,6 +4213,11 @@ export interface components {
              * @example 70
              */
             usableArea?: number;
+            /**
+             * @description Maximum number of occupants allowed in this apartment
+             * @example 4
+             */
+            maxOccupants: number;
             /** @example 2 */
             numberOfBedrooms: number;
             /** @example 2 */
@@ -4356,6 +4370,11 @@ export interface components {
              * @example 70
              */
             usableArea?: number;
+            /**
+             * @description Maximum number of occupants allowed in this apartment
+             * @example 4
+             */
+            maxOccupants?: number;
             /** @example 2 */
             numberOfBedrooms?: number;
             /** @example 2 */
@@ -4426,6 +4445,11 @@ export interface components {
              * @example 70
              */
             usableArea?: number;
+            /**
+             * @description Maximum number of occupants allowed in this apartment
+             * @example 4
+             */
+            maxOccupants?: number;
             /** @example 2 */
             numberOfBedrooms?: number;
             /** @example 2 */
@@ -4663,6 +4687,8 @@ export interface components {
             streetAddress?: string | null;
             /** @example 2 */
             numberOfBedrooms?: number | null;
+            /** @example 4 */
+            maxOccupants?: number | null;
             /** @example 1 */
             numberOfBathrooms?: number | null;
             /** @example 55.5 */
@@ -4838,12 +4864,12 @@ export interface components {
             isRenewed: boolean;
             latestRenewalContractId?: string | null;
             /**
-             * @description Maximum number of additional members that can still be added to this contract based on apartment bedrooms
+             * @description Maximum number of additional members that can still be added to this contract based on apartment max occupants
              * @example 1
              */
             maxAddableMembers: number;
             /**
-             * @description Maximum occupants allowed for this contract (from apartment bedrooms)
+             * @description Maximum occupants allowed for this contract
              * @example 2
              */
             maxOccupants: number;
