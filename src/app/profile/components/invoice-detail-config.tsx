@@ -138,11 +138,11 @@ export const createDetailRows = ({
             label: t('fields.issueDate'),
             children: formatInvoiceDate(invoiceData.issueDate, locale),
         },
-        {
-            key: 'sentAt',
-            label: t('fields.sentAt'),
-            children: formatInvoiceDate(invoiceData.sentAt ?? undefined, locale),
-        },
+        // {
+        //     key: 'sentAt',
+        //     label: t('fields.sentAt'),
+        //     children: formatInvoiceDate(invoiceData.sentAt ?? undefined, locale),
+        // },
         {
             key: 'paidAt',
             label: t('fields.paidAt'),
@@ -163,32 +163,32 @@ export const createDetailRows = ({
             label: t('fields.totalAmount'),
             children: <Text strong>{formatInvoiceAmount(invoiceData.totalAmount, locale)}</Text>,
         },
-        {
-            key: 'baseRent',
-            label: t('fields.baseRent'),
-            children: formatInvoiceAmount(invoiceData.baseRent, locale),
-        },
-        {
-            key: 'taxAmount',
-            label: t('fields.taxAmount'),
-            children: formatInvoiceAmount(invoiceData.taxAmount, locale),
-        },
-        {
-            key: 'invoiceDocumentUrl',
-            label: t('fields.invoiceDocument'),
-            children: invoiceData.invoiceDocumentUrl ? (
-                <Link href={invoiceData.invoiceDocumentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
-                    {t('actions.openDocument')}
-                </Link>
-            ) : (
-                '-'
-            ),
-        },
-        {
-            key: 'notes',
-            label: t('fields.notes'),
-            children: normalizeText(invoiceData.notes),
-        },
+        // {
+        //     key: 'baseRent',
+        //     label: t('fields.baseRent'),
+        //     children: formatInvoiceAmount(invoiceData.baseRent, locale),
+        // },
+        // {
+        //     key: 'taxAmount',
+        //     label: t('fields.taxAmount'),
+        //     children: formatInvoiceAmount(invoiceData.taxAmount, locale),
+        // },
+        // {
+        //     key: 'invoiceDocumentUrl',
+        //     label: t('fields.invoiceDocument'),
+        //     children: invoiceData.invoiceDocumentUrl ? (
+        //         <Link href={invoiceData.invoiceDocumentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
+        //             {t('actions.openDocument')}
+        //         </Link>
+        //     ) : (
+        //         '-'
+        //     ),
+        // },
+        // {
+        //     key: 'notes',
+        //     label: t('fields.notes'),
+        //     children: normalizeText(invoiceData.notes),
+        // },
         {
             key: 'createdAt',
             label: t('fields.createdAt'),
