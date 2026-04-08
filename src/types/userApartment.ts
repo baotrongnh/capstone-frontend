@@ -48,3 +48,51 @@ export type MyApartmentDetailRow = {
     label: string
     value: ReactNode
 }
+
+export type TranslationFn = ((key: string) => string) & {
+    has?: (key: string) => boolean
+}
+
+export type QuickSummaryRow = {
+    key: string
+    label: string
+    value: string
+}
+
+export type BuildMyApartmentQuickSummaryRowsParams = {
+    t: TranslationFn
+    apartment: UserApartmentDetailItem['apartment'] | undefined
+    rawApartment: UserApartmentDetailItem | undefined
+    totalArea: number
+    depositAmount: number
+    locale: string
+}
+
+export type MyApartmentHeroProps = {
+    t: TranslationFn
+    locale: string
+    apartmentName: string
+    displayAddress: string
+    apartmentNumber: unknown
+    floorNumber: unknown
+    rentPrice: number
+    apartmentImages: string[]
+    quickSummaryRows: QuickSummaryRow[]
+}
+
+export type MyApartmentInformationTabsProps = {
+    t: TranslationFn
+    locale: string
+    rawApartment: UserApartmentDetailItem
+    apartment: UserApartmentDetailItem['apartment'] | undefined
+    displayAddress: string
+    totalArea: number
+    depositAmount: number
+    amenities: string[]
+    hiddenDoorPassword: string
+    showDoorPassword: boolean
+    onToggleDoorPassword: () => void
+    onOpenChangePasswordModal: () => void
+}
+
+export type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'

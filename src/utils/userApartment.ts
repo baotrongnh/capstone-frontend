@@ -1,10 +1,11 @@
+import type {
+    ApartmentStatus,
+    BuildMyApartmentQuickSummaryRowsParams,
+    QuickSummaryRow,
+    TranslationFn,
+} from '@/types/userApartment'
 import { toDisplayText } from '@/utils/format'
-
-type TranslationFn = ((key: string) => string) & {
-    has?: (key: string) => boolean
-}
-
-export type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'
+import { formatPaymentAmount } from '@/utils/payment'
 
 export const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
     available: 'green',
@@ -134,6 +135,40 @@ export const formatFurnishing = (value: unknown, t: (key: string) => string) => 
     }
 
     return value.replace(/_/g, ' ')
+}
+
+export const buildMyApartmentQuickSummaryRows = ({
+    t,
+    apartment,
+    rawApartment,
+    totalArea,
+    depositAmount,
+    locale,
+}: BuildMyApartmentQuickSummaryRowsParams): QuickSummaryRow[] => {
+    return [
+        {
+            key: 'quickTotalArea',
+            label: t('totalArea'),
+            value: hasDisplayValue(apartment?.totalArea) ? `${totalArea} m²` : '-',
+        },
+        {
+            key: 'quickDepositAmount',
+            label: t('depositAmount'),
+            value: hasDisplayValue(apartment?.depositAmount)
+                ? formatPaymentAmount(depositAmount, locale)
+                : '-',
+        },
+        {
+            key: 'quickFurnishingStatus',
+            label: t('furnishingStatus'),
+            value: formatFurnishing(apartment?.furnishingStatus, t),
+        },
+        {
+            key: 'quickTenantStatus',
+            label: t('tenantStatus'),
+            value: toUserApartmentStatusLabel(rawApartment?.status, t),
+        },
+    ]
 }
 
 export const toVideoEmbedUrl = (value: unknown) => {

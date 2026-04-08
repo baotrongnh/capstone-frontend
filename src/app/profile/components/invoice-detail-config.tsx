@@ -4,7 +4,6 @@ import { normalizeText } from '@/utils/text'
 import type { DescriptionsProps } from 'antd'
 import { Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import Link from 'next/link'
 
 const { Text } = Typography
 
