@@ -1,10 +1,10 @@
 'use client'
 
 import { useUserApartment } from '@/hooks/query/useUserApartment'
+import type { ApartmentStatus } from '@/types/userApartment'
 import { formatLocaleDate, toDisplayText } from '@/utils/format'
 import {
     APARTMENT_STATUS_COLORS,
-    ApartmentStatus,
     getApartmentCoverImage,
     toApartmentStatus,
     toUserApartmentStatusLabel,
