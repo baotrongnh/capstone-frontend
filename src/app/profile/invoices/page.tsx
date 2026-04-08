@@ -3,7 +3,16 @@
 import { INVOICE_STATUS_COLORS, INVOICE_STATUS_TABS } from '@/types/invoice'
 import { useInvoices } from '@/hooks/query/useInvoices'
 import type { InvoiceItem, InvoiceStatus, ListInvoicesQuery } from '@/types/invoice'
-import { formatInvoiceAmount, formatInvoiceDate, isInvoiceStatus, toInvoiceTypeTranslationKey } from '../../../utils/invoice'
+import {
+    extractInvoiceItems,
+    extractInvoiceLimit,
+    extractInvoicePage,
+    extractInvoiceTotal,
+    formatInvoiceAmount,
+    formatInvoiceDate,
+    isInvoiceStatus,
+    toInvoiceTypeTranslationKey,
+} from '../../../utils/invoice'
 import { Alert, Empty, Grid, Table, Tabs, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useMemo, useState } from 'react'
@@ -16,24 +25,32 @@ export default function InvoicesPage() {
     const locale = useLocale()
     const screens = Grid.useBreakpoint()
     const [activeStatus, setActiveStatus] = useState<'all' | InvoiceStatus>('all')
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(10)
 
-    const queryParams = useMemo<ListInvoicesQuery | undefined>(
-        () => (activeStatus === 'all' ? undefined : { status: activeStatus }),
-        [activeStatus],
+    const queryParams = useMemo<ListInvoicesQuery>(
+        () => ({
+            ...(activeStatus === 'all' ? {} : { status: activeStatus }),
+            page,
+            limit,
+        }),
+        [activeStatus, limit, page],
     )
 
-    const { data: allInvoicesData } = useInvoices()
     const { data, isLoading, isError, error } = useInvoices(queryParams)
-    const invoices = useMemo(() => data?.data ?? [], [data])
-    const allInvoices = useMemo(() => allInvoicesData?.data ?? [], [allInvoicesData])
-    const filteredAllInvoices = useMemo(
-        () => allInvoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
-        [allInvoices],
-    )
+    const { data: issuedCountData } = useInvoices({ status: 'issued', page: 1, limit: 1 })
+    const { data: paidCountData } = useInvoices({ status: 'paid', page: 1, limit: 1 })
+    const { data: overdueCountData } = useInvoices({ status: 'overdue', page: 1, limit: 1 })
+    const { data: cancelledCountData } = useInvoices({ status: 'cancelled', page: 1, limit: 1 })
+
+    const invoices = useMemo(() => extractInvoiceItems(data?.data), [data])
     const filteredInvoices = useMemo(
         () => invoices.filter((invoice) => invoice.status && isInvoiceStatus(invoice.status) && INVOICE_STATUS_TABS.includes(invoice.status)),
         [invoices],
     )
+    const currentPage = extractInvoicePage(data) ?? page
+    const currentLimit = extractInvoiceLimit(data) ?? limit
+    const currentTotal = extractInvoiceTotal(data)
 
     const statusCounts = useMemo(() => {
         const counts: Record<InvoiceStatus, number> = {
@@ -46,19 +63,23 @@ export default function InvoicesPage() {
             cancelled: 0,
         }
 
-        filteredAllInvoices.forEach((invoice) => {
-            const status = invoice.status
-            if (status && isInvoiceStatus(status)) {
-                counts[status] += 1
-            }
-        })
+        counts.issued = extractInvoiceTotal(issuedCountData)
+        counts.paid = extractInvoiceTotal(paidCountData)
+        counts.overdue = extractInvoiceTotal(overdueCountData)
+        counts.cancelled = extractInvoiceTotal(cancelledCountData)
 
         return counts
-    }, [filteredAllInvoices])
+    }, [cancelledCountData, overdueCountData, paidCountData, issuedCountData])
+
+    const totalVisibleInvoices = useMemo(
+        () => INVOICE_STATUS_TABS.reduce((sum, status) => sum + statusCounts[status], 0),
+        [statusCounts],
+    )
 
     const handleStatusTabChange = (key: string) => {
         if (key === 'all' || isInvoiceStatus(key)) {
             setActiveStatus(key)
+            setPage(1)
         }
     }
 
@@ -144,7 +165,7 @@ export default function InvoicesPage() {
     ]
 
     const tabItems = [
-        { key: 'all', label: `${t('all')} (${filteredAllInvoices.length})` },
+        { key: 'all', label: `${t('all')} (${totalVisibleInvoices})` },
         ...INVOICE_STATUS_TABS.map((status) => ({
             key: status,
             label: `${t(`statuses.${status}`)} (${statusCounts[status]})`,
@@ -182,7 +203,18 @@ export default function InvoicesPage() {
                     dataSource={filteredInvoices}
                     loading={isLoading}
                     scroll={screens.md ? undefined : { x: 760 }}
-                    pagination={{ pageSize: 10 }}
+                    pagination={{
+                        current: currentPage,
+                        pageSize: currentLimit,
+                        total: currentTotal,
+                        showSizeChanger: false,
+                        onChange: (nextPage, nextPageSize) => {
+                            setPage(nextPage)
+                            if (nextPageSize && nextPageSize !== limit) {
+                                setLimit(nextPageSize)
+                            }
+                        },
+                    }}
                     onRow={(record) => ({
                         onClick: () => {
                             if (!record.id) return

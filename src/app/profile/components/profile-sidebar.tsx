@@ -45,6 +45,12 @@ const getNavigationItems = (
       path: "/profile/contracts",
     },
     {
+      key: "cooperations",
+      label: t("sidebar.cooperations"),
+      icon: <FileTextOutlined />,
+      path: "/profile/cooperations",
+    },
+    {
       key: "my-schedule",
       label: t("sidebar.mySchedule"),
       icon: <CalendarOutlined />,

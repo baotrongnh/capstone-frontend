@@ -45,6 +45,12 @@ const StatusBadge = ({ status }: { status: string }) => {
       border: "border-emerald-200",
       label: "Gia hạn",
     },
+    expired: {
+      bg: "bg-orange-50",
+      text: "text-orange-700",
+      border: "border-orange-200",
+      label: "Đã hết hạn",
+    },
   };
 
   const config =
@@ -148,7 +154,9 @@ export const ContractCard = ({
             <div className="flex flex-col flex-1">
               <span className="text-xs text-gray-500 mb-0.5">Địa chỉ</span>
               <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {contract.apartment?.streetAddress || "Chưa cập nhật"}
+                {contract.apartment?.streetAddress},{" "}
+                {contract.apartment?.wardName},{" "}
+                {contract.apartment?.districtName}
               </span>
             </div>
           </div>
@@ -172,7 +180,10 @@ export const ContractCard = ({
                 <User size={18} className="text-gray-400" />
               </div>
               <div className="flex flex-col flex-1 gap-2">
-                <span className="text-xs text-gray-500">Thành viên khác</span>
+                <span className="text-xs text-gray-500">
+                  Thành viên khác (Tối đa:{" "}
+                  {contract.apartment?.numberOfBedrooms} thành viên)
+                </span>
                 <div className="space-y-2">
                   {contract.members?.map((member, index) => {
                     return (

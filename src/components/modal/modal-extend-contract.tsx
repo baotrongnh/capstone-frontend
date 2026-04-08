@@ -1,7 +1,7 @@
 import { useRenewContract } from "@/hooks/query/useContracts";
 import { useSearchNational } from "@/hooks/query/useUser";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { Button, Form, Input, Modal, Select, Spin, message } from "antd";
+import { Button, Form, Input, Modal, Select, Spin } from "antd";
 import { AlertCircle, Calendar, FileText } from "lucide-react";
 import { ReactNode, useState } from "react";
 
@@ -85,19 +85,30 @@ export default function ModalExtendContract({
   );
 
   const calculateNewEndDate = () => {
-    if (!selectContract || !selectedMonths) return null;
+    if (!selectContract) return null;
+
+    const startDate = new Date(selectContract.startDate);
     const currentEndDate = new Date(selectContract.endDate);
-    const newEndDate = new Date(currentEndDate);
-    newEndDate.setMonth(newEndDate.getMonth() + selectedMonths);
-    return newEndDate;
+
+    if (options === "keep") {
+      // Calculate contract duration in months
+      const monthsDuration =
+        (currentEndDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (currentEndDate.getMonth() - startDate.getMonth());
+
+      const newEndDate = new Date(currentEndDate);
+      newEndDate.setMonth(newEndDate.getMonth() + monthsDuration);
+      return newEndDate;
+    } else if (options === "change" && selectedMonths) {
+      const newEndDate = new Date(currentEndDate);
+      newEndDate.setMonth(newEndDate.getMonth() + selectedMonths);
+      return newEndDate;
+    }
+
+    return null;
   };
 
   const newEndDate = calculateNewEndDate();
-
-  const handleSearchChange = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, "");
-    setSearchValue(digitsOnly);
-  };
 
   const handleMemberSelect = (value: string, option: MemberOption) => {
     const memberData = option.data;
@@ -123,28 +134,26 @@ export default function ModalExtendContract({
   };
 
   const handleConfirm = async () => {
-    if (!selectedMonths) {
-      message.warning("Vui lòng chọn số tháng gia hạn");
-      return;
-    }
-
     const value = form.getFieldsValue();
+    const payloadChange = {
+      renewalOption: "customize",
+      extensionMonths: value.extensionMonths,
+      memberNationalIds: Array.from(selectedMembers.values()).map(
+        (member) => member.nationalId,
+      ),
+    };
+    console.log("VALUE", payloadChange);
 
-    console.log("value", value);
-
-    const payload = {
-      extensionMonths: selectedMonths,
-      specialConditions: value.specialConditions || "",
-      additionalMembers: Array.from(selectedMembers.values()).map((member) => ({
-        nationalId: member.nationalId,
-        memberType: "co_tenant",
-        isPrimaryContact: false,
-        sharePercentage: 25,
-      })),
+    const payloadKeep = {
+      renewalOption: "keep_current",
     };
     setIsLoading(true);
     try {
-      await renewContract(payload);
+      if (options === "change") {
+        await renewContract(payloadChange);
+      } else {
+        await renewContract(payloadKeep);
+      }
       handleCancel();
     } catch (error) {
       console.error("Error in handleConfirm:", error);
@@ -260,106 +269,113 @@ export default function ModalExtendContract({
           </div>
 
           <Form form={form} layout="vertical">
-            <div className="space-y-4">
-              <Form.Item
-                name="extensionMonths"
-                label="Số tháng muốn gia hạn"
-                required
-              >
-                <Select
-                  placeholder="Chọn số tháng gia hạn"
-                  value={selectedMonths}
-                  onChange={setSelectedMonths}
-                  options={monthOptions}
-                  className="w-full"
-                  size="large"
-                  style={{
-                    fontSize: "14px",
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item label="Thêm thành viên (tìm kiếm bằng CCCD)">
-                <Select
-                  showSearch
-                  value={searchValue || undefined}
-                  onSearch={handleSearchChange}
-                  onSelect={handleMemberSelect}
-                  options={autocompleteOptions}
-                  optionLabelProp="value"
-                  placeholder="Nhập 12 số CCCD"
-                  className="w-full h-10"
-                  notFoundContent={
-                    isSearching ? (
-                      <Spin size="small" />
-                    ) : searchValue.length === 12 ? (
-                      "Không tìm thấy người dùng"
-                    ) : (
-                      "Vui lòng nhập đủ 12 số"
-                    )
-                  }
-                />
-              </Form.Item>
-
-              {selectedMembers.size > 0 && (
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Thành viên đã chọn
-                  </label>
-                  {Array.from(selectedMembers.values()).map((member) => (
-                    <div
-                      key={member.nationalId}
-                      className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div>
-                          <div className="font-medium text-sm text-gray-900">
-                            {member.fullName}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Email: {member.email}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Căn cước công dân: {member.nationalId}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => {
-                          const next = new Map(selectedMembers);
-                          next.delete(member.nationalId);
-                          setSelectedMembers(next);
-                        }}
-                        className="text-gray-400 hover:text-red-500 transition-colors ml-2 shrink-0"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             {options === "change" && (
               <>
-                {/* <div className="grid grid-cols-2 gap-2">
-                  <Form.Item name="monthlyRent" label="Tiền thuê hàng tháng">
-                    <Input type={"number"} />
+                <div className="space-y-4">
+                  <Form.Item
+                    name="extensionMonths"
+                    label="Số tháng muốn gia hạn"
+                    required
+                  >
+                    <Select
+                      placeholder="Chọn số tháng gia hạn"
+                      value={selectedMonths}
+                      onChange={setSelectedMonths}
+                      options={monthOptions}
+                      className="w-full"
+                      size="large"
+                      style={{
+                        fontSize: "14px",
+                      }}
+                    />
                   </Form.Item>
-                  <Form.Item name="depositAmount" label="Tiền cọc">
-                    <Input type={"number"} />
-                  </Form.Item>
-                </div> */}
 
-                <Form.Item
-                  name="specialConditions"
-                  label="Ghi chú khác (nếu có)"
-                >
-                  <Input.TextArea
-                    rows={4}
-                    placeholder="Nhập ghi chú khác nếu có"
-                  />
-                </Form.Item>
+                  <Form.Item label="Thêm thành viên (tìm kiếm bằng CCCD)">
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={12}
+                      placeholder="Nhập 12 số CCCD"
+                      value={searchValue}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 12);
+                        setSearchValue(digitsOnly);
+                      }}
+                      className="w-full h-10 rounded-lg"
+                    />
+                    {autocompleteOptions.length > 0 &&
+                      searchValue.length === 12 && (
+                        <div className="mt-2 border rounded-lg bg-white shadow-lg">
+                          {autocompleteOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              onClick={() =>
+                                handleMemberSelect(
+                                  option.value,
+                                  option as MemberOption,
+                                )
+                              }
+                              className="p-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0"
+                            >
+                              {option.label}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    {isSearching && searchValue.length === 12 && (
+                      <div className="mt-2 flex justify-center">
+                        <Spin size="small" />
+                      </div>
+                    )}
+                    {searchValue.length === 12 &&
+                      !isSearching &&
+                      autocompleteOptions.length === 0 && (
+                        <div className="mt-2 text-center text-gray-500 text-sm">
+                          Không tìm thấy người dùng
+                        </div>
+                      )}
+                  </Form.Item>
+
+                  {selectedMembers.size > 0 && (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Thành viên đã chọn
+                      </label>
+                      {Array.from(selectedMembers.values()).map((member) => (
+                        <div
+                          key={member.nationalId}
+                          className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div>
+                              <div className="font-medium text-sm text-gray-900">
+                                {member.fullName}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Email: {member.email}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Căn cước công dân: {member.nationalId}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const next = new Map(selectedMembers);
+                              next.delete(member.nationalId);
+                              setSelectedMembers(next);
+                            }}
+                            className="text-gray-400 hover:text-red-500 transition-colors ml-2 shrink-0"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </Form>
@@ -385,7 +401,6 @@ export default function ModalExtendContract({
               onClick={handleConfirm}
               loading={isLoading}
               className="flex-1 rounded-xl! h-10! text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 border-0 shadow-lg shadow-blue-600/30 transition-all duration-200"
-              disabled={selectedMonths === null}
             >
               Chấp nhận gia hạn
             </Button>

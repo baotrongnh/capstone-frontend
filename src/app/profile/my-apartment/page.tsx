@@ -1,255 +1,82 @@
 'use client'
 
-import { useFullAddress } from '@/hooks/query/useAddress'
-import { useUpdateMyHousePassword, useUserApartment } from '@/hooks/query/useUserApartment'
+import { useUserApartment } from '@/hooks/query/useUserApartment'
+import type { ApartmentStatus } from '@/types/userApartment'
 import { formatLocaleDate, toDisplayText } from '@/utils/format'
-import { formatPaymentAmount } from '@/utils/payment'
 import {
     APARTMENT_STATUS_COLORS,
-    ApartmentStatus,
-    formatFurnishing,
+    getApartmentCoverImage,
     toApartmentStatus,
-    toReadableStatus,
-    toSafeNumber,
+    toUserApartmentStatusLabel,
 } from '@/utils/userApartment'
 import {
-    DollarOutlined,
-    EyeInvisibleOutlined,
+    CheckCircleOutlined,
+    EnvironmentOutlined,
     EyeOutlined,
-    LockOutlined,
+    HomeOutlined,
+    SearchOutlined,
+    UserOutlined,
 } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Row, Statistic, Table, Tag } from 'antd'
+import { Button, Card, Col, Empty, Input, Row, Select, Statistic, Tag } from 'antd'
 import { useLocale, useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { ChangeHousePasswordModal } from '../components/change-house-password-modal'
-import { ApartmentImageSlider } from '../components/apartment-image-slider'
-import { ApartmentVideoTour } from '../components/apartment-video-tour'
-import { MyApartmentDetailRow, UserApartmentItem } from '@/types/userApartment'
+import { useRouter } from 'next/navigation'
+import { useMemo, useState } from 'react'
+
+const { Search } = Input
+type ApartmentStatusFilter = 'all' | ApartmentStatus
 
 export default function MyApartmentPage() {
     const t = useTranslations('Profile.apartment')
     const locale = useLocale()
-    const [showDoorPassword, setShowDoorPassword] = useState(false)
-    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
+    const router = useRouter()
     const { data, isLoading } = useUserApartment()
-    const { mutate: updateHousePassword, isPending: isUpdatingHousePassword } = useUpdateMyHousePassword()
-    const rawApartment = data?.data?.[0] as UserApartmentItem | undefined
-    const apartment = rawApartment?.apartment
-    const fullAddress = useFullAddress(
-        apartment?.streetAddress ?? undefined,
-        apartment?.provinceCode ?? undefined,
-        apartment?.wardCode ?? undefined,
+
+    const apartments = useMemo(() => data?.data ?? [], [data?.data])
+    const [search, setSearch] = useState('')
+    const [statusFilter, setStatusFilter] = useState<ApartmentStatusFilter>('all')
+
+    const statusOptions = useMemo(() => {
+        const uniqueStatuses = Array.from(new Set(apartments.map((item) => toApartmentStatus(item.apartment?.status))))
+
+        return [
+            { value: 'all' as const, label: t('allStatuses') },
+            ...uniqueStatuses.map((status) => ({ value: status, label: toUserApartmentStatusLabel(status, t) })),
+        ]
+    }, [apartments, t])
+
+    const stats = useMemo(
+        () => ({
+            total: apartments.length,
+            primaryTenant: apartments.filter((item) => item.isPrimaryTenant).length,
+            secondaryTenant: apartments.filter((item) => !item.isPrimaryTenant).length,
+            activeAssignments: apartments.filter((item) => item.status === 'active').length,
+        }),
+        [apartments],
     )
-    const status = toApartmentStatus(apartment?.status)
-    const displayAddress = fullAddress || apartment?.streetAddress || '-'
-    const rentPrice = toSafeNumber(apartment?.baseRentPrice)
-    const totalArea = toSafeNumber(apartment?.totalArea)
-    const depositAmount = toSafeNumber(apartment?.depositAmount)
-    const apartmentStatusLabel = apartment?.status
-        ? (apartment.status in APARTMENT_STATUS_COLORS ? t(`status.${apartment.status as ApartmentStatus}`) : toReadableStatus(apartment.status))
-        : '-'
-    const hiddenDoorPassword = rawApartment?.apartmentDoorPassword
-        ? (showDoorPassword ? rawApartment.apartmentDoorPassword : '********')
-        : '-'
-    const apartmentName = apartment?.buildingName ?? apartment?.apartmentNumber ?? '-'
-    const amenities = apartment?.amenities ?? []
 
-    const handleOpenChangePasswordModal = () => {
-        setIsChangePasswordModalOpen(true)
-    }
+    const filtered = useMemo(
+        () =>
+            apartments.filter((item) => {
+                const apartment = item.apartment
+                const apartmentSearchText = [
+                    apartment?.buildingName,
+                    apartment?.apartmentNumber,
+                    apartment?.streetAddress,
+                ]
+                    .filter((value): value is string => typeof value === 'string')
+                    .join(' ')
+                    .toLowerCase()
 
-    const handleCloseChangePasswordModal = () => {
-        setIsChangePasswordModalOpen(false)
-    }
+                const matchSearch = search.trim().length === 0 || apartmentSearchText.includes(search.trim().toLowerCase())
+                const apartmentStatus = toApartmentStatus(apartment?.status)
+                const matchStatus = statusFilter === 'all' || apartmentStatus === statusFilter
 
-    const handleChangeHousePassword = (newPassword: string) => {
-        const userApartmentId = rawApartment?.id ? String(rawApartment.id) : ''
+                return matchSearch && matchStatus
+            }),
+        [apartments, search, statusFilter],
+    )
 
-        if (!userApartmentId) {
-            return
-        }
-
-        updateHousePassword(
-            {
-                id: userApartmentId,
-                payload: { housePassword: newPassword },
-            },
-            {
-                onSuccess: () => {
-                    setIsChangePasswordModalOpen(false)
-                    setShowDoorPassword(false)
-                },
-            },
-        )
-    }
-
-    const detailRows: MyApartmentDetailRow[] = [
-        {
-            key: 'tenantStatus',
-            label: t('tenantStatus'),
-            value: toReadableStatus(rawApartment?.status),
-        },
-        {
-            key: 'isPrimaryTenant',
-            label: t('isPrimaryTenant'),
-            value: rawApartment?.isPrimaryTenant ? t('yes') : t('no'),
-        },
-        {
-            key: 'moveInDate',
-            label: t('moveInDate'),
-            value: formatLocaleDate(rawApartment?.moveInDate, locale === 'en' ? 'en' : 'vi'),
-        },
-        {
-            key: 'moveOutDate',
-            label: t('moveOutDate'),
-            value: formatLocaleDate(rawApartment?.moveOutDate, locale === 'en' ? 'en' : 'vi'),
-        },
-        {
-            key: 'apartmentNumber',
-            label: t('apartmentNumber'),
-            value: toDisplayText(apartment?.apartmentNumber),
-        },
-        {
-            key: 'buildingName',
-            label: t('buildingName'),
-            value: toDisplayText(apartment?.buildingName),
-        },
-        {
-            key: 'floorNumber',
-            label: t('floorNumber'),
-            value: toDisplayText(apartment?.floorNumber),
-        },
-        {
-            key: 'address',
-            label: t('address'),
-            value: toDisplayText(displayAddress),
-        },
-        {
-            key: 'spaceOverview',
-            label: t('spaceOverview'),
-            value: (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <span className="text-xs text-slate-500">{t('bedrooms')}</span>
-                        <div className="font-medium text-slate-900">{toDisplayText(apartment?.numberOfBedrooms)}</div>
-                    </div>
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <span className="text-xs text-slate-500">{t('bathrooms')}</span>
-                        <div className="font-medium text-slate-900">{toDisplayText(apartment?.numberOfBathrooms)}</div>
-                    </div>
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <span className="text-xs text-slate-500">{t('totalArea')}</span>
-                        <div className="font-medium text-slate-900">{apartment?.totalArea ? `${apartment.totalArea} m²` : '-'}</div>
-                    </div>
-                    <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <span className="text-xs text-slate-500">{t('usableArea')}</span>
-                        <div className="font-medium text-slate-900">{apartment?.usableArea ? `${apartment.usableArea} m²` : '-'}</div>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            key: 'furnishingStatus',
-            label: t('furnishingStatus'),
-            value: formatFurnishing(apartment?.furnishingStatus, t),
-        },
-        {
-            key: 'maxConcurrentViewings',
-            label: t('maxConcurrentViewings'),
-            value: toDisplayText(apartment?.maxConcurrentViewings),
-        },
-        {
-            key: 'apartmentDoorPassword',
-            label: t('apartmentDoorPassword'),
-            value: (
-                <div className="flex w-full items-center justify-between gap-3">
-                    <span className="font-mono tracking-wide text-slate-900">{hiddenDoorPassword}</span>
-
-                    <div className="flex items-center gap-2">
-                        {rawApartment?.apartmentDoorPassword ? (
-                            <Button
-                                size="small"
-                                type="text"
-                                aria-label={showDoorPassword ? t('hideSensitiveData') : t('showSensitiveData')}
-                                icon={showDoorPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                style={{ borderRadius: 999, paddingInline: 8 }}
-                                onClick={() => setShowDoorPassword((prev) => !prev)}
-                            />
-                        ) : null}
-                        {rawApartment?.id ? (
-                            <Button
-                                size="small"
-                                type="default"
-                                icon={<LockOutlined />}
-                                style={{
-                                    borderRadius: 8,
-                                    borderColor: '#c7d2fe',
-                                    backgroundColor: '#eef2ff',
-                                    color: '#3730a3',
-                                    fontWeight: 500,
-                                }}
-                                onClick={handleOpenChangePasswordModal}
-                            >
-                                {t('changeHousePassword')}
-                            </Button>
-                        ) : null}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            key: 'buildingGateCode',
-            label: t('buildingGateCode'),
-            value: toDisplayText(rawApartment?.buildingGateCode),
-        },
-        {
-            key: 'smartLockPin',
-            label: t('smartLockPin'),
-            value: toDisplayText(rawApartment?.smartLockPin),
-        },
-        {
-            key: 'mailboxCode',
-            label: t('mailboxCode'),
-            value: toDisplayText(rawApartment?.mailboxCode),
-        },
-        {
-            key: 'emergencyContactName',
-            label: t('emergencyContactName'),
-            value: toDisplayText(rawApartment?.emergencyContactName),
-        },
-        {
-            key: 'emergencyContactPhone',
-            label: t('emergencyContactPhone'),
-            value: toDisplayText(rawApartment?.emergencyContactPhone),
-        },
-        {
-            key: 'amenities',
-            label: t('amenities'),
-            value: amenities.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                    {amenities.map((amenity) => (
-                        <Tag key={amenity} color="cyan">
-                            {toDisplayText(amenity).replace(/_/g, ' ')}
-                        </Tag>
-                    ))}
-                </div>
-            ) : '-',
-        },
-        {
-            key: 'yearBuilt',
-            label: t('yearBuilt'),
-            value: toDisplayText(apartment?.yearBuilt),
-        },
-        {
-            key: 'description',
-            label: t('description'),
-            value: toDisplayText(apartment?.description),
-        },
-    ]
-
-    const loading = isLoading
-
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
                 <div>{t('loading')}</div>
@@ -257,133 +84,147 @@ export default function MyApartmentPage() {
         )
     }
 
-    if (!rawApartment) {
-        return (
-            <div className="space-y-6">
-                <div className="rounded-lg border border-amber-200/80 bg-linear-to-br from-amber-50 via-orange-50 to-rose-50 p-6 shadow-sm">
-                    <h2 className="text-2xl font-bold text-stone-900">{t('title')}</h2>
-                    <p className="mt-1 text-sm text-stone-600">
-                        {t('subtitle')}
-                    </p>
-                </div>
-                <Empty
-                    description={t('noApartment')}
-                    className="rounded-lg border border-dashed border-stone-300 bg-white py-14"
-                />
-            </div>
-        )
-    }
-
     return (
         <div className="space-y-6">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <h2 className="text-2xl font-bold text-foreground">{t('title')}</h2>
-                    <p className="mt-1 text-sm text-muted">{t('subtitle')}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Tag color={APARTMENT_STATUS_COLORS[status]} className="px-3! py-1! text-sm! font-medium!">
-                        {t('statusLabel')}: {apartmentStatusLabel}
-                    </Tag>
-                    <Tag color={rawApartment?.isPrimaryTenant ? 'blue' : 'default'} className="px-3! py-1! text-sm! font-medium!">
-                        {rawApartment?.isPrimaryTenant ? t('primaryTenant') : t('secondaryTenant')}
-                    </Tag>
-                </div>
+            <div>
+                <h2 className="text-2xl font-bold">{t('title')}</h2>
+                <p className="mt-1 text-sm text-muted">{t('subtitle')}</p>
             </div>
 
-            <ApartmentImageSlider
-                buildingName={apartmentName}
-                images={apartment?.images ?? null}
-            />
+            <Row gutter={[16, 16]}>
+                <Col xs={12} sm={6}>
+                    <Card className="text-center">
+                        <Statistic title={t('stats.total')} value={stats.total} prefix={<HomeOutlined />} />
+                    </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                    <Card className="text-center border-blue-200 bg-blue-50">
+                        <Statistic
+                            title={t('stats.primaryTenant')}
+                            value={stats.primaryTenant}
+                            prefix={<UserOutlined />}
+                            styles={{ content: { color: '#2563eb' } }}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                    <Card className="text-center border-cyan-200 bg-cyan-50">
+                        <Statistic
+                            title={t('stats.secondaryTenant')}
+                            value={stats.secondaryTenant}
+                            styles={{ content: { color: '#0891b2' } }}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                    <Card className="text-center border-emerald-200 bg-emerald-50">
+                        <Statistic
+                            title={t('stats.activeAssignments')}
+                            value={stats.activeAssignments}
+                            prefix={<CheckCircleOutlined />}
+                            styles={{ content: { color: '#059669' } }}
+                        />
+                    </Card>
+                </Col>
+            </Row>
 
-            <Card className="rounded-lg border border-blue-100 bg-white shadow-sm" style={{ marginTop: 4, marginBottom: 18 }}>
-                <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-semibold text-primary">{apartmentName}</h3>
-                    <p className="text-sm text-muted">
-                        {t('apartmentNumber')}: {toDisplayText(apartment?.apartmentNumber)}
-                        {apartment?.floorNumber ? ` · ${t('floorNumber')} ${apartment.floorNumber}` : ''}
-                    </p>
-                    <p className="text-sm text-muted">{toDisplayText(displayAddress)}</p>
-                </div>
+            <div className="flex flex-wrap items-center gap-3">
+                <Search
+                    placeholder={t('searchPlaceholder')}
+                    allowClear
+                    prefix={<SearchOutlined />}
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    className="w-72"
+                />
+                <Select<ApartmentStatusFilter>
+                    value={statusFilter}
+                    onChange={(value) => setStatusFilter(value)}
+                    className="w-48"
+                    options={statusOptions}
+                />
+            </div>
 
-                <Row gutter={[16, 16]} style={{ marginTop: 12 }}>
-                    <Col xs={24} md={8}>
-                        <Card className="h-full rounded-lg border-blue-200 bg-blue-50/60" style={{ marginBottom: 6 }}>
-                            <Statistic
-                                title={t('rentPrice')}
-                                value={rentPrice}
-                                formatter={(value) => formatPaymentAmount(Number(value ?? 0), 'vi')}
-                                suffix={t('perMonth')}
-                                styles={{ content: { color: '#3b82f6', fontWeight: 700 } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col xs={24} md={8}>
-                        <Card className="h-full rounded-lg border-emerald-300 bg-yellow-50/70" style={{ marginBottom: 6 }}>
-                            <Statistic
-                                title={t('totalArea')}
-                                value={totalArea}
-                                suffix="m²"
-                                styles={{ content: { color: '#15803d', fontWeight: 700 } }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col xs={24} md={8}>
-                        <Card className="h-full rounded-lg border-yellow-300 bg-emerald-50/70" style={{ marginBottom: 6 }}>
-                            <Statistic
-                                title={t('depositAmount')}
-                                value={depositAmount}
-                                prefix={<DollarOutlined />}
-                                formatter={(value) => formatPaymentAmount(Number(value ?? 0), locale)}
-                                styles={{ content: { color: '#efc103', fontWeight: 700 } }}
-                            />
-                        </Card>
-                    </Col>
+            {filtered.length === 0 ? (
+                <Empty
+                    description={apartments.length === 0 ? t('noApartment') : t('noResults')}
+                    className="rounded-lg border border-dashed border-stone-300 bg-white py-12"
+                />
+            ) : (
+                <Row gutter={[16, 16]}>
+                    {filtered.map((item) => {
+                        const apartment = item.apartment
+                        const apartmentStatus = toApartmentStatus(apartment?.status)
+                        const apartmentStatusLabel = toUserApartmentStatusLabel(apartmentStatus, t)
+                        const coverImage = getApartmentCoverImage(apartment?.images as unknown)
+
+                        return (
+                            <Col key={item.id} xs={24} sm={12} lg={8}>
+                                <Card
+                                    className="h-full transition-shadow duration-200 hover:shadow-md"
+                                    cover={
+                                        <div className="relative h-44 overflow-hidden bg-gray-100">
+                                            <div
+                                                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                                style={{ backgroundImage: `url('${coverImage}')` }}
+                                            />
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
+                                            <div className="absolute left-3 bottom-3 rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-slate-700">
+                                                {toDisplayText(apartment?.apartmentNumber)}
+                                            </div>
+                                            <div className="absolute right-3 top-3">
+                                                <Tag color={APARTMENT_STATUS_COLORS[apartmentStatus] ?? 'default'} className="font-medium">
+                                                    {apartmentStatusLabel}
+                                                </Tag>
+                                            </div>
+                                        </div>
+                                    }
+                                    actions={[
+                                        <Button
+                                            key="view-detail"
+                                            type="link"
+                                            icon={<EyeOutlined />}
+                                            onClick={() => router.push(`/profile/my-apartment/${item.id}`)}
+                                        >
+                                            {t('viewDetail')}
+                                        </Button>,
+                                    ]}
+                                >
+                                    <div className="mb-2">
+                                        <p className="truncate text-base leading-tight font-bold">
+                                            {toDisplayText(apartment?.buildingName)}
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-500">
+                                            {t('apartmentNumber')}: {toDisplayText(apartment?.apartmentNumber)}
+                                        </p>
+                                    </div>
+
+                                    <div className="mb-3 flex items-start gap-1">
+                                        <EnvironmentOutlined className="mt-0.5 shrink-0 text-sm text-gray-400" />
+                                        <p className="line-clamp-2 text-sm text-muted">{toDisplayText(apartment?.streetAddress)}</p>
+                                    </div>
+
+                                    <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                                        <Tag color={item.isPrimaryTenant ? 'blue' : 'default'}>
+                                            {item.isPrimaryTenant ? t('primaryTenant') : t('secondaryTenant')}
+                                        </Tag>
+                                        <Tag color={APARTMENT_STATUS_COLORS[apartmentStatus] ?? 'default'}>{apartmentStatusLabel}</Tag>
+                                    </div>
+
+                                    <div className="border-t pt-3 text-xs text-muted space-y-1">
+                                        <p>
+                                            {t('moveInDate')}: {formatLocaleDate(item.moveInDate, locale === 'en' ? 'en' : 'vi')}
+                                        </p>
+                                        <p>
+                                            {t('moveOutDate')}: {formatLocaleDate(item.moveOutDate, locale === 'en' ? 'en' : 'vi')}
+                                        </p>
+                                    </div>
+                                </Card>
+                            </Col>
+                        )
+                    })}
                 </Row>
-            </Card>
-
-            <Card
-                className="rounded-lg border-slate-200 bg-white"
-                style={{ marginBottom: 18 }}
-                title={<span className="text-slate-900">{t('apartmentInfo')}</span>}
-            >
-                <Table
-                    bordered
-                    pagination={false}
-                    dataSource={detailRows}
-                    rowKey="key"
-                    columns={[
-                        {
-                            title: t('apartmentInfo'),
-                            dataIndex: 'label',
-                            key: 'label',
-                            width: '34%',
-                            className: 'font-medium text-slate-700',
-                        },
-                        {
-                            title: t('description'),
-                            dataIndex: 'value',
-                            key: 'value',
-                        },
-                    ]}
-                />
-            </Card>
-
-            <Card className="rounded-lg border-slate-200 bg-white" style={{ marginBottom: 8 }}>
-                <ApartmentVideoTour
-                    videoTourUrl={apartment?.videoTourUrl}
-                    title={t('videoTour')}
-                    unavailableText={t('videoUnavailable')}
-                />
-            </Card>
-
-            <ChangeHousePasswordModal
-                open={isChangePasswordModalOpen}
-                isSubmitting={isUpdatingHousePassword}
-                currentPassword={rawApartment?.apartmentDoorPassword ?? undefined}
-                onClose={handleCloseChangePasswordModal}
-                onSubmit={handleChangeHousePassword}
-            />
+            )}
         </div>
     )
 }

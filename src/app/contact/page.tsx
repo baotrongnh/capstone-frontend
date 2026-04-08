@@ -37,8 +37,6 @@ export default function PartnerContact() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  console.log("USER", user);
-
   const [modalVerify, setModalVerify] = useState(false);
   const { mutateAsync: createCooperation } = useCreateCooperation();
 
@@ -70,6 +68,7 @@ export default function PartnerContact() {
         formData.append("depositAmount", data.depositAmount);
         formData.append("yearBuilt", String(data.yearBuilt));
         formData.append("floorNumber", String(data.floorNumber));
+        formData.append("maxOccupants", data.maxOccupants);
 
         formData.append("wardCode", String(data.newWardCode));
         formData.append("latitude", "0");
@@ -312,9 +311,24 @@ export default function PartnerContact() {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Năm xây dựng phải là số nguyên > 0",
                   },
+                  {
+                    validator: (_, value) => {
+                      const year = Number(value);
+
+                      if (!value || (year >= 1950 && year <= 2026)) {
+                        return Promise.resolve();
+                      }
+
+                      return Promise.reject(
+                        new Error(
+                          "Năm xây dựng không được lớn hơn 2026 và nhỏ hơn 1950",
+                        ),
+                      );
+                    },
+                  },
                 ]}
               >
-                <Input type={"number"} placeholder="VD: 100m2" />
+                <Input type={"number"} placeholder="VD: 2026" />
               </Form.Item>
 
               <Form.Item
@@ -325,6 +339,15 @@ export default function PartnerContact() {
                   {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số tầng phải là số nguyên > 0",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 200)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số tầng không được lớn hơn 200"),
+                      );
+                    },
                   },
                 ]}
               >
@@ -343,6 +366,15 @@ export default function PartnerContact() {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số phòng tắm phải là số nguyên > 0",
                   },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 10)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số phòng tắm không được lớn hơn 10"),
+                      );
+                    },
+                  },
                 ]}
               >
                 <Input type={"number"} placeholder="VD: 10" />
@@ -359,6 +391,15 @@ export default function PartnerContact() {
                   {
                     pattern: /^[1-9][0-9]*$/,
                     message: "Số phòng ngủ phải là số nguyên > 0",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || Number(value) <= 20)
+                        return Promise.resolve();
+                      return Promise.reject(
+                        new Error("Số phòng ngủ không được lớn hơn 20"),
+                      );
+                    },
                   },
                 ]}
               >
@@ -395,6 +436,27 @@ export default function PartnerContact() {
                   placeholder="VD: 15.000.000"
                 />
               </Form.Item>
+
+              <Form.Item
+                label="Số người ở tối đa"
+                name="maxOccupants"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số người ở tối đa",
+                  },
+                ]}
+              >
+                <InputNumber
+                  className="w-full h-11"
+                  style={{ width: "100%" }}
+                  min={0}
+                  formatter={formatter}
+                  parser={parser}
+                  placeholder="VD: 1"
+                />
+              </Form.Item>
+
               <Form.Item
                 label="Mô tả tài sản"
                 name="description"

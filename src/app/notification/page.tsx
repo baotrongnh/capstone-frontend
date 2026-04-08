@@ -1,11 +1,22 @@
 'use client'
 
-import { useNotifications } from '@/hooks/query/useNotifications'
+import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/query/useNotifications'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 export default function NotificationPage() {
-     const { data: notifications, isLoading } = useNotifications()
+     const { data: notifications = [], isLoading } = useNotifications()
+     const markAsRead = useMarkNotificationAsRead()
+     const markAllAsRead = useMarkAllNotificationsAsRead()
+
+     useEffect(() => {
+          if (isLoading) return
+          const hasUnread = notifications.some((item) => !item.isRead)
+          if (!hasUnread) return
+          if (markAllAsRead.isPending) return
+          markAllAsRead.mutate()
+     }, [isLoading, markAllAsRead, notifications])
 
      return (
           <div className='container py-10'>
@@ -14,15 +25,19 @@ export default function NotificationPage() {
 
                {isLoading && <p className='text-sm text-gray-500'>Đang tải thông báo...</p>}
 
-               {!isLoading && notifications?.length === 0 && (
+               {!isLoading && notifications.length === 0 && (
                     <p className='text-sm text-gray-500'>Hiện chưa có thông báo nào.</p>
                )}
 
                <div className='space-y-3'>
-                    {notifications?.map((item) => (
+                    {notifications.map((item) => (
                          <article
                               key={item.id}
                               className={`rounded-lg border p-4 transition-colors ${item.isRead ? 'border-gray-200 bg-white' : 'border-sky-200 bg-sky-50/60'}`}
+                              onClick={() => {
+                                   if (item.isRead || markAsRead.isPending) return
+                                   markAsRead.mutate(item.id)
+                              }}
                          >
                               <div className='mb-1 flex items-start justify-between gap-3'>
                                    <h2 className='text-sm font-semibold text-gray-900'>{item.title || 'Thông báo mới'}</h2>
@@ -36,7 +51,14 @@ export default function NotificationPage() {
                               {(item.actionUrl || item.actionLabel) && (
                                    <div className='mt-2'>
                                         {item.actionUrl ? (
-                                             <Link href={item.actionUrl} className='text-sm font-medium text-primary hover:underline'>
+                                             <Link
+                                                  href={item.actionUrl}
+                                                  className='text-sm font-medium text-primary hover:underline'
+                                                  onClick={() => {
+                                                       if (item.isRead || markAsRead.isPending) return
+                                                       markAsRead.mutate(item.id)
+                                                  }}
+                                             >
                                                   {item.actionLabel || 'Xem chi tiết'}
                                              </Link>
                                         ) : (

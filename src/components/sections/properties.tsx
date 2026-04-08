@@ -43,8 +43,6 @@ export default function PropertiesSection() {
 
   const { data: apartments } = useApartments(params);
 
-  console.log("ADDRE", user);
-
   if (!apartments) {
     return <div>Loading...</div>;
   }
@@ -139,7 +137,8 @@ export default function PropertiesSection() {
                         </div>
                         <div>
                           Tầng {apartment.floorNumber} ·{" "}
-                          {apartment.streetAddress}
+                          {apartment.streetAddress}, {apartment.wardName},{" "}
+                          {apartment.districtName}
                         </div>
 
                         <div>

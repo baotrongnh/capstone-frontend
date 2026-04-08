@@ -1,4 +1,4 @@
-import { INVOICE_STATUS_COLORS, INVOICE_TYPE_VALUES, type InvoiceStatus, type InvoiceType } from '@/types/invoice'
+import { INVOICE_STATUS_COLORS, INVOICE_TYPE_VALUES, type InvoiceItem, type InvoiceStatus, type InvoiceType, type ListInvoicesRes } from '@/types/invoice'
 import { formatLocaleDate, formatVndCurrency } from './format'
 
 export type InvoiceTypeTranslationKey =
@@ -63,4 +63,38 @@ export const toInvoiceTypeTranslationKey = (value?: string | null): InvoiceTypeT
 export const toPaymentMethodTranslationKey = (value?: string | null): PaymentMethodTranslationKey | null => {
     if (!value) return null
     return PAYMENT_METHOD_ALIASES[value] ?? null
+}
+
+export const extractInvoiceItems = (payload?: ListInvoicesRes['data']): InvoiceItem[] => {
+    if (!payload) return []
+    if (Array.isArray(payload)) return payload
+    return payload.items ?? []
+}
+
+export const extractInvoiceTotal = (response?: ListInvoicesRes): number => {
+    const responseMeta = response?.meta as { total?: number } | undefined
+    if (typeof responseMeta?.total === 'number') return responseMeta.total
+
+    const payload = response?.data
+    if (!payload) return 0
+    if (Array.isArray(payload)) return payload.length
+    return payload.total ?? 0
+}
+
+export const extractInvoicePage = (response?: ListInvoicesRes): number | undefined => {
+    const responseMeta = response?.meta as { page?: number } | undefined
+    if (typeof responseMeta?.page === 'number') return responseMeta.page
+
+    const payload = response?.data
+    if (!payload || Array.isArray(payload)) return undefined
+    return payload.page
+}
+
+export const extractInvoiceLimit = (response?: ListInvoicesRes): number | undefined => {
+    const responseMeta = response?.meta as { limit?: number } | undefined
+    if (typeof responseMeta?.limit === 'number') return responseMeta.limit
+
+    const payload = response?.data
+    if (!payload || Array.isArray(payload)) return undefined
+    return payload.limit
 }

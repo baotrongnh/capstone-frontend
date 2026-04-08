@@ -3,7 +3,12 @@ import type { paths } from './api'
 export type ListInvoicesQuery = paths['/api/v1/invoices']['get']['parameters']['query']
 export type ListInvoicesRes = paths['/api/v1/invoices']['get']['responses']['200']['content']['application/json']
 export type ListInvoicesPayload = NonNullable<ListInvoicesRes['data']>
-export type InvoiceItem = ListInvoicesPayload[number]
+export type InvoiceItem =
+    ListInvoicesPayload extends Array<infer Item>
+    ? Item
+    : ListInvoicesPayload extends { items: Array<infer Item> }
+    ? Item
+    : never
 export type InvoiceStatus = Exclude<NonNullable<ListInvoicesQuery>['status'], undefined>
 
 export type GetInvoiceByIdPath = paths['/api/v1/invoices/{id}']['get']['parameters']['path']

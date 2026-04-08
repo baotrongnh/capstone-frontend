@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 
 export default function ServicesSection() {
   const t = useTranslations("HomePage");
-
   const services = [
     {
       id: 1,

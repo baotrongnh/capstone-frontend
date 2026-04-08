@@ -87,30 +87,29 @@ export const useCreateCooperation = () => {
 };
 
 export const useApartmentRating = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: ApartmentRatingPayload;
-    }) => apartmentService.rating(id, payload),
+    mutationFn: ({ id, payload, }: { id: string, payload: ApartmentRatingPayload }) => apartmentService.rating(id, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["apartments"] });
-      queryClient.invalidateQueries({ queryKey: ["apartments", variables.id] });
-      message.success("Đánh giá căn hộ thành công!");
+      queryClient.invalidateQueries({ queryKey: ["apartments"] })
+      queryClient.invalidateQueries({ queryKey: ["apartments", variables.id] })
+      message.success("Cảm ơn bạn đã đánh giá căn hộ!")
     },
     onError: (error) => {
-      message.error(error?.message || "Có lỗi xảy ra!");
+      if (error.message === 'Request failed with status code 403') {
+        message.error("Bạn chưa thể đánh giá căn hộ này khi chưa trải nghiệm dịch vụ!")
+      }
+      else {
+        message.error("Đã xảy ra lỗi hệ thống, vui lòng thử lại sau!")
+      }
     },
-  });
-};
+  })
+}
 
 export const useApartmentOwner = (id: string | number) => {
   return useQuery({
-    queryKey: ["apartmentOwner", id],
+    queryKey: ["apartmentOwner"],
     queryFn: () => apartmentService.owner(id),
   });
 };

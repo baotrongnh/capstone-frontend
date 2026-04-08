@@ -1,7 +1,7 @@
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { Modal, Button, Select, message, Divider, Space, Tag } from "antd";
 import { useState } from "react";
-import { AlertCircle, FileText, Home } from "lucide-react";
+import { AlertCircle, AlertTriangle, FileText, Home, Info } from "lucide-react";
 import { useCancelContract } from "@/hooks/query/useContracts";
 
 interface ModalContractProps {
@@ -69,6 +69,7 @@ export default function ModalCancelContract({
     setIsLoading(true);
     try {
       await cancelContract(reason);
+      message.success("Đã hủy hợp đồng thành công");
       handleCancel();
     } catch (error) {
       message.error("Lỗi khi hủy hợp đồng");
@@ -81,109 +82,108 @@ export default function ModalCancelContract({
 
   return (
     <Modal
-      title={
-        <div className="flex px-8 items-center gap-3 -ml-2">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">Hủy hợp đồng</h2>
-            <p className="text-xs text-slate-500">Quản lý hợp đồng của bạn</p>
-          </div>
-        </div>
-      }
       open={showModalCancelContract}
       onCancel={handleCancel}
-      width={600}
+      width={520}
       centered
+      closable={false}
       footer={null}
+      className="[&_.ant-modal-content]:p-0 [&_.ant-modal-content]:rounded-2xl [&_.ant-modal-content]:overflow-hidden"
     >
       {selectContract && (
-        <div className="bg-white">
-          <div className="bg-linear-to-r from-orange-50 to-red-50 border-l-4 border-red-500 p-4 mx-6 mt-6 rounded-lg">
-            <div className="flex gap-3">
-              <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-red-900 text-sm mb-1">
-                  Thao tác này sẽ hủy hợp đồng
-                </p>
-                <p className="text-xs text-red-700">
-                  Hủy hợp đồng là thao tác quan trọng. Các bên liên quan sẽ được
-                  thông báo ngay lập tức.
+        <div className="bg-white flex flex-col">
+          {/* Header Area */}
+          <div className="px-6 pt-6 pb-4 border-b border-slate-100">
+            <div className="flex items-start gap-4">
+              {/* Warning Icon Badge */}
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center shrink-0 border border-red-100">
+                <AlertTriangle
+                  className="text-red-600"
+                  size={24}
+                  strokeWidth={2}
+                />
+              </div>
+              <div className="pt-1">
+                <h2 className="text-xl font-bold text-slate-900 mb-1">
+                  Xác nhận hủy hợp đồng
+                </h2>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  Thao tác này không thể hoàn tác. Các bên liên quan sẽ nhận
+                  được thông báo ngay lập tức.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="px-6 py-5">
-            <p className="text-xs font-semibold text-slate-500 uppercase mb-4 tracking-wide">
-              Thông tin hợp đồng
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 mb-1">
-              <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText size={16} className="text-blue-600" />
-                  <span className="text-xs font-semibold text-blue-900">
+          {/* Body Area */}
+          <div className="px-6 py-5 space-y-6">
+            {/* Contract Info Cards - Đổi sang tone trung tính cho chuyên nghiệp */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200/60 flex flex-col justify-center">
+                <div className="flex items-center gap-2 mb-1.5 text-slate-500">
+                  <FileText size={15} />
+                  <span className="text-xs font-medium uppercase tracking-wide">
                     Mã hợp đồng
                   </span>
                 </div>
-                <p className="font-bold text-lg text-slate-900 truncate">
+                <p className="font-semibold text-base text-slate-900 truncate">
                   {selectContract.contractNumber}
                 </p>
               </div>
 
-              <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Home size={16} className="text-emerald-600" />
-                  <span className="text-xs font-semibold text-emerald-900">
+              <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200/60 flex flex-col justify-center">
+                <div className="flex items-center gap-2 mb-1.5 text-slate-500">
+                  <Home size={15} />
+                  <span className="text-xs font-medium uppercase tracking-wide">
                     Căn hộ
                   </span>
                 </div>
-                <p className="font-bold text-lg text-slate-900 truncate">
+                <p className="font-semibold text-base text-slate-900 truncate">
                   Phòng {selectContract.apartment?.apartmentNumber}
                 </p>
               </div>
             </div>
-          </div>
 
-          <Divider />
-
-          <div className="px-6 py-5">
-            <div className="mb-4">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-4">
-                <span className="text-red-500">*</span> Lý do hủy hợp đồng
+            {/* Form Section */}
+            <div>
+              <label className="flex items-center gap-1 text-sm font-semibold text-slate-700 mb-2">
+                Lý do hủy <span className="text-red-500">*</span>
               </label>
               <Select
-                placeholder="Chọn lý do hủy..."
+                placeholder="Chọn lý do hủy phù hợp..."
                 value={reason || undefined}
                 onChange={setReason}
                 options={reasonOptions}
+                className="w-full [&_.ant-select-selector]:rounded-xl"
                 size="large"
-                className="w-full"
-                style={{ height: "44px" }}
               />
-            </div>
 
-            {selectedOption && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-xs text-blue-600 font-medium mb-1">
-                  Lý do được chọn:
-                </p>
-                <p className="text-sm font-semibold text-slate-900 mb-1">
-                  {selectedOption.label}
-                </p>
-                <p className="text-xs text-slate-600">
-                  {selectedOption.description}
-                </p>
-              </div>
-            )}
+              {/* Selected Reason Detail */}
+              {selectedOption && (
+                <div className="mt-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <Info size={18} className="text-slate-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      {selectedOption.label}
+                    </p>
+                    <p className="text-sm text-slate-500 mt-0.5 leading-relaxed">
+                      {selectedOption.description}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="px-6 py-5 bg-slate-50 border-t border-slate-200 rounded-b-lg flex gap-3 justify-end">
+          {/* Footer Area */}
+          <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex gap-3 justify-end">
             <Button
               size="large"
               onClick={handleCancel}
-              className="rounded-lg font-semibold min-w-32"
+              disabled={isLoading}
+              className="rounded-xl font-medium text-slate-600 border-slate-300 hover:bg-slate-100 hover:text-slate-800"
             >
-              Hủy bỏ
+              Quay lại
             </Button>
             <Button
               type="primary"
@@ -192,7 +192,7 @@ export default function ModalCancelContract({
               loading={isLoading}
               onClick={handleConfirm}
               disabled={!reason}
-              className="rounded-lg font-semibold min-w-40"
+              className="rounded-xl font-medium px-6 shadow-sm disabled:bg-red-200"
             >
               Xác nhận hủy
             </Button>

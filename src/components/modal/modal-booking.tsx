@@ -8,7 +8,6 @@ import {
   HomeOutlined,
 } from "@ant-design/icons";
 import {
-  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -19,8 +18,8 @@ import {
   Modal,
   Row,
   Select,
-  Tag,
   Spin,
+  Tag,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
@@ -29,10 +28,10 @@ import { useEffect, useState } from "react";
 
 import { ROUTES } from "@/constants/routes";
 import { useFullAddress } from "@/hooks/query/useAddress";
+import { useSearchNational } from "@/hooks/query/useUser";
 import { ApartmentItem } from "@/lib/services/apartment.service";
 import { useAuthStore } from "@/stores/auth.store";
 import Link from "next/link";
-import { useSearchNational } from "@/hooks/query/useUser";
 
 interface ModalBookingProps {
   open: boolean;
@@ -126,6 +125,7 @@ export default function ModalBooking({
   };
 
   const handleSearchChange = (value: string) => {
+    // Only allow digits, reject any letters or special characters
     const digitsOnly = value.replace(/\D/g, "");
     setSearchValue(digitsOnly);
   };
@@ -217,7 +217,7 @@ export default function ModalBooking({
           </div>
         </div>
 
-        <div className="p-3 max-h-[88vh]">
+        <div className="p-3 max-h-[100vh]">
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-5">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-800 font-semibold text-base">
@@ -253,7 +253,13 @@ export default function ModalBooking({
                   {Number(apartment?.data?.depositAmount).toLocaleString(
                     "vi-VN",
                   )}{" "}
-                  ₫
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-500">Tổng số người:</span>
+                <span className="font-semibold text-gray-900 text-base">
+                  {Number(apartment?.data?.maxOccupants)} người
                 </span>
               </div>
             </div>
@@ -323,13 +329,17 @@ export default function ModalBooking({
                   }
                 >
                   <div className="space-y-2">
-                    <AutoComplete
-                      value=""
+                    <Select
+                      showSearch
+                      allowClear
                       onSearch={handleSearchChange}
-                      onChange={() => {}}
-                      options={autocompleteOptions}
                       onSelect={handleMemberSelect}
+                      onClear={() => setSearchValue("")}
+                      options={autocompleteOptions}
+                      optionLabelProp="value"
                       placeholder="Nhập 12 số CCCD của thành viên"
+                      className="w-full"
+                      filterOption={false}
                       notFoundContent={
                         isSearching ? (
                           <Spin size="small" />
@@ -337,13 +347,8 @@ export default function ModalBooking({
                           <span className="text-gray-500 text-sm">
                             Không tìm thấy người dùng
                           </span>
-                        ) : searchValue.length > 0 ? (
-                          <span className="text-gray-500 text-sm">
-                            Vui lòng nhập đủ 12 số
-                          </span>
                         ) : null
                       }
-                      className="w-full h-10 rounded-lg"
                     />
 
                     {selectedMembers.size > 0 && (
