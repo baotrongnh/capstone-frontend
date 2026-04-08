@@ -20,12 +20,8 @@ export const useCreateReservations = () => {
       let displayMessage = "Lỗi khi gửi yêu cầu";
 
       if (statusCode === 409) {
-        if (backendMessage?.includes("already exists")) {
-          displayMessage =
-            "Khoảng thời gian bạn chọn hợp đồng bị trùng lặp. Vui lòng chọn thời gian khác.";
-        } else {
-          displayMessage = backendMessage || displayMessage;
-        }
+        displayMessage =
+          "Khoảng thời gian bạn chọn hợp đồng bị trùng lặp hoặc đã thuê căn hộ này!";
       } else if (backendMessage) {
         displayMessage = backendMessage;
       }

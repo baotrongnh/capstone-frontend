@@ -37,8 +37,6 @@ export default function PartnerContact() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  console.log("USER", user);
-
   const [modalVerify, setModalVerify] = useState(false);
   const { mutateAsync: createCooperation } = useCreateCooperation();
 
@@ -70,6 +68,7 @@ export default function PartnerContact() {
         formData.append("depositAmount", data.depositAmount);
         formData.append("yearBuilt", String(data.yearBuilt));
         formData.append("floorNumber", String(data.floorNumber));
+        formData.append("maxOccupants", data.maxOccupants);
 
         formData.append("wardCode", String(data.newWardCode));
         formData.append("latitude", "0");
@@ -329,7 +328,7 @@ export default function PartnerContact() {
                   },
                 ]}
               >
-                <Input type={"number"} placeholder="VD: 100m2" />
+                <Input type={"number"} placeholder="VD: 2026" />
               </Form.Item>
 
               <Form.Item
@@ -437,6 +436,27 @@ export default function PartnerContact() {
                   placeholder="VD: 15.000.000"
                 />
               </Form.Item>
+
+              <Form.Item
+                label="Số người ở tối đa"
+                name="maxOccupants"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số người ở tối đa",
+                  },
+                ]}
+              >
+                <InputNumber
+                  className="w-full h-11"
+                  style={{ width: "100%" }}
+                  min={0}
+                  formatter={formatter}
+                  parser={parser}
+                  placeholder="VD: 1"
+                />
+              </Form.Item>
+
               <Form.Item
                 label="Mô tả tài sản"
                 name="description"

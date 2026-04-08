@@ -1,7 +1,7 @@
 import { useRenewContract } from "@/hooks/query/useContracts";
 import { useSearchNational } from "@/hooks/query/useUser";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { Button, Form, Input, Modal, Select, Spin, message } from "antd";
+import { Button, Form, Input, Modal, Select, Spin } from "antd";
 import { AlertCircle, Calendar, FileText } from "lucide-react";
 import { ReactNode, useState } from "react";
 
@@ -85,19 +85,30 @@ export default function ModalExtendContract({
   );
 
   const calculateNewEndDate = () => {
-    if (!selectContract || !selectedMonths) return null;
+    if (!selectContract) return null;
+
+    const startDate = new Date(selectContract.startDate);
     const currentEndDate = new Date(selectContract.endDate);
-    const newEndDate = new Date(currentEndDate);
-    newEndDate.setMonth(newEndDate.getMonth() + selectedMonths);
-    return newEndDate;
+
+    if (options === "keep") {
+      // Calculate contract duration in months
+      const monthsDuration =
+        (currentEndDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (currentEndDate.getMonth() - startDate.getMonth());
+
+      const newEndDate = new Date(currentEndDate);
+      newEndDate.setMonth(newEndDate.getMonth() + monthsDuration);
+      return newEndDate;
+    } else if (options === "change" && selectedMonths) {
+      const newEndDate = new Date(currentEndDate);
+      newEndDate.setMonth(newEndDate.getMonth() + selectedMonths);
+      return newEndDate;
+    }
+
+    return null;
   };
 
   const newEndDate = calculateNewEndDate();
-
-  const handleSearchChange = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, "");
-    setSearchValue(digitsOnly);
-  };
 
   const handleMemberSelect = (value: string, option: MemberOption) => {
     const memberData = option.data;
@@ -124,16 +135,14 @@ export default function ModalExtendContract({
 
   const handleConfirm = async () => {
     const value = form.getFieldsValue();
-
-    console.log("value", value);
-
     const payloadChange = {
       renewalOption: "customize",
-      extensionMonths: selectedMonths,
-      memberNationalIds: Array.from(selectedMembers.values()).map((member) => ({
-        nationalId: member.nationalId,
-      })),
+      extensionMonths: value.extensionMonths,
+      memberNationalIds: Array.from(selectedMembers.values()).map(
+        (member) => member.nationalId,
+      ),
     };
+    console.log("VALUE", payloadChange);
 
     const payloadKeep = {
       renewalOption: "keep_current",
@@ -282,25 +291,51 @@ export default function ModalExtendContract({
                   </Form.Item>
 
                   <Form.Item label="Thêm thành viên (tìm kiếm bằng CCCD)">
-                    <Select
-                      showSearch
-                      value={searchValue || undefined}
-                      onSearch={handleSearchChange}
-                      onSelect={handleMemberSelect}
-                      options={autocompleteOptions}
-                      optionLabelProp="value"
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={12}
                       placeholder="Nhập 12 số CCCD"
-                      className="w-full h-10"
-                      notFoundContent={
-                        isSearching ? (
-                          <Spin size="small" />
-                        ) : searchValue.length === 12 ? (
-                          "Không tìm thấy người dùng"
-                        ) : (
-                          "Vui lòng nhập đủ 12 số"
-                        )
-                      }
+                      value={searchValue}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 12);
+                        setSearchValue(digitsOnly);
+                      }}
+                      className="w-full h-10 rounded-lg"
                     />
+                    {autocompleteOptions.length > 0 &&
+                      searchValue.length === 12 && (
+                        <div className="mt-2 border rounded-lg bg-white shadow-lg">
+                          {autocompleteOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              onClick={() =>
+                                handleMemberSelect(
+                                  option.value,
+                                  option as MemberOption,
+                                )
+                              }
+                              className="p-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0"
+                            >
+                              {option.label}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    {isSearching && searchValue.length === 12 && (
+                      <div className="mt-2 flex justify-center">
+                        <Spin size="small" />
+                      </div>
+                    )}
+                    {searchValue.length === 12 &&
+                      !isSearching &&
+                      autocompleteOptions.length === 0 && (
+                        <div className="mt-2 text-center text-gray-500 text-sm">
+                          Không tìm thấy người dùng
+                        </div>
+                      )}
                   </Form.Item>
 
                   {selectedMembers.size > 0 && (
