@@ -1,8 +1,9 @@
 import { ROUTES } from "@/constants/routes";
 import { useUploadContractPdf } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
+import { CheckCircleOutlined, WarningOutlined } from "@ant-design/icons";
 import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
-import { Check, Pen } from "lucide-react";
+import { Check, Pen, CheckCircle, CreditCard } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PDFDocument } from "pdf-lib";
 import { useRef, useState } from "react";
@@ -27,6 +28,7 @@ export default function ModalAssignContract({
   const [signedPdfBytes, setSignedPdfBytes] = useState<Uint8Array | null>(null);
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [showSignModal, setShowSignModal] = useState(false);
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
   const { mutateAsync: uploadContractPdf } = useUploadContractPdf(
@@ -165,7 +167,7 @@ export default function ModalAssignContract({
 
       setShowDetailModal(false);
 
-      route.push(`${ROUTES.PROFILE}/invoices`);
+      setShowNotifyModal(true);
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
     }
@@ -345,6 +347,80 @@ export default function ModalAssignContract({
 
           <div style={{ fontSize: "12px", color: "#666", textAlign: "center" }}>
             Bạn có thể vẽ lại. Ấn nút Xóa để xoá và thử lại.
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={showNotifyModal}
+        onCancel={() => setShowNotifyModal(false)}
+        footer={null}
+        centered
+        width={440}
+        closable={false}
+        className="[&_.ant-modal-content]:rounded-[20px] [&_.ant-modal-content]:overflow-hidden [&_.ant-modal-content]:p-0"
+        styles={{
+          body: { padding: 0 },
+        }}
+      >
+        <div className="bg-white">
+          <div className="shrink-0 w-12 h-12 rounded-full m-auto bg-emerald-100 flex items-center justify-center ring-4 ring-emerald-50">
+            <CheckCircleOutlined className="text-emerald-600! text-2xl" />
+          </div>
+          <div className="px-6 pt-6 pb-5 border-b border-slate-100">
+            <div className="flex items-center gap-4">
+              <div className="pt-1">
+                <h3 className="text-xl flex justify-center font-bold text-slate-800 tracking-tight">
+                  Ký hợp đồng thành công!
+                </h3>
+                <p className="text-[14px] flex justify-center items-center text-slate-500 mt-1.5 leading-relaxed pr-2">
+                  Vui lòng hoàn tất thanh toán để bàn giao căn hộ.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-6 py-5 bg-white">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-slate-100 px-4 py-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                <p className="text-[13px] font-medium text-slate-500 mb-1">
+                  Mã hợp đồng
+                </p>
+                <p className="font-semibold text-slate-800 text-[15px]">
+                  CTR-2026-00006
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-100 px-4 py-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                <p className="text-[13px] font-medium text-slate-500 mb-1">
+                  Căn hộ
+                </p>
+                <p className="font-semibold text-slate-800 text-[15px]">
+                  Phòng VIN-99
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* FOOTER - Nền xám nhạt để tách biệt với phần nội dung */}
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/80">
+            <Button
+              size="large"
+              onClick={() => setShowNotifyModal(false)}
+              className="rounded-xl font-medium text-slate-600 border-slate-200 hover:text-slate-900 hover:border-slate-300 hover:bg-white transition-all h-11"
+            >
+              Để sau
+            </Button>
+
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => route.push(`${ROUTES.PROFILE}/invoices`)}
+              className="rounded-xl font-medium bg-slate-900 hover:bg-slate-800 flex items-center gap-2 border-none shadow-md hover:shadow-lg transition-all h-11 px-5"
+            >
+              <CreditCard size={18} className="opacity-90" />
+              Thanh toán ngay
+            </Button>
           </div>
         </div>
       </Modal>
