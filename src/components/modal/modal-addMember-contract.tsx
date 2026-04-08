@@ -43,7 +43,6 @@ export default function ModalAddMember({
     selectContract?.id || "",
   );
 
-  // Reset state khi đóng modal
   useEffect(() => {
     if (!open) {
       setSearchValue("");
@@ -51,7 +50,6 @@ export default function ModalAddMember({
     }
   }, [open]);
 
-  // Cấu trúc options cho Select
   const autocompleteOptions = getNational
     ? [
         {
@@ -68,9 +66,7 @@ export default function ModalAddMember({
               )}
             </div>
           ),
-          // Giá trị này sẽ hiển thị trên ô Input nhờ optionLabelProp="value"
           value: getNational.identity?.nationalId || "",
-          // Đẩy thêm data vào để dùng trong hàm onSelect
           data: {
             nationalId: getNational.identity?.nationalId || "",
             fullName: getNational.fullName,
@@ -171,13 +167,26 @@ export default function ModalAddMember({
       <div className="p-6 max-h-[60vh] overflow-y-auto">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <p>Danh sách thành viên</p>
+            <p>
+              {selectContract?.members?.map((item, index) => (
+                <>
+                  <div key={index}>
+                    {index + 1}/ {item.user.fullName}
+                  </div>
+                </>
+              ))}
+            </p>
+
+            <label className="block text-sm mt-5 font-medium text-gray-700 mb-2">
               Tìm kiếm thành viên
             </label>
             <Select
               showSearch
+              allowClear
               onSearch={handleSearchChange}
               onSelect={handleMemberSelect}
+              onClear={() => setSearchValue("")}
               options={autocompleteOptions}
               optionLabelProp="value"
               placeholder="Nhập 12 số CCCD"
@@ -189,7 +198,7 @@ export default function ModalAddMember({
                 ) : searchValue.length === 12 ? (
                   "Không tìm thấy người dùng"
                 ) : (
-                  "Vui lòng nhập đủ 12 số"
+                  ""
                 )
               }
             />
