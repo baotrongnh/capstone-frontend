@@ -60,7 +60,9 @@ export const CooperationsCard = ({
     ? new Date(contract.cooperationContract.endDate).toLocaleDateString("vi-VN")
     : "N/A";
   const baseRentPrice = Number(contract.baseRentPrice).toLocaleString("vi-VN");
-  const contractNumber = contract.cooperationContract?.contractNumber || "N/A";
+  const contractNumber = contract.cooperationContract?.contractNumber;
+
+  console.log("CON", contract);
 
   return (
     <Card

@@ -110,7 +110,7 @@ export const useApartmentRating = () => {
 
 export const useApartmentOwner = (id: string | number) => {
   return useQuery({
-    queryKey: ["apartmentOwner", id],
+    queryKey: ["apartmentOwner"],
     queryFn: () => apartmentService.owner(id),
   });
 };

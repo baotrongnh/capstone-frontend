@@ -1,6 +1,8 @@
 import { contractsService } from "@/lib/services/contracts.service";
+import { userService } from "@/lib/services/user.service";
+import { useAuthStore } from "@/stores/auth.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { App, message } from "antd";
 import { AxiosError } from "axios";
 
 export const useGetContracts = () =>
@@ -10,6 +12,7 @@ export const useGetContracts = () =>
   });
 
 export const useUploadContractPdf = (contractId: string) => {
+  const { message } = App.useApp();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (contractData: object) =>
@@ -22,11 +25,13 @@ export const useUploadContractPdf = (contractId: string) => {
     },
     onError: (error) => {
       console.error("Error uploading PDF:", error);
+      message.error("Có lỗi xảy ra khi tải lên PDF.");
     },
   });
 };
 
 export const useCancelContract = (contractId: string) => {
+  const { message } = App.useApp();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (reason: string) => contractsService.cancel(contractId, reason),
@@ -36,41 +41,64 @@ export const useCancelContract = (contractId: string) => {
     },
     onError: (error) => {
       console.error("Error uploading PDF:", error);
+      message.error("Có lỗi xảy ra khi tải lên PDF.");
     },
   });
 };
 
 export const useCancelCooperation = (cooperationId: string) => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
   return useMutation({
     mutationFn: (reason: string) =>
       contractsService.cancelCooperation(cooperationId, reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      queryClient.invalidateQueries({ queryKey: ["apartmentOwner"] });
       message.success("Hợp đồng hợp tác hủy thành công!");
     },
     onError: (error) => {
       console.error("Error canceling cooperation:", error);
+      message.error("Có lỗi xảy ra khi hủy hợp đồng hợp tác.");
     },
   });
 };
 
 export const useSignCooperationContract = (contractId: string) => {
+  const { message } = App.useApp();
   const queryClient = useQueryClient();
+  const tokens = useAuthStore((s) => s.tokens);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const syncAuthUser = async () => {
+    if (!tokens) {
+      return;
+    }
+
+    const user = await queryClient.fetchQuery({
+      queryKey: ["user", "profile"],
+      queryFn: () => userService.getProfile(),
+    });
+
+    setAuth(user, tokens);
+  };
   return useMutation({
     mutationFn: (signatureData: object) =>
       contractsService.signCooperationContract(contractId, signatureData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: ["apartmentOwner"],
+      });
+      await syncAuthUser();
       message.success("Ký hợp đồng hợp tác thành công!");
     },
     onError: (error) => {
       console.error("Error signing cooperation contract:", error);
+      message.error("Có lỗi xảy ra khi ký hợp đồng hợp tác.");
     },
   });
 };
 
 export const useRenewContract = (contractId: string) => {
+  const { message } = App.useApp();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: object) => contractsService.renew(contractId, body),
@@ -105,6 +133,8 @@ export const useRenewContract = (contractId: string) => {
 };
 
 export const useAddMemberContract = (nationalId: string) => {
+  const { message } = App.useApp();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: object) =>
