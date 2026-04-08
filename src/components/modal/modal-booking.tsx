@@ -339,10 +339,6 @@ export default function ModalBooking({
                           <span className="text-gray-500 text-sm">
                             Không tìm thấy người dùng
                           </span>
-                        ) : searchValue.length > 0 ? (
-                          <span className="text-gray-500 text-sm">
-                            Vui lòng nhập đủ 12 số
-                          </span>
                         ) : null
                       }
                     />

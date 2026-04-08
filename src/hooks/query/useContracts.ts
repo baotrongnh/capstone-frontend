@@ -87,6 +87,13 @@ export const useRenewContract = (contractId: string) => {
       if (statusCode === 409) {
         displayMessage =
           "Hợp đồng này đã được gia hạn, vui lòng gia hạn hợp đồng 'Gia hạn'.";
+      } else if (
+        statusCode === 400 &&
+        backendMessage ===
+          "Renewed contract can have at most 1 members based on apartment max occupants"
+      ) {
+        displayMessage =
+          "Hợp đồng này vượt quá số thành viên cho phép của căn hộ!";
       } else if (backendMessage) {
         displayMessage = backendMessage;
       }
