@@ -1,6 +1,6 @@
 'use client'
 
-import { getMyUserApartments, updateMyHousePassword } from '@/lib/services/userApartment.service'
+import { getMyUserApartments, getUserApartmentById, updateMyHousePassword } from '@/lib/services/userApartment.service'
 import { UserApartmentApiError } from '@/types/userApartment'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
@@ -13,6 +13,14 @@ export const useUserApartment = () => {
     })
 }
 
+export const useUserApartmentDetail = (id: string) => {
+    return useQuery({
+        queryKey: ['user-apartments', 'detail', id],
+        queryFn: () => getUserApartmentById(id),
+        enabled: Boolean(id),
+    })
+}
+
 export const useUpdateMyHousePassword = () => {
     const { message } = App.useApp()
     const queryClient = useQueryClient()
@@ -21,7 +29,7 @@ export const useUpdateMyHousePassword = () => {
         mutationFn: updateMyHousePassword,
         onSuccess: (res) => {
             message.success(res?.message || 'House password updated successfully')
-            queryClient.invalidateQueries({ queryKey: ['user-apartments', 'my'] })
+            queryClient.invalidateQueries({ queryKey: ['user-apartments'] })
         },
         onError: (error: AxiosError<UserApartmentApiError>) => {
             const backendMessage = error.response?.data?.message

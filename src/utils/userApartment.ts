@@ -1,5 +1,9 @@
 import { toDisplayText } from '@/utils/format'
 
+type TranslationFn = ((key: string) => string) & {
+    has?: (key: string) => boolean
+}
+
 export type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'
 
 export const APARTMENT_STATUS_COLORS: Record<ApartmentStatus, string> = {
@@ -17,11 +21,6 @@ export const toSafeNumber = (value: unknown, fallback = 0) => {
     return Number.isFinite(parsed) ? parsed : fallback
 }
 
-export const toOptionalNumber = (value: unknown): number | undefined => {
-    const parsed = typeof value === 'number' ? value : Number(value)
-    return Number.isFinite(parsed) ? parsed : undefined
-}
-
 export const toApartmentStatus = (status: unknown): ApartmentStatus => {
     if (typeof status !== 'string') {
         return 'inactive'
@@ -30,7 +29,7 @@ export const toApartmentStatus = (status: unknown): ApartmentStatus => {
     return status in APARTMENT_STATUS_COLORS ? (status as ApartmentStatus) : 'inactive'
 }
 
-export const toReadableStatus = (value: unknown) => {
+const toReadableStatus = (value: unknown) => {
     const text = toDisplayText(value)
     if (text === '-') return text
 
@@ -38,6 +37,81 @@ export const toReadableStatus = (value: unknown) => {
         .split('_')
         .join(' ')
         .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+export const hasDisplayValue = (value: unknown) => {
+    if (value === null || value === undefined) {
+        return false
+    }
+
+    if (typeof value === 'string') {
+        return value.trim().length > 0
+    }
+
+    return true
+}
+
+const normalizeEnumKey = (value: unknown) => {
+    const text = toDisplayText(value)
+    if (text === '-') {
+        return ''
+    }
+
+    return text
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '_')
+        .replace(/-/g, '_')
+}
+
+const translateEnumValue = (value: unknown, t: TranslationFn, keyPrefix: string) => {
+    const normalized = normalizeEnumKey(value)
+
+    if (!normalized) {
+        return '-'
+    }
+
+    const translationKey = `${keyPrefix}.${normalized}`
+    const hasKey = typeof t.has === 'function' ? t.has(translationKey) : false
+
+    if (hasKey) {
+        return t(translationKey)
+    }
+
+    return toReadableStatus(normalized)
+}
+
+export const toUserApartmentStatusLabel = (status: unknown, t: TranslationFn) => {
+    return translateEnumValue(status, t, 'status')
+}
+
+export const toPaymentMethodLabel = (paymentMethod: unknown, t: TranslationFn) => {
+    return translateEnumValue(paymentMethod, t, 'paymentMethodOptions')
+}
+
+export const toContractCategoryLabel = (category: unknown, t: TranslationFn) => {
+    return translateEnumValue(category, t, 'contractCategoryOptions')
+}
+
+export const toContractMemberTypeLabel = (memberType: unknown, t: TranslationFn) => {
+    return translateEnumValue(memberType, t, 'memberTypeOptions')
+}
+
+export const toContractMemberStatusLabel = (status: unknown, t: TranslationFn) => {
+    return translateEnumValue(status, t, 'memberStatusOptions')
+}
+
+export const parseApartmentImages = (images: unknown) => {
+    if (!Array.isArray(images)) {
+        return [] as string[]
+    }
+
+    return images.filter((image): image is string => typeof image === 'string' && image.trim().length > 0)
+}
+
+export const getApartmentCoverImage = (images: unknown) => {
+    const parsedImages = parseApartmentImages(images)
+    return parsedImages[0] ?? '/img/apartment-placeholder.png'
 }
 
 export const formatFurnishing = (value: unknown, t: (key: string) => string) => {

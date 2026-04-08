@@ -385,6 +385,10 @@
       "buildingGateCode": "Building Gate Code",
       "smartLockPin": "Smart Lock PIN",
       "mailboxCode": "Mailbox Code",
+      "parkingAccessCode": "Parking Access Code",
+      "wifiName": "WiFi Name",
+      "wifiPassword": "WiFi Password",
+      "notes": "Notes",
       "emergencyContactName": "Emergency Contact Name",
       "emergencyContactPhone": "Emergency Contact Phone",
       "showSensitiveData": "Show sensitive data",
@@ -393,13 +397,52 @@
       "no": "No",
       "primaryTenant": "Primary Tenant",
       "secondaryTenant": "Secondary Tenant",
+      "searchPlaceholder": "Search by building name, unit number or address...",
+      "allStatuses": "All statuses",
+      "noResults": "No apartments match your filters",
+      "viewDetail": "View detail",
+      "stats": {
+        "total": "Total Apartments",
+        "primaryTenant": "Primary Tenant",
+        "secondaryTenant": "Secondary Tenant",
+        "activeAssignments": "Active Assignments"
+      },
       "showMoreImages": "View more photos",
       "showLessImages": "Show fewer photos",
       "startDate": "Start Date",
       "endDate": "End Date",
+      "contractNumber": "Contract Number",
       "monthlyRent": "Monthly Rent",
       "depositAmount": "Deposit Amount",
       "contractStatus": "Contract Status",
+      "paymentDueDay": "Payment Due Day",
+      "paymentMethod": "Payment Method",
+      "contractCategory": "Contract Category",
+      "contractMembers": "Contract Members",
+      "paymentMethodOptions": {
+        "bank_transfer": "Bank Transfer",
+        "cash": "Cash",
+        "e_wallet": "E-wallet",
+        "auto_debit": "Auto Debit",
+        "credit_card": "Credit Card",
+        "debit_card": "Debit Card",
+        "other": "Other"
+      },
+      "contractCategoryOptions": {
+        "normal": "Standard Contract",
+        "renewal": "Renewal"
+      },
+      "memberTypeOptions": {
+        "primary": "Primary Member",
+        "co_tenant": "Co-tenant",
+        "secondary": "Secondary Member"
+      },
+      "memberStatusOptions": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending",
+        "terminated": "Terminated"
+      },
       "electricity": "Electricity",
       "water": "Water",
       "previousReading": "Previous Reading",
@@ -464,8 +507,10 @@
         "unfurnished": "Unfurnished"
       },
       "status": {
+        "active": "Active",
         "available": "Available",
         "occupied": "Occupied",
+        "pending": "Pending",
         "rented": "Rented",
         "maintenance": "Maintenance",
         "reserved": "Reserved",

@@ -2,6 +2,7 @@
 
 import { ApiErrorResponse, AuthFormProps, LoginDTO, RegisterDto } from "@/types/auth";
 import { App, Button, Divider, Form, Input } from "antd";
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -20,9 +21,13 @@ export default function AuthForm({
   const tHook = useTranslations('Auth');
   const t = tProp || tHook;
   const [mode, setMode] = useState<"login" | "register">("login");
+  const [loginPasswordVisible, setLoginPasswordVisible] = useState(false);
+  const [registerPasswordVisible, setRegisterPasswordVisible] = useState(false);
 
   const switchMode = (next: "login" | "register") => {
     form.resetFields();
+    setLoginPasswordVisible(false);
+    setRegisterPasswordVisible(false);
     setMode(next);
   };
 
@@ -121,7 +126,15 @@ export default function AuthForm({
               style={{ marginBottom: 20 }}
               className="[&_.ant-form-item-label>label]:w-full [&_.ant-form-item-label>label]:after:hidden"
             >
-              <Input.Password placeholder={t('passwordPlaceholder')} style={{ height: 45, padding: 10 }} />
+              <Input.Password
+                placeholder={t('passwordPlaceholder')}
+                style={{ height: 45, padding: 10 }}
+                iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)}
+                visibilityToggle={{
+                  visible: loginPasswordVisible,
+                  onVisibleChange: setLoginPasswordVisible,
+                }}
+              />
             </Form.Item>
           </>
         ) : (
@@ -168,7 +181,15 @@ export default function AuthForm({
               ]}
               style={{ marginBottom: 10 }}
             >
-              <Input.Password placeholder={t('passwordPlaceholder')} style={{ height: 45, padding: 10 }} />
+              <Input.Password
+                placeholder={t('passwordPlaceholder')}
+                style={{ height: 45, padding: 10 }}
+                iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)}
+                visibilityToggle={{
+                  visible: registerPasswordVisible,
+                  onVisibleChange: setRegisterPasswordVisible,
+                }}
+              />
             </Form.Item>
           </>
         )}
