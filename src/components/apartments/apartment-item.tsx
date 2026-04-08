@@ -43,11 +43,11 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                <div className='p-3 flex-1 min-w-0'>
                     <div className='flex items-center gap-2 mb-1.5 flex-wrap'>
                          <span className='inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-primary/40 text-white border'>
-                              Chưa có thông tin
+                              {tFurnishing(apartment.furnishingStatus)}
                          </span>
                          <span className='text-gray-300'>|</span>
-                         <Rate allowHalf defaultValue={4.5} />
-                         <span className='text-gray-400 text-xs'>({5} lượt đánh giá)</span>
+                         <Rate allowHalf defaultValue={apartment?.rating || 0} />
+                         <span className='text-gray-400 text-xs'>({apartment?.rating || 0} / 5 sao)</span>
                     </div>
 
                     {/* Title */}
@@ -59,7 +59,8 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                          <InfoChip icon="lucide:map-pin">{displayAddress || 'Chưa có địa chỉ'}</InfoChip>
                          <InfoChip icon="lucide:maximize-2">{apartment.totalArea} m²</InfoChip>
                          <InfoChip icon="lucide:bed-double">{apartment.numberOfBedrooms} PN · {apartment.numberOfBathrooms} WC</InfoChip>
-                         <InfoChip icon="lucide:sofa">{tFurnishing(apartment.furnishingStatus)}</InfoChip>
+                         {apartment?.amenities?.map((item) => (<InfoChip key={item.id} icon="lucide:badge-check">{item.name}</InfoChip>))}
+                         
                     </div>
                </div>
 
