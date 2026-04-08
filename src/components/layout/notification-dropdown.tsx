@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifications } from '@/hooks/query/useNotifications'
+import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/query/useNotifications'
 import { ROUTES } from '@/constants/routes'
 import type { MenuProps } from 'antd'
 import { Badge, Dropdown } from 'antd'
@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { BellRing } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useMemo } from 'react'
 
 type NotificationDropdownProps = {
      iconSize?: number
@@ -17,9 +18,15 @@ type NotificationDropdownProps = {
 export default function NotificationDropdown({ iconSize = 20, className = '' }: NotificationDropdownProps) {
      const t = useTranslations('Header')
      const { data: notifications = [], isLoading } = useNotifications()
+     const markAsRead = useMarkNotificationAsRead()
+     const markAllAsRead = useMarkAllNotificationsAsRead()
 
      const unreadCount = notifications.filter(item => !item.isRead).length
      const recentNotifications = notifications.slice(0, 5)
+     const unreadById = useMemo(
+          () => new Map(notifications.map((item) => [item.id, !item.isRead])),
+          [notifications],
+     )
 
      const contentItems: MenuProps['items'] = isLoading
           ? [{ key: 'loading', disabled: true, label: <p className='px-1 py-0.5 text-sm text-gray-500'>Đang tải...</p> }]
@@ -60,7 +67,24 @@ export default function NotificationDropdown({ iconSize = 20, className = '' }: 
      ]
 
      return (
-          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement='bottomRight'>
+          <Dropdown
+               menu={{
+                    items: menuItems,
+                    onClick: ({ key }) => {
+                         const id = String(key)
+                         if (!unreadById.get(id)) return
+                         if (markAsRead.isPending) return
+                         markAsRead.mutate(id)
+                    },
+               }}
+               trigger={['click']}
+               placement='bottomRight'
+               onOpenChange={(open) => {
+                    if (!open || unreadCount === 0) return
+                    if (markAllAsRead.isPending) return
+                    markAllAsRead.mutate()
+               }}
+          >
                <button
                     type='button'
                     className={`inline-flex cursor-pointer items-center text-gray-700 hover:text-primary ${className}`.trim()}
