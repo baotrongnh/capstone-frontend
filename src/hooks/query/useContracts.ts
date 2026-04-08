@@ -19,9 +19,6 @@ export const useUploadContractPdf = (contractId: string) => {
       contractsService.create(contractId, contractData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
-      message.success(
-        "Gửi hợp đồng thành công! Vui lòng thanh toán để hoàn tất thủ tục.",
-      );
     },
     onError: (error) => {
       console.error("Error uploading PDF:", error);
