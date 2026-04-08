@@ -46,7 +46,7 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                               {tFurnishing(apartment.furnishingStatus)}
                          </span>
                          <span className='text-gray-300'>|</span>
-                         <Rate allowHalf defaultValue={apartment?.rating || 0} />
+                         <Rate disabled allowHalf defaultValue={apartment?.rating || 0} />
                          <span className='text-gray-400 text-xs'>({apartment?.rating || 0} / 5 sao)</span>
                     </div>
 
