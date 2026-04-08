@@ -4,7 +4,8 @@ export const ROUTES = {
   CONTACT: "/contact",
   PROFILE: "/profile",
   NOTIFICATION: "/notification",
-  MY_APARTMENT: '/profile/my-apartment'
+  MY_APARTMENT: '/profile/my-apartment',
+  APP_GUIDE: '/app-guide',
 };
 
 export const IMG_URL = {
