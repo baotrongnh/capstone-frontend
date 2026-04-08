@@ -387,6 +387,10 @@
       "buildingGateCode": "Mã cổng tòa nhà",
       "smartLockPin": "Mã PIN khóa thông minh",
       "mailboxCode": "Mã hộp thư",
+      "parkingAccessCode": "Mã ra vào bãi đỗ xe",
+      "wifiName": "Tên WiFi",
+      "wifiPassword": "Mật khẩu WiFi",
+      "notes": "Ghi chú",
       "emergencyContactName": "Tên liên hệ khẩn cấp",
       "emergencyContactPhone": "Số điện thoại khẩn cấp",
       "showSensitiveData": "Hiện dữ liệu nhạy cảm",
@@ -395,13 +399,52 @@
       "no": "Không",
       "primaryTenant": "Thuê chính",
       "secondaryTenant": "Thuê phụ",
+      "searchPlaceholder": "Tìm theo tên tòa nhà, số căn hoặc địa chỉ...",
+      "allStatuses": "Tất cả trạng thái",
+      "noResults": "Không có căn hộ nào phù hợp với bộ lọc",
+      "viewDetail": "Xem chi tiết",
+      "stats": {
+        "total": "Tổng căn hộ",
+        "primaryTenant": "Thuê chính",
+        "secondaryTenant": "Thuê phụ",
+        "activeAssignments": "Đang hiệu lực"
+      },
       "showMoreImages": "Xem thêm ảnh",
       "showLessImages": "Thu gọn ảnh",
       "startDate": "Ngày bắt đầu",
       "endDate": "Ngày kết thúc",
+      "contractNumber": "Mã hợp đồng",
       "monthlyRent": "Tiền thuê hàng tháng",
       "depositAmount": "Tiền đặt cọc",
       "contractStatus": "Trạng thái hợp đồng",
+      "paymentDueDay": "Ngày đến hạn thanh toán",
+      "paymentMethod": "Phương thức thanh toán",
+      "contractCategory": "Loại hợp đồng",
+      "contractMembers": "Thành viên hợp đồng",
+      "paymentMethodOptions": {
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "cash": "Tiền mặt",
+        "e_wallet": "Ví điện tử",
+        "auto_debit": "Trích nợ tự động",
+        "credit_card": "Thẻ tín dụng",
+        "debit_card": "Thẻ ghi nợ",
+        "other": "Khác"
+      },
+      "contractCategoryOptions": {
+        "normal": "Hợp đồng thường",
+        "renewal": "Gia hạn"
+      },
+      "memberTypeOptions": {
+        "primary": "Thành viên chính",
+        "co_tenant": "Người thuê cùng",
+        "secondary": "Thành viên phụ"
+      },
+      "memberStatusOptions": {
+        "active": "Đang hiệu lực",
+        "inactive": "Không hoạt động",
+        "pending": "Chờ xử lý",
+        "terminated": "Đã kết thúc"
+      },
       "electricity": "Điện",
       "water": "Nước",
       "previousReading": "Chỉ số trước",
@@ -466,8 +509,10 @@
         "unfurnished": "Không nội thất"
       },
       "status": {
-        "available": "Có sẵn",
+        "active": "Đang hiệu lực",
+        "available": "Còn trống",
         "occupied": "Đã có người ở",
+        "pending": "Chờ xử lý",
         "rented": "Đã cho thuê",
         "maintenance": "Bảo trì",
         "reserved": "Đã đặt trước",

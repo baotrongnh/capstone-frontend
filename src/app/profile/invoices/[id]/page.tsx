@@ -191,7 +191,7 @@ export default function InvoiceDetailPage() {
             <Row gutter={[16, 16]}>
                 <Col xs={24} md={8}>
                     <Card
-                        className="border-0 shadow-sm"
+                        className="border-0 shadow-sm min-h-27"
                         styles={{ body: { padding: 20 } }}
                     >
                         <Statistic
@@ -202,7 +202,7 @@ export default function InvoiceDetailPage() {
                 </Col>
                 <Col xs={24} md={8}>
                     <Card
-                        className="border-0 shadow-sm"
+                        className="border-0 shadow-sm min-h-27"
                         styles={{ body: { padding: 20 } }}
                     >
                         <div className="text-sm text-gray-500">{t('summary.status')}</div>
@@ -213,7 +213,7 @@ export default function InvoiceDetailPage() {
                 </Col>
                 <Col xs={24} md={8}>
                     <Card
-                        className="border-0 shadow-sm"
+                        className="border-0 shadow-sm min-h-27"
                         styles={{ body: { padding: 20 } }}
                     >
                         <div className="text-sm text-gray-500">{t('summary.invoiceType')}</div>
