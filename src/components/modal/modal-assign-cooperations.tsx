@@ -2,6 +2,7 @@ import { ROUTES } from "@/constants/routes";
 import { useApartmentCooperationContract } from "@/hooks/query/useApartments";
 import { useSignCooperationContract } from "@/hooks/query/useContracts";
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
+import { useQueryClient } from "@tanstack/react-query";
 import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
 import { Check, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -29,10 +30,11 @@ export default function ModalAssignCooperations({
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [showSignModal, setShowSignModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
-
   const { data: cooperation } = useApartmentCooperationContract(
     selectedContract?.id || "",
   );
+
+  console.log("HA", selectedContract);
 
   const { mutateAsync: signCooperationContract } = useSignCooperationContract(
     cooperation?.cooperationContractId || "",
@@ -171,7 +173,6 @@ export default function ModalAssignCooperations({
 
       setShowSignModal(false);
       setShowDetailModal(false);
-
       route.push(`${ROUTES.PROFILE}/cooperations`);
     } catch (error) {
       message.error("Lỗi khi gửi hợp đồng đã ký: " + error);
