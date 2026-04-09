@@ -1,6 +1,6 @@
 'use client'
 
-import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/query/useNotifications'
+import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotificationUnreadCount, useNotifications } from '@/hooks/query/useNotifications'
 import { ROUTES } from '@/constants/routes'
 import type { MenuProps } from 'antd'
 import { Badge, Dropdown } from 'antd'
@@ -8,7 +8,6 @@ import dayjs from 'dayjs'
 import { BellRing } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useMemo } from 'react'
 
 type NotificationDropdownProps = {
      iconSize?: number
@@ -17,16 +16,13 @@ type NotificationDropdownProps = {
 
 export default function NotificationDropdown({ iconSize = 20, className = '' }: NotificationDropdownProps) {
      const t = useTranslations('Header')
-     const { data: notifications = [], isLoading } = useNotifications()
+     const { data: notifications = [], isLoading, refetch: refetchNotifications } = useNotifications()
+     const { data: unreadCount = 0, refetch: refetchUnreadCount } = useNotificationUnreadCount()
      const markAsRead = useMarkNotificationAsRead()
      const markAllAsRead = useMarkAllNotificationsAsRead()
 
-     const unreadCount = notifications.filter(item => !item.isRead).length
      const recentNotifications = notifications.slice(0, 5)
-     const unreadById = useMemo(
-          () => new Map(notifications.map((item) => [item.id, !item.isRead])),
-          [notifications],
-     )
+     const unreadById = new Map(notifications.map((item) => [item.id, !item.isRead]))
 
      const contentItems: MenuProps['items'] = isLoading
           ? [{ key: 'loading', disabled: true, label: <p className='px-1 py-0.5 text-sm text-gray-500'>Đang tải...</p> }]
@@ -74,15 +70,30 @@ export default function NotificationDropdown({ iconSize = 20, className = '' }: 
                          const id = String(key)
                          if (!unreadById.get(id)) return
                          if (markAsRead.isPending) return
-                         markAsRead.mutate(id)
+                         markAsRead.mutate(id, {
+                              onSuccess: () => {
+                                   refetchNotifications()
+                                   refetchUnreadCount()
+                              },
+                         })
                     },
                }}
                trigger={['click']}
                placement='bottomRight'
                onOpenChange={(open) => {
-                    if (!open || unreadCount === 0) return
-                    if (markAllAsRead.isPending) return
-                    markAllAsRead.mutate()
+                    if (!open) return
+
+                    refetchNotifications()
+                    refetchUnreadCount()
+
+                    if (unreadCount > 0 && !markAllAsRead.isPending) {
+                         markAllAsRead.mutate(undefined, {
+                              onSuccess: () => {
+                                   refetchNotifications()
+                                   refetchUnreadCount()
+                              },
+                         })
+                    }
                }}
           >
                <button
