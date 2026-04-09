@@ -3,19 +3,32 @@
 import { ROUTES } from '@/constants/routes'
 import { useCreateViewRequest } from '@/hooks/query/useViewRequest'
 import { useAuthStore } from '@/stores/auth.store'
-import { Alert, Button, DatePicker, Input, Modal, TimePicker } from 'antd'
+import { Alert, Button, DatePicker, Input, Modal, Select, TimePicker } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/vi'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 dayjs.locale('vi')
 
 export interface BookingScheduleData {
      date: Dayjs
      timeSlot: string
+     durationMinutes: number
      note?: string
+}
+
+const DURATION_OPTIONS = [30, 45, 60, 90]
+const BOOKING_START_HOUR = 7
+const BOOKING_END_HOUR = 17
+
+const getMinBookingDateTime = () => {
+     const rawMinBookingDateTime = dayjs().add(1, 'day')
+
+     return rawMinBookingDateTime
+          .startOf('minute')
+          .add(rawMinBookingDateTime.second() > 0 || rawMinBookingDateTime.millisecond() > 0 ? 1 : 0, 'minute')
 }
 
 export default function ModalBookingSchedule({
@@ -30,25 +43,20 @@ export default function ModalBookingSchedule({
      const t = useTranslations('BookingModal')
      const [date, setDate] = useState<Dayjs | null>(null)
      const [time, setTime] = useState<Dayjs | null>(null)
+     const [durationMinutes, setDurationMinutes] = useState<number>(30)
      const [note, setNote] = useState<string>('')
-     const [errors, setErrors] = useState<{ date?: string; time?: string }>({})
+     const [errors, setErrors] = useState<{ date?: string; time?: string; durationMinutes?: string }>({})
      const { mutate, isPending } = useCreateViewRequest()
 
      const user = useAuthStore((store) => store.user)
      const hasPhone = user?.phone
      const hasID = user?.identity
      const isValidToBook = hasPhone && hasID
-     const minBookingDateTime = useMemo(() => {
-          const rawMinBookingDateTime = dayjs().add(1, 'day')
-
-          return rawMinBookingDateTime
-               .startOf('minute')
-               .add(rawMinBookingDateTime.second() > 0 || rawMinBookingDateTime.millisecond() > 0 ? 1 : 0, 'minute')
-     }, [open])
+     const minBookingDateTime = getMinBookingDateTime()
 
      const minBookingHint = minBookingDateTime.format('HH:mm DD/MM/YYYY')
 
-     const onSubmit = (selectedDate: Dayjs, selectedTime: Dayjs, message: string) => {
+     const onSubmit = (selectedDate: Dayjs, selectedTime: Dayjs, selectedDuration: number, message: string) => {
           const appointmentAt = selectedDate
                .hour(selectedTime.hour())
                .minute(selectedTime.minute())
@@ -59,15 +67,17 @@ export default function ModalBookingSchedule({
           mutate({
                apartmentId,
                appointmentAt,
+               durationMinutes: selectedDuration,
                note: message
           })
      }
 
      const handleOk = () => {
-          if (!date || !time) {
+          if (!date || !time || !durationMinutes) {
                setErrors({
                     date: !date ? t('dateRequired') : undefined,
                     time: !time ? t('timeRequired') : undefined,
+                    durationMinutes: !durationMinutes ? 'Vui lòng chọn thời lượng cuộc hẹn' : undefined,
                })
                return
           }
@@ -78,6 +88,14 @@ export default function ModalBookingSchedule({
                .second(0)
                .millisecond(0)
 
+          if (time.hour() < BOOKING_START_HOUR || time.hour() > BOOKING_END_HOUR) {
+               setErrors((prev) => ({
+                    ...prev,
+                    time: 'Chỉ được chọn giờ từ 07:00 đến 17:59',
+               }))
+               return
+          }
+
           if (appointmentDateTime.isBefore(minBookingDateTime)) {
                setErrors({
                     date: 'Lịch xem phải đặt trước ít nhất 1 ngày',
@@ -86,13 +104,14 @@ export default function ModalBookingSchedule({
                return
           }
 
-          onSubmit(date, time, note)
+          onSubmit(date, time, durationMinutes, note)
           handleCancel()
      }
 
      const handleCancel = () => {
           setDate(null)
           setTime(null)
+          setDurationMinutes(30)
           setNote('')
           setErrors({})
           onClose()
@@ -123,18 +142,33 @@ export default function ModalBookingSchedule({
      }
 
      const disabledDate = (current: Dayjs) =>
-          current && current < minBookingDateTime.startOf('day')
+          current &&
+          (
+               current < minBookingDateTime.startOf('day') ||
+               (
+                    minBookingDateTime.hour() > BOOKING_END_HOUR &&
+                    current.isSame(minBookingDateTime.startOf('day'), 'day')
+               )
+          )
 
      const getDisabledTime = () => {
+          const outsideBusinessHours = Array.from({ length: 24 }, (_, i) => i)
+               .filter((hour) => hour < BOOKING_START_HOUR || hour > BOOKING_END_HOUR)
+
           if (!date || !date.isSame(minBookingDateTime, 'day')) {
-               return {}
+               return {
+                    disabledHours: () => outsideBusinessHours,
+               }
           }
 
           const minHour = minBookingDateTime.hour()
           const minMinute = minBookingDateTime.minute()
+          const beforeMinHours = Array.from({ length: Math.max(minHour, 0) }, (_, i) => i)
+          const disabledHours = Array.from(new Set([...outsideBusinessHours, ...beforeMinHours]))
+               .sort((a, b) => a - b)
 
           return {
-               disabledHours: () => Array.from({ length: minHour }, (_, i) => i),
+               disabledHours: () => disabledHours,
                disabledMinutes: (selectedHour: number) =>
                     selectedHour === minHour
                          ? Array.from({ length: minMinute }, (_, i) => i)
@@ -163,7 +197,7 @@ export default function ModalBookingSchedule({
                     <div className='rounded-xl border border-gray-200 bg-gray-50 p-4'>
                          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                               <div className='space-y-1.5'>
-                                   <label className='font-medium text-sm'>{t('dateLabel')}</label>
+                                   <label className='min-h-5 font-medium text-sm'>{t('dateLabel')}</label>
                                    <DatePicker
                                         className='w-full'
                                         size='large'
@@ -178,7 +212,7 @@ export default function ModalBookingSchedule({
                               </div>
 
                               <div className='space-y-1.5'>
-                                   <label className='font-medium text-sm'>{t('timeLabel')}</label>
+                                   <label className='min-h-5 font-medium text-sm'>{t('timeLabel')}</label>
                                    <TimePicker
                                         className='w-full'
                                         size='large'
@@ -193,12 +227,31 @@ export default function ModalBookingSchedule({
                                    />
                                    {errors.time && <p className='text-red-500 text-xs'>{errors.time}</p>}
                               </div>
+
+                              <div className='space-y-1.5 sm:col-span-2'>
+                                   <label className='min-h-5 font-medium text-sm'>Thời lượng mong muốn</label>
+                                   <Select<number>
+                                        className='w-full'
+                                        size='large'
+                                        value={durationMinutes}
+                                        options={DURATION_OPTIONS.map((value) => ({
+                                             label: `${value} phút`,
+                                             value,
+                                        }))}
+                                        status={errors.durationMinutes ? 'error' : undefined}
+                                        onChange={(value) => {
+                                             setDurationMinutes(value)
+                                             setErrors((e) => ({ ...e, durationMinutes: undefined }))
+                                        }}
+                                   />
+                                   {errors.durationMinutes && <p className='text-red-500 text-xs'>{errors.durationMinutes}</p>}
+                              </div>
                          </div>
 
                          {date && time && (
                               <div className='mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2'>
                                    <p className='text-xs text-emerald-800'>
-                                        Lịch dự kiến: {date.format('DD/MM/YYYY')} lúc {time.format('HH:mm')}
+                                        Lịch dự kiến: {date.format('DD/MM/YYYY')} lúc {time.format('HH:mm')} trong {durationMinutes} phút
                                    </p>
                               </div>
                          )}

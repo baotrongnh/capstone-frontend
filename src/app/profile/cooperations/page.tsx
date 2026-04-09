@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "pending" | "available";
+type StatusFilter = "all" | "pending" | "available" | "reserved" | "inactive";
 
 export default function CooperationsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -34,11 +34,14 @@ export default function CooperationsPage() {
     return (data ?? []) as OwnerApartmentResponse[];
   }, [data]);
 
+  console.log("AAA", contractsList);
+
   const filteredContracts = useMemo(() => {
     const baseContracts = contractsList.filter(
       (c) =>
         c.status === "pending" ||
         c.status === "available" ||
+        c.status === "reserved" ||
         c.status === "inactive",
     );
 
@@ -48,8 +51,6 @@ export default function CooperationsPage() {
 
     return baseContracts.filter((c) => c.status === statusFilter);
   }, [contractsList, statusFilter]);
-
-  console.log("MLML", filteredContracts);
 
   const selectedContract = useMemo(() => {
     return (

@@ -225,6 +225,7 @@
     "pasteImageHint": "You can paste images (Ctrl+V) into the chat"
   },
   "Profile": {
+    "authRequired": "Please log in to access your profile.",
     "sidebar": {
       "myInformation": "My Information",
       "accountInformation": "Account Information",
@@ -807,6 +808,7 @@
     "properties": {
       "title": "My Properties",
       "subtitle": "Manage all your listed properties",
+      "detailSubtitle": "Details of the apartments you are leasing out",
       "addProperty": "Add Property",
       "noProperties": "You have no properties listed yet",
       "noResults": "No properties match your search",
@@ -814,23 +816,31 @@
       "allStatuses": "All Statuses",
       "loading": "Loading...",
       "view": "View",
+      "viewDetail": "View detail",
       "edit": "Edit",
+      "unitLabel": "Unit",
       "beds": "beds",
       "baths": "baths",
+      "perMonth": "/month",
       "vacant": "Vacant",
       "contractEnds": "Contract ends",
       "stats": {
         "total": "Total Properties",
         "available": "Available",
         "occupied": "Occupied",
+        "maintenance": "Maintenance",
         "monthlyRevenue": "Monthly Revenue"
       },
       "status": {
         "available": "Available",
         "occupied": "Occupied",
+        "rented": "Rented",
         "maintenance": "Maintenance",
         "reserved": "Reserved",
-        "inactive": "Inactive"
+        "unavailable": "Unavailable",
+        "inactive": "Inactive",
+        "verified": "Verified",
+        "pending": "Pending"
       }
     }
   },

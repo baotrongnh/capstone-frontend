@@ -6,7 +6,7 @@ import { useLogout } from "@/hooks/query/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
 import { Icon } from "@iconify/react";
 import type { MenuProps } from "antd";
-import { House, LogOut, Menu, User } from "lucide-react";
+import { House, LogOut, Menu, Smartphone, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -71,6 +71,11 @@ export default function Header() {
     logoutApi();
   }
 
+  function openAppGuide() {
+    router.push(ROUTES.APP_GUIDE);
+    setDrawerOpen(false);
+  }
+
   const flagIcon = locale === "vi" ? "flag:vn-4x3" : "flag:us-4x3";
   const userMenuItems: MenuProps["items"] = [
     {
@@ -84,6 +89,12 @@ export default function Header() {
       label: "Căn hộ của tôi",
       icon: <House size={16} />,
       onClick: () => goApartment(),
+    },
+    {
+      key: "app-guide",
+      label: "Hướng dẫn dùng app",
+      icon: <Smartphone size={16} />,
+      onClick: () => openAppGuide(),
     },
     { type: "divider" },
     {

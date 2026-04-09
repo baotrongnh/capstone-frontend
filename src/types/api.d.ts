@@ -1552,7 +1552,7 @@ export interface paths {
         put?: never;
         /**
          * User books apartment viewing
-         * @description Authenticated user books a viewing by sending apartmentId and appointmentAt. Note is optional.
+         * @description Authenticated user books a viewing by sending apartmentId, appointmentAt and optional durationMinutes. Note is optional.
          */
         post: operations["ViewingRequestsController_createUserViewingBooking"];
         delete?: never;
@@ -1570,7 +1570,7 @@ export interface paths {
         };
         /**
          * Get my viewing requests
-         * @description Authenticated user gets their own viewing requests/appointments with optional status filter and pagination.
+         * @description Authenticated user or staff gets their own viewing requests/appointments with optional status filter and pagination.
          */
         get: operations["ViewingRequestsController_getMyViewingRequests"];
         put?: never;
@@ -1832,6 +1832,40 @@ export interface paths {
         head?: never;
         /** Update IoT board metadata */
         patch: operations["IoTController_updateBoard"];
+        trace?: never;
+    };
+    "/api/v1/iot/boards/{boardId}/unlink-apartment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Remove apartment link from a board and its child devices */
+        patch: operations["IoTController_unlinkBoardApartment"];
+        trace?: never;
+    };
+    "/api/v1/iot/boards/unlink-apartment-by-apartment/{apartmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Remove apartment link from all boards currently assigned to an apartment */
+        patch: operations["IoTController_unlinkBoardsByApartment"];
         trace?: never;
     };
     "/api/v1/iot/boards/{boardId}/devices": {
@@ -5437,11 +5471,15 @@ export interface components {
              */
             nationalId: string;
             /**
+             * @description Added member is always secondary (co_tenant)
              * @default co_tenant
              * @enum {string}
              */
-            memberType: "primary" | "co_tenant" | "guarantor";
-            /** @example false */
+            memberType: "co_tenant";
+            /**
+             * @description Added member cannot be primary contact
+             * @example false
+             */
             isPrimaryContact?: boolean;
             /**
              * @description Share percentage
@@ -6327,6 +6365,11 @@ export interface components {
              */
             appointmentAt: string;
             /**
+             * @description Thoi luong slot xem (phut), mac dinh 30
+             * @example 45
+             */
+            durationMinutes?: number;
+            /**
              * @description Ghi chu cua user cho lich hen (khong bat buoc)
              * @example Toi muon xem can ho vao buoi sang, vui long lien he truoc 30 phut.
              */
@@ -6362,6 +6405,8 @@ export interface components {
             note?: string | null;
             /** Format: date-time */
             cancelledAt?: string | null;
+            /** @example Nguoi dung ban viec dot xuat, xin doi lich tuan sau. */
+            cancellationReason?: string | null;
             apartment: components["schemas"]["UserMyViewingApartmentDto"];
             assignedStaff: components["schemas"]["UserViewingAssignedStaffDto"];
             /** Format: date-time */
@@ -6689,6 +6734,24 @@ export interface components {
              * @enum {string}
              */
             status: "active" | "inactive" | "maintenance" | "error";
+        };
+        IoTBoardUnlinkResultDto: {
+            /** @example ESP_A101 */
+            boardId: string;
+            /** @example A101 Main Board */
+            boardName: string;
+            /** @example 3fa85f64-5717-4562-b3fc-2c963f66afa6 */
+            previousApartmentId?: string | null;
+            /** @example 3 */
+            affectedDevices: number;
+        };
+        IoTApartmentBoardsUnlinkResultDto: {
+            /** @example 3fa85f64-5717-4562-b3fc-2c963f66afa6 */
+            apartmentId: string;
+            /** @example 2 */
+            affectedBoards: number;
+            /** @example 5 */
+            affectedDevices: number;
         };
         UpdateIoTBoardDeviceDto: {
             /**
@@ -12415,7 +12478,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Requested slot is full or user already has an active appointment for this apartment */
+            /** @description Requested time range overlaps existing appointment of user, assigned staff, or apartment */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -12440,7 +12503,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Paginated list of current user viewing requests */
+            /** @description Paginated list of current actor viewing requests */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13119,6 +13182,70 @@ export interface operations {
                         /** @example Success */
                         message?: string;
                         data?: components["schemas"]["IoTBoardDetailDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    IoTController_unlinkBoardApartment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Board-to-apartment link removed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["IoTBoardUnlinkResultDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    IoTController_unlinkBoardsByApartment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                apartmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Apartment-to-boards links removed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["IoTApartmentBoardsUnlinkResultDto"];
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;

@@ -225,6 +225,7 @@
     "pasteImageHint": "Bạn có thể dán ảnh (Ctrl+V) vào khung chat"
   },
   "Profile": {
+    "authRequired": "Vui lòng đăng nhập để truy cập trang cá nhân.",
     "sidebar": {
       "myInformation": "Thông tin của tôi",
       "accountInformation": "Thông tin tài khoản",
@@ -809,6 +810,7 @@
     "properties": {
       "title": "Bất động sản của tôi",
       "subtitle": "Quản lý tất cả bất động sản đã đăng của bạn",
+      "detailSubtitle": "Chi tiết căn hộ bạn đang cho thuê",
       "addProperty": "Thêm bất động sản",
       "noProperties": "Bạn chưa có bất động sản nào",
       "noResults": "Không có bất động sản nào phù hợp với tìm kiếm",
@@ -816,23 +818,31 @@
       "allStatuses": "Tất cả trạng thái",
       "loading": "Đang tải...",
       "view": "Xem",
+      "viewDetail": "Xem chi tiết",
       "edit": "Chỉnh sửa",
+      "unitLabel": "Số căn",
       "beds": "phòng ngủ",
       "baths": "phòng tắm",
+      "perMonth": "/tháng",
       "vacant": "Trống",
       "contractEnds": "Hợp đồng kết thúc",
       "stats": {
         "total": "Tổng bất động sản",
         "available": "Còn trống",
         "occupied": "Đã cho thuê",
+        "maintenance": "Bảo trì",
         "monthlyRevenue": "Doanh thu tháng"
       },
       "status": {
         "available": "Còn trống",
         "occupied": "Đã có người ở",
+        "rented": "Đã cho thuê",
         "maintenance": "Bảo trì",
         "reserved": "Đã đặt trước",
-        "inactive": "Không hoạt động"
+        "unavailable": "Không khả dụng",
+        "inactive": "Không hoạt động",
+        "verified": "Đã xác thực",
+        "pending": "Chờ xử lý"
       }
     }
   },

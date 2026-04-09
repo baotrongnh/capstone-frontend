@@ -168,15 +168,13 @@ export default function ModalAddMember({
         <div className="space-y-4">
           <div>
             <p>Danh sách thành viên</p>
-            <p>
+            <div>
               {selectContract?.members?.map((item, index) => (
-                <>
-                  <div key={index}>
-                    {index + 1}/ {item.user.fullName}
-                  </div>
-                </>
+                <div key={index}>
+                  {index + 1}/ {item.user.fullName}
+                </div>
               ))}
-            </p>
+            </div>
 
             <label className="block text-sm mt-5 font-medium text-gray-700 mb-2">
               Tìm kiếm thành viên
