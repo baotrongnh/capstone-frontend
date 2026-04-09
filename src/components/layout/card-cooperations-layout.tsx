@@ -23,13 +23,19 @@ const StatusBadge = ({ status }: { status: string }) => {
       bg: "bg-green-50",
       text: "text-green-700",
       border: "border-green-200",
-      label: "đã ký",
+      label: "Đã ký",
     },
     inactive: {
       bg: "bg-red-50",
       text: "text-red-700",
       border: "border-red-200",
-      label: "đã hủy",
+      label: "Đã hủy",
+    },
+    reserved: {
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      border: "border-blue-200",
+      label: "Đã đặt trước",
     },
   };
 
