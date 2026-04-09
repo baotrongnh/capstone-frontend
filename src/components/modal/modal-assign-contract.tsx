@@ -1,9 +1,9 @@
 import { ROUTES } from "@/constants/routes";
 import { useUploadContractPdf } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { CheckCircleOutlined, WarningOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined } from "@ant-design/icons";
 import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
-import { Check, Pen, CheckCircle, CreditCard } from "lucide-react";
+import { Check, CreditCard, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PDFDocument } from "pdf-lib";
 import { useRef, useState } from "react";
@@ -387,7 +387,7 @@ export default function ModalAssignContract({
                   Mã hợp đồng
                 </p>
                 <p className="font-semibold text-slate-800 text-[15px]">
-                  CTR-2026-00006
+                  {selectedContract?.contractNumber}
                 </p>
               </div>
 
@@ -396,13 +396,13 @@ export default function ModalAssignContract({
                   Căn hộ
                 </p>
                 <p className="font-semibold text-slate-800 text-[15px]">
-                  Phòng VIN-99
+                  {selectedContract?.apartment?.apartmentNumber ||
+                    "Chưa có thông tin"}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FOOTER - Nền xám nhạt để tách biệt với phần nội dung */}
           <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/80">
             <Button
               size="large"

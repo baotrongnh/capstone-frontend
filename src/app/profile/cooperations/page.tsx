@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 
-type StatusFilter = "all" | "pending" | "available";
+type StatusFilter = "all" | "pending" | "available" | "reserved" | "inactive";
 
 export default function CooperationsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
