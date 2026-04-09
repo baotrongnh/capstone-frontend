@@ -12,7 +12,8 @@ import {
     toSafeNumber,
     toUserApartmentStatusLabel,
 } from '@/utils/userApartment'
-import { Empty, Tag } from 'antd'
+import { Breadcrumb, Empty, Tag } from 'antd'
+import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
@@ -111,6 +112,18 @@ export default function MyApartmentDetailPage() {
     if (!rawApartment) {
         return (
             <div className="space-y-6">
+                <Breadcrumb
+                    style={{ marginBottom: 24 }}
+                    items={[
+                        {
+                            title: <Link href="/profile/my-apartment">{t('title')}</Link>,
+                        },
+                        {
+                            title: t('title'),
+                        },
+                    ]}
+                />
+
                 <div className="rounded-lg border border-amber-200/80 bg-linear-to-br from-amber-50 via-orange-50 to-rose-50 p-6 shadow-sm">
                     <h2 className="text-2xl font-bold text-stone-900">{t('title')}</h2>
                     <p className="mt-1 text-sm text-stone-600">{t('subtitle')}</p>
@@ -122,6 +135,18 @@ export default function MyApartmentDetailPage() {
 
     return (
         <div className="space-y-6">
+            <Breadcrumb
+                style={{ marginBottom: 24 }}
+                items={[
+                    {
+                        title: <Link href="/profile/my-apartment">{t('title')}</Link>,
+                    },
+                    {
+                        title: toDisplayText(apartment?.apartmentNumber),
+                    },
+                ]}
+            />
+
             <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                     <h2 className="text-2xl font-bold text-foreground">{t('title')}</h2>
