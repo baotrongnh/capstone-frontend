@@ -225,6 +225,7 @@
     "pasteImageHint": "You can paste images (Ctrl+V) into the chat"
   },
   "Profile": {
+    "authRequired": "Please log in to access your profile.",
     "sidebar": {
       "myInformation": "My Information",
       "accountInformation": "Account Information",

@@ -225,6 +225,7 @@
     "pasteImageHint": "Bạn có thể dán ảnh (Ctrl+V) vào khung chat"
   },
   "Profile": {
+    "authRequired": "Vui lòng đăng nhập để truy cập trang cá nhân.",
     "sidebar": {
       "myInformation": "Thông tin của tôi",
       "accountInformation": "Thông tin tài khoản",
