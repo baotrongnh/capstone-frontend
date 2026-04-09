@@ -12,11 +12,10 @@ import {
   ChatMessage,
   ChatMode,
   ChatSocketMessage,
-  ChatSendMessagePayload,
   normalizeChatMessage,
 } from '@/types/chat'
 import { CustomerServiceOutlined, RobotOutlined } from '@ant-design/icons'
-import { Avatar, Divider, FloatButton, Space } from 'antd'
+import { Avatar, Badge, Divider, FloatButton, Space } from 'antd'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -33,6 +32,8 @@ const getInitialChatMode = (): ChatMode => {
   const savedMode = localStorage.getItem(CHAT_MODE_STORAGE_KEY)
   return savedMode === 'support' || savedMode === 'ai' ? savedMode : null
 }
+
+const CHAT_NOTIFICATION_SOUND_URL = '/sounds/notification.mp3'
 
 const toUiMessage = (message: ChatSocketMessage): ChatMessage => {
   const parsedTimestamp = new Date(message.timestamp)
@@ -76,19 +77,24 @@ export default function ChatSupport() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [unreadSupportCount, setUnreadSupportCount] = useState(0)
+  const messagesRef = useRef<ChatMessage[]>([])
   const isCreatingConversationRef = useRef(false)
+  const notificationAudioRef = useRef<HTMLAudioElement | null>(null)
 
   const currentApartmentId = pathname.match(/^\/apartment\/([^/]+)$/)?.[1] ?? ''
   const { data: apartmentData } = useApartment(currentApartmentId)
   const currentApartment = apartmentData?.data
 
-  const isAiMode = mode === 'ai'
-  const accentColor = isAiMode ? '#7c3aed' : '#3b82f6'
-  const titleText = !mode ? t('selectTitle') : isAiMode ? t('aiTitle') : t('title')
+  const resetUnreadSupport = () => setUnreadSupportCount(0)
 
   const pushMessage = useCallback((message: unknown) => {
     setMessages((prev) => appendUniqueMessage(prev, message))
   }, [])
+
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
 
   const resetChatSession = useCallback(() => {
     if (conversationId) {
@@ -98,6 +104,7 @@ export default function ChatSupport() {
     isCreatingConversationRef.current = false
     setConversationId(null)
     setIsLoadingHistory(false)
+    messagesRef.current = []
     setMessages([])
   }, [conversationId])
 
@@ -133,25 +140,23 @@ export default function ChatSupport() {
       .map(toUiMessage)
 
     setMessages(normalizedMessages)
+    messagesRef.current = normalizedMessages
     setIsLoadingHistory(false)
   }, [])
 
   const sendSupportMessage = useCallback((payload: Pick<ChatMessage, 'content' | 'images' | 'apartmentId'>) => {
     if (!conversationId) {
-      console.warn('[chat] conversation is not ready, creating a new one')
       requestSupportConversation()
       return
     }
 
-    const socketPayload: ChatSendMessagePayload = {
+    socket.emit('chat:send_message', {
       conversationId,
       content: payload.content,
       images: payload.images,
       apartmentId: payload.apartmentId,
       messageType: payload.images?.length ? 'image' : 'text',
-    }
-
-    socket.emit('chat:send_message', socketPayload)
+    })
   }, [conversationId, requestSupportConversation])
 
   const sendUserMessage = useCallback((payload: Pick<ChatMessage, 'content' | 'images' | 'apartmentId'>) => {
@@ -172,6 +177,41 @@ export default function ChatSupport() {
 
   const canSendSupportMessage = mode !== 'support' || Boolean(conversationId)
 
+  const playIncomingMessageSound = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    if (!notificationAudioRef.current) {
+      notificationAudioRef.current = new Audio(CHAT_NOTIFICATION_SOUND_URL)
+      notificationAudioRef.current.preload = 'auto'
+    }
+
+    const audio = notificationAudioRef.current
+    audio.currentTime = 0
+    audio.play().catch(() => {
+      // Ignore playback errors (e.g. missing file or autoplay restrictions).
+    })
+  }, [])
+
+  const handleIncomingSocketMessage = useCallback((payload: unknown) => {
+    const normalized = normalizeChatMessage(payload)
+    if (!normalized) return
+
+    const normalizedMessage = toUiMessage(normalized)
+
+    if (messagesRef.current.some((item) => String(item.id) === String(normalizedMessage.id))) {
+      return
+    }
+
+    const nextMessages = [...messagesRef.current, normalizedMessage]
+    messagesRef.current = nextMessages
+    setMessages(nextMessages)
+
+    if (normalized.sender === 'support' && (!isChatOpen || mode !== 'support')) {
+      setUnreadSupportCount((prev) => prev + 1)
+      playIncomingMessageSound()
+    }
+  }, [isChatOpen, mode, playIncomingMessageSound])
+
   const ensureSupportConversation = useCallback(() => {
     if (!isChatOpen || mode !== 'support' || conversationId || isCreatingConversationRef.current || !socket.connected) {
       return
@@ -182,8 +222,6 @@ export default function ChatSupport() {
 
   useEffect(() => {
     const handleConnect = () => {
-      console.info('[chat] connected', { socketId: socket.id })
-
       if (mode === 'support' && conversationId) {
         setIsLoadingHistory(true)
         socket.emit('chat:join_conversation', { conversationId })
@@ -193,36 +231,34 @@ export default function ChatSupport() {
       ensureSupportConversation()
     }
 
-    const handleDisconnect = (reason: string) => {
-      console.info('[chat] disconnected', { reason })
-    }
-
     const handleChatError = (payload: { message: string }) => {
       isCreatingConversationRef.current = false
       setIsLoadingHistory(false)
-      console.error('[chat] server error', payload)
+      console.error('[chat] server error', payload?.message)
     }
 
     socket.on('connect', handleConnect)
-    socket.on('disconnect', handleDisconnect)
     socket.on('chat:error', handleChatError)
     socket.on('chat:conversation_created', handleConversationCreated)
     socket.on('chat:conversation_data', handleConversationData)
-    socket.on('chat:new_message', pushMessage)
+    socket.on('chat:new_message', handleIncomingSocketMessage)
 
     return () => {
       socket.off('connect', handleConnect)
-      socket.off('disconnect', handleDisconnect)
       socket.off('chat:error', handleChatError)
       socket.off('chat:conversation_created', handleConversationCreated)
       socket.off('chat:conversation_data', handleConversationData)
-      socket.off('chat:new_message', pushMessage)
+      socket.off('chat:new_message', handleIncomingSocketMessage)
     }
-  }, [conversationId, ensureSupportConversation, handleConversationCreated, handleConversationData, mode, pushMessage])
+  }, [conversationId, ensureSupportConversation, handleConversationCreated, handleConversationData, handleIncomingSocketMessage, mode])
 
   const handleModeSelect = (selectedMode: 'support' | 'ai') => {
     setMode(selectedMode)
     localStorage.setItem(CHAT_MODE_STORAGE_KEY, selectedMode)
+
+    if (selectedMode === 'support' && isChatOpen) {
+      resetUnreadSupport()
+    }
 
     pushMessage({
       id: `welcome-${selectedMode}-${Date.now()}`,
@@ -243,6 +279,7 @@ export default function ChatSupport() {
     }
 
     setIsChatOpen(true)
+    resetUnreadSupport()
 
     if (mode === 'support' && socket.connected && !conversationId && !isCreatingConversationRef.current) {
       requestSupportConversation()
@@ -274,17 +311,21 @@ export default function ChatSupport() {
   const title = (
     <Space>
       <Avatar
-        style={{ backgroundColor: accentColor }}
+        style={{ backgroundColor: mode === 'ai' ? '#7c3aed' : '#3b82f6' }}
         icon={mode === 'ai' ? <RobotOutlined /> : <CustomerServiceOutlined />}
       />
-      <span>{titleText}</span>
+      <span>{!mode ? t('selectTitle') : mode === 'ai' ? t('aiTitle') : t('title')}</span>
     </Space>
   )
 
   return (
     <>
       <FloatButton
-        icon={<CustomerServiceOutlined />}
+        icon={(
+          <Badge count={unreadSupportCount} size="small" overflowCount={99}>
+            <CustomerServiceOutlined />
+          </Badge>
+        )}
         type="primary"
         style={{ right: 24, bottom: 24, width: 56, height: 56 }}
         onClick={handleOpenChat}
