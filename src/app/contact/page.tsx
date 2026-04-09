@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import bg from "../../../public/img/banner10.jpg";
 import banner from "../../../public/img/partner.jpg";
+import ModalLoginRequired from "@/components/modal/modal-login-required";
 
 interface LocationData {
   code: number | string;
@@ -36,7 +37,7 @@ export default function PartnerContact() {
   const user = useAuthStore((s) => s.user);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [showModalLogin, setShowModalLogin] = useState(false);
   const [modalVerify, setModalVerify] = useState(false);
   const { mutateAsync: createCooperation } = useCreateCooperation();
 
@@ -102,6 +103,8 @@ export default function PartnerContact() {
       } finally {
         setIsLoading(false);
       }
+    } else if (!user) {
+      setShowModalLogin(true);
     } else {
       setModalVerify(true);
     }
@@ -525,6 +528,10 @@ export default function PartnerContact() {
         isOpen={modalVerify}
         onClose={() => setModalVerify(false)}
         onVerify={() => handleVerify()}
+      />
+      <ModalLoginRequired
+        isModalOpen={showModalLogin}
+        setIsModalOpen={setShowModalLogin}
       />
     </>
   );

@@ -6,7 +6,7 @@ import {
   apartmentService,
 } from "@/lib/services/apartment.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { App } from "antd";
 
 // QUERIES
 export const useApartments = (params?: ApartmentSearchQueryParams) => {
@@ -27,6 +27,7 @@ export const useApartment = (id: string | number) => {
 // MUTATIONS
 export const useCreateApartment = () => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   return useMutation({
     mutationFn: apartmentService.create,
@@ -42,6 +43,7 @@ export const useCreateApartment = () => {
 
 export const useUpdateApartment = () => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string | number; data: string }) =>
@@ -59,9 +61,11 @@ export const useUpdateApartment = () => {
 
 export const useDeleteApartment = () => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   return useMutation({
     mutationFn: apartmentService.delete,
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["apartments"] });
       message.success("Xóa căn hộ thành công!");
@@ -74,6 +78,8 @@ export const useDeleteApartment = () => {
 
 export const useCreateCooperation = () => {
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
+
   return useMutation({
     mutationFn: apartmentService.cooperation,
     onSuccess: () => {
@@ -87,25 +93,33 @@ export const useCreateCooperation = () => {
 };
 
 export const useApartmentRating = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   return useMutation({
-    mutationFn: ({ id, payload, }: { id: string, payload: ApartmentRatingPayload }) => apartmentService.rating(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: ApartmentRatingPayload;
+    }) => apartmentService.rating(id, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["apartments"] })
-      queryClient.invalidateQueries({ queryKey: ["apartments", variables.id] })
-      message.success("Cảm ơn bạn đã đánh giá căn hộ!")
+      queryClient.invalidateQueries({ queryKey: ["apartments"] });
+      queryClient.invalidateQueries({ queryKey: ["apartments", variables.id] });
+      message.success("Cảm ơn bạn đã đánh giá căn hộ!");
     },
     onError: (error) => {
-      if (error.message === 'Request failed with status code 403') {
-        message.error("Bạn chưa thể đánh giá căn hộ này khi chưa trải nghiệm dịch vụ!")
-      }
-      else {
-        message.error("Đã xảy ra lỗi hệ thống, vui lòng thử lại sau!")
+      if (error.message === "Request failed with status code 403") {
+        message.error(
+          "Bạn chưa thể đánh giá căn hộ này khi chưa trải nghiệm dịch vụ!",
+        );
+      } else {
+        message.error("Đã xảy ra lỗi hệ thống, vui lòng thử lại sau!");
       }
     },
-  })
-}
+  });
+};
 
 export const useApartmentOwner = (id: string | number) => {
   return useQuery({
