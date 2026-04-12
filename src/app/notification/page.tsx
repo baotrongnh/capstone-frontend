@@ -1,27 +1,44 @@
 'use client'
 
 import { useMarkAllNotificationsAsRead, useMarkNotificationAsRead, useNotifications } from '@/hooks/query/useNotifications'
+import { Button } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useEffect } from 'react'
 
 export default function NotificationPage() {
-     const { data: notifications = [], isLoading } = useNotifications()
+     const { data: notifications = [], isLoading, refetch } = useNotifications()
      const markAsRead = useMarkNotificationAsRead()
      const markAllAsRead = useMarkAllNotificationsAsRead()
 
      useEffect(() => {
-          if (isLoading) return
-          const hasUnread = notifications.some((item) => !item.isRead)
-          if (!hasUnread) return
-          if (markAllAsRead.isPending) return
-          markAllAsRead.mutate()
-     }, [isLoading, markAllAsRead, notifications])
+          refetch()
+     }, [refetch])
 
      return (
           <div className='container py-10'>
-               <h1 className='mb-2 text-2xl font-semibold'>Thông báo</h1>
-               <p className='mb-6 text-gray-600'>Danh sách tất cả thông báo của bạn.</p>
+               <div className='mb-6 flex flex-wrap justify-between gap-2'>
+
+                    <div>
+                         <h1 className='mb-2 text-2xl font-semibold'>Thông báo</h1>
+                         <p className='mb-6 text-gray-600'>Danh sách tất cả thông báo của bạn.</p>
+                    </div>
+
+                    <div className='flex gap-3'>
+                         <Button
+                              shape='round'
+                              size='small'
+                              type='primary'
+                              onClick={() => {
+                                   if (markAllAsRead.isPending) return
+                                   markAllAsRead.mutate(undefined, { onSuccess: () => refetch() })
+                              }}
+                              loading={markAllAsRead.isPending}
+                         >
+                              Đánh dấu tất cả đã đọc
+                         </Button>
+                    </div>
+               </div>
 
                {isLoading && <p className='text-sm text-gray-500'>Đang tải thông báo...</p>}
 
@@ -36,7 +53,11 @@ export default function NotificationPage() {
                               className={`rounded-lg border p-4 transition-colors ${item.isRead ? 'border-gray-200 bg-white' : 'border-sky-200 bg-sky-50/60'}`}
                               onClick={() => {
                                    if (item.isRead || markAsRead.isPending) return
-                                   markAsRead.mutate(item.id)
+                                   markAsRead.mutate(item.id, {
+                                        onSuccess: () => {
+                                             refetch()
+                                        },
+                                   })
                               }}
                          >
                               <div className='mb-1 flex items-start justify-between gap-3'>
@@ -56,7 +77,11 @@ export default function NotificationPage() {
                                                   className='text-sm font-medium text-primary hover:underline'
                                                   onClick={() => {
                                                        if (item.isRead || markAsRead.isPending) return
-                                                       markAsRead.mutate(item.id)
+                                                       markAsRead.mutate(item.id, {
+                                                            onSuccess: () => {
+                                                                 refetch()
+                                                            },
+                                                       })
                                                   }}
                                              >
                                                   {item.actionLabel || 'Xem chi tiết'}
