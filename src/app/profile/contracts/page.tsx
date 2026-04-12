@@ -40,6 +40,8 @@ export default function ContractsPage() {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
 
+  console.log("DTA", contractsList);
+
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
     else if (statusFilter === "renewal") {
