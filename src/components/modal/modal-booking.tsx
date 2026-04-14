@@ -90,6 +90,7 @@ export default function ModalBooking({
 
   const handleReservations = async () => {
     const values = await formReservations.validateFields();
+
     const payload = {
       apartmentId: apartmentId,
       desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),

@@ -229,6 +229,13 @@ export default function PartnerContact() {
                 <Select
                   placeholder="Chọn tỉnh/thành"
                   className="h-11"
+                  showSearch
+                  virtual
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                   options={provinces?.map((p: LocationData) => ({
                     label: p.name,
                     value: p.code,
@@ -423,21 +430,49 @@ export default function PartnerContact() {
                   placeholder="VD: 15.000.000"
                 />
               </Form.Item>
-              <Form.Item
-                label="Số tiền cọc"
-                name="depositAmount"
-                rules={[
-                  { required: true, message: "Vui lòng nhập số tiền cọc" },
-                ]}
-              >
-                <InputNumber
-                  className="w-full h-11"
-                  style={{ width: "100%" }}
-                  min={0}
-                  formatter={formatter}
-                  parser={parser}
-                  placeholder="VD: 15.000.000"
-                />
+              <Form.Item label="Số tiền cọc">
+                <Form.Item
+                  name="depositAmount"
+                  noStyle
+                  rules={[
+                    { required: true, message: "Vui lòng nhập số tiền cọc" },
+                  ]}
+                >
+                  <InputNumber
+                    className="w-full h-11"
+                    style={{ width: "100%" }}
+                    min={0}
+                    formatter={formatter}
+                    parser={parser}
+                    placeholder="VD: 15.000.000"
+                  />
+                </Form.Item>
+
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      const rentPrice = form.getFieldValue("baseRentPrice");
+                      if (rentPrice) {
+                        form.setFieldValue("depositAmount", rentPrice);
+                      }
+                    }}
+                  >
+                    1 tháng
+                  </Button>
+
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      const rentPrice = form.getFieldValue("baseRentPrice");
+                      if (rentPrice) {
+                        form.setFieldValue("depositAmount", rentPrice * 2);
+                      }
+                    }}
+                  >
+                    2 tháng
+                  </Button>
+                </div>
               </Form.Item>
 
               <Form.Item
