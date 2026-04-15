@@ -5,6 +5,8 @@ import {
   UserOutlined,
   HomeOutlined,
   WalletOutlined,
+  BarChartOutlined,
+  SafetyCertificateOutlined,
   SettingOutlined,
   LogoutOutlined,
   FileTextOutlined,
@@ -12,7 +14,7 @@ import {
   ContactsOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Avatar, Menu } from "antd";
 import {
   ProfileNavItem,
   ProfileRole,
@@ -57,7 +59,7 @@ const getNavigationItems = (
       path: "/profile/my-schedule",
     },
     {
-      key: "Invoices",
+      key: "invoices",
       label: t("sidebar.myBills"),
       icon: <FileTextOutlined />,
       path: "/profile/invoices",
@@ -83,6 +85,13 @@ const getNavigationItems = (
       icon: <ApartmentOutlined />,
       path: "/profile/my-properties",
     });
+
+    items.splice(6, 0, {
+      key: "partner-revenues",
+      label: t("sidebar.revenue"),
+      icon: <BarChartOutlined />,
+      path: "/profile/partner-revenues",
+    });
   }
 
   return items;
@@ -90,12 +99,20 @@ const getNavigationItems = (
 
 export default function ProfileSidebar({
   role,
+  displayName,
+  displayEmail,
+  displayAvatarUrl,
   onLogout,
 }: ProfileSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const t = useTranslations("Profile");
+  const roleLabel = role === "partner" ? t("sidebar.rolePartner") : t("sidebar.roleUser");
+  const identityName = displayName?.trim() || roleLabel;
+  const identityEmail = displayEmail?.trim() || "";
+  const avatarText = identityName.charAt(0).toUpperCase();
+  const avatarUrl = displayAvatarUrl?.trim() || undefined;
 
   const navigationItems = useMemo(() => getNavigationItems(role, t), [role, t]);
 
@@ -112,7 +129,7 @@ export default function ProfileSidebar({
       if (from === "payments") {
         return "payment-history";
       }
-      return "Invoices";
+      return "invoices";
     }
 
     const matchedItem = navigationItems.find(
@@ -122,7 +139,33 @@ export default function ProfileSidebar({
   }, [pathname, navigationItems, searchParams]);
 
   return (
-    <div className="h-full flex flex-col shadow-sm bg-white rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col border border-gray-200 shadow-sm bg-white rounded-lg overflow-hidden">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center gap-3 min-w-0">
+          <Avatar
+            src={avatarUrl}
+            size={48}
+            className="bg-blue-50! text-primary! font-semibold border border-blue-100"
+          >
+            {avatarText}
+          </Avatar>
+
+          <div className="min-w-0 flex-1">
+            <p className="text-lg  font-semibold truncate">{identityName}</p>
+            {identityEmail ? (
+              <p className="text-sm text-muted truncate">{identityEmail}</p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-medium text-primary">
+            <SafetyCertificateOutlined />
+            {roleLabel}
+          </span>
+        </div>
+      </div>
+
       <div className="flex-1 overflow-y-auto p-2">
         <Menu
           mode="inline"
@@ -133,10 +176,10 @@ export default function ProfileSidebar({
         />
       </div>
 
-      <div className="border-t border-gray-200 p-4 bg-white ">
+      <div className="border-t border-gray-200 p-3 bg-white">
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
         >
           <LogoutOutlined />
           <span className="font-medium">{t("sidebar.logout")}</span>

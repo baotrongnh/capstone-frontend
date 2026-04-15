@@ -242,7 +242,23 @@
       "myProperties": "Bất động sản của tôi",
       "bookings": "Đặt phòng",
       "revenue": "Doanh thu",
+      "currentRole": "Vai trò hiện tại",
+      "roleUser": "Người thuê",
+      "rolePartner": "Đối tác",
+      "userWorkspace": "Không gian người thuê",
+      "partnerWorkspace": "Không gian đối tác",
+      "userWorkspaceHint": "Theo dõi căn hộ, hợp đồng và thanh toán nhanh chóng.",
+      "partnerWorkspaceHint": "Quản lý bất động sản, lịch hẹn và doanh thu tại một nơi.",
+      "navigation": "Điều hướng",
       "logout": "Đăng xuất"
+    },
+    "layout": {
+      "profileSpaceLabel": "Không gian cá nhân",
+      "title": "Trang cá nhân",
+      "userDescription": "Bạn đang truy cập trang profile với vai trò người thuê.",
+      "partnerDescription": "Bạn đang truy cập trang profile với vai trò đối tác.",
+      "userRoleBadge": "Người thuê",
+      "partnerRoleBadge": "Đối tác"
     },
     "account": {
       "title": "Thông tin của tôi",

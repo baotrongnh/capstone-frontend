@@ -150,6 +150,9 @@ export type PartnerProperty = {
 
 export type ProfileSidebarProps = {
   role: ProfileRole
+  displayName?: string | null
+  displayEmail?: string | null
+  displayAvatarUrl?: string | null
   onLogout: () => void
 }
 

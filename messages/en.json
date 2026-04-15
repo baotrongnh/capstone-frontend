@@ -240,7 +240,23 @@
       "myProperties": "My Properties",
       "bookings": "Bookings",
       "revenue": "Revenue",
+      "currentRole": "Current Role",
+      "roleUser": "User",
+      "rolePartner": "Partner",
+      "userWorkspace": "User Workspace",
+      "partnerWorkspace": "Partner Workspace",
+      "userWorkspaceHint": "Track apartment, contracts and payments quickly.",
+      "partnerWorkspaceHint": "Manage properties, schedules and revenue from one place.",
+      "navigation": "Navigation",
       "logout": "Logout"
+    },
+    "layout": {
+      "profileSpaceLabel": "Personal workspace",
+      "title": "My Profile",
+      "userDescription": "You are browsing this profile as a user account.",
+      "partnerDescription": "You are browsing this profile as a partner account.",
+      "userRoleBadge": "User",
+      "partnerRoleBadge": "Partner"
     },
     "account": {
       "title": "My Information",

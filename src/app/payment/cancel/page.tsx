@@ -6,6 +6,7 @@ import { normalizeText } from '@/utils/text'
 import { Alert, Button, Descriptions, Result, Spin, Typography } from 'antd'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 const { Text } = Typography
 
@@ -15,6 +16,26 @@ export default function PaymentCancelPage() {
     const locale = useLocale()
     const t = useTranslations('Profile.payment.checkout')
     const invoiceId = searchParams.get('invoiceId') ?? undefined
+    const source = searchParams.get('source')
+    const scheme = searchParams.get('scheme') || 'homeiq'
+    const reason = searchParams.get('reason')
+
+    useEffect(() => {
+        if (source !== 'mobile') {
+            return
+        }
+
+        const params = new URLSearchParams()
+        if (invoiceId) {
+            params.set('invoiceId', invoiceId)
+        }
+        if (reason) {
+            params.set('reason', reason)
+        }
+
+        const deepLink = `${scheme}://payment/fail${params.toString() ? `?${params.toString()}` : ''}`
+        window.location.replace(deepLink)
+    }, [invoiceId, reason, scheme, source])
 
     const { data, isLoading, isError, error } = useInvoice(invoiceId)
     const invoice = data?.data
