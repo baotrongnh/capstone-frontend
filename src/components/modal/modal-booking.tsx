@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { BOOKING_ADVANCE_DAYS_LIMIT } from "@/constants/apartment";
 import { ROUTES } from "@/constants/routes";
 import { useFullAddress } from "@/hooks/query/useAddress";
 import { useSearchNational } from "@/hooks/query/useUser";
@@ -289,10 +290,15 @@ export default function ModalBooking({
                     format="DD/MM/YYYY"
                     placeholder="Chọn ngày"
                     disabledDate={(current) => {
+                      const tomorrow = dayjs().add(1, "day");
+                      const maxDate = dayjs().add(
+                        BOOKING_ADVANCE_DAYS_LIMIT,
+                        "day",
+                      );
                       return (
                         current &&
-                        (current.isBefore(dayjs(), "day") ||
-                          current.isSame(dayjs(), "day"))
+                        (current.isBefore(tomorrow, "day") ||
+                          current.isAfter(maxDate, "day"))
                       );
                     }}
                     onChange={handleStartDateChange}

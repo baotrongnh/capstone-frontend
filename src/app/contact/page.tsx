@@ -430,7 +430,8 @@ export default function PartnerContact() {
                   placeholder="VD: 15.000.000"
                 />
               </Form.Item>
-              <Form.Item label="Số tiền cọc">
+
+              <Form.Item label="Số tiền cọc (VNĐ)" required>
                 <Form.Item
                   name="depositAmount"
                   noStyle
