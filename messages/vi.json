@@ -978,5 +978,154 @@
       "balcony": "Ban công",
       "other": "Khác"
     }
+  },
+  "Policies": {
+    "pageTitle": "Chính Sách Nền Tảng",
+    "pageSubtitle": "Các hướng dẫn toàn diện và điều khoản hợp tác được thiết kế để đảm bảo tính minh bạch, công bằng và dịch vụ xuất sắc cho tất cả các bên.",
+    "rentalPolicy": {
+      "title": "Chính Sách Thuê Nhà",
+      "description": "Các hướng dẫn rõ ràng và công bằng bảo vệ cả chủ nhà và người thuê, đảm bảo trải nghiệm thuê suôn sẻ cho mọi người.",
+      "items": [
+        {
+          "title": "Thời Hạn Cho Thuê",
+          "content": "Thời hạn thuê tối thiểu là 3 tháng. Các hợp đồng dài hạn (12+ tháng) được hưởng chiết khấu đặc biệt từ 5-10% tùy thuộc vào thời hạn."
+        },
+        {
+          "title": "Điều Khoản Thanh Toán",
+          "content": "Tiền thuê phải thanh toán vào ngày 1 của mỗi tháng. Người thuê có thể thanh toán qua chuyển khoản ngân hàng, ví điện tử hoặc tiền mặt tại văn phòng. Phí chậm trễ 5% được áp dụng sau 5 ngày."
+        },
+        {
+          "title": "Tiền Ký Quỹ",
+          "content": "Tiền ký quỹ tương đương một tháng tiền thuê là bắt buộc. Tiền ký quỹ này sẽ được hoàn lại trong vòng 30 ngày sau khi dọn dẹp, miễn là không có hư hỏng."
+        },
+        {
+          "title": "Bảo Trì & Sửa Chữa",
+          "content": "Chủ nhà chịu trách nhiệm về sửa chữa cấu trúc và sửa chữa lớn. Người thuê chịu trách nhiệm về bảo trì nhỏ và hư hỏng do lơ là."
+        },
+        {
+          "title": "Chính Sách Chấm Dứt",
+          "content": "Bất kỳ bên nào cũng phải thông báo bằng văn bản ít nhất 30 ngày trước khi chấm dứt. Chấm dứt sớm có thể phải chịu các khoản phạt theo quy định hợp đồng."
+        },
+        {
+          "title": "Nội Quy Chung",
+          "content": "Người thuê phải tuân thủ nội quy cộng đồng: không gây ồn sau 22 giờ, không tự ý cải tạo, giữ gìn sạch sẽ các khu vực chung, và phải xin phép trước khi có thay đổi cấu trúc."
+        }
+      ],
+      "important": "Quan Trọng",
+      "importantText": "Tất cả người thuê và chủ nhà phải xem xét và đồng ý với các chính sách này trước khi ký hợp đồng cho thuê."
+    },
+    "cooperationPolicy": {
+      "title": "Chính Sách Hợp Tác",
+      "description": "Các lựa chọn kết nối đa dạng với chia sẻ doanh thu minh bạch. Chọn mô hình phù hợp nhất với nhu cầu quản lý bất động sản của bạn.",
+      "revenueDistribution": "Phân Phối Doanh Thu:",
+      "items": [
+        {
+          "percentage": "70/30",
+          "description": "Chia Sẻ Hoa Hồng Tiêu Chuẩn Cho Chủ Sở Hữu Bất Động Sản",
+          "details": [
+            "Chủ sở hữu nhận 70% doanh thu cho thuê",
+            "Nền tảng nhận 30% phí quản lý và bảo trì",
+            "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ",
+            "Báo cáo doanh thu hàng quý"
+          ]
+        },
+        {
+          "percentage": "85/15",
+          "description": "Chương Trình Đối Tác Cao Cấp (Hợp Đồng Hàng Năm)",
+          "details": [
+            "Chủ sở hữu nhận 85% doanh thu cho thuê",
+            "Nền tảng nhận 15% hoa hồng",
+            "Yêu cầu tối thiểu 5 bất động sản",
+            "Chỉ định trưởng tài khoản riêng",
+            "Dịch vụ sửa chữa và bảo trì ưu tiên"
+          ]
+        },
+        {
+          "percentage": "60/40",
+          "description": "Dịch Vụ Quản Lý Toàn Diện",
+          "details": [
+            "Nền tảng xử lý 100% quản lý bất động sản",
+            "Chủ sở hữu nhận 60% doanh thu cho thuê",
+            "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì",
+            "Tiếp thị và tìm kiếm người thuê được bao gồm",
+            "Chụp ảnh chuyên nghiệp và tour ảo 3D"
+          ]
+        }
+      ],
+      "simple": "Đơn Giản & Minh Bạch",
+      "simpleText": "Không có phí ẩn. Chia sẻ doanh thu rõ ràng và tính toán tự động mỗi tháng.",
+      "policyDetails": [
+        {
+          "title": "Quy trình hợp tác dễ dàng",
+          "content": "Khảo sát căn hộ miễn phí và đề xuất gói khai thác phù hợp với tình hình thực tế. Ký hợp đồng gửi quản lý trong vòng 3-5 ngày. Khô cạnh, nhanh chóng, không phức tạp."
+        },
+        {
+          "title": "Quản lý vận hành chuyên nghiệp",
+          "content": "Đăng tin trên các nền tảng lớn với mô tả chi tiết và hình ảnh chuyên nghiệp. Tiếp nhận khách, kiểm tra, ký hợp đồng trực tiếp. Chăm sóc khách hàng 24/7, xử lý khiếu nại nhanh."
+        },
+        {
+          "title": "Báo cáo doanh thu minh bạch",
+          "content": "Theo dõi doanh thu real-time qua ứng dụng HomeIQ. Tỷ lệ lấp đầy hàng tháng được công bố chi tiết. Thanh toán doanh thu vào tài khoản ngân hàng mỗi tháng, không chậm trễ."
+        },
+        {
+          "title": "Bảo trì & sửa chữa tài sản",
+          "content": "Xử lý sự cố nhanh chóng với đội thợ sẵn sàng 24/7. Thông báo chủ nhà trước khi sửa chữa, lấy ý kiến khi chi phí lớn. Bảo hành toàn bộ tài sản trong thời gian hợp đồng."
+        },
+        {
+          "title": "Marketing & tiếp thị chuyên nghiệp",
+          "content": "Đưa căn hộ lên tất cả nền tảng lớn như Airbnb, Booking, Agoda, các trang bất động sản. Chiến dịch quảng cáo được tối ưu hóa để tăng lượt xem và booking. Tối thiểu hóa khoảng thời gian trống giữa các khách thuê."
+        },
+        {
+          "title": "Hỗ trợ pháp lý & hợp đồng",
+          "content": "Cung cấp hợp đồng mẫu tuân thủ pháp luật hiện hành. Tư vấn các vấn đề pháp lý liên quan đến cho thuê căn hộ. Bảo vệ quyền lợi chủ nhà trong mối quan hệ với khách thuê."
+        }
+      ]
+    },
+    "howItWorks": "Cách Thức Hoạt Động",
+    "step1": {
+      "title": "Đăng Ký Bất Động Sản",
+      "description": "Tạo tài khoản và liệt kê căn hộ hoặc phòng của bạn với thông tin chi tiết và ảnh."
+    },
+    "step2": {
+      "title": "Chọn Kế Hoạch Hợp Tác",
+      "description": "Chọn mô hình kết nối phù hợp với nhu cầu và sở thích quản lý của bạn."
+    },
+    "step3": {
+      "title": "Kiếm Thu Nhập Hàng Tháng",
+      "description": "Nhận thanh toán tự động mỗi tháng theo kế hoạch hợp tác bạn chọn."
+    },
+    "introduction": {
+      "description": "HomeIQ là nền tảng quản lý và khai thác căn hộ hiện đại, kết nối khách thuê với chủ sở hữu tài sản bằng quy trình số hóa toàn diện.",
+      "features": [
+        "Vận hành chuyên nghiệp",
+        "Hợp đồng minh bạch",
+        "Tối ưu doanh thu bền vững"
+      ]
+    },
+    "payment": {
+      "deposit": "Tiền cọc phải bằng 1-2 tháng tiền thuê, được giữ trong suốt thời gian hợp đồng.",
+      "methods": "Thanh toán qua chuyển khoản ngân hàng, QR Code hoặc ví điện tử với lệ phí không phát sinh.",
+      "reminder": "Tiền thuê phải thanh toán trước ngày 1 của mỗi tháng. Phí chậm trễ 5% được áp dụng sau 5 ngày không thanh toán.",
+      "receipt": "Biên lai thanh toán được gửi tự động qua email ngay sau khi xác nhận tiền."
+    },
+    "refund": {
+      "content": "Cần thông báo trước tối thiểu 30 ngày. Tiền cọc được xử lý hoàn trả sau khi kiểm tra hiện trạng căn hộ và đối soát công nợ. Hoàn cọc trong vòng 5-7 ngày làm việc."
+    },
+    "update": {
+      "content": "HomeIQ có quyền cập nhật chính sách nhằm phù hợp với pháp luật, thị trường và chiến lược phát triển. Phiên bản mới nhất luôn được công bố công khai trên hệ thống."
+    },
+    "support": {
+      "heading": "Đội ngũ HomeIQ luôn sẵn sàng hỗ trợ",
+      "email": "Email: support@homeiq.vn",
+      "phone": "Hotline: 1900 8888",
+      "hours": "Thời gian hỗ trợ: 08:00 - 22:00 mỗi ngày",
+      "button": "Liên hệ ngay"
+    },
+    "contactSection": {
+      "title": "Câu Hỏi Về Các Chính Sách Của Chúng Tôi?",
+      "description": "Đội hỗ trợ của chúng tôi sẵn sàng giúp đỡ. Liên hệ với chúng tôi để tìm hiểu thêm về chính sách thuê hoặc điều khoản hợp tác.",
+      "contactButton": "Liên Hệ Hỗ Trợ",
+      "downloadButton": "Tải PDF"
+    }
   }
 }
