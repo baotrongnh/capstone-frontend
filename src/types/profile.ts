@@ -189,3 +189,15 @@ export type MyPropertiesProps = {
   properties?: PartnerProperty[]
   loading?: boolean
 }
+
+
+export type SidebarSection = {
+  key: string;
+  label: string;
+  icon: ProfileNavItem["icon"];
+  itemKeys: string[];
+};
+
+export type ResolvedSidebarSection = Omit<SidebarSection, "itemKeys"> & {
+  items: ProfileNavItem[];
+};
