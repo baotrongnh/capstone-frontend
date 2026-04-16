@@ -22,7 +22,8 @@ type StatusFilter =
   | "signed"
   | "terminated"
   | "active"
-  | "renewal";
+  | "renewal"
+  | "expired";
 
 export default function ContractsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -34,11 +35,14 @@ export default function ContractsPage() {
   const [showModalCancelContract, setShowModalCancelContract] = useState(false);
   const [showModalExtendContract, setShowModalExtendContract] = useState(false);
   const router = useRouter();
+
   const { data, isLoading } = useGetContracts();
 
   const contractsList = useMemo<ContractWithMembers[]>(() => {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
+
+  console.log("DTA", contractsList);
 
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
@@ -56,6 +60,10 @@ export default function ContractsPage() {
     } else if (statusFilter === "terminated") {
       return contractsList.filter(
         (c: ContractWithMembers) => c.status === "terminated",
+      );
+    } else if (statusFilter === "expired") {
+      return contractsList.filter(
+        (c: ContractWithMembers) => c.status === "expired",
       );
     } else {
       return contractsList.filter(

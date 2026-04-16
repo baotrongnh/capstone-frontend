@@ -1051,5 +1051,154 @@
       "balcony": "Balcony",
       "other": "Other"
     }
+  },
+  "Policies": {
+    "pageTitle": "Platform Policies",
+    "pageSubtitle": "Comprehensive guidelines and cooperation terms designed to ensure transparency, fairness, and excellent service for all parties.",
+    "rentalPolicy": {
+      "title": "Rental Policy",
+      "description": "Clear and fair guidelines that protect both landlords and tenants, ensuring a smooth rental experience for everyone.",
+      "items": [
+        {
+          "title": "Lease Duration",
+          "content": "Minimum lease period is 3 months. Long-term leases (12+ months) are eligible for special discounts of 5-10% depending on the duration."
+        },
+        {
+          "title": "Payment Terms",
+          "content": "Rent is due on the 1st of each month. Tenants can pay via bank transfer, e-payment, or cash at the office. A 5% late fee applies after 5 days."
+        },
+        {
+          "title": "Security Deposit",
+          "content": "A security deposit equivalent to one month's rent is required. This deposit will be returned within 30 days after move-out, provided no damages occur."
+        },
+        {
+          "title": "Maintenance & Repairs",
+          "content": "Landlord covers structural and major repairs. Tenant is responsible for small maintenance tasks and damages caused by negligence."
+        },
+        {
+          "title": "Termination Policy",
+          "content": "Either party must provide 30 days written notice before termination. Early termination may incur penalties as per the lease agreement."
+        },
+        {
+          "title": "House Rules",
+          "content": "Tenants must follow community rules: no excessive noise after 10 PM, no unauthorized renovations, keep common areas clean, and obtain approval for any structural changes."
+        }
+      ],
+      "important": "Important",
+      "importantText": "All tenants and landlords must review and agree to these policies before entering into any rental agreement."
+    },
+    "cooperationPolicy": {
+      "title": "Cooperation Policy",
+      "description": "Flexible partnership options with transparent revenue sharing. Choose the model that best fits your property management needs.",
+      "revenueDistribution": "Revenue Distribution:",
+      "items": [
+        {
+          "percentage": "70/30",
+          "description": "Standard Commission Split for Property Owners",
+          "details": [
+            "Owners retain 70% of rental income",
+            "Platform receives 30% as management and maintenance fee",
+            "Includes professional cleaning, tenant screening, and support",
+            "Quarterly revenue reports provided"
+          ]
+        },
+        {
+          "percentage": "85/15",
+          "description": "Premium Partner Program (Annual Contract)",
+          "details": [
+            "Owners retain 85% of rental income",
+            "Platform receives 15% commission",
+            "Minimum 5 properties required",
+            "Dedicated account manager assigned",
+            "Priority repair and maintenance services"
+          ]
+        },
+        {
+          "percentage": "60/40",
+          "description": "Full Management Services",
+          "details": [
+            "Platform handles 100% of property management",
+            "Owners receive 60% of rental income",
+            "Includes 24/7 support, tenant management, and maintenance",
+            "Marketing and tenant acquisition included",
+            "Professional photography and virtual tours"
+          ]
+        }
+      ],
+      "simple": "Simple & Transparent",
+      "simpleText": "No hidden fees. Revenue distribution is clear and calculated automatically every month.",
+      "policyDetails": [
+        {
+          "title": "Easy Cooperation Process",
+          "content": "Free property assessment and customized partnership proposals. Sign cooperation agreements within 3-5 days. Simple, fast, and hassle-free process."
+        },
+        {
+          "title": "Professional Operations Management",
+          "content": "List properties on major platforms with professional descriptions and photos. Direct tenant screening, verification, and lease signing. 24/7 customer care and quick issue resolution."
+        },
+        {
+          "title": "Transparent Revenue Reporting",
+          "content": "Track real-time earnings through HomeIQ app. Monthly occupancy rates displayed in detail. Automatic bank transfer each month with no delays."
+        },
+        {
+          "title": "Property Maintenance & Repairs",
+          "content": "Quick emergency response with 24/7 repair team ready. Property owners notified before repairs; approval required for major expenses. Full warranty coverage during lease period."
+        },
+        {
+          "title": "Professional Marketing & Promotion",
+          "content": "List on all major platforms: Airbnb, Booking, Agoda, and real estate sites. Optimized advertising campaigns to increase views and bookings. Minimize vacancy periods between tenants."
+        },
+        {
+          "title": "Legal Support & Contracts",
+          "content": "Provide legally compliant lease agreement templates. Legal consultation on rental-related matters. Protect property owner rights in tenant relationships."
+        }
+      ]
+    },
+    "howItWorks": "How It Works",
+    "step1": {
+      "title": "Register Your Property",
+      "description": "Create an account and list your apartment or room with detailed information and photos."
+    },
+    "step2": {
+      "title": "Choose a Cooperation Plan",
+      "description": "Select the partnership model that suits your needs and management preferences."
+    },
+    "step3": {
+      "title": "Earn Monthly Income",
+      "description": "Get paid automatically every month according to your chosen cooperation plan."
+    },
+    "introduction": {
+      "description": "HomeIQ is a modern property management and rental platform that connects tenants with property owners through comprehensive digitization processes.",
+      "features": [
+        "Professional Operations",
+        "Transparent Contracts",
+        "Optimized Sustainable Revenue"
+      ]
+    },
+    "payment": {
+      "deposit": "The security deposit must equal 1-2 months of rent and is held throughout the lease period.",
+      "methods": "Pay via bank transfer, QR code, or e-wallet with no additional fees.",
+      "reminder": "Rent must be paid before the 1st of each month. A 5% late fee applies after 5 days of non-payment.",
+      "receipt": "Payment receipts are automatically sent via email upon confirmation."
+    },
+    "refund": {
+      "content": "30 days advance notice required. The security deposit is processed for return after inspection and debt reconciliation. Refunds processed within 5-7 business days."
+    },
+    "update": {
+      "content": "HomeIQ reserves the right to update policies to comply with laws, market conditions, and development strategies. The latest version is always published transparently on our platform."
+    },
+    "support": {
+      "heading": "Our HomeIQ team is ready to assist",
+      "email": "Email: support@homeiq.vn",
+      "phone": "Hotline: 1900 8888",
+      "hours": "Support hours: 08:00 - 22:00 every day",
+      "button": "Contact Now"
+    },
+    "contactSection": {
+      "title": "Questions About Our Policies?",
+      "description": "Our support team is here to help. Contact us for more information about rental policies or cooperation terms.",
+      "contactButton": "Contact Support",
+      "downloadButton": "Download PDF"
+    }
   }
 }
