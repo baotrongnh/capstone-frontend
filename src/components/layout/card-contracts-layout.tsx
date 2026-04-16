@@ -283,11 +283,9 @@ export const ContractCard = ({
         >
           <Eye size={18} />
           {(contract.status === "signed" ||
-            contract.status === "terminated") && (
-            <span className="font-medium">Xem hợp đồng</span>
-          )}
-
-          {contract.status === "active" && (
+            contract.status === "terminated" ||
+            contract.status === "expired" ||
+            contract.status === "active") && (
             <span className="font-medium">Xem hợp đồng</span>
           )}
 
@@ -298,6 +296,7 @@ export const ContractCard = ({
 
         {contract.status != "terminated" &&
           contract.status !== "active" &&
+          contract.status !== "expired" &&
           contract.isDepositPaid === false && (
             <Button
               block
