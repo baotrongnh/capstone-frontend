@@ -26,13 +26,25 @@ export default function InvoiceDetailPage() {
     const t = useTranslations('Profile.invoices.detail')
     const tInvoices = useTranslations('Profile.invoices')
     const tPayments = useTranslations('Profile.payment')
+    const tRevenue = useTranslations('Profile.revenue')
     const params = useParams<{ id: string }>()
     const searchParams = useSearchParams()
     const id = params?.id
     const from = searchParams.get('from')
 
-    const backHref = from === 'payments' ? '/profile/payment-history' : '/profile/invoices'
-    const backLabel = from === 'payments' ? tPayments('title') : tInvoices('title')
+    const backHref =
+        from === 'payments'
+            ? '/profile/payment-history'
+            : from === 'revenue'
+                ? '/profile/partner-revenues'
+                : '/profile/invoices'
+
+    const backLabel =
+        from === 'payments'
+            ? tPayments('title')
+            : from === 'revenue'
+                ? tRevenue('title')
+                : tInvoices('title')
 
     const { data, isLoading, isError, error } = useInvoice(id)
     const { mutateAsync: createPayOSLink, isPending: isCreatingPayOSPaymentLink } = useCreatePayOSPaymentLink()

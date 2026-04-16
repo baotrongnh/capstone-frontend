@@ -860,6 +860,66 @@
         "verified": "Đã xác thực",
         "pending": "Chờ xử lý"
       }
+    },
+    "revenue": {
+      "title": "Báo cáo tổng quan doanh thu",
+      "subtitle": "Theo dõi hiệu quả doanh thu đối tác trong kỳ, gồm doanh thu gộp, doanh thu hoa hồng hệ thống và doanh thu thực nhận.",
+      "filters": {
+        "dateRange": "Khoảng thời gian",
+        "pageSize": "Số dòng mỗi trang",
+        "reset": "Đặt lại tháng hiện tại"
+      },
+      "errors": {
+        "loadError": "Không thể tải dữ liệu báo cáo doanh thu"
+      },
+      "stats": {
+        "overviewTitle": "Báo cáo tổng quan",
+        "partnerLabel": "Đối tác",
+        "companyLabel": "Công ty",
+        "activityTitle": "Thống kê hoạt động",
+        "invoiceCount": "Số hóa đơn",
+        "apartmentCount": "Số căn hộ",
+        "contractCount": "Số hợp đồng",
+        "financeTitle": "Doanh thu",
+        "totalGrossRevenue": "Tổng doanh thu (Gross)",
+        "totalSystemRevenue": "Doanh thu hoa hồng hệ thống",
+        "totalNetPayoutRevenue": "Doanh thu thực nhận (Net payout)"
+      },
+      "charts": {
+        "donut": {
+          "title": "Cơ cấu doanh thu",
+          "subtitle": "Phân bổ doanh thu trong kỳ báo cáo",
+          "grossRevenue": "Doanh thu gộp",
+          "systemRevenue": "Doanh thu hoa hồng hệ thống",
+          "netPayoutRevenue": "Khoản thực nhận"
+        },
+        "timeline": {
+          "title": "Biểu đồ doanh thu theo thời gian",
+          "subtitle": "Dữ liệu được tổng hợp theo ngày thanh toán hóa đơn",
+          "grossRevenue": "Doanh thu gộp",
+          "systemRevenue": "Doanh thu hoa hồng hệ thống",
+          "netPayoutRevenue": "Doanh thu thực nhận",
+          "invoiceCount": "Hóa đơn"
+        }
+      },
+      "table": {
+        "title": "Danh sách hóa đơn doanh thu",
+        "empty": "Không tìm thấy dữ liệu doanh thu",
+        "invoiceNumber": "Mã hóa đơn",
+        "invoiceType": "Loại hóa đơn",
+        "paidAt": "Ngày thanh toán",
+        "apartment": "Căn hộ",
+        "contract": "Hợp đồng",
+        "commissionRate": "Tỷ lệ hoa hồng",
+        "grossRevenue": "Doanh thu gộp",
+        "systemRevenue": "Doanh thu hệ thống",
+        "netPayoutRevenue": "Khoản thực nhận"
+      },
+      "pagination": {
+        "currentPage": "Trang {page}/{totalPages}",
+        "previous": "Trang trước",
+        "next": "Trang sau"
+      }
     }
   },
   "ApartmentListPage": {

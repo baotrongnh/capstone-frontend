@@ -153,7 +153,7 @@ export default function ProfileSidebar({
           <div className="min-w-0 flex-1">
             <p className="text-lg  font-semibold truncate">{identityName}</p>
             {identityEmail ? (
-              <p className="text-sm text-muted truncate">{identityEmail}</p>
+              <p className="text-xs text-muted truncate">{identityEmail}</p>
             ) : null}
           </div>
         </div>

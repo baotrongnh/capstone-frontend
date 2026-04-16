@@ -858,6 +858,66 @@
         "verified": "Verified",
         "pending": "Pending"
       }
+    },
+    "revenue": {
+      "title": "Revenue Overview Report",
+      "subtitle": "Track partner performance by period, including gross revenue, system commission revenue, and net payout.",
+      "filters": {
+        "dateRange": "Date range",
+        "pageSize": "Rows per page",
+        "reset": "Reset to current month"
+      },
+      "errors": {
+        "loadError": "Unable to load revenue report data"
+      },
+      "stats": {
+        "overviewTitle": "Overview",
+        "partnerLabel": "Partner",
+        "companyLabel": "Company",
+        "activityTitle": "Activity Metrics",
+        "invoiceCount": "Invoices",
+        "apartmentCount": "Apartments",
+        "contractCount": "Contracts",
+        "financeTitle": "Revenue",
+        "totalGrossRevenue": "Total gross revenue",
+        "totalSystemRevenue": "System commission revenue",
+        "totalNetPayoutRevenue": "Net payout revenue"
+      },
+      "charts": {
+        "donut": {
+          "title": "Revenue composition",
+          "subtitle": "Revenue distribution within the selected period",
+          "grossRevenue": "Gross revenue",
+          "systemRevenue": "System commission revenue",
+          "netPayoutRevenue": "Net payout"
+        },
+        "timeline": {
+          "title": "Revenue over time",
+          "subtitle": "Aggregated by invoice paid date",
+          "grossRevenue": "Gross revenue",
+          "systemRevenue": "System revenue",
+          "netPayoutRevenue": "Net payout",
+          "invoiceCount": "Invoices"
+        }
+      },
+      "table": {
+        "title": "Revenue invoice list",
+        "empty": "No revenue data found",
+        "invoiceNumber": "Invoice number",
+        "invoiceType": "Invoice type",
+        "paidAt": "Paid date",
+        "apartment": "Apartment",
+        "contract": "Contract",
+        "commissionRate": "Commission rate",
+        "grossRevenue": "Gross revenue",
+        "systemRevenue": "System revenue",
+        "netPayoutRevenue": "Net payout"
+      },
+      "pagination": {
+        "currentPage": "Page {page}/{totalPages}",
+        "previous": "Previous",
+        "next": "Next"
+      }
     }
   },
   "ApartmentListPage": {

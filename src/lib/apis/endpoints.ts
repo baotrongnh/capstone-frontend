@@ -16,5 +16,6 @@ export const endpoints = {
   reservations: createEndpoints("reservations"),
   notifications: createEndpoints("notifications"),
   invoices: createEndpoints("invoices"),
-  payments: createEndpoints("payments")
+  payments: createEndpoints("payments"),
+  revenues: createEndpoints("revenues")
 };

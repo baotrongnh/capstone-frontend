@@ -476,6 +476,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/apartments/cooperation-contracts/pdf/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * View partner cooperation contract PDF by signed token
+         * @description Public endpoint to view partner cooperation contract PDF using a short-lived signed token.
+         */
+        get: operations["ApartmentsController_viewCooperationPdfByToken"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/apartments/{id}/rating": {
         parameters: {
             query?: never;
@@ -6829,38 +6849,6 @@ export interface components {
              */
             isActive: boolean;
         };
-        RevenueOverviewDto: {
-            /** @example 25 */
-            invoiceCount: number;
-            /** @example 350000000 */
-            totalInvoiceAmount: number;
-            /** @example 275000000 */
-            totalSystemRevenue: number;
-            /** @example 100000000 */
-            totalPartnerGrossRevenue: number;
-            /** @example 85000000 */
-            totalPartnerNetPayout: number;
-        };
-        RevenuePartnerDto: {
-            id: string;
-            fullName: string;
-            companyName?: string | null;
-        };
-        PartnerRevenueSummaryItemDto: {
-            partner: components["schemas"]["RevenuePartnerDto"];
-            /** @example 10 */
-            invoiceCount: number;
-            /** @example 2 */
-            apartmentCount: number;
-            /** @example 3 */
-            contractCount: number;
-            /** @example 120000000 */
-            totalGrossRevenue: number;
-            /** @example 12000000 */
-            totalSystemCommissionRevenue: number;
-            /** @example 108000000 */
-            totalNetPayoutRevenue: number;
-        };
         RevenueApartmentDto: {
             id: string;
             apartmentNumber: string;
@@ -6874,6 +6862,11 @@ export interface components {
             /** Format: date-time */
             endDate: string;
             status: string;
+        };
+        RevenuePartnerDto: {
+            id: string;
+            fullName: string;
+            companyName?: string | null;
         };
         RevenueCooperationContractDto: {
             id: string;
@@ -6907,6 +6900,40 @@ export interface components {
             contract: components["schemas"]["RevenueContractDto"];
             partner?: components["schemas"]["RevenuePartnerDto"] | null;
             cooperationContract?: components["schemas"]["RevenueCooperationContractDto"] | null;
+        };
+        RevenueOverviewDto: {
+            /** @example 25 */
+            invoiceCount: number;
+            /** @example 350000000 */
+            totalInvoiceAmount: number;
+            /** @example 275000000 */
+            totalSystemRevenue: number;
+            /** @example 100000000 */
+            totalPartnerGrossRevenue: number;
+            /** @example 85000000 */
+            totalPartnerNetPayout: number;
+            invoices: components["schemas"]["RevenueTransactionDto"][];
+            /** @example 1 */
+            page: number;
+            /** @example 20 */
+            limit: number;
+            /** @example 2 */
+            totalPages: number;
+        };
+        PartnerRevenueSummaryItemDto: {
+            partner: components["schemas"]["RevenuePartnerDto"];
+            /** @example 10 */
+            invoiceCount: number;
+            /** @example 2 */
+            apartmentCount: number;
+            /** @example 3 */
+            contractCount: number;
+            /** @example 120000000 */
+            totalGrossRevenue: number;
+            /** @example 12000000 */
+            totalSystemCommissionRevenue: number;
+            /** @example 108000000 */
+            totalNetPayoutRevenue: number;
         };
         RevenueTransactionListDto: {
             items: components["schemas"]["RevenueTransactionDto"][];
@@ -8183,6 +8210,41 @@ export interface operations {
         responses: {
             /** @description Cooperation contract PDF file */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApartmentsController_viewCooperationPdfByToken: {
+        parameters: {
+            query: {
+                /** @description Signed token returned in cooperationContractPublicPdfUrl field */
+                token: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cooperation contract PDF file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid or expired PDF token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Cooperation contract or PDF not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
