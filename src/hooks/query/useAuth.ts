@@ -153,16 +153,31 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
             }
 
             const accessToken = await new Promise<string>((resolve, reject) => {
-                const timer = setInterval(() => {
+                let timer = 0
+                const timeoutMs = 120_000
+
+                const cleanup = () => {
+                    window.clearInterval(timer)
+                    window.clearTimeout(timeoutId)
+                }
+
+                const timeoutId = window.setTimeout(() => {
+                    cleanup()
+                    if (!popup.closed) popup.close()
+                    reject(new Error('Google login timed out. Please try again.'))
+                }, timeoutMs)
+
+                timer = window.setInterval(() => {
                     try {
                         if (popup.closed) {
-                            clearInterval(timer)
+                            cleanup()
                             reject(new Error('Popup closed by user'))
                             return
                         }
+
                         const hash = popup.location.hash
                         if (hash && hash.includes('access_token')) {
-                            clearInterval(timer)
+                            cleanup()
                             popup.close()
                             const params = new URLSearchParams(hash.substring(1))
                             const token = params.get('access_token')
@@ -170,7 +185,7 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
                             else reject(new Error('No access token found in redirect URL'))
                         }
                     } catch {
-                        message.error("Somethings went wrong!")
+                        
                     }
                 }, 500)
             })
