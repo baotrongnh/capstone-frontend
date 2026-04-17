@@ -136,7 +136,7 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
                          onChange={(e) => setMessage(e.target.value)}
                          onPressEnter={handlePressEnter}
                          onPaste={handlePaste}
-                         placeholder={t('inputPlaceholder')}
+                         placeholder={disabled ? 'Hệ thống đang gặp lỗi, vui lòng thử lại sau' : t('inputPlaceholder')}
                          autoSize={{ minRows: 1, maxRows: 4 }}
                          className="flex-1"
                          disabled={disabled || isSending}

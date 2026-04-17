@@ -23,14 +23,6 @@ const DURATION_OPTIONS = [30, 45, 60, 90]
 const BOOKING_START_HOUR = 7
 const BOOKING_END_HOUR = 17
 
-const getMinBookingDateTime = () => {
-     const rawMinBookingDateTime = dayjs().add(1, 'day')
-
-     return rawMinBookingDateTime
-          .startOf('minute')
-          .add(rawMinBookingDateTime.second() > 0 || rawMinBookingDateTime.millisecond() > 0 ? 1 : 0, 'minute')
-}
-
 export default function ModalBookingSchedule({
      open,
      onClose,
@@ -52,9 +44,7 @@ export default function ModalBookingSchedule({
      const hasPhone = user?.phone
      const hasID = user?.identity
      const isValidToBook = hasPhone && hasID
-     const minBookingDateTime = getMinBookingDateTime()
-
-     const minBookingHint = minBookingDateTime.format('HH:mm DD/MM/YYYY')
+     const tomorrow = dayjs().add(1, 'day').startOf('day')
 
      const onSubmit = (selectedDate: Dayjs, selectedTime: Dayjs, selectedDuration: number, message: string) => {
           const appointmentAt = selectedDate
@@ -82,12 +72,6 @@ export default function ModalBookingSchedule({
                return
           }
 
-          const appointmentDateTime = date
-               .hour(time.hour())
-               .minute(time.minute())
-               .second(0)
-               .millisecond(0)
-
           if (time.hour() < BOOKING_START_HOUR || time.hour() > BOOKING_END_HOUR) {
                setErrors((prev) => ({
                     ...prev,
@@ -96,10 +80,9 @@ export default function ModalBookingSchedule({
                return
           }
 
-          if (appointmentDateTime.isBefore(minBookingDateTime)) {
+          if (!date.isSame(tomorrow, 'day')) {
                setErrors({
-                    date: 'Lịch xem phải đặt trước ít nhất 1 ngày',
-                    time: 'Vui lòng chọn thời gian hợp lệ',
+                    date: 'Chỉ được đặt lịch cho ngày hôm sau',
                })
                return
           }
@@ -120,20 +103,6 @@ export default function ModalBookingSchedule({
      const handleDateChange = (val: Dayjs | null) => {
           setDate(val)
           setErrors((e) => ({ ...e, date: undefined }))
-
-          if (!val || !time) {
-               return
-          }
-
-          const appointmentDateTime = val
-               .hour(time.hour())
-               .minute(time.minute())
-               .second(0)
-               .millisecond(0)
-
-          if (appointmentDateTime.isBefore(minBookingDateTime)) {
-               setTime(null)
-          }
      }
 
      const handleTimeChange = (val: Dayjs | null) => {
@@ -142,37 +111,14 @@ export default function ModalBookingSchedule({
      }
 
      const disabledDate = (current: Dayjs) =>
-          current &&
-          (
-               current < minBookingDateTime.startOf('day') ||
-               (
-                    minBookingDateTime.hour() > BOOKING_END_HOUR &&
-                    current.isSame(minBookingDateTime.startOf('day'), 'day')
-               )
-          )
+          current && !current.startOf('day').isSame(tomorrow, 'day')
 
      const getDisabledTime = () => {
-          const outsideBusinessHours = Array.from({ length: 24 }, (_, i) => i)
+          const disabledHours = Array.from({ length: 24 }, (_, i) => i)
                .filter((hour) => hour < BOOKING_START_HOUR || hour > BOOKING_END_HOUR)
-
-          if (!date || !date.isSame(minBookingDateTime, 'day')) {
-               return {
-                    disabledHours: () => outsideBusinessHours,
-               }
-          }
-
-          const minHour = minBookingDateTime.hour()
-          const minMinute = minBookingDateTime.minute()
-          const beforeMinHours = Array.from({ length: Math.max(minHour, 0) }, (_, i) => i)
-          const disabledHours = Array.from(new Set([...outsideBusinessHours, ...beforeMinHours]))
-               .sort((a, b) => a - b)
 
           return {
                disabledHours: () => disabledHours,
-               disabledMinutes: (selectedHour: number) =>
-                    selectedHour === minHour
-                         ? Array.from({ length: minMinute }, (_, i) => i)
-                         : [],
           }
      }
 
@@ -191,7 +137,7 @@ export default function ModalBookingSchedule({
           >
                <div className='pt-4 space-y-5'>
                     <div className='rounded-xl border border-blue-100 bg-blue-50 p-3'>
-                         <p className='text-xs text-blue-800'>Lịch xem cần đặt trước ít nhất 1 ngày, từ {minBookingHint}.</p>
+                         <p className='text-xs text-blue-800'>Vui lòng book trước lịch cho ngày hôm sau</p>
                     </div>
 
                     <div className='rounded-xl border border-gray-200 bg-gray-50 p-4'>
@@ -218,6 +164,7 @@ export default function ModalBookingSchedule({
                                         size='large'
                                         format='HH:mm'
                                         minuteStep={15}
+                                        hideDisabledOptions
                                         value={time}
                                         placeholder={t('timeLabel')}
                                         disabled={!date}

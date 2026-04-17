@@ -4,7 +4,7 @@ import { CreditCardOutlined } from '@ant-design/icons'
 import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
 import { useCreatePayOSPaymentLink } from '@/hooks/query/usePayments'
-import { createDetailRows, createItemColumns, createPaymentColumns } from '../../components/invoice-detail-config'
+import { createDetailRows, createItemColumns, createPaymentColumns } from '../../components/invoice/invoice-detail-config'
 import type { ApiErrorResponse } from '@/types/auth'
 import {
     formatInvoiceAmount,
@@ -26,13 +26,25 @@ export default function InvoiceDetailPage() {
     const t = useTranslations('Profile.invoices.detail')
     const tInvoices = useTranslations('Profile.invoices')
     const tPayments = useTranslations('Profile.payment')
+    const tRevenue = useTranslations('Profile.revenue')
     const params = useParams<{ id: string }>()
     const searchParams = useSearchParams()
     const id = params?.id
     const from = searchParams.get('from')
 
-    const backHref = from === 'payments' ? '/profile/payment-history' : '/profile/invoices'
-    const backLabel = from === 'payments' ? tPayments('title') : tInvoices('title')
+    const backHref =
+        from === 'payments'
+            ? '/profile/payment-history'
+            : from === 'revenue'
+                ? '/profile/partner-revenues'
+                : '/profile/invoices'
+
+    const backLabel =
+        from === 'payments'
+            ? tPayments('title')
+            : from === 'revenue'
+                ? tRevenue('title')
+                : tInvoices('title')
 
     const { data, isLoading, isError, error } = useInvoice(id)
     const { mutateAsync: createPayOSLink, isPending: isCreatingPayOSPaymentLink } = useCreatePayOSPaymentLink()

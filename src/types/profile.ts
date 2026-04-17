@@ -150,6 +150,9 @@ export type PartnerProperty = {
 
 export type ProfileSidebarProps = {
   role: ProfileRole
+  displayName?: string | null
+  displayEmail?: string | null
+  displayAvatarUrl?: string | null
   onLogout: () => void
 }
 
@@ -186,3 +189,15 @@ export type MyPropertiesProps = {
   properties?: PartnerProperty[]
   loading?: boolean
 }
+
+
+export type SidebarSection = {
+  key: string;
+  label: string;
+  icon: ProfileNavItem["icon"];
+  itemKeys: string[];
+};
+
+export type ResolvedSidebarSection = Omit<SidebarSection, "itemKeys"> & {
+  items: ProfileNavItem[];
+};
