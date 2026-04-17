@@ -43,6 +43,8 @@ export default function PropertiesSection() {
 
   const { data: apartments } = useApartments(params);
 
+  console.log("ĐA", apartments);
+
   if (!apartments) {
     return <div>Loading...</div>;
   }
@@ -130,15 +132,14 @@ export default function PropertiesSection() {
                       </h4>
 
                       <div className="space-y-1 text-xs text-gray-500 mb-2">
-                        <div>{apartment.totalArea} m²</div>
+                        <div>Diện tích: {apartment.totalArea} m²</div>
                         <div>
-                          {apartment.numberOfBedrooms} PN ·{" "}
+                          Không gian: {apartment.numberOfBedrooms} PN ·{" "}
                           {apartment.numberOfBathrooms} WC
                         </div>
                         <div>
                           Tầng {apartment.floorNumber} ·{" "}
-                          {apartment.streetAddress}, {apartment.wardName},{" "}
-                          {apartment.districtName}
+                          {apartment.streetAddress}, {apartment.wardName}
                         </div>
 
                         <div>
