@@ -29,7 +29,7 @@ export default function Header() {
   const locale = useLocale();
   const navLinks = [
     { href: ROUTES.APARTMENT, label: t("findApartment") },
-    { href: "/", label: t("support") },
+    { href: "/policies", label: 'Chính sách' },
     { href: "/contact", label: t("contact") },
   ];
   const isLoggedIn = Boolean(isHydrated && isAuthenticated && user);

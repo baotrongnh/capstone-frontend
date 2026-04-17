@@ -33,7 +33,7 @@ export default function HeaderDesktopActions({
                {/* {isLoggedIn && <MessageSquareText strokeWidth={1.4} />} */}
                {isLoggedIn && <NotificationDropdown />}
 
-               <Link href={ROUTES.CONTACT}>
+               <Link href={ROUTES.PARTNER_REQUEST}>
                     <Button shape="round" type="primary">{becomePartnerLabel}</Button>
                </Link>
 
