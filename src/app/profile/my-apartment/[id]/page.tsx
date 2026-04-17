@@ -18,8 +18,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
 import { ChangeHousePasswordModal } from '../../components/change-house-password-modal'
-import { MyApartmentHero } from '../../components/my-apartment-hero'
-import { MyApartmentInformationTabs } from '../../components/my-apartment-information-tabs'
+import { MyApartmentHero } from '../../components/apartment/my-apartment-hero'
+import { MyApartmentInformationTabs } from '../../components/apartment/my-apartment-information-tabs'
 
 export default function MyApartmentDetailPage() {
     const t = useTranslations('Profile.apartment')

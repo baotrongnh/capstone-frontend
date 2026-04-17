@@ -2,7 +2,7 @@ import { ROUTES } from "@/constants/routes";
 import { useUploadContractPdf } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
 import { CheckCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
+import { Alert, App, Button, Checkbox, Divider, message, Modal } from "antd";
 import { Check, CreditCard, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PDFDocument } from "pdf-lib";
@@ -45,6 +45,8 @@ export default function ModalAssignContract({
     }
     return u8arr;
   };
+
+  console.log("PDF", selectedContract);
 
   const embedSignatureInPDF = async (signatureDataUrl: string) => {
     if (!selectedContract?.pdfUrl) {

@@ -155,8 +155,7 @@ export const ContractCard = ({
               <span className="text-xs text-gray-500 mb-0.5">Địa chỉ</span>
               <span className="text-sm font-semibold text-gray-800 leading-tight">
                 {contract.apartment?.streetAddress},{" "}
-                {contract.apartment?.wardName},{" "}
-                {contract.apartment?.districtName}
+                {contract.apartment?.wardName}
               </span>
             </div>
           </div>
