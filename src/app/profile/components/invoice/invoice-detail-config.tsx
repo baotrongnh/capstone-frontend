@@ -108,6 +108,11 @@ export const createDetailRows = ({
             children: <Text className="font-mono">{normalizeText(invoiceData.invoiceNumber)}</Text>,
         },
         {
+            key: 'apartmentId',
+            label: t('fields.apartmentId'),
+            children: <Text className="font-mono">{normalizeText(invoiceData.contract.apartment.apartmentNumber)}</Text>,
+        },
+        {
             key: 'status',
             label: t('fields.status'),
             children: <Tag color={getStatusColor(status)}>{invoiceStatusLabel}</Tag>,
@@ -123,11 +128,6 @@ export const createDetailRows = ({
             children: formatInvoiceDate(invoiceData.billingPeriodStart, locale),
         },
         {
-            key: 'billingEnd',
-            label: t('fields.billingEnd'),
-            children: formatInvoiceDate(invoiceData.billingPeriodEnd, locale),
-        },
-        {
             key: 'dueDate',
             label: t('fields.dueDate'),
             children: formatInvoiceDate(invoiceData.dueDate, locale),
@@ -137,11 +137,6 @@ export const createDetailRows = ({
             label: t('fields.issueDate'),
             children: formatInvoiceDate(invoiceData.issueDate, locale),
         },
-        // {
-        //     key: 'sentAt',
-        //     label: t('fields.sentAt'),
-        //     children: formatInvoiceDate(invoiceData.sentAt ?? undefined, locale),
-        // },
         {
             key: 'paidAt',
             label: t('fields.paidAt'),
@@ -162,41 +157,10 @@ export const createDetailRows = ({
             label: t('fields.totalAmount'),
             children: <Text strong>{formatInvoiceAmount(invoiceData.totalAmount, locale)}</Text>,
         },
-        // {
-        //     key: 'baseRent',
-        //     label: t('fields.baseRent'),
-        //     children: formatInvoiceAmount(invoiceData.baseRent, locale),
-        // },
-        // {
-        //     key: 'taxAmount',
-        //     label: t('fields.taxAmount'),
-        //     children: formatInvoiceAmount(invoiceData.taxAmount, locale),
-        // },
-        // {
-        //     key: 'invoiceDocumentUrl',
-        //     label: t('fields.invoiceDocument'),
-        //     children: invoiceData.invoiceDocumentUrl ? (
-        //         <Link href={invoiceData.invoiceDocumentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
-        //             {t('actions.openDocument')}
-        //         </Link>
-        //     ) : (
-        //         '-'
-        //     ),
-        // },
-        // {
-        //     key: 'notes',
-        //     label: t('fields.notes'),
-        //     children: normalizeText(invoiceData.notes),
-        // },
         {
             key: 'createdAt',
             label: t('fields.createdAt'),
             children: formatInvoiceDate(invoiceData.createdAt, locale),
-        },
-        {
-            key: 'updatedAt',
-            label: t('fields.updatedAt'),
-            children: formatInvoiceDate(invoiceData.updatedAt, locale),
         },
         {
             key: 'id',

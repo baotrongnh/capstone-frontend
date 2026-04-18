@@ -1,6 +1,6 @@
 'use client'
 
-import { getMyUserApartments, getUserApartmentById, updateMyHousePassword } from '@/lib/services/userApartment.service'
+import { getIotBoards, getMyUserApartments, getUserApartmentById, updateDoorPin } from '@/lib/services/userApartment.service'
 import { UserApartmentApiError } from '@/types/userApartment'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
@@ -21,12 +21,20 @@ export const useUserApartmentDetail = (id: string) => {
     })
 }
 
-export const useUpdateMyHousePassword = () => {
+export const useIotBoardsByApartment = (apartmentId?: string) => {
+    return useQuery({
+        queryKey: ['iot-boards', 'by-apartment', apartmentId],
+        queryFn: () => getIotBoards({ apartmentId }),
+        enabled: Boolean(apartmentId),
+    })
+}
+
+export const useUpdateDoorPin = () => {
     const { message } = App.useApp()
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: updateMyHousePassword,
+        mutationFn: updateDoorPin,
         onSuccess: (res) => {
             message.success(res?.message || 'House password updated successfully')
             queryClient.invalidateQueries({ queryKey: ['user-apartments'] })
@@ -41,3 +49,5 @@ export const useUpdateMyHousePassword = () => {
         },
     })
 }
+
+export const useUpdateMyHousePassword = useUpdateDoorPin
