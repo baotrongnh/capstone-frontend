@@ -23,6 +23,11 @@ const DURATION_OPTIONS = [30, 45, 60, 90]
 const BOOKING_START_HOUR = 7
 const BOOKING_END_HOUR = 17
 
+const isBookableDate = (value: Dayjs | null) => {
+     if (!value) return false
+     return !value.startOf('day').isBefore(dayjs().add(1, 'day').startOf('day'), 'day')
+}
+
 export default function ModalBookingSchedule({
      open,
      onClose,
@@ -45,6 +50,7 @@ export default function ModalBookingSchedule({
      const hasID = user?.identity
      const isValidToBook = hasPhone && hasID
      const tomorrow = dayjs().add(1, 'day').startOf('day')
+     const isBookableSelected = isBookableDate(date)
 
      const onSubmit = (selectedDate: Dayjs, selectedTime: Dayjs, selectedDuration: number, message: string) => {
           const appointmentAt = selectedDate
@@ -80,9 +86,9 @@ export default function ModalBookingSchedule({
                return
           }
 
-          if (!date.isSame(tomorrow, 'day')) {
+          if (!isBookableDate(date)) {
                setErrors({
-                    date: 'Chỉ được đặt lịch cho ngày hôm sau',
+                    date: 'Chỉ được đặt lịch từ ngày mai trở đi',
                })
                return
           }
@@ -101,6 +107,12 @@ export default function ModalBookingSchedule({
      }
 
      const handleDateChange = (val: Dayjs | null) => {
+          if (val && !isBookableDate(val)) {
+               setDate(null)
+               setErrors((e) => ({ ...e, date: 'Chỉ được đặt lịch từ ngày mai trở đi' }))
+               return
+          }
+
           setDate(val)
           setErrors((e) => ({ ...e, date: undefined }))
      }
@@ -111,7 +123,7 @@ export default function ModalBookingSchedule({
      }
 
      const disabledDate = (current: Dayjs) =>
-          current && !current.startOf('day').isSame(tomorrow, 'day')
+          current && current.startOf('day').isBefore(tomorrow, 'day')
 
      const getDisabledTime = () => {
           const disabledHours = Array.from({ length: 24 }, (_, i) => i)
@@ -137,7 +149,7 @@ export default function ModalBookingSchedule({
           >
                <div className='pt-4 space-y-5'>
                     <div className='rounded-xl border border-blue-100 bg-blue-50 p-3'>
-                         <p className='text-xs text-blue-800'>Vui lòng book trước lịch cho ngày hôm sau</p>
+                         <p className='text-xs text-blue-800'>Vui lòng book trước lịch ít nhất 1 ngày</p>
                     </div>
 
                     <div className='rounded-xl border border-gray-200 bg-gray-50 p-4'>
@@ -148,6 +160,7 @@ export default function ModalBookingSchedule({
                                         className='w-full'
                                         size='large'
                                         format='DD/MM/YYYY'
+                                        inputReadOnly
                                         placeholder={t('datePlaceholder')}
                                         disabledDate={disabledDate}
                                         value={date}
@@ -244,7 +257,7 @@ export default function ModalBookingSchedule({
                               style={{ minWidth: 140 }}
                               onClick={handleOk}
                               loading={isPending}
-                              disabled={isPending || !isValidToBook || !date || !time}
+                              disabled={isPending || !isValidToBook || !isBookableSelected || !time}
                          >
                               {t('confirm')}
                          </Button>
