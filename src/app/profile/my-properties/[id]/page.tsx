@@ -22,8 +22,8 @@ import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { ApartmentVideoTour } from '../../components/apartment-video-tour'
-import { MyApartmentHero } from '../../components/my-apartment-hero'
+import { ApartmentVideoTour } from '../../components/apartment/apartment-video-tour'
+import { MyApartmentHero } from '../../components/apartment/my-apartment-hero'
 
 type PropertyDetailRow = {
     key: string

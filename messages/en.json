@@ -240,7 +240,29 @@
       "myProperties": "My Properties",
       "bookings": "Bookings",
       "revenue": "Revenue",
+      "currentRole": "Current Role",
+      "roleUser": "User",
+      "rolePartner": "Partner",
+      "userWorkspace": "User Workspace",
+      "partnerWorkspace": "Partner Workspace",
+      "userWorkspaceHint": "Track apartment, contracts and payments quickly.",
+      "partnerWorkspaceHint": "Manage properties, schedules and revenue from one place.",
+      "navigation": "Navigation",
+      "sectionAccountRevenue": "Account",
+      "sectionApartmentProperty": "Apartment",
+      "sectionContracts": "Contracts",
+      "sectionSchedule": "Schedule",
+      "sectionBilling": "Billing",
+      "sectionSettings": "Settings",
       "logout": "Logout"
+    },
+    "layout": {
+      "profileSpaceLabel": "Personal workspace",
+      "title": "My Profile",
+      "userDescription": "You are browsing this profile as a user account.",
+      "partnerDescription": "You are browsing this profile as a partner account.",
+      "userRoleBadge": "User",
+      "partnerRoleBadge": "Partner"
     },
     "account": {
       "title": "My Information",
@@ -842,6 +864,66 @@
         "verified": "Verified",
         "pending": "Pending"
       }
+    },
+    "revenue": {
+      "title": "Revenue Overview Report",
+      "subtitle": "Track partner performance by period, including gross revenue, system commission revenue, and net payout.",
+      "filters": {
+        "dateRange": "Date range",
+        "pageSize": "Rows per page",
+        "reset": "Reset to current month"
+      },
+      "errors": {
+        "loadError": "Unable to load revenue report data"
+      },
+      "stats": {
+        "overviewTitle": "Overview",
+        "partnerLabel": "Partner",
+        "companyLabel": "Company",
+        "activityTitle": "Activity Metrics",
+        "invoiceCount": "Invoices",
+        "apartmentCount": "Apartments",
+        "contractCount": "Contracts",
+        "financeTitle": "Revenue",
+        "totalGrossRevenue": "Total gross revenue",
+        "totalSystemRevenue": "System commission revenue",
+        "totalNetPayoutRevenue": "Net payout revenue"
+      },
+      "charts": {
+        "donut": {
+          "title": "Revenue composition",
+          "subtitle": "Revenue distribution within the selected period",
+          "grossRevenue": "Gross revenue",
+          "systemRevenue": "System commission revenue",
+          "netPayoutRevenue": "Net payout"
+        },
+        "timeline": {
+          "title": "Revenue over time",
+          "subtitle": "Aggregated by invoice paid date",
+          "grossRevenue": "Gross revenue",
+          "systemRevenue": "System revenue",
+          "netPayoutRevenue": "Net payout",
+          "invoiceCount": "Invoices"
+        }
+      },
+      "table": {
+        "title": "Revenue invoice list",
+        "empty": "No revenue data found",
+        "invoiceNumber": "Invoice number",
+        "invoiceType": "Invoice type",
+        "paidAt": "Paid date",
+        "apartment": "Apartment",
+        "contract": "Contract",
+        "commissionRate": "Commission rate",
+        "grossRevenue": "Gross revenue",
+        "systemRevenue": "System revenue",
+        "netPayoutRevenue": "Net payout"
+      },
+      "pagination": {
+        "currentPage": "Page {page}/{totalPages}",
+        "previous": "Previous",
+        "next": "Next"
+      }
     }
   },
   "ApartmentListPage": {
@@ -1019,34 +1101,17 @@
         {
           "percentage": "70/30",
           "description": "Standard Commission Split for Property Owners",
-          "details": [
-            "Owners retain 70% of rental income",
-            "Platform receives 30% as management and maintenance fee",
-            "Includes professional cleaning, tenant screening, and support",
-            "Quarterly revenue reports provided"
-          ]
+          "details": ["Owners retain 70% of rental income", "Platform receives 30% as management and maintenance fee", "Includes professional cleaning, tenant screening, and support", "Quarterly revenue reports provided"]
         },
         {
           "percentage": "85/15",
           "description": "Premium Partner Program (Annual Contract)",
-          "details": [
-            "Owners retain 85% of rental income",
-            "Platform receives 15% commission",
-            "Minimum 5 properties required",
-            "Dedicated account manager assigned",
-            "Priority repair and maintenance services"
-          ]
+          "details": ["Owners retain 85% of rental income", "Platform receives 15% commission", "Minimum 5 properties required", "Dedicated account manager assigned", "Priority repair and maintenance services"]
         },
         {
           "percentage": "60/40",
           "description": "Full Management Services",
-          "details": [
-            "Platform handles 100% of property management",
-            "Owners receive 60% of rental income",
-            "Includes 24/7 support, tenant management, and maintenance",
-            "Marketing and tenant acquisition included",
-            "Professional photography and virtual tours"
-          ]
+          "details": ["Platform handles 100% of property management", "Owners receive 60% of rental income", "Includes 24/7 support, tenant management, and maintenance", "Marketing and tenant acquisition included", "Professional photography and virtual tours"]
         }
       ],
       "simple": "Simple & Transparent",
@@ -1093,11 +1158,7 @@
     },
     "introduction": {
       "description": "HomeIQ is a modern property management and rental platform that connects tenants with property owners through comprehensive digitization processes.",
-      "features": [
-        "Professional Operations",
-        "Transparent Contracts",
-        "Optimized Sustainable Revenue"
-      ]
+      "features": ["Professional Operations", "Transparent Contracts", "Optimized Sustainable Revenue"]
     },
     "payment": {
       "deposit": "The security deposit must equal 1-2 months of rent and is held throughout the lease period.",

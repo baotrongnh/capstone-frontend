@@ -4,8 +4,14 @@ import { useVerifyIdentity } from '@/hooks/query/useUser';
 import { ModalIdentityCardProps } from '@/types/user';
 import { InboxOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Modal, Upload } from 'antd';
+import { AxiosError } from 'axios';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+
+type VerifyIdentityErrorResponse = {
+    message?: string;
+};
 
 export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardProps) {
     const t = useTranslations('Profile.account');
@@ -55,8 +61,16 @@ export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardPr
             setFrontFile(null);
             setBackFile(null);
             onClose();
-        } catch {
-            message.error(t('cccdUploadFailed'));
+        } catch (error) {
+            const axiosError = error as AxiosError<VerifyIdentityErrorResponse>;
+            const statusCode = axiosError?.response?.status;
+            const backendMessage = axiosError?.response?.data?.message;
+
+            if (statusCode === 409 && backendMessage) {
+                message.error(backendMessage);
+            } else {
+                message.error(backendMessage || t('cccdUploadFailed'));
+            }
         } finally {
             setSubmitting(false);
         }
@@ -133,10 +147,12 @@ export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardPr
                             <div className={`relative flex items-center justify-center w-full h-full rounded-xl border-2 border-dashed cursor-pointer overflow-hidden transition-colors ${frontUrl ? 'border-transparent' : 'border-gray-300 bg-gray-100 hover:border-primary hover:bg-blue-50'}`}>
                                 {frontUrl ? (
                                     <>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
+                                        <Image
                                             src={frontUrl}
                                             alt={t('cccdFront')}
+                                            fill
+                                            unoptimized
+                                            sizes="(max-width: 768px) 100vw, 50vw"
                                             className="absolute inset-0 w-full h-full object-cover rounded-xl"
                                         />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
@@ -168,10 +184,12 @@ export default function ModalIdentityCard({ open, onClose }: ModalIdentityCardPr
                             <div className={`relative flex items-center justify-center w-full h-full rounded-xl border-2 border-dashed cursor-pointer overflow-hidden transition-colors ${backUrl ? 'border-transparent' : 'border-gray-300 bg-gray-100 hover:border-primary hover:bg-blue-50'}`}>
                                 {backUrl ? (
                                     <>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
+                                        <Image
                                             src={backUrl}
                                             alt={t('cccdBack')}
+                                            fill
+                                            unoptimized
+                                            sizes="(max-width: 768px) 100vw, 50vw"
                                             className="absolute inset-0 w-full h-full object-cover rounded-xl"
                                         />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
