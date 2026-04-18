@@ -15,6 +15,7 @@ type HeaderDesktopActionsProps = {
      userFullName: string
      becomePartnerLabel: string
      loginLabel: string
+     avatar: string | null | undefined
      onOpenAuth: () => void
 }
 
@@ -26,6 +27,7 @@ export default function HeaderDesktopActions({
      becomePartnerLabel,
      loginLabel,
      onOpenAuth,
+     avatar
 }: HeaderDesktopActionsProps) {
      return (
           <div className="hidden lg:flex items-center gap-5">
@@ -41,7 +43,7 @@ export default function HeaderDesktopActions({
                     <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
                          <div className="flex items-center cursor-pointer gap-2">
                               <span className="font-medium">{userFullName}</span>
-                              <Avatar icon={<User />} />
+                              <Avatar icon={<User />} src={avatar} />
                               <ChevronDown strokeWidth={1.6} size={15} />
                          </div>
                     </Dropdown>
