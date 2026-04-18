@@ -34,6 +34,7 @@ export default function Header() {
   ];
   const isLoggedIn = Boolean(isHydrated && isAuthenticated && user);
   const userFullName = user?.fullName || "";
+  const avatar = user?.profileImageUrl
   const becomePartnerLabel = t("becomePartner");
   const loginLabel = t("login");
   const profileLabel = t("profile");
@@ -139,6 +140,7 @@ export default function Header() {
           becomePartnerLabel={becomePartnerLabel}
           loginLabel={loginLabel}
           onOpenAuth={openAuth}
+          avatar={avatar}
         />
 
         {/* Mobile hamburger */}
