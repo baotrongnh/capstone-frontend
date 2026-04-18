@@ -1,9 +1,10 @@
 'use client'
 
 import { useFullAddress } from '@/hooks/query/useAddress'
-import { useUpdateMyHousePassword, useUserApartmentDetail } from '@/hooks/query/useUserApartment'
-import { UserApartmentDetailItem } from '@/types/userApartment'
+import { useIotBoardsByApartment, useUpdateDoorPin, useUserApartmentDetail } from '@/hooks/query/useUserApartment'
+import { ChangeHousePasswordSubmitPayload, UserApartmentDetailItem } from '@/types/userApartment'
 import { toDisplayText } from '@/utils/format'
+import { buildApartmentIotDevices, resolveDoorPinTargetFromBoards } from '@/utils/iot'
 import {
     APARTMENT_STATUS_COLORS,
     buildMyApartmentQuickSummaryRows,
@@ -12,11 +13,12 @@ import {
     toSafeNumber,
     toUserApartmentStatusLabel,
 } from '@/utils/userApartment'
-import { Breadcrumb, Empty, Tag } from 'antd'
+import { getIotBoards } from '@/lib/services/userApartment.service'
+import { App, Breadcrumb, Empty, Tag } from 'antd'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChangeHousePasswordModal } from '../../components/change-house-password-modal'
 import { MyApartmentHero } from '../../components/apartment/my-apartment-hero'
 import { MyApartmentInformationTabs } from '../../components/apartment/my-apartment-information-tabs'
@@ -24,17 +26,25 @@ import { MyApartmentInformationTabs } from '../../components/apartment/my-apartm
 export default function MyApartmentDetailPage() {
     const t = useTranslations('Profile.apartment')
     const locale = useLocale()
+    const { message } = App.useApp()
     const params = useParams<{ id: string }>()
     const userApartmentId = typeof params?.id === 'string' ? params.id : ''
 
-    const [showDoorPassword, setShowDoorPassword] = useState(false)
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
 
     const { data, isLoading } = useUserApartmentDetail(userApartmentId)
-    const { mutate: updateHousePassword, isPending: isUpdatingHousePassword } = useUpdateMyHousePassword()
+    const { mutate: updateHousePassword, isPending: isUpdatingHousePassword } = useUpdateDoorPin()
 
     const rawApartment = data?.data as UserApartmentDetailItem | undefined
     const apartment = rawApartment?.apartment
+    const apartmentId = rawApartment?.apartmentId
+
+    const { data: iotBoardsResponse, isLoading: isIotDevicesLoading } = useIotBoardsByApartment(apartmentId)
+
+    const iotDevices = useMemo(
+        () => buildApartmentIotDevices(iotBoardsResponse?.data, apartmentId),
+        [apartmentId, iotBoardsResponse?.data],
+    )
 
     const fullAddress = useFullAddress(
         apartment?.streetAddress ?? undefined,
@@ -66,12 +76,6 @@ export default function MyApartmentDetailPage() {
         locale,
     })
 
-    const hiddenDoorPassword = rawApartment?.apartmentDoorPassword
-        ? showDoorPassword
-            ? rawApartment.apartmentDoorPassword
-            : '********'
-        : '-'
-
     const handleOpenChangePasswordModal = () => {
         setIsChangePasswordModalOpen(true)
     }
@@ -80,25 +84,36 @@ export default function MyApartmentDetailPage() {
         setIsChangePasswordModalOpen(false)
     }
 
-    const handleChangeHousePassword = (newPassword: string) => {
-        const targetId = rawApartment?.id ? String(rawApartment.id) : userApartmentId
-
-        if (!targetId) {
+    const handleChangeHousePassword = async (payload: ChangeHousePasswordSubmitPayload) => {
+        if (!apartmentId) {
+            message.error(t('doorDeviceNotFound'))
             return
         }
 
-        updateHousePassword(
-            {
-                id: targetId,
-                payload: { housePassword: newPassword },
-            },
-            {
-                onSuccess: () => {
-                    setIsChangePasswordModalOpen(false)
-                    setShowDoorPassword(false)
+        try {
+            const iotBoardsResponse = await getIotBoards({ apartmentId })
+            const doorPinTarget = resolveDoorPinTargetFromBoards(iotBoardsResponse?.data, apartmentId)
+
+            if (!doorPinTarget) {
+                message.error(t('doorDeviceNotFound'))
+                return
+            }
+
+            updateHousePassword(
+                {
+                    boardId: doorPinTarget.boardId,
+                    deviceId: doorPinTarget.deviceId,
+                    payload,
                 },
-            },
-        )
+                {
+                    onSuccess: () => {
+                        setIsChangePasswordModalOpen(false)
+                    },
+                },
+            )
+        } catch {
+            message.error(t('doorBoardsLoadFailed'))
+        }
     }
 
     if (isLoading) {
@@ -183,16 +198,14 @@ export default function MyApartmentDetailPage() {
                 totalArea={totalArea}
                 depositAmount={depositAmount}
                 amenities={amenities}
-                hiddenDoorPassword={hiddenDoorPassword}
-                showDoorPassword={showDoorPassword}
-                onToggleDoorPassword={() => setShowDoorPassword((prev) => !prev)}
+                iotDevices={iotDevices}
+                isIotDevicesLoading={isIotDevicesLoading}
                 onOpenChangePasswordModal={handleOpenChangePasswordModal}
             />
 
             <ChangeHousePasswordModal
                 open={isChangePasswordModalOpen}
                 isSubmitting={isUpdatingHousePassword}
-                currentPassword={rawApartment.apartmentDoorPassword ?? undefined}
                 onClose={handleCloseChangePasswordModal}
                 onSubmit={handleChangeHousePassword}
             />

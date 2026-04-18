@@ -17,5 +17,6 @@ export const endpoints = {
   notifications: createEndpoints("notifications"),
   invoices: createEndpoints("invoices"),
   payments: createEndpoints("payments"),
-  revenues: createEndpoints("revenues")
+  revenues: createEndpoints("revenues"),
+  iot: createEndpoints("iot")
 };

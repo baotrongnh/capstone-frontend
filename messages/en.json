@@ -393,6 +393,8 @@
       "buildingName": "Building Name",
       "apartmentNumber": "Apartment Number",
       "statusLabel": "Status",
+      "iotStateOn": "On",
+      "iotStateOff": "Off",
       "address": "Address",
       "spaceOverview": "Space overview",
       "totalArea": "Total Area",
@@ -498,9 +500,11 @@
       "videoTourUrl": "Video Tour",
       "videoUnavailable": "Video tour is not available",
       "changeHousePassword": "Change house password",
+      "doorDeviceNotFound": "Door device information is missing. Unable to change password.",
+      "doorBoardsLoadFailed": "Unable to load IoT board information for this apartment.",
       "housePasswordModal": {
         "title": "Change apartment door password",
-        "description": "Please verify your current password and set a new password with 4-12 digits.",
+        "description": "Please enter your current PIN and set a new PIN with exactly 6 digits.",
         "oldPassword": "Current password",
         "oldPasswordPlaceholder": "Enter current door password",
         "newPassword": "New password",
@@ -516,11 +520,13 @@
           "newDifferentOld": "New password must be different from the current password",
           "confirmRequired": "Please confirm the new password",
           "confirmMismatch": "Confirmation password does not match",
-          "format": "Password must contain 4-12 digits"
+          "format": "Password must contain exactly 6 digits"
         }
       },
       "description": "Description",
       "amenities": "Amenities",
+      "iotDevices": "IoT Devices",
+      "iotDevicesEmpty": "No IoT devices found for this apartment",
       "roomsCount": "Rooms Count",
       "iotDevicesCount": "IoT Devices Count",
       "utilityMetersCount": "Utility Meters Count",
@@ -777,6 +783,7 @@
         },
         "fields": {
           "invoiceNumber": "Invoice Number",
+          "apartmentId": "Apartment ID",
           "status": "Status",
           "invoiceType": "Invoice Type",
           "billingStart": "Billing Period Start",

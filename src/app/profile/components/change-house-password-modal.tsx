@@ -5,7 +5,6 @@ import { ChangeHousePasswordFormValues, ChangeHousePasswordModalProps } from '@/
 export function ChangeHousePasswordModal({
     open,
     isSubmitting,
-    currentPassword,
     onClose,
     onSubmit,
 }: ChangeHousePasswordModalProps) {
@@ -18,20 +17,10 @@ export function ChangeHousePasswordModal({
     }
 
     const handleFinish = (values: ChangeHousePasswordFormValues) => {
-        const oldPassword = values.oldPassword.trim()
-        const newPassword = values.newPassword.trim()
+        const oldPin = values.oldPassword.trim()
+        const newPin = values.newPassword.trim()
 
-        if (currentPassword && oldPassword !== currentPassword) {
-            form.setFields([
-                {
-                    name: 'oldPassword',
-                    errors: [t('housePasswordModal.validation.oldMismatch')],
-                },
-            ])
-            return
-        }
-
-        if (oldPassword === newPassword) {
+        if (oldPin === newPin) {
             form.setFields([
                 {
                     name: 'newPassword',
@@ -41,7 +30,7 @@ export function ChangeHousePasswordModal({
             return
         }
 
-        onSubmit(newPassword)
+        onSubmit({ oldPin, newPin })
     }
 
     return (
@@ -76,6 +65,10 @@ export function ChangeHousePasswordModal({
                     label={t('housePasswordModal.oldPassword')}
                     rules={[
                         { required: true, message: t('housePasswordModal.validation.oldRequired') },
+                        {
+                            pattern: /^\d{6}$/,
+                            message: t('housePasswordModal.validation.format'),
+                        },
                     ]}
                 >
                     <Input.Password
@@ -92,7 +85,7 @@ export function ChangeHousePasswordModal({
                     rules={[
                         { required: true, message: t('housePasswordModal.validation.newRequired') },
                         {
-                            pattern: /^\d{4,12}$/,
+                            pattern: /^\d{6}$/,
                             message: t('housePasswordModal.validation.format'),
                         },
                     ]}
