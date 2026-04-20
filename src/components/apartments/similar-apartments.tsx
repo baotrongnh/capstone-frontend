@@ -7,10 +7,17 @@ import { CarouselRef } from 'antd/es/carousel'
 import { useRef } from 'react'
 import ApartmentCard from './apartment-card'
 
-export default function SimilarApartments() {
+type SimilarApartmentsProps = {
+     excludeApartmentId?: string
+}
+
+export default function SimilarApartments({ excludeApartmentId }: SimilarApartmentsProps) {
      const carouselRef = useRef<CarouselRef>(null)
      const { data } = useApartments({ limit: 8, status: 'available' })
-     const apartments = data?.data ?? []
+     const apartments = (data?.data ?? []).filter((apartment) => {
+          if (!excludeApartmentId) return true
+          return apartment.id !== excludeApartmentId
+     })
 
      if (apartments.length === 0) return null
 
@@ -56,8 +63,8 @@ export default function SimilarApartments() {
                          }
                     ]}
                >
-                    {apartments.map((apartment, index) => (
-                         <div key={index} className='px-2 mb-10'>
+                    {apartments.map((apartment) => (
+                         <div key={apartment.id} className='px-2 mb-10'>
                               <ApartmentCard apartment={apartment} />
                          </div>
                     ))}
