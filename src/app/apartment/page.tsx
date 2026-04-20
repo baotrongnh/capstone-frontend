@@ -25,6 +25,8 @@ export default function ApartmentList() {
   const apartments = dataApartment?.data ?? []
   const meta = dataApartment?.meta
 
+  console.log(apartments);
+
   const updateFilters = useCallback((patch: ApartmentSearchQueryParams | null) => {
     if (!patch) {
       setFilters(DEFAULT_APARTMENT_FILTERS)

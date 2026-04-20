@@ -104,6 +104,8 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const hasMedia = images.length > 0 || !!apt?.videoTourUrl
   const status = apt?.status ? APARTMENT_STATUS[apt.status] : null
   const averageRating = Number(apt?.rating ?? 0)
+  const isHomeIqOwner = apt?.owner?.email?.toLowerCase() === "homeiq@gmail.com"
+  const partnerCompanyName = apt?.owner?.companyName?.trim()
 
   const handleFindDirection = () => {
     if (apt?.latitude && apt?.longitude) {
@@ -470,8 +472,18 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
               <Building2 size={20} className="text-primary" />
             </div>
             <div>
-              <p className="font-semibold">{apt?.owner?.companyName}</p>
-              <p className="text-sm text-gray-500">{apt?.owner?.companyName}</p>
+              {isHomeIqOwner ? (
+                <Tag color="green" className="m-0! font-semibold">
+                  Chính chủ HomeIQ
+                </Tag>
+              ) : (
+                <p className="font-semibold">
+                  {partnerCompanyName || "Thiếu chủ sở hữu"}
+                </p>
+              )}
+              <p className="text-sm text-gray-500">
+                {apt?.owner?.fullName || apt?.owner?.email || "Chưa có thông tin chủ sở hữu"}
+              </p>
             </div>
           </div>
         </div>
