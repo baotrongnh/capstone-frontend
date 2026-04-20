@@ -412,7 +412,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
           <h2 className="font-semibold text-lg md:text-xl">
             {t("descriptionTitle")}
           </h2>
-          <Typography.Paragraph className="text-justify text-sm md:text-base">
+          <Typography.Paragraph className="text-justify text-sm md:text-base whitespace-pre-wrap wrap-break-word">
             {apt.description}
           </Typography.Paragraph>
         </div>
