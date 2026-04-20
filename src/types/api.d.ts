@@ -1003,6 +1003,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/invoices/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Unified invoice feed for staff, user and partner
+         * @description Role-aware endpoint. Staff gets payout worklist, user gets payable invoices, partner gets receivable invoices with payout breakdown.
+         */
+        get: operations["InvoicesController_findMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invoices": {
         parameters: {
             query?: never;
@@ -1012,6 +1032,23 @@ export interface paths {
         };
         /** List invoices */
         get: operations["InvoicesController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invoices/utility/monthly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List monthly utility invoices */
+        get: operations["InvoicesController_findMonthlyUtilityUsage"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4556,6 +4593,86 @@ export interface components {
              */
             sharePercentage?: number;
         };
+        InvoiceMePaymentSummaryDto: {
+            paymentId?: string | null;
+            paymentReference?: string | null;
+            /** @example pending */
+            status: string;
+            /** Format: date-time */
+            paymentDate?: string | null;
+        };
+        InvoiceMePartyDto: {
+            id?: string | null;
+            fullName?: string | null;
+            companyName?: string | null;
+        };
+        InvoiceMePayoutBreakdownDto: {
+            /** @example 50000000 */
+            grossRevenue: number;
+            /** @example 10 */
+            systemCommissionRate: number;
+            /** @example 5000000 */
+            systemCommissionAmount: number;
+            /** @example 45000000 */
+            netPayoutAmount: number;
+        };
+        InvoiceMeWorkItemMetaDto: {
+            /** @example 2026-04 */
+            payoutMonth?: string | null;
+            transferProofUrl?: string | null;
+            transferReference?: string | null;
+            transferNote?: string | null;
+            /** Format: date-time */
+            confirmedAt?: string | null;
+            confirmedByStaffId?: string | null;
+        };
+        InvoiceMeItemDto: {
+            /** @enum {string} */
+            itemType: "invoice" | "partner_monthly_payout" | "contract_deposit_payout";
+            /** @description Unique id of the item in this feed */
+            itemId: string;
+            invoiceId?: string | null;
+            invoiceNumber?: string | null;
+            invoiceType?: string | null;
+            invoiceStatus?: string | null;
+            billingMonth?: string | null;
+            /** Format: date-time */
+            billingPeriodStart?: string | null;
+            /** Format: date-time */
+            billingPeriodEnd?: string | null;
+            /** Format: date-time */
+            dueDate?: string | null;
+            /** Format: date-time */
+            paidAt?: string | null;
+            /** @example 15000000.00 */
+            totalAmount?: string | null;
+            /** @example VND */
+            currency?: string | null;
+            /** @example bank_transfer */
+            paymentMethod?: string | null;
+            paymentSummary: components["schemas"]["InvoiceMePaymentSummaryDto"];
+            contractId?: string | null;
+            contractNumber?: string | null;
+            apartmentId?: string | null;
+            apartmentNumber?: string | null;
+            payer?: components["schemas"]["InvoiceMePartyDto"] | null;
+            receiver?: components["schemas"]["InvoiceMePartyDto"] | null;
+            payoutBreakdown?: components["schemas"]["InvoiceMePayoutBreakdownDto"] | null;
+            workMeta: components["schemas"]["InvoiceMeWorkItemMetaDto"];
+        };
+        InvoiceMeListDto: {
+            /** @enum {string} */
+            roleContext: "staff_worklist" | "user_payable" | "partner_receivable";
+            items: components["schemas"]["InvoiceMeItemDto"][];
+            /** @example 10 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 20 */
+            limit: number;
+            /** @example 1 */
+            totalPages: number;
+        };
         InvoiceContractApartmentDto: {
             /** @example apt-123 */
             id: string;
@@ -4655,6 +4772,69 @@ export interface components {
             /** @example 20 */
             limit: number;
             /** @example 6 */
+            totalPages: number;
+        };
+        MonthlyUtilityApartmentDto: {
+            /** @example apt-123 */
+            id: string;
+            /** @example T2-1505 */
+            apartmentNumber: string;
+        };
+        MonthlyUtilityContractDto: {
+            /** @example contract-123 */
+            id: string;
+            /** @example HD-2026-00001 */
+            contractNumber: string;
+        };
+        MonthlyUtilityBreakdownDto: {
+            /** @example 1100.00 */
+            previousReading?: string | null;
+            /** @example 1250.00 */
+            currentReading?: string | null;
+            /** @example 150.00 */
+            consumption?: string | null;
+            /** @example kWh */
+            unit?: string | null;
+            /** @example 3500.00 */
+            ratePerUnit?: string | null;
+            /** @example 525000.00 */
+            amount?: string | null;
+        };
+        MonthlyUtilityInvoiceDto: {
+            /** @example invoice-utility-202601 */
+            invoiceId: string;
+            /** @example UTIL-202601-T2-1505 */
+            invoiceNumber: string;
+            /** @example paid */
+            status: string;
+            /** @example 2026-01 */
+            billingMonth?: string | null;
+            /** Format: date-time */
+            billingPeriodStart: string;
+            /** Format: date-time */
+            billingPeriodEnd: string;
+            /** Format: date-time */
+            issueDate: string;
+            /** Format: date-time */
+            dueDate: string;
+            /** Format: date-time */
+            paidAt?: string | null;
+            apartment: components["schemas"]["MonthlyUtilityApartmentDto"];
+            contract: components["schemas"]["MonthlyUtilityContractDto"];
+            electricity?: components["schemas"]["MonthlyUtilityBreakdownDto"] | null;
+            water?: components["schemas"]["MonthlyUtilityBreakdownDto"] | null;
+            /** @example 900000.00 */
+            totalUtilityAmount: string;
+        };
+        MonthlyUtilityInvoiceListDto: {
+            items: components["schemas"]["MonthlyUtilityInvoiceDto"][];
+            /** @example 10 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 12 */
+            limit: number;
+            /** @example 1 */
             totalPages: number;
         };
         InvoiceContentItemDto: {
@@ -9189,6 +9369,61 @@ export interface operations {
             };
         };
     };
+    InvoicesController_findMe: {
+        parameters: {
+            query?: {
+                /** @description Optional scope override. Use auto to let system resolve based on current actor. */
+                actorScope?: "auto" | "staff_worklist" | "user_payable" | "partner_receivable";
+                invoiceType?: "rent" | "deposit" | "contractDeposit" | "utility" | "service" | "penalty" | "other";
+                invoiceStatus?: "draft" | "issued" | "sent" | "partially_paid" | "paid" | "overdue" | "cancelled";
+                paymentStatus?: "pending" | "processing" | "completed" | "failed" | "refunded" | "cancelled";
+                paymentMethod?: "bank_transfer" | "cash" | "e_wallet" | "auto_debit" | "credit_card" | "debit_card";
+                /** @description Billing month in YYYY-MM format */
+                billingMonth?: string;
+                /** @description Filter by payer user id */
+                payerUserId?: string;
+                /** @description Filter by receiver user id */
+                receiverUserId?: string;
+                /** @description Filter invoices due date from (inclusive) */
+                dueFrom?: string;
+                /** @description Filter invoices due date to (inclusive) */
+                dueTo?: string;
+                /** @description Filter paid date from (inclusive) */
+                paidFrom?: string;
+                /** @description Filter paid date to (inclusive) */
+                paidTo?: string;
+                /** @description Text search for invoiceNumber, contractNumber, apartmentNumber or partner name */
+                search?: string;
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Role-aware invoice feed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["InvoiceMeListDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
     InvoicesController_findAll: {
         parameters: {
             query?: {
@@ -9214,6 +9449,39 @@ export interface operations {
                         /** @example Success */
                         message?: string;
                         data?: components["schemas"]["InvoiceListPaginatedDto"];
+                        meta?: {
+                            /** @example 2026-02-26T10:21:00.000Z */
+                            timestamp?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    InvoicesController_findMonthlyUtilityUsage: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of monthly utility invoices with electricity and water usage details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 200 */
+                        statusCode?: number;
+                        /** @example Success */
+                        message?: string;
+                        data?: components["schemas"]["MonthlyUtilityInvoiceListDto"];
                         meta?: {
                             /** @example 2026-02-26T10:21:00.000Z */
                             timestamp?: string;

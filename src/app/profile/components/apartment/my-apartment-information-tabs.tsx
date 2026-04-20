@@ -2,6 +2,7 @@
 
 import { MyApartmentDetailRow } from '@/types/userApartment'
 import type { MyApartmentInformationTabsProps } from '@/types/userApartment'
+import { DEFAULT_IOT_TOPIC_ICON, IOT_TOPIC_ICON_MAP } from '@/constants/iot'
 import { formatLocaleDate, toDisplayText } from '@/utils/format'
 import { formatPaymentAmount } from '@/utils/payment'
 import {
@@ -13,11 +14,7 @@ import {
     toPaymentMethodLabel,
     toUserApartmentStatusLabel,
 } from '@/utils/userApartment'
-import {
-    EyeInvisibleOutlined,
-    EyeOutlined,
-    LockOutlined,
-} from '@ant-design/icons'
+import { LockOutlined } from '@ant-design/icons'
 import { Button, Card, Table, Tabs, Tag } from 'antd'
 import { ApartmentVideoTour } from './apartment-video-tour'
 
@@ -30,15 +27,52 @@ export function MyApartmentInformationTabs({
     totalArea,
     depositAmount,
     amenities,
-    hiddenDoorPassword,
-    showDoorPassword,
-    onToggleDoorPassword,
+    iotDevices,
+    isIotDevicesLoading,
     onOpenChangePasswordModal,
 }: MyApartmentInformationTabsProps) {
     const rentalContract = rawApartment?.rentalContract
     const contractMembers = rentalContract?.members ?? []
     const emergencyContactName = rawApartment?.emergencyContactName ?? rawApartment?.user?.emergencyContactName
     const emergencyContactPhone = rawApartment?.emergencyContactPhone ?? rawApartment?.user?.emergencyContactPhone
+
+    const getIotStateLabel = (state: string | null | undefined) => {
+        const normalizedState = (state ?? '').trim().toLowerCase()
+
+        if (normalizedState === 'on') {
+            return t('iotStateOn')
+        }
+
+        if (normalizedState === 'off') {
+            return t('iotStateOff')
+        }
+
+        return toDisplayText(state)
+    }
+
+    const iotDevicesContent = isIotDevicesLoading
+        ? t('loading')
+        : iotDevices.length > 0
+            ? (
+                <div className="space-y-2">
+                    {iotDevices.map((device) => {
+                        const Icon = IOT_TOPIC_ICON_MAP[device.normalizedTopic] ?? DEFAULT_IOT_TOPIC_ICON
+                        const stateLabel = getIotStateLabel(device.state)
+                        return (
+                            <div key={device.key} className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                                <div className="flex items-center gap-2 font-medium text-slate-900">
+                                    <Icon className="text-primary" />
+                                    <span>{toDisplayText(device.deviceName)}</span>
+                                </div>
+                                <div className="mt-1 text-xs text-slate-500">
+                                    {`${t('statusLabel')}: ${stateLabel}`}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )
+            : t('iotDevicesEmpty')
 
     const detailRows: MyApartmentDetailRow[] = [
         {
@@ -127,6 +161,11 @@ export function MyApartmentInformationTabs({
             label: t('maxConcurrentViewings'),
             value: toDisplayText(apartment?.maxConcurrentViewings),
         },
+        {
+            key: 'iotDevices',
+            label: t('iotDevices'),
+            value: iotDevicesContent,
+        },
         ...(rentalContract
             ? [
                 {
@@ -187,38 +226,22 @@ export function MyApartmentInformationTabs({
                     key: 'apartmentDoorPassword',
                     label: t('apartmentDoorPassword'),
                     value: (
-                        <div className="flex w-full items-center justify-between gap-3">
-                            <span className="font-mono tracking-wide text-slate-900">{hiddenDoorPassword}</span>
-
-                            <div className="flex items-center gap-2">
-                                {rawApartment?.apartmentDoorPassword ? (
-                                    <Button
-                                        size="small"
-                                        type="text"
-                                        aria-label={showDoorPassword ? t('hideSensitiveData') : t('showSensitiveData')}
-                                        icon={showDoorPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                        style={{ borderRadius: 999, paddingInline: 8 }}
-                                        onClick={onToggleDoorPassword}
-                                    />
-                                ) : null}
-                                {rawApartment?.id ? (
-                                    <Button
-                                        size="small"
-                                        type="default"
-                                        icon={<LockOutlined />}
-                                        style={{
-                                            borderRadius: 8,
-                                            borderColor: '#c7d2fe',
-                                            backgroundColor: '#eef2ff',
-                                            color: '#3730a3',
-                                            fontWeight: 500,
-                                        }}
-                                        onClick={onOpenChangePasswordModal}
-                                    >
-                                        {t('changeHousePassword')}
-                                    </Button>
-                                ) : null}
-                            </div>
+                        <div className="flex w-full items-center justify-start">
+                            <Button
+                                size="small"
+                                type="default"
+                                icon={<LockOutlined />}
+                                style={{
+                                    borderRadius: 8,
+                                    borderColor: '#c7d2fe',
+                                    backgroundColor: '#eef2ff',
+                                    color: '#3730a3',
+                                    fontWeight: 500,
+                                }}
+                                onClick={onOpenChangePasswordModal}
+                            >
+                                {t('changeHousePassword')}
+                            </Button>
                         </div>
                     ),
                 },
@@ -345,6 +368,12 @@ export function MyApartmentInformationTabs({
                                 showHeader={false}
                                 dataSource={detailRows}
                                 rowKey="key"
+                                className="[&_.table-row-no-hover:hover>td]:bg-white! [&_.table-row-no-hover>td.ant-table-cell-row-hover]:bg-white!"
+                                rowClassName={(record) =>
+                                    record.key === 'spaceOverview' || record.key === 'iotDevices' || record.key === 'contractMembers'
+                                        ? 'table-row-no-hover'
+                                        : ''
+                                }
                                 columns={[
                                     {
                                         dataIndex: 'label',

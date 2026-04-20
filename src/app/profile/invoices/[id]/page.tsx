@@ -1,22 +1,22 @@
 'use client'
 
-import { CreditCardOutlined } from '@ant-design/icons'
-import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import { useInvoice } from '@/hooks/query/useInvoices'
 import { useCreatePayOSPaymentLink } from '@/hooks/query/usePayments'
-import { createDetailRows, createItemColumns, createPaymentColumns } from '../../components/invoice/invoice-detail-config'
 import type { ApiErrorResponse } from '@/types/auth'
+import { INVOICE_STATUS_COLORS } from '@/types/invoice'
 import {
     formatInvoiceAmount,
     isInvoiceStatus,
     toInvoiceTypeTranslationKey,
     toPaymentMethodTranslationKey,
 } from '@/utils/invoice'
-import { normalizeObjectToRows, normalizeText } from '@/utils/text'
+import { normalizeText } from '@/utils/text'
+import { CreditCardOutlined } from '@ant-design/icons'
 import { Alert, App, Breadcrumb, Button, Card, Col, Descriptions, Empty, Row, Spin, Statistic, Table, Tag, Typography } from 'antd'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useParams, useSearchParams } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { createDetailRows, createItemColumns } from '../../components/invoice/invoice-detail-config'
 
 const { Text, Title } = Typography
 
@@ -118,14 +118,6 @@ export default function InvoiceDetailPage() {
 
     const itemColumns = createItemColumns({ t, locale, getTypeLabel })
 
-    const paymentColumns = createPaymentColumns({
-        t,
-        locale,
-        getPaymentMethodLabel,
-        getStatusColor,
-        getStatusLabel,
-    })
-
     if (isLoading) {
         return (
             <div className="flex min-h-75 items-center justify-center">
@@ -149,9 +141,6 @@ export default function InvoiceDetailPage() {
         return <Empty description={t('notFound')} className="py-10" />
     }
 
-    const utilityRows = normalizeObjectToRows(invoice.utilityCharges)
-    const additionalRows = normalizeObjectToRows(invoice.additionalCharges)
-    const discountRows = normalizeObjectToRows(invoice.discounts)
     const contentItems = invoice.invoiceContent?.items ?? []
     const invoiceStatus = normalizeText(invoice.status)
     const invoiceType = normalizeText(invoice.invoiceType)
@@ -287,80 +276,6 @@ export default function InvoiceDetailPage() {
                     />
                 ) : (
                     <Empty description={t('empty.invoiceItems')} />
-                )}
-            </Card>
-
-            <Card
-                title={t('sections.utilityCharges')}
-                className="border border-gray-100"
-                style={{ marginTop: 24 }}
-                styles={{ body: { padding: 16 } }}
-            >
-                {utilityRows.length === 0 ? (
-                    <Empty description={t('empty.utilityCharges')} />
-                ) : (
-                    <Descriptions
-                        bordered
-                        size="middle"
-                        column={1}
-                        items={utilityRows.map((item) => ({ key: item.key, label: item.key, children: item.value }))}
-                    />
-                )}
-            </Card>
-
-            <Card
-                title={t('sections.additionalCharges')}
-                className="border border-gray-100"
-                style={{ marginTop: 24 }}
-                styles={{ body: { padding: 16 } }}
-            >
-                {additionalRows.length === 0 ? (
-                    <Empty description={t('empty.additionalCharges')} />
-                ) : (
-                    <Descriptions
-                        bordered
-                        size="middle"
-                        column={1}
-                        items={additionalRows.map((item) => ({ key: item.key, label: item.key, children: item.value }))}
-                    />
-                )}
-            </Card>
-
-            <Card
-                title={t('sections.discounts')}
-                className="border border-gray-100"
-                style={{ marginTop: 24 }}
-                styles={{ body: { padding: 16 } }}
-            >
-                {discountRows.length === 0 ? (
-                    <Empty description={t('empty.discounts')} />
-                ) : (
-                    <Descriptions
-                        bordered
-                        size="middle"
-                        column={1}
-                        items={discountRows.map((item) => ({ key: item.key, label: item.key, children: item.value }))}
-                    />
-                )}
-            </Card>
-
-            <Card
-                title={t('sections.payments')}
-                className="border border-gray-100"
-                style={{ marginTop: 24 }}
-                styles={{ body: { padding: 20 } }}
-            >
-                {invoice.payments.length > 0 ? (
-                    <Table
-                        rowKey="id"
-                        columns={paymentColumns}
-                        dataSource={invoice.payments}
-                        pagination={false}
-                        size="middle"
-                        scroll={{ x: 760 }}
-                    />
-                ) : (
-                    <Empty description={t('empty.payments')} />
                 )}
             </Card>
         </div>

@@ -155,88 +155,89 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="">
-          <h3 className="flex justify-center text-3xl font-bold text-gray-800 mb-4">
-            {t("exploreTitle")}
-          </h3>
-          <p className="flex justify-center text-[#909090] mb-8">
-            {t("exploreSubtitle")}
-          </p>
+          <div className="">
+            <h3 className="flex justify-center text-3xl font-bold text-gray-800 mb-4">
+              {t("exploreTitle")}
+            </h3>
+            <p className="flex justify-center text-[#909090] mb-8">
+              {t("exploreSubtitle")}
+            </p>
 
-          <div className="flex justify-center gap-2 mb-8 flex-wrap">
-            {cityKeys.map((key) => (
-              <Button
-                key={key}
-                size="large"
-                className="px-4 py-2 bg-gray-100 border-2 border-blue-300 text-[#909090] hover:bg-[#3980F3] hover:text-white transition"
-              >
-                {t(`cities.${key}`)}
-              </Button>
-            ))}
-          </div>
-
-          <div className="w-full">
-            <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
-              <Image
-                src={
-                  banner9?.src ||
-                  "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop"
-                }
-                alt="City Banner"
-                preview={false}
-                className="w-full h-full object-cover"
-                rootClassName="w-full h-full block"
-              />
-              <div className="absolute inset-0 bg-black/10"></div>
+            <div className="flex justify-center gap-2 mb-8 flex-wrap">
+              {cityKeys.map((key) => (
+                <Button
+                  key={key}
+                  size="large"
+                  className="px-4 py-2 bg-gray-100 border-2 border-blue-300 text-[#909090] hover:bg-[#3980F3] hover:text-white transition"
+                >
+                  {t(`cities.${key}`)}
+                </Button>
+              ))}
             </div>
 
-            <div className="relative  z-10 -mt-22 w-[95%] max-w-7xl mx-auto px-4 pb-12">
-              <div className="bg-[#F9FFFF] shadow-xl rounded-[3px] p-12 flex flex-col md:flex-row items-center justify-between gap-10">
-                <div className="flex-1 w-[80%]">
-                  <h4 className="font-bold text-[40px] text-[#1e293b] leading-tight font-sans mb-6">
-                    {t("highlightCity.name")}
-                  </h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    {t("highlightCity.description")}
-                  </p>
-                </div>
-                <div className="flex w-[45%] flex-col items-end gap-4">
-                  <div className="flex justify-end w-full pr-8">
-                    <div className="bg-white px-5 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                      <CarOutlined className="text-purple-500 text-xl" />
-                      <span className="text-purple-500 font-semibold text-xs">
-                        {t("highlightCity.tags.publicTransport")}
-                      </span>
-                    </div>
-                  </div>
+            <div className="w-full">
+              <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
+                <Image
+                  src={
+                    banner9?.src ||
+                    "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop"
+                  }
+                  alt="City Banner"
+                  preview={false}
+                  className="w-full h-full object-cover"
+                  rootClassName="w-full h-full block"
+                />
+                <div className="absolute inset-0 bg-black/10"></div>
+              </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                      <GlobalOutlined className="text-teal-500 text-xl" />
-                      <span className="text-teal-500 font-semibold text-xs">
-                        {t("highlightCity.tags.convenientLife")}
-                      </span>
-                    </div>
-                    <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                      <CarOutlined className="text-yellow-500 text-xl" />
-                      <span className="text-yellow-500 font-semibold text-xs">
-                        {t("highlightCity.tags.easyMove")}
-                      </span>
-                    </div>
+              <div className="relative  z-10 -mt-22 w-[95%] max-w-7xl mx-auto px-4 pb-12">
+                <div className="bg-[#F9FFFF] shadow-xl rounded-[3px] p-12 flex flex-col md:flex-row items-center justify-between gap-10">
+                  <div className="flex-1 w-[80%]">
+                    <h4 className="font-bold text-[40px] text-[#1e293b] leading-tight font-sans mb-6">
+                      {t("highlightCity.name")}
+                    </h4>
+                    <p className="text-gray-500 text-sm leading-relaxed">
+                      {t("highlightCity.description")}
+                    </p>
                   </div>
-
-                  <div className="flex items-center gap-4 mr-12">
-                    <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                      <BankOutlined className="text-red-500 text-xl" />
-                      <span className="text-red-500 font-semibold text-xs">
-                        {t("highlightCity.tags.economicCenter")}
-                      </span>
+                  <div className="flex w-[45%] flex-col items-end gap-4">
+                    <div className="flex justify-end w-full pr-8">
+                      <div className="bg-white px-5 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
+                        <CarOutlined className="text-purple-500 text-xl" />
+                        <span className="text-purple-500 font-semibold text-xs">
+                          {t("highlightCity.tags.publicTransport")}
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                      <SyncOutlined className="text-blue-500 text-xl" />
-                      <span className="text-blue-500 font-semibold text-xs">
-                        {t("highlightCity.tags.manyChoices")}
-                      </span>
+
+                    <div className="flex items-center gap-4">
+                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
+                        <GlobalOutlined className="text-teal-500 text-xl" />
+                        <span className="text-teal-500 font-semibold text-xs">
+                          {t("highlightCity.tags.convenientLife")}
+                        </span>
+                      </div>
+                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
+                        <CarOutlined className="text-yellow-500 text-xl" />
+                        <span className="text-yellow-500 font-semibold text-xs">
+                          {t("highlightCity.tags.easyMove")}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 mr-12">
+                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
+                        <BankOutlined className="text-red-500 text-xl" />
+                        <span className="text-red-500 font-semibold text-xs">
+                          {t("highlightCity.tags.economicCenter")}
+                        </span>
+                      </div>
+                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
+                        <SyncOutlined className="text-blue-500 text-xl" />
+                        <span className="text-blue-500 font-semibold text-xs">
+                          {t("highlightCity.tags.manyChoices")}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -245,6 +246,5 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-    </div>
-  );
+      );
 }
