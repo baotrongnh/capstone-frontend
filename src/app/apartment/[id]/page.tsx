@@ -478,7 +478,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
                 </Tag>
               ) : (
                 <p className="font-semibold">
-                  {partnerCompanyName || "Thiếu chủ sở hữu"}
+                    {partnerCompanyName || apt?.owner?.fullName || "Chưa có thông tin công ty"}
                 </p>
               )}
               <p className="text-sm text-gray-500">

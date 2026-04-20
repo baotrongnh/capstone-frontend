@@ -39,14 +39,21 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
           <Link
                href={`${ROUTES.APARTMENT}/${apartment?.id}`}
                className='relative flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md transition duration-150 overflow-hidden'>
-               {isHomeIqOwner && (
+               {isHomeIqOwner ? (
                     <div className='absolute right-3 top-3 z-20'>
                          <span className='inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-600 shadow-sm'>
                               <BadgeCheck size={15} />
                               Chính chủ HomeIQ
                          </span>
                     </div>
-               )}
+               )
+                    : <div className='absolute right-3 top-3 z-20'>
+                         <span className='inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-1 text-[11px] font-semibold text-purple-600 shadow-sm'>
+                              <BadgeCheck size={15} />
+                              Đối tác
+                         </span>
+                    </div>
+          }
                <Image
                     src={apartment.images?.[0] ?? IMG_URL.APARTMENT_PLACEHOLDER}
                     width={500}
