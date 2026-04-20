@@ -248,7 +248,7 @@ export default function ModalBookingSchedule({
                          />
                     )}
 
-                    <div className='flex justify-end gap-2'>
+                    <div className='flex justify-end gap-2 pt-3'>
                          <Button size='large' shape='round' onClick={handleCancel}>{t('cancel')}</Button>
                          <Button
                               size='large'
