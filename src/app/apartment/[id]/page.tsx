@@ -478,7 +478,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
                 </Tag>
               ) : (
                 <p className="font-semibold">
-                    {partnerCompanyName || apt?.owner?.fullName || "Chưa có thông tin công ty"}
+                  {partnerCompanyName || apt?.owner?.fullName || "Chưa có thông tin công ty"}
                 </p>
               )}
               <p className="text-sm text-gray-500">
@@ -594,7 +594,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         )}
       </div>
 
-      <SimilarApartments />
+      <SimilarApartments excludeApartmentId={id} />
     </div>
   );
 }
