@@ -1,10 +1,7 @@
 import type { paths } from '@/types/api'
 
-export type ChatMode = 'support' | 'ai' | null
 export type ChatSender = 'user' | 'support'
 export type ChatMessageType = 'text' | 'image' | 'file'
-
-export const CHAT_MODE_STORAGE_KEY = 'chat_mode'
 
 export type ChatConversationListQuery = NonNullable<
      paths['/api/v1/chat/conversations']['get']['parameters']['query']

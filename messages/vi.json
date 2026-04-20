@@ -222,7 +222,7 @@
     "back": "Quay lại",
     "sendApartment": "Gửi căn hộ",
     "sendApartmentMsg": "Tôi muốn hỏi về căn hộ này",
-    "pasteImageHint": "Bạn có thể dán ảnh (Ctrl+V) vào khung chat"
+    "pasteImageHint": "Bạn có thể dán ảnh vào khung chat."
   },
   "Profile": {
     "authRequired": "Vui lòng đăng nhập để truy cập trang cá nhân.",
