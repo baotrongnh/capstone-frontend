@@ -3,6 +3,7 @@ import { useFullAddress } from '@/hooks/query/useAddress'
 import type { ApartmentItem } from '@/lib/services/apartment.service'
 import { Icon } from '@iconify/react'
 import { Rate } from 'antd'
+import { BadgeCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -25,12 +26,34 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
           apartment?.wardCode ?? undefined,
      )
 
-     console.log(displayAddress);
+     const owner = (apartment as ApartmentItem & {
+          owner?: {
+               email?: string | null
+               companyName?: string | null
+          } | null
+     }).owner
+     const isHomeIqOwner = owner?.email?.toLowerCase() === 'homeiq@gmail.com'
+     const partnerCompanyName = owner?.companyName?.trim()
 
      return (
           <Link
                href={`${ROUTES.APARTMENT}/${apartment?.id}`}
-               className='flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md transition duration-150 overflow-hidden'>
+               className='relative flex flex-col md:flex-row shadow-sm rounded-md hover:opacity-80 hover:shadow-md transition duration-150 overflow-hidden'>
+               {isHomeIqOwner ? (
+                    <div className='absolute right-3 top-3 z-20'>
+                         <span className='inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-600 shadow-sm'>
+                              <BadgeCheck size={15} />
+                              Chính chủ HomeIQ
+                         </span>
+                    </div>
+               )
+                    : <div className='absolute right-3 top-3 z-20'>
+                         <span className='inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-1 text-[11px] font-semibold text-purple-600 shadow-sm'>
+                              <BadgeCheck size={15} />
+                              Đối tác
+                         </span>
+                    </div>
+          }
                <Image
                     src={apartment.images?.[0] ?? IMG_URL.APARTMENT_PLACEHOLDER}
                     width={500}
@@ -55,12 +78,18 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                          {apartment.buildingName}
                     </h1>
 
+                    {!isHomeIqOwner && (
+                         <p className='mb-2 text-sm text-gray-600 line-clamp-1'>
+                              {partnerCompanyName || 'Thiếu chủ sở hữu'}
+                         </p>
+                    )}
+
                     <div className='flex flex-wrap gap-2'>
                          <InfoChip icon="lucide:map-pin">{displayAddress || 'Chưa có địa chỉ'}</InfoChip>
                          <InfoChip icon="lucide:maximize-2">{apartment.totalArea} m²</InfoChip>
                          <InfoChip icon="lucide:bed-double">{apartment.numberOfBedrooms} PN · {apartment.numberOfBathrooms} WC</InfoChip>
                          {apartment?.amenities?.map((item) => (<InfoChip key={item.id} icon="lucide:badge-check">{item.name}</InfoChip>))}
-                         
+
                     </div>
                </div>
 
