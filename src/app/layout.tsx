@@ -31,6 +31,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={inter.className}>
+        <SpeedInsights />
         <AntdRegistry>
           <ConfigProvider
             theme={{
