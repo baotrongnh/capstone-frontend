@@ -55,6 +55,7 @@ export default async function RootLayout({
                       <main className="mt-24">{children}</main>
                       <Footer />
                       <ChatSupport />
+                      <SpeedInsights />
                     </SocketProvider>
                   </AuthProvider>
                 </NextIntlClientProvider>
