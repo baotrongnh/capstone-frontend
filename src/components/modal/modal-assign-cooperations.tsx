@@ -74,7 +74,7 @@ export default function ModalAssignCooperations({
       const signatureWidth = 100;
       const signatureHeight = 100;
       const xPosition = width / 2 + 60;
-      const yPosition = height / 2 - signatureHeight / 2 - 100;
+      const yPosition = height / 2 - signatureHeight / 2 - 130;
 
       lastPage.drawImage(signatureImage, {
         x: xPosition,

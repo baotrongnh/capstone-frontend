@@ -196,22 +196,6 @@ export default function TestimonialsSection() {
                   </p>
 
                   <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <StarOutlined
-                          key={i}
-                          className={
-                            // Lấy rating thực tế hoặc mặc định là 5 sao nếu rỗng
-                            i < Math.floor(project.rating || 5)
-                              ? "text-yellow-400 text-lg"
-                              : "text-gray-500 text-lg"
-                          }
-                        />
-                      ))}
-                      <span className="text-sm text-white/90 ml-2 font-medium">
-                        ({project.rating || 5}/5)
-                      </span>
-                    </div>
                     <button
                       onClick={() => {
                         router.push(`${ROUTES.APARTMENT}`);
