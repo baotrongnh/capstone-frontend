@@ -6,6 +6,7 @@ import { DEFAULT_IOT_TOPIC_ICON, IOT_TOPIC_ICON_MAP } from '@/constants/iot'
 import { formatLocaleDate, toDisplayText } from '@/utils/format'
 import { formatPaymentAmount } from '@/utils/payment'
 import {
+    toContractStatusLabel,
     formatFurnishing,
     hasDisplayValue,
     toContractCategoryLabel,
@@ -182,12 +183,7 @@ export function MyApartmentInformationTabs({
                 {
                     key: 'rentalContractStatus',
                     label: t('contractStatus'),
-                    value: toUserApartmentStatusLabel(rentalContract.status, t),
-                },
-                {
-                    key: 'paymentDueDay',
-                    label: t('paymentDueDay'),
-                    value: toDisplayText(rentalContract.paymentDueDay),
+                    value: toContractStatusLabel(rentalContract.status, t),
                 },
                 {
                     key: 'paymentMethod',
@@ -245,60 +241,6 @@ export function MyApartmentInformationTabs({
                             </Button>
                         </div>
                     ),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.buildingGateCode)
-            ? [
-                {
-                    key: 'buildingGateCode',
-                    label: t('buildingGateCode'),
-                    value: toDisplayText(rawApartment?.buildingGateCode),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.smartLockPin)
-            ? [
-                {
-                    key: 'smartLockPin',
-                    label: t('smartLockPin'),
-                    value: toDisplayText(rawApartment?.smartLockPin),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.mailboxCode)
-            ? [
-                {
-                    key: 'mailboxCode',
-                    label: t('mailboxCode'),
-                    value: toDisplayText(rawApartment?.mailboxCode),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.parkingAccessCode)
-            ? [
-                {
-                    key: 'parkingAccessCode',
-                    label: t('parkingAccessCode'),
-                    value: toDisplayText(rawApartment?.parkingAccessCode),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.wifiName)
-            ? [
-                {
-                    key: 'wifiName',
-                    label: t('wifiName'),
-                    value: toDisplayText(rawApartment?.wifiName),
-                },
-            ]
-            : []),
-        ...(hasDisplayValue(rawApartment?.wifiPassword)
-            ? [
-                {
-                    key: 'wifiPassword',
-                    label: t('wifiPassword'),
-                    value: toDisplayText(rawApartment?.wifiPassword),
                 },
             ]
             : []),
