@@ -72,7 +72,7 @@ export default function ModalAssignContract({
       const signatureWidth = 120;
       const signatureHeight = 30;
       const xPosition = width - signatureWidth - 120;
-      const yPosition = 220;
+      const yPosition = 270;
 
       lastPage.drawImage(signatureImage, {
         x: xPosition,
