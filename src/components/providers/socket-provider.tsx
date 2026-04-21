@@ -22,7 +22,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
           }
 
           const handleConnect = () => {
-               console.info('[socket] connected', { id: socket.id })
+               console.info('[socket] connected')
           }
 
           const handleDisconnect = (reason: string) => {

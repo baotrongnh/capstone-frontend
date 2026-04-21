@@ -289,52 +289,6 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      <div className="mt-6 md:mt-8 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 md:p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h2 className="font-semibold text-lg md:text-xl">{t("rating.title")}</h2>
-            <p className="text-sm text-gray-500 mt-1">{t("rating.subtitle")}</p>
-          </div>
-          <div className="rounded-xl bg-white border border-gray-100 px-4 py-3 min-w-52">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{t("rating.average")}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-2xl font-bold text-primary">
-                {averageRating > 0 ? averageRating.toFixed(1) : "-"}
-              </span>
-              <Rate disabled allowHalf value={averageRating} />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-xl bg-white border border-gray-100 p-4 md:p-5">
-          <p className="text-sm font-medium text-gray-700 mb-2">{t("rating.yourRating")}</p>
-          <Rate value={ratingValue} onChange={setRatingValue} />
-
-          <Input.TextArea
-            value={ratingComment}
-            onChange={(e) => setRatingComment(e.target.value)}
-            rows={4}
-            maxLength={250}
-            showCount
-            placeholder={t("rating.placeholder")}
-            className="mt-4"
-          />
-
-          <div className="mt-4 flex justify-end">
-            <Button
-              type="primary"
-              shape="round"
-              size="large"
-              disabled={!ratingValue}
-              loading={isSubmittingRating}
-              onClick={handleSubmitRating}
-            >
-              {isSubmittingRating ? t("rating.submitting") : t("rating.submit")}
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Specs */}
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
@@ -489,68 +443,6 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
-      {/* Rooms */}
-      {apt?.rooms && apt.rooms.length > 0 && (
-        <div className="mt-8 md:mt-10">
-          <h2 className="font-semibold text-lg md:text-xl mb-3">
-            {t("roomsTitle")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {apt.rooms.map((room) => (
-              <div
-                key={room.id}
-                className="border border-gray-100 rounded-lg p-4 bg-white"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium">
-                    {tLabels(`roomType.${room.roomType}`) || room.roomType}
-                    {room.roomNumber ? ` · ${room.roomNumber}` : ""}
-                  </span>
-                  <Tag
-                    color={APARTMENT_STATUS[room.status]?.color || "default"}
-                  >
-                    {tLabels(`status.${room.status}`) || room.status}
-                  </Tag>
-                </div>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {room.area && (
-                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                      {room.area} m²
-                    </span>
-                  )}
-                  {room.maxOccupancy > 1 && (
-                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                      {room.maxOccupancy} {t("room.occupancyUnit")}
-                    </span>
-                  )}
-                  {room.hasAirConditioning && (
-                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                      {t("room.airCon")}
-                    </span>
-                  )}
-                  {room.hasWindow && (
-                    <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded">
-                      {t("room.window")}
-                    </span>
-                  )}
-                  {room.hasPrivateBathroom && (
-                    <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded">
-                      {t("room.privateBath")}
-                    </span>
-                  )}
-                </div>
-                {room.rentPrice && (
-                  <p className="text-sm font-semibold text-primary">
-                    {formatVND(room.rentPrice)}
-                    {t("room.perMonth")}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Location */}
       <div className="mt-8 md:mt-10 mb-8 md:mb-10">
         <div className="flex items-center gap-2 mb-3 md:mb-4">
@@ -592,6 +484,52 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
             <span className="text-xs text-gray-400">{fullAddress}</span>
           </button>
         )}
+      </div>
+
+      <div className="mt-6 md:mt-8 rounded-2xl border border-gray-200 bg-gray-50/70 p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="font-semibold text-lg md:text-xl">{t("rating.title")}</h2>
+            <p className="text-sm text-gray-500 mt-1">{t("rating.subtitle")}</p>
+          </div>
+          <div className="rounded-xl bg-white border border-gray-100 px-4 py-3 min-w-52">
+            <p className="text-xs uppercase tracking-wide text-gray-500">{t("rating.average")}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-2xl font-bold text-primary">
+                {averageRating > 0 ? averageRating.toFixed(1) : "-"}
+              </span>
+              <Rate disabled allowHalf value={averageRating} />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-xl bg-white border border-gray-100 p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("rating.yourRating")}</p>
+          <Rate value={ratingValue} onChange={setRatingValue} />
+
+          <Input.TextArea
+            value={ratingComment}
+            onChange={(e) => setRatingComment(e.target.value)}
+            rows={4}
+            maxLength={250}
+            showCount
+            placeholder={t("rating.placeholder")}
+            className="mt-4"
+          />
+
+          <div className="mt-4 flex justify-end pt-5">
+            <Button
+              type="primary"
+              shape="round"
+              size="large"
+              disabled={!ratingValue}
+              loading={isSubmittingRating}
+              onClick={handleSubmitRating}
+            >
+              {isSubmittingRating ? t("rating.submitting") : t("rating.submit")}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <SimilarApartments excludeApartmentId={id} />
