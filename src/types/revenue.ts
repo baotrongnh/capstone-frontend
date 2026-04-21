@@ -1,11 +1,12 @@
 import type { paths } from './api'
 
-export type RevenueOverviewQuery = paths['/api/v1/revenues/overview']['get']['parameters']['query']
+export type RevenueOverviewQuery = paths['/api/v1/invoices/me']['get']['parameters']['query']
 
 export type RevenueOverviewResponse =
-    paths['/api/v1/revenues/overview']['get']['responses']['200']['content']['application/json']
+    paths['/api/v1/invoices/me']['get']['responses']['200']['content']['application/json']
 
 export type RevenueOverviewSchemaData = NonNullable<RevenueOverviewResponse['data']>
+export type RevenueOverviewSchemaItem = RevenueOverviewSchemaData['items'][number]
 
 export type RevenueOverviewInvoice = {
     invoiceId: string
@@ -26,30 +27,25 @@ export type RevenueOverviewInvoice = {
     contract?: {
         id: string
         contractNumber: string
-        startDate: string
-        endDate: string
-        status: string
     } | null
     partner?: {
         id: string
         fullName: string
         companyName?: string | null
     } | null
-    cooperationContract?: {
+    payer?: {
         id: string
-        contractNumber: string
-        commissionRate: number
-        startDate: string
-        endDate: string
+        fullName: string
+        companyName?: string | null
+    } | null
+    receiver?: {
+        id: string
+        fullName: string
+        companyName?: string | null
     } | null
 }
 
-export type RevenueOverviewData = RevenueOverviewSchemaData & {
-    invoices?: RevenueOverviewInvoice[]
-    page?: number
-    limit?: number
-    totalPages?: number
-}
+export type RevenueOverviewData = RevenueOverviewSchemaData
 
 export type PartnerRevenueSummary = {
     partnerName: string

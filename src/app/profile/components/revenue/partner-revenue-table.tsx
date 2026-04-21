@@ -30,7 +30,14 @@ export function PartnerRevenueTable({ rows, labels, locale, isLoading, isLargeSc
                 dataIndex: 'invoicePaidAt',
                 key: 'invoicePaidAt',
                 width: 140,
-                render: (value: string) => new Date(value).toLocaleDateString(locale === 'en' ? 'en-GB' : 'vi-VN'),
+                render: (value: string) => {
+                    const date = new Date(value)
+                    if (Number.isNaN(date.getTime())) {
+                        return '-'
+                    }
+
+                    return date.toLocaleDateString(locale === 'en' ? 'en-GB' : 'vi-VN')
+                },
             },
             {
                 title: labels.apartment,
