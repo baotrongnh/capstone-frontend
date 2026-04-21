@@ -43,8 +43,6 @@ export default function PropertiesSection() {
 
   const { data: apartments } = useApartments(params);
 
-  console.log("ĐA", apartments);
-
   if (!apartments) {
     return <div>Loading...</div>;
   }
