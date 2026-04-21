@@ -94,6 +94,10 @@ export const toContractCategoryLabel = (category: unknown, t: TranslationFn) => 
     return translateEnumValue(category, t, 'contractCategoryOptions')
 }
 
+export const toContractStatusLabel = (status: unknown, t: TranslationFn) => {
+    return translateEnumValue(status, t, 'contractStatusOptions')
+}
+
 export const toContractMemberTypeLabel = (memberType: unknown, t: TranslationFn) => {
     return translateEnumValue(memberType, t, 'memberTypeOptions')
 }

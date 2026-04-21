@@ -465,6 +465,16 @@
         "normal": "Standard Contract",
         "renewal": "Renewal"
       },
+      "contractStatusOptions": {
+        "draft": "Draft",
+        "pending": "Pending Signature",
+        "signed": "Signed",
+        "active": "Active",
+        "expired": "Expired",
+        "terminated": "Terminated",
+        "renewed": "Renewed",
+        "cancelled": "Cancelled"
+      },
       "memberTypeOptions": {
         "primary": "Primary Member",
         "co_tenant": "Co-tenant",

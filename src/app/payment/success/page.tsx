@@ -15,6 +15,8 @@ export default function PaymentSuccessPage() {
     const searchParams = useSearchParams()
     const locale = useLocale()
     const t = useTranslations('Profile.payment.checkout')
+    const tInvoices = useTranslations('Profile.invoices')
+    const tPayment = useTranslations('Profile.payment')
     const invoiceId = searchParams.get('invoiceId') ?? undefined
     const source = searchParams.get('source')
     const scheme = searchParams.get('scheme') || 'homeiq'
@@ -35,6 +37,30 @@ export default function PaymentSuccessPage() {
 
     const { data, isLoading, isError, error } = useInvoice(invoiceId)
     const invoice = data?.data
+
+    const getStatusLabel = (status: unknown) => {
+        const normalizedStatus = String(status ?? '')
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, '_')
+            .replace(/-/g, '_')
+
+        if (!normalizedStatus) {
+            return '-'
+        }
+
+        const statusKey = `statuses.${normalizedStatus}`
+
+        if (typeof tInvoices.has === 'function' && tInvoices.has(statusKey)) {
+            return tInvoices(statusKey)
+        }
+
+        if (typeof tPayment.has === 'function' && tPayment.has(statusKey)) {
+            return tPayment(statusKey)
+        }
+
+        return normalizeText(status)
+    }
 
     if (isLoading) {
         return (
@@ -74,7 +100,7 @@ export default function PaymentSuccessPage() {
                         {formatInvoiceAmount(invoice.totalAmount, locale)}
                     </Descriptions.Item>
                     <Descriptions.Item label={t('labels.status')}>
-                        {normalizeText(invoice.status)}
+                        {getStatusLabel(invoice.status)}
                     </Descriptions.Item>
                 </Descriptions>
             )}
