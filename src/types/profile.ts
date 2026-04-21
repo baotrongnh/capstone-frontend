@@ -201,3 +201,10 @@ export type SidebarSection = {
 export type ResolvedSidebarSection = Omit<SidebarSection, "itemKeys"> & {
   items: ProfileNavItem[];
 };
+
+export type ProfileSettingsFormValues = {
+  language: 'vi' | 'en'
+  currentPassword?: string
+  newPassword?: string
+  confirmPassword?: string
+}

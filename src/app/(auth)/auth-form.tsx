@@ -121,7 +121,7 @@ export default function AuthForm({
               name="password"
               rules={[
                 { required: true, message: t('passwordRequired') },
-                { min: 6, message: t('passwordMinLength') },
+                { min: 8, message: t('passwordMinLength') },
               ]}
               style={{ marginBottom: 20 }}
               className="[&_.ant-form-item-label>label]:w-full [&_.ant-form-item-label>label]:after:hidden"
