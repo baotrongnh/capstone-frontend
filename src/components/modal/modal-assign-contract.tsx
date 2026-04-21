@@ -21,7 +21,7 @@ export default function ModalAssignContract({
   selectedContract,
 }: ModalAssignContractProps) {
   const sigRef = useRef<SignatureCanvas | null>(null);
-
+  const { message } = App.useApp();
   const route = useRouter();
   const [signature, setSignature] = useState<string | null>(null);
   const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
