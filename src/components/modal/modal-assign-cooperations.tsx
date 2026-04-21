@@ -2,7 +2,7 @@ import { ROUTES } from "@/constants/routes";
 import { useApartmentCooperationContract } from "@/hooks/query/useApartments";
 import { useSignCooperationContract } from "@/hooks/query/useContracts";
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
-import { Alert, Button, Checkbox, Divider, message, Modal } from "antd";
+import { Alert, App, Button, Checkbox, Divider, Modal } from "antd";
 import { Check, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PDFDocument } from "pdf-lib";
@@ -21,7 +21,7 @@ export default function ModalAssignCooperations({
   selectedContract,
 }: ModalAssignCooperationsProps) {
   const sigRef = useRef<SignatureCanvas | null>(null);
-
+  const { message } = App.useApp();
   const route = useRouter();
   const [signature, setSignature] = useState<string | null>(null);
   const [signedPdfUrl, setSignedPdfUrl] = useState<string | null>(null);
@@ -38,8 +38,6 @@ export default function ModalAssignCooperations({
   const { mutateAsync: signCooperationContract } = useSignCooperationContract(
     cooperation?.cooperationContractId || "",
   );
-
-  console.log("DADA", cooperation);
 
   const dataUrlToBytes = (dataUrl: string): Uint8Array => {
     const arr = dataUrl.split(",");
