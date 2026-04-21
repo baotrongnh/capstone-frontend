@@ -9,13 +9,13 @@ export const useRevenueOverview = (params?: RevenueOverviewQuery) => {
     return useQuery<RevenueOverviewResponse>({
         queryKey: [
             'revenue-overview',
-            params?.from ?? null,
-            params?.to ?? null,
-            params?.partnerId ?? null,
+            params?.actorScope ?? null,
+            params?.paidFrom ?? null,
+            params?.paidTo ?? null,
             params?.page ?? null,
             params?.limit ?? null,
         ],
         queryFn: () => getRevenueOverview(params),
-        enabled: Boolean(params?.from && params?.to),
+        enabled: Boolean(params?.paidFrom && params?.paidTo),
     })
 }
