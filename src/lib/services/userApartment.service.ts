@@ -1,6 +1,8 @@
 import {
     GetIotBoardsQuery,
     GetIotBoardsRes,
+    GetIotMetersQuery,
+    GetIotMetersRes,
     GetUserApartmentByIdRes,
     ListMyUserApartmentsRes,
     UpdateDoorPinParams,
@@ -21,6 +23,11 @@ export const getUserApartmentById = async (id: string): Promise<GetUserApartment
 
 export const getIotBoards = async (query?: GetIotBoardsQuery): Promise<GetIotBoardsRes> => {
     const res = await apiClient.get(`${endpoints.iot}/boards`, { params: query })
+    return res.data
+}
+
+export const getIotMeters = async (query?: GetIotMetersQuery): Promise<GetIotMetersRes> => {
+    const res = await apiClient.get(`${endpoints.iot}/meter`, { params: query })
     return res.data
 }
 

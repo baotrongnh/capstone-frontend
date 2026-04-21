@@ -18,6 +18,11 @@ export type InvoiceDetailPayment = InvoiceDetail['payments'][number]
 export type InvoiceDetailContentItem = NonNullable<NonNullable<InvoiceDetail['invoiceContent']>['items']>[number]
 export type InvoiceType = Extract<NonNullable<InvoiceDetail['invoiceType']>, string>
 
+export type ListMonthlyUtilityInvoicesQuery = paths['/api/v1/invoices/utility/monthly']['get']['parameters']['query']
+export type ListMonthlyUtilityInvoicesRes = paths['/api/v1/invoices/utility/monthly']['get']['responses']['200']['content']['application/json']
+export type MonthlyUtilityInvoiceListPayload = NonNullable<ListMonthlyUtilityInvoicesRes['data']>
+export type MonthlyUtilityInvoiceItem = MonthlyUtilityInvoiceListPayload['items'][number]
+
 export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
     draft: 'default',
     issued: 'blue',

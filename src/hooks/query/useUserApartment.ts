@@ -1,6 +1,6 @@
 'use client'
 
-import { getIotBoards, getMyUserApartments, getUserApartmentById, updateDoorPin } from '@/lib/services/userApartment.service'
+import { getIotBoards, getIotMeters, getMyUserApartments, getUserApartmentById, updateDoorPin } from '@/lib/services/userApartment.service'
 import { UserApartmentApiError } from '@/types/userApartment'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
@@ -25,6 +25,14 @@ export const useIotBoardsByApartment = (apartmentId?: string) => {
     return useQuery({
         queryKey: ['iot-boards', 'by-apartment', apartmentId],
         queryFn: () => getIotBoards({ apartmentId }),
+        enabled: Boolean(apartmentId),
+    })
+}
+
+export const useIotMetersByApartment = (apartmentId?: string) => {
+    return useQuery({
+        queryKey: ['iot-meter', 'by-apartment', apartmentId],
+        queryFn: () => getIotMeters({ apartmentId }),
         enabled: Boolean(apartmentId),
     })
 }
