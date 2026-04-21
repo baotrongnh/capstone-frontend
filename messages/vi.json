@@ -88,9 +88,9 @@
     },
     "appPromoSection": {
       "badge": "Tải về ngay",
-      "title": "Tải ứng dụng ToletX",
+      "title": "Tải ứng dụng HomeIQ ",
       "free": "miễn phí",
-      "subtitle": "Đặt chỗ nhanh hơn, dễ dàng hơn và nhận ưu đãi độc quyền.",
+      "subtitle": "Sử dụng IOT và các thiết bị thông minh để quản lý căn hộ, tiện lợi hơn bao giờ hết.",
       "notification": {
         "title": "Nhận ngay các ưu đãi cá nhân hóa!",
         "description": " Ưu đãi ngay bây giờ!"
@@ -1129,17 +1129,34 @@
         {
           "percentage": "70/30",
           "description": "Chia Sẻ Hoa Hồng Tiêu Chuẩn Cho Chủ Sở Hữu Bất Động Sản",
-          "details": ["Chủ sở hữu nhận 70% doanh thu cho thuê", "Nền tảng nhận 30% phí quản lý và bảo trì", "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ", "Báo cáo doanh thu hàng quý"]
+          "details": [
+            "Chủ sở hữu nhận 70% doanh thu cho thuê",
+            "Nền tảng nhận 30% phí quản lý và bảo trì",
+            "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ",
+            "Báo cáo doanh thu hàng quý"
+          ]
         },
         {
           "percentage": "85/15",
           "description": "Chương Trình Đối Tác Cao Cấp (Hợp Đồng Hàng Năm)",
-          "details": ["Chủ sở hữu nhận 85% doanh thu cho thuê", "Nền tảng nhận 15% hoa hồng", "Yêu cầu tối thiểu 5 bất động sản", "Chỉ định trưởng tài khoản riêng", "Dịch vụ sửa chữa và bảo trì ưu tiên"]
+          "details": [
+            "Chủ sở hữu nhận 85% doanh thu cho thuê",
+            "Nền tảng nhận 15% hoa hồng",
+            "Yêu cầu tối thiểu 5 bất động sản",
+            "Chỉ định trưởng tài khoản riêng",
+            "Dịch vụ sửa chữa và bảo trì ưu tiên"
+          ]
         },
         {
           "percentage": "60/40",
           "description": "Dịch Vụ Quản Lý Toàn Diện",
-          "details": ["Nền tảng xử lý 100% quản lý bất động sản", "Chủ sở hữu nhận 60% doanh thu cho thuê", "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì", "Tiếp thị và tìm kiếm người thuê được bao gồm", "Chụp ảnh chuyên nghiệp và tour ảo 3D"]
+          "details": [
+            "Nền tảng xử lý 100% quản lý bất động sản",
+            "Chủ sở hữu nhận 60% doanh thu cho thuê",
+            "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì",
+            "Tiếp thị và tìm kiếm người thuê được bao gồm",
+            "Chụp ảnh chuyên nghiệp và tour ảo 3D"
+          ]
         }
       ],
       "simple": "Đơn Giản & Minh Bạch",
@@ -1186,7 +1203,11 @@
     },
     "introduction": {
       "description": "HomeIQ là nền tảng quản lý và khai thác căn hộ hiện đại, kết nối khách thuê với chủ sở hữu tài sản bằng quy trình số hóa toàn diện.",
-      "features": ["Vận hành chuyên nghiệp", "Hợp đồng minh bạch", "Tối ưu doanh thu bền vững"]
+      "features": [
+        "Vận hành chuyên nghiệp",
+        "Hợp đồng minh bạch",
+        "Tối ưu doanh thu bền vững"
+      ]
     },
     "payment": {
       "deposit": "Tiền cọc phải bằng 1-2 tháng tiền thuê, được giữ trong suốt thời gian hợp đồng.",
