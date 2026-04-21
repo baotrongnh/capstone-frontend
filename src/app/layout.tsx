@@ -11,6 +11,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SocketProvider from "@/components/providers/socket-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
