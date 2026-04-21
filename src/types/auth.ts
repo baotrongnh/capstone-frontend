@@ -31,6 +31,8 @@ export type RefreshTokenRes = paths['/api/v1/auth/refresh']['post']['responses']
 export type RefreshTokenResponse = NonNullable<RefreshTokenRes['data']>
 export type AuthTokens = RefreshTokenResponse
 
+export type ChangePasswordDto = paths['/api/v1/auth/change-password']['post']['requestBody']['content']['application/json']
+
 export type ApiErrorData = {
     message?: string | string[]
 }

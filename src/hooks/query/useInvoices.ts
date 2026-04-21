@@ -1,6 +1,6 @@
-import { getInvoiceById, getInvoices } from "@/lib/services/invoice.service"
-import { GetInvoiceByIdPath, ListInvoicesQuery } from "@/types/invoice"
-import { useQuery } from "@tanstack/react-query"
+import { getInvoiceById, getInvoices, getMonthlyUtilityInvoices } from '@/lib/services/invoice.service'
+import { GetInvoiceByIdPath, ListInvoicesQuery, ListMonthlyUtilityInvoicesQuery } from '@/types/invoice'
+import { useQuery } from '@tanstack/react-query'
 
 export const useInvoices = (params?: ListInvoicesQuery) => {
     return useQuery({
@@ -17,5 +17,12 @@ export const useInvoice = (id?: GetInvoiceByIdPath['id']) => {
             return getInvoiceById(id)
         },
         enabled: Boolean(id),
+    })
+}
+
+export const useUtilityMonthlyInvoices = (params?: ListMonthlyUtilityInvoicesQuery) => {
+    return useQuery({
+        queryKey: ['utility-monthly-invoices', params],
+        queryFn: () => getMonthlyUtilityInvoices(params),
     })
 }
