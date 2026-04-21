@@ -74,3 +74,15 @@ export const formatTime = (date: Date) => {
           minute: '2-digit',
      })
 }
+
+// export function extractId(slug: string): string {
+//      const match = slug.match(
+//           /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+//      )
+
+//      if (!match) {
+//           throw new Error("Invalid slug")
+//      }
+
+//      return match[0]
+// }

@@ -1,37 +1,35 @@
-import AuthProvider from "@/components/providers/auth-provider";
-import ChatSupport from "@/components/chat/chat-support";
-import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
-import ReactQueryProvider from "@/components/providers/react-query-provider";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { App, ConfigProvider } from "antd";
-import type { Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import SocketProvider from "@/components/providers/socket-provider";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import ChatSupport from "@/components/chat/chat-support"
+import Footer from "@/components/layout/footer"
+import Header from "@/components/layout/header"
+import AuthProvider from "@/components/providers/auth-provider"
+import ReactQueryProvider from "@/components/providers/react-query-provider"
+import SocketProvider from "@/components/providers/socket-provider"
+import { AntdRegistry } from "@ant-design/nextjs-registry"
+import { App, ConfigProvider } from "antd"
+import type { Metadata } from "next"
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages } from "next-intl/server"
+import { Inter } from "next/font/google"
+import "./globals.css"
 
-const inter = Inter({ subsets: ["latin", "vietnamese"] });
+const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
 export const metadata: Metadata = {
   title: "INTELLISERVOPS",
   description: "INTELLISERVOPS",
-};
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const messages = await getMessages();
-  const locale = await getLocale();
+  const messages = await getMessages()
+  const locale = await getLocale()
 
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <SpeedInsights />
         <AntdRegistry>
           <ConfigProvider
             theme={{
@@ -64,5 +62,5 @@ export default async function RootLayout({
         </AntdRegistry>
       </body>
     </html>
-  );
+  )
 }
