@@ -2,6 +2,7 @@ import type {
     PartnerRevenueDonutItem,
     PartnerRevenuePagination,
     PartnerRevenueSummary,
+    RevenueOverviewSchemaItem,
     PartnerRevenueTableRow,
     RevenueOverviewData,
     RevenueOverviewInvoice,
@@ -62,18 +63,19 @@ export const toPartnerRevenueQueryDateRange = (fromDate: string, toDate: string)
     const to = parseDateInput(toDate, true) ?? parseDateInput(fallback.toDate, true)
 
     return {
-        from: from ? from.toISOString() : new Date().toISOString(),
-        to: to ? to.toISOString() : new Date().toISOString(),
+        paidFrom: from ? from.toISOString() : new Date().toISOString(),
+        paidTo: to ? to.toISOString() : new Date().toISOString(),
     }
 }
 
 const toOverviewData = (response?: RevenueOverviewResponse): RevenueOverviewData => {
     const rawData = (response?.data ?? {
-        invoiceCount: 0,
-        totalInvoiceAmount: 0,
-        totalSystemRevenue: 0,
-        totalPartnerGrossRevenue: 0,
-        totalPartnerNetPayout: 0,
+        roleContext: 'partner_receivable',
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+        totalPages: 1,
     }) as RevenueOverviewData
 
     return rawData
@@ -81,15 +83,88 @@ const toOverviewData = (response?: RevenueOverviewResponse): RevenueOverviewData
 
 export const extractRevenueOverviewData = (response?: RevenueOverviewResponse) => toOverviewData(response)
 
+const toNormalizedPartner = (item: RevenueOverviewSchemaItem) => {
+    const candidate = item.receiver ?? item.payer ?? null
+
+    if (!candidate) {
+        return null
+    }
+
+    return {
+        id: toDisplayText(candidate.id, ''),
+        fullName: toDisplayText(candidate.fullName, ''),
+        companyName: toDisplayText(candidate.companyName, ''),
+    }
+}
+
+const toRevenueInvoice = (item: RevenueOverviewSchemaItem): RevenueOverviewInvoice => ({
+    invoiceId: toDisplayText(item.invoiceId || item.itemId, ''),
+    invoiceNumber: toDisplayText(item.invoiceNumber),
+    invoiceType: toDisplayText(item.invoiceType),
+    invoicePaidAt: toDisplayText(item.paidAt || item.dueDate || item.billingPeriodEnd || item.billingPeriodStart, ''),
+    invoiceAmount: toFiniteNumber(item.totalAmount),
+    isPartnerApartment: true,
+    commissionRateApplied: item.payoutBreakdown?.systemCommissionRate ?? null,
+    systemRevenueAmount: toFiniteNumber(item.payoutBreakdown?.systemCommissionAmount),
+    partnerGrossRevenueAmount: toFiniteNumber(item.payoutBreakdown?.grossRevenue),
+    partnerNetPayoutAmount: toFiniteNumber(item.payoutBreakdown?.netPayoutAmount),
+    apartment: item.apartmentId || item.apartmentNumber
+        ? {
+            id: toDisplayText(item.apartmentId, ''),
+            apartmentNumber: toDisplayText(item.apartmentNumber),
+            buildingName: null,
+        }
+        : null,
+    contract: item.contractId || item.contractNumber
+        ? {
+            id: toDisplayText(item.contractId, ''),
+            contractNumber: toDisplayText(item.contractNumber),
+        }
+        : null,
+    partner: toNormalizedPartner(item),
+    payer: item.payer
+        ? {
+            id: toDisplayText(item.payer.id, ''),
+            fullName: toDisplayText(item.payer.fullName, ''),
+            companyName: toDisplayText(item.payer.companyName, ''),
+        }
+        : null,
+    receiver: item.receiver
+        ? {
+            id: toDisplayText(item.receiver.id, ''),
+            fullName: toDisplayText(item.receiver.fullName, ''),
+            companyName: toDisplayText(item.receiver.companyName, ''),
+        }
+        : null,
+})
+
 export const extractRevenueOverviewInvoices = (response?: RevenueOverviewResponse): RevenueOverviewInvoice[] => {
     const data = toOverviewData(response)
-    return Array.isArray(data.invoices) ? data.invoices : []
+    return Array.isArray(data.items)
+        ? data.items
+            .filter((item) => item.itemType === 'invoice' && Boolean(item.invoiceId || item.itemId))
+            .map(toRevenueInvoice)
+        : []
 }
 
 const resolvePartnerDisplayNameFromInvoices = (invoices: RevenueOverviewInvoice[]) => {
-    const firstInvoicePartner = invoices.find((invoice) => invoice.partner?.fullName || invoice.partner?.companyName)?.partner
-    const fullName = toDisplayText(firstInvoicePartner?.fullName, '').trim()
-    const companyName = toDisplayText(firstInvoicePartner?.companyName, '').trim()
+    const firstInvoicePartner = invoices.find(
+        (invoice) =>
+            invoice.partner?.fullName ||
+            invoice.partner?.companyName ||
+            invoice.receiver?.fullName ||
+            invoice.receiver?.companyName ||
+            invoice.payer?.fullName ||
+            invoice.payer?.companyName,
+    )
+
+    const candidate =
+        firstInvoicePartner?.partner ??
+        firstInvoicePartner?.receiver ??
+        firstInvoicePartner?.payer
+
+    const fullName = toDisplayText(candidate?.fullName, '').trim()
+    const companyName = toDisplayText(candidate?.companyName, '').trim()
 
     if (fullName.length > 0) {
         return fullName
@@ -103,8 +178,15 @@ const resolvePartnerDisplayNameFromInvoices = (invoices: RevenueOverviewInvoice[
 }
 
 const resolveCompanyNameFromInvoices = (invoices: RevenueOverviewInvoice[]) => {
-    const firstInvoicePartner = invoices.find((invoice) => invoice.partner?.companyName)?.partner
-    const companyName = toDisplayText(firstInvoicePartner?.companyName, '').trim()
+    const firstInvoicePartner = invoices.find(
+        (invoice) => invoice.partner?.companyName || invoice.receiver?.companyName || invoice.payer?.companyName,
+    )
+    const companyName = toDisplayText(
+        firstInvoicePartner?.partner?.companyName ||
+        firstInvoicePartner?.receiver?.companyName ||
+        firstInvoicePartner?.payer?.companyName,
+        '',
+    ).trim()
     return companyName.length > 0 ? companyName : '-'
 }
 
@@ -121,16 +203,24 @@ const countDistinctBy = <T>(items: T[], getValue: (item: T) => string | undefine
 export const buildPartnerRevenueSummary = (response?: RevenueOverviewResponse): PartnerRevenueSummary => {
     const data = toOverviewData(response)
     const invoices = extractRevenueOverviewInvoices(response)
+    const revenueTotals = invoices.reduce(
+        (accumulator, invoice) => ({
+            gross: accumulator.gross + toFiniteNumber(invoice.partnerGrossRevenueAmount),
+            system: accumulator.system + toFiniteNumber(invoice.systemRevenueAmount),
+            net: accumulator.net + toFiniteNumber(invoice.partnerNetPayoutAmount),
+        }),
+        { gross: 0, system: 0, net: 0 },
+    )
 
     return {
         partnerName: resolvePartnerDisplayNameFromInvoices(invoices),
         companyName: resolveCompanyNameFromInvoices(invoices),
-        invoiceCount: toFiniteNumber(data.invoiceCount),
+        invoiceCount: Math.max(0, toFiniteNumber(data.total, invoices.length)),
         apartmentCount: countDistinctBy(invoices, (invoice) => invoice.apartment?.id),
         contractCount: countDistinctBy(invoices, (invoice) => invoice.contract?.id),
-        totalGrossRevenue: toFiniteNumber(data.totalPartnerGrossRevenue),
-        totalSystemRevenue: toFiniteNumber(data.totalSystemRevenue),
-        totalNetPayoutRevenue: toFiniteNumber(data.totalPartnerNetPayout),
+        totalGrossRevenue: revenueTotals.gross,
+        totalSystemRevenue: revenueTotals.system,
+        totalNetPayoutRevenue: revenueTotals.net,
     }
 }
 
@@ -194,6 +284,10 @@ export const extractPartnerRevenuePagination = (response?: RevenueOverviewRespon
 const toTimelineDateKey = (isoDateTime: string) => {
     const date = new Date(isoDateTime)
 
+    if (Number.isNaN(date.getTime())) {
+        return null
+    }
+
     const year = date.getFullYear()
     const month = `${date.getMonth() + 1}`.padStart(2, '0')
     const day = `${date.getDate()}`.padStart(2, '0')
@@ -217,6 +311,10 @@ export const buildPartnerRevenueTimelinePoints = (
 ): PartnerRevenueTimelinePoint[] => {
     const grouped = invoices.reduce<Map<string, { grossRevenue: number; systemRevenue: number; netPayoutRevenue: number; invoiceCount: number }>>((accumulator, invoice) => {
         const dateKey = toTimelineDateKey(invoice.invoicePaidAt)
+        if (!dateKey) {
+            return accumulator
+        }
+
         const current = accumulator.get(dateKey) ?? {
             grossRevenue: 0,
             systemRevenue: 0,

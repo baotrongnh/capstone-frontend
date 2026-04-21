@@ -11,7 +11,6 @@ import {
     REVENUE_DATE_INPUT_FORMAT,
 } from "@/constants/revenue"
 import { useRevenueOverview } from "@/hooks/query/useRevenue"
-import { useAuthStore } from "@/stores/auth.store"
 import type { RevenueDateRange } from "@/types/partnerRevenue"
 import {
     buildPartnerRevenueDonutItems,
@@ -35,7 +34,6 @@ export default function PartnerRevenuesPage() {
     const t = useTranslations("Profile.revenue")
     const locale = useLocale()
     const screens = Grid.useBreakpoint()
-    const user = useAuthStore((state) => state.user)
 
     const defaultDateRange = useMemo(() => getCurrentMonthDateRange(), [])
 
@@ -45,8 +43,6 @@ export default function PartnerRevenuesPage() {
     ])
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState<number>(PARTNER_REVENUE_DEFAULT_LIMIT)
-
-    const partnerId = typeof user?.id === "string" ? user.id : undefined
 
     const queryDateRange = useMemo(
         () =>
@@ -59,12 +55,12 @@ export default function PartnerRevenuesPage() {
 
     const queryParams = useMemo(
         () => ({
+            actorScope: "partner_receivable" as const,
             ...queryDateRange,
-            ...(partnerId ? { partnerId } : {}),
             page,
             limit,
         }),
-        [limit, page, partnerId, queryDateRange],
+        [limit, page, queryDateRange],
     )
 
     const { data, isLoading, isError, error } = useRevenueOverview(queryParams)
