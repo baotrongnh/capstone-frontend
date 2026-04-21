@@ -1,19 +1,33 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { ChevronUp, ChevronDown, Quote } from "lucide-react";
-import banner3 from "../../../public/img/banner5.jpg";
-import { StarOutlined } from "@ant-design/icons";
-import { useApartments } from "@/hooks/query/useApartments";
 import { ROUTES } from "@/constants/routes";
+import { useApartments } from "@/hooks/query/useApartments";
+import type { components } from "@/types/api";
+import { StarOutlined } from "@ant-design/icons";
+import { ChevronDown, ChevronUp, Quote } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import banner3 from "../../../public/img/banner5.jpg";
+import out3 from "../../../public/img/out3.jpg";
+import out5 from "../../../public/img/out5.jpg";
+import outfit from "../../../public/img/outfit.jpg";
+type Testimonial = {
+  id: number;
+  name: string;
+  role: string;
+  time: string;
+  review: string;
+  image: string;
+};
+
+type ApartmentItem = components["schemas"]["ApartmentListItemDto"];
 
 const TestimonialCard = ({
   item,
   type,
 }: {
-  item: any;
+  item: Testimonial;
   type: "active" | "next";
 }) => {
   const isActive = type === "active";
@@ -66,7 +80,7 @@ export default function TestimonialsSection() {
 
   // Lấy dữ liệu từ API
   const { data: apartmentsResponse } = useApartments({ limit: 4 });
-  const projects = apartmentsResponse?.data || [];
+  const projects: ApartmentItem[] = apartmentsResponse?.data || [];
 
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
 
@@ -81,36 +95,33 @@ export default function TestimonialsSection() {
     setCurrentProjectIndex((prev) => (prev + 1) % projects.length);
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const testimonials = [
+  const testimonials: Testimonial[] = [
     {
       id: 1,
-      name: "Nguyễn Minh T",
+      name: "Hồ Khôi",
       role: "Người thuê",
       time: "10 tháng",
       review:
         "Mình đã ở căn hộ này gần một năm và nhìn chung trải nghiệm khá tốt. Không gian thoáng, ánh sáng tự nhiên nhiều nên ở lâu không bị bí. Bố trí phòng hợp lý, sinh hoạt hằng ngày rất tiện.",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+      image: out3.src,
     },
     {
       id: 2,
-      name: "Trần Hoàng A",
+      name: "Trần Hoàng ",
       role: "Người thuê",
       time: "1 năm",
       review:
         "Dịch vụ quản lý rất chuyên nghiệp, mọi yêu cầu sửa chữa đều được đáp ứng nhanh chóng. Vị trí thuận lợi để di chuyển vào trung tâm, tiết kiệm được rất nhiều thời gian đi lại hàng ngày.",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
+      image: outfit.src,
     },
     {
       id: 3,
-      name: "Lê Văn C",
+      name: "Lê Thanh Huyền",
       role: "Khách ngắn hạn",
       time: "2 tháng",
       review:
         "Căn hộ sạch sẽ, đầy đủ tiện nghi như mô tả. Chủ nhà thân thiện và hỗ trợ nhiệt tình. Sẽ quay lại nếu có dịp công tác dài ngày tại thành phố này.",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop",
+      image: out5.src,
     },
   ];
 
@@ -229,7 +240,6 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      {/* ===== PHẦN TESTIMONIALS GIỮ NGUYÊN HOẶC ĐỢI API SAU ===== */}
       <div className="bg-white py-24 relative overflow-hidden ">
         <div className="absolute top-0 left-0 w-full z-1">
           <img src="/vector1.svg" alt="logo" className="w-full h-auto" />
@@ -270,18 +280,18 @@ export default function TestimonialsSection() {
                   />
                 </div>
 
-                <div className="flex flex-col gap-4 pt-8 sticky top-24  sm:flex">
+                <div className="flex flex-col gap-4 pt-8">
                   <button
                     onClick={handlePrevTestimonial}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition duration-200"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white bg-gray-300 hover:bg-gray-600 transition duration-200 shadow-md hover:shadow-lg cursor-pointer z-20 active:scale-95"
                   >
-                    <ChevronUp size={28} />
+                    <ChevronUp size={24} />
                   </button>
                   <button
                     onClick={handleNextTestimonial}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition duration-200"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white bg-gray-300 hover:bg-gray-600 transition duration-200 shadow-md hover:shadow-lg cursor-pointer z-20 active:scale-95"
                   >
-                    <ChevronDown size={28} />
+                    <ChevronDown size={24} />
                   </button>
                 </div>
               </div>

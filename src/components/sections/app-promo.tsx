@@ -1,12 +1,11 @@
 "use client";
 
+import { APP_PROMO_I18N_KEYS } from "@/constants";
+import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
-import banner from "../../../public/img/banner7.jpg";
-import { Bell, MapPin, Star, Calendar, User } from "lucide-react";
-import { APP_PROMO_I18N_KEYS, UI_BRAND } from "@/constants";
 
-import app1 from "../../../public/img/app1.jpg";
 import app2 from "../../../public/img/app2.jpg";
+import mb3 from "../../../public/img/mb3.jpg";
 
 export default function AppPromoSection() {
   const t = useTranslations("HomePage.appPromoSection");
@@ -32,18 +31,13 @@ export default function AppPromoSection() {
                 "Tìm kiếm và đặt phòng dễ dàng hơn bao giờ hết với ứng dụng di động của chúng tôi. Trải nghiệm mượt mà, ưu đãi độc quyền."}
             </p>
 
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="hover:opacity-90 transition transform hover:-translate-y-1 duration-300 bg-black p-2 rounded-[10px]"
-              >
-                <img src={app1.src} alt="Google Play" className="h-10 w-auto" />
-              </a>
-              <a
-                href="#"
-                className="hover:opacity-90 transition transform hover:-translate-y-1 duration-300 bg-black p-2 rounded-[10px]"
-              >
-                <img src={app2.src} alt="App Store" className="h-10 w-auto" />
+            <div className="flex gap-4 px-2 py-1 w-40 bg-black hover:-translate-y-1 duration-300 rounded-[10px]">
+              <a href="#" className="hover:opacity-90 transition transform ">
+                <img
+                  src={app2.src}
+                  alt="Google Play"
+                  className="h-10  w-auto"
+                />
               </a>
             </div>
           </div>
@@ -65,24 +59,11 @@ export default function AppPromoSection() {
               </div>
             </div>
 
-            <div className="relative top-15 ml-50 bg-gray-900 p-3 rounded-[3rem] h-137.5 w-70 md:h-155 md:w-87.5 shadow-2xl flex flex-col">
-              <div className="absolute top-24 -left-0.5 h-6 w-0.75 bg-gray-700 rounded-l-sm"></div>
-              <div className="absolute top-36 -left-0.5 h-10 w-0.75 bg-gray-700 rounded-l-sm"></div>
-              <div className="absolute top-48 -left-0.5 h-10 w-0.75 bg-gray-700 rounded-l-sm"></div>
-              <div className="absolute top-32 -right-0.5 h-16 w-0.75 bg-gray-700 rounded-r-sm"></div>
-
-              <div className="w-full h-full bg-white rounded-[2.3rem] overflow-hidden flex flex-col relative z-0">
-                <div className="flex-1 relative bg-gray-100 overflow-hidden shadow-inner">
-                  <img
-                    src={banner.src}
-                    alt="City Landscape"
-                    className="w-full h-full object-cover block"
-                  />
-
-                  <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/30"></div>
-                </div>
-              </div>
-            </div>
+            <img
+              src={mb3.src}
+              className="w-90 h-130 ml-50"
+              alt="City Landscape"
+            />
 
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-87.5 h-87.5 bg-cyan-200 rounded-full blur-3xl opacity-20 -z-10"></div>
           </div>
