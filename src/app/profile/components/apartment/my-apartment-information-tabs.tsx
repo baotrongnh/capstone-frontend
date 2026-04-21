@@ -17,6 +17,7 @@ import {
 import { LockOutlined } from '@ant-design/icons'
 import { Button, Card, Table, Tabs, Tag } from 'antd'
 import { ApartmentVideoTour } from './apartment-video-tour'
+import { MyApartmentUtilityUsageTab } from './my-apartment-utility-usage-tab'
 
 export function MyApartmentInformationTabs({
     t,
@@ -386,6 +387,17 @@ export function MyApartmentInformationTabs({
                                         key: 'value',
                                     },
                                 ]}
+                            />
+                        ),
+                    },
+                    {
+                        key: 'utilityUsage',
+                        label: t('utilityUsage'),
+                        children: (
+                            <MyApartmentUtilityUsageTab
+                                t={t}
+                                locale={locale}
+                                apartmentId={rawApartment?.apartmentId}
                             />
                         ),
                     },

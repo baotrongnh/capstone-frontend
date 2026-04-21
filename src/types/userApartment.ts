@@ -10,6 +10,10 @@ export type GetIotBoardsQuery = paths['/api/v1/iot/boards']['get']['parameters']
 export type GetIotBoardsRes = paths['/api/v1/iot/boards']['get']['responses']['200']['content']['application/json']
 export type IotBoardListItem = NonNullable<NonNullable<GetIotBoardsRes['data']>[number]>
 export type IotBoardDeviceItem = IotBoardListItem['devices'][number]
+export type GetIotMetersQuery = paths['/api/v1/iot/meter']['get']['parameters']['query']
+export type GetIotMetersRes = paths['/api/v1/iot/meter']['get']['responses']['200']['content']['application/json']
+export type IotMetersData = NonNullable<GetIotMetersRes['data']>
+export type IotUtilityMeterItem = NonNullable<NonNullable<IotMetersData['electric'] | IotMetersData['water']>>
 
 export type IotDeviceTopic = 'alarm' | 'light' | 'curtain' | 'door' | 'unknown'
 
@@ -76,7 +80,7 @@ export type MyApartmentDetailRow = {
     value: ReactNode
 }
 
-export type TranslationFn = ((key: string) => string) & {
+export type TranslationFn = ((key: string, values?: Record<string, string | number | Date>) => string) & {
     has?: (key: string) => boolean
 }
 
@@ -119,6 +123,20 @@ export type MyApartmentInformationTabsProps = {
     iotDevices: ApartmentIotDeviceDisplayItem[]
     isIotDevicesLoading: boolean
     onOpenChangePasswordModal: () => void
+}
+
+export type UtilityUsageKey = 'electricity' | 'water'
+
+export type UtilityMonthSlot = {
+    key: string
+    label: string
+    year: number
+}
+
+export type MyApartmentUtilityUsageTabProps = {
+    t: TranslationFn
+    locale: string
+    apartmentId?: string
 }
 
 export type ApartmentStatus = 'available' | 'occupied' | 'rented' | 'maintenance' | 'reserved' | 'unavailable' | 'inactive'

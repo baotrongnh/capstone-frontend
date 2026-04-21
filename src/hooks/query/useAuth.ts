@@ -46,7 +46,14 @@ export const useLogin = (onSuccess?: () => void) => {
         },
         onError: (error: ApiErrorResponse) => {
             const msg = error?.response?.data?.message
-            const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || 'Invalid credentials or account deactivated'
+            const rawMessage = Array.isArray(msg) ? msg[0] : msg
+
+            if (typeof rawMessage === 'string' && rawMessage.toLowerCase() === 'invalid credentials') {
+                message.error(t('invalidCredentials'))
+                return
+            }
+
+            const errorMessage = rawMessage || error?.message || 'Invalid credentials or account deactivated'
             message.error(errorMessage)
         }
     })
@@ -185,7 +192,7 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
                             else reject(new Error('No access token found in redirect URL'))
                         }
                     } catch {
-                        
+
                     }
                 }, 500)
             })
@@ -218,4 +225,27 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
     }
 
     return { login, loading }
+}
+
+export const useChangePassword = (onSuccess?: () => void) => {
+    const { message } = App.useApp()
+    const t = useTranslations('Profile.settings')
+
+    return useMutation({
+        mutationFn: authService.changePassword,
+        onSuccess: () => {
+            message.success(t('changePasswordSuccess'))
+            onSuccess?.()
+        },
+        onError: (error: ApiErrorResponse) => {
+            if (error?.response?.status === 401) {
+                message.error(t('currentPasswordIncorrect'))
+                return
+            }
+
+            const msg = error?.response?.data?.message
+            const errorMessage = Array.isArray(msg) ? msg[0] : msg || error?.message || t('changePasswordFailed')
+            message.error(errorMessage)
+        }
+    })
 }
