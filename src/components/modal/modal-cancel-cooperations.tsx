@@ -1,6 +1,6 @@
 import { useCancelCooperation } from "@/hooks/query/useContracts";
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
-import { Button, Divider, Modal, Select, message } from "antd";
+import { App, Button, Divider, Modal, Select } from "antd";
 import { AlertCircle, FileText, Home } from "lucide-react";
 import { useState } from "react";
 
@@ -50,7 +50,7 @@ export default function ModalCancelCooperations({
 }: ModalCancelContractProps) {
   const [reason, setReason] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const { message } = App.useApp();
   const { mutateAsync: cancelCooperation } = useCancelCooperation(
     selectContract?.cooperationContract?.id ?? "",
   );

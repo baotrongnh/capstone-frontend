@@ -395,6 +395,8 @@
       "buildingName": "Tên tòa nhà",
       "apartmentNumber": "Số căn hộ",
       "statusLabel": "Trạng thái",
+      "iotStateOn": "Bật",
+      "iotStateOff": "Tắt",
       "address": "Địa chỉ",
       "spaceOverview": "Thông số không gian",
       "totalArea": "Tổng diện tích",
@@ -500,9 +502,11 @@
       "videoTourUrl": "Video tour",
       "videoUnavailable": "Chưa có video tour",
       "changeHousePassword": "Đổi mật khẩu nhà",
+      "doorDeviceNotFound": "Không tìm thấy thiết bị cửa để đổi mật khẩu.",
+      "doorBoardsLoadFailed": "Không thể tải danh sách thiết bị IoT cho căn hộ này.",
       "housePasswordModal": {
         "title": "Đổi mật khẩu cửa căn hộ",
-        "description": "Vui lòng xác thực mật khẩu hiện tại và thiết lập mật khẩu mới gồm 4-12 chữ số.",
+        "description": "Vui lòng nhập mã PIN hiện tại và thiết lập mã PIN mới gồm đúng 6 chữ số.",
         "oldPassword": "Mật khẩu hiện tại",
         "oldPasswordPlaceholder": "Nhập mật khẩu cửa hiện tại",
         "newPassword": "Mật khẩu mới",
@@ -518,11 +522,13 @@
           "newDifferentOld": "Mật khẩu mới phải khác mật khẩu hiện tại",
           "confirmRequired": "Vui lòng xác nhận mật khẩu mới",
           "confirmMismatch": "Mật khẩu xác nhận không khớp",
-          "format": "Mật khẩu phải gồm 4-12 chữ số"
+          "format": "Mật khẩu phải gồm đúng 6 chữ số"
         }
       },
       "description": "Mô tả",
       "amenities": "Tiện ích",
+      "iotDevices": "Thiết bị IoT",
+      "iotDevicesEmpty": "Chưa có thiết bị IoT cho căn hộ này",
       "roomsCount": "Số phòng",
       "iotDevicesCount": "Số thiết bị IoT",
       "utilityMetersCount": "Số đồng hồ tiện ích",
@@ -779,6 +785,7 @@
         },
         "fields": {
           "invoiceNumber": "Số hóa đơn",
+          "apartmentId": "Mã căn hộ",
           "status": "Trạng thái",
           "invoiceType": "Loại hóa đơn",
           "billingStart": "Kỳ thanh toán bắt đầu",

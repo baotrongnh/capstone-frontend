@@ -224,22 +224,43 @@ export const ContractCard = ({
             </div>
           )}
 
-          {contract.status === "active" && contract.isDepositPaid === true && (
-            <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
-              <div className="w-full">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+          {contract.status === "active" &&
+            contract.isDepositPaid === true &&
+            contract.category != "renewal" && (
+              <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
+                <div className="w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+                    </div>
+                    <p className="text-sm font-medium text-green-800">
+                      <span className="font-bold mr-1">Lưu ý:</span>
+                      Hợp đồng đã thanh toán và được kích hoạt!
+                    </p>
                   </div>
-                  <p className="text-sm font-medium text-green-800">
-                    <span className="font-bold mr-1">Lưu ý:</span>
-                    Hợp đồng đã thanh toán và được kích hoạt!
-                  </p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+
+          {contract.status === "active" &&
+            contract.isDepositPaid === true &&
+            contract.category === "renewal" && (
+              <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
+                <div className="w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+                    </div>
+                    <p className="text-sm font-medium text-green-800">
+                      <span className="font-bold mr-1">Lưu ý:</span>
+                      Hợp đồng đã thanh toán và đang chờ kích hoạt!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
           {contract.isDepositPaid === true && contract.status !== "active" && (
             <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
@@ -283,11 +304,9 @@ export const ContractCard = ({
         >
           <Eye size={18} />
           {(contract.status === "signed" ||
-            contract.status === "terminated") && (
-            <span className="font-medium">Xem hợp đồng</span>
-          )}
-
-          {contract.status === "active" && (
+            contract.status === "terminated" ||
+            contract.status === "expired" ||
+            contract.status === "active") && (
             <span className="font-medium">Xem hợp đồng</span>
           )}
 
@@ -298,6 +317,7 @@ export const ContractCard = ({
 
         {contract.status != "terminated" &&
           contract.status !== "active" &&
+          contract.status !== "expired" &&
           contract.isDepositPaid === false && (
             <Button
               block
