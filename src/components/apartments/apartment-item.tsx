@@ -30,6 +30,7 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
           owner?: {
                email?: string | null
                companyName?: string | null
+               fullName?: string | null
           } | null
      }).owner
      const isHomeIqOwner = owner?.email?.toLowerCase() === 'homeiq@gmail.com'
@@ -79,8 +80,8 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
                     </h1>
 
                     {!isHomeIqOwner && (
-                         <p className='mb-2 text-sm text-gray-600 line-clamp-1'>
-                              Chủ sở hữu: {partnerCompanyName || 'Chưa cập nhật'}
+                         <p className='mb-2 text-sm line-clamp-1 text-muted'>
+                              Chủ sở hữu: {partnerCompanyName || owner?.fullName}
                          </p>
                     )}
 
