@@ -80,7 +80,7 @@ export default function ApartmentItem({ apartment }: { apartment: ApartmentItem 
 
                     {!isHomeIqOwner && (
                          <p className='mb-2 text-sm text-gray-600 line-clamp-1'>
-                              {partnerCompanyName || 'Thiếu chủ sở hữu'}
+                              Chủ sở hữu: {partnerCompanyName || 'Chưa cập nhật'}
                          </p>
                     )}
 
