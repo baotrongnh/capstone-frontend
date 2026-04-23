@@ -315,21 +315,18 @@ export const ContractCard = ({
           )}
         </Button>
 
-        {contract.status != "terminated" &&
-          contract.status !== "active" &&
-          contract.status !== "expired" &&
-          contract.isDepositPaid === false && (
-            <Button
-              block
-              size="large"
-              style={{ marginBottom: 10 }}
-              onClick={onCancel}
-              className="flex items-center text-white! bg-red-500! justify-center gap-2 h-9! rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
-            >
-              <DeleteOutlined size={18} />
-              <span className="font-medium">Hủy hợp đồng</span>
-            </Button>
-          )}
+        {contract.status != "terminated" && (
+          <Button
+            block
+            size="large"
+            style={{ marginBottom: 10 }}
+            onClick={onCancel}
+            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-9! rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
+          >
+            <DeleteOutlined size={18} />
+            <span className="font-medium">Hủy hợp đồng</span>
+          </Button>
+        )}
 
         {contract.isRenewed === false && contract.status === "active" && (
           <>
