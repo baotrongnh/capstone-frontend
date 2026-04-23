@@ -43,8 +43,6 @@ export default function PropertiesSection() {
 
   const user = useAuthStore((s) => s.user);
 
-  console.log("USER", user);
-
   const { data: apartments } = useApartments(params);
 
   if (!apartments) {
@@ -247,7 +245,10 @@ export default function PropertiesSection() {
           setAuthModalOpen={setIsAuthModalOpen}
         />
 
-        <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal
+          open={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
       </div>
     </div>
   );
