@@ -56,14 +56,38 @@
       "hatay": "Ha Tay"
     },
     "highlightCity": {
-      "name": "Ho Chi Minh City",
-      "description": "A dynamic city with many rental apartment options in diverse areas, prices and sizes. Convenient location for travel, close to essential utilities, meeting the daily living and working needs of tenants.",
       "tags": {
         "publicTransport": "Public Transport",
         "convenientLife": "Convenient Living",
         "easyMove": "Easy to Move",
         "economicCenter": "Economic Center",
-        "manyChoices": "Many Choices"
+        "manyChoices": "Many Choices",
+        "safeArea": "Safe Area",
+        "nearUtilities": "Near Utilities",
+        "seasideLife": "Seaside Life",
+        "tourismHub": "Tourism Hub",
+        "greenSpace": "Green Space",
+        "nightlife": "Active Nightlife"
+      },
+      "hanoi": {
+        "name": "Hanoi",
+        "description": "The capital city with rich cultural heritage and convenient living conditions. Hanoi offers diverse apartment options with easy access to public transportation, educational institutions, and commercial centers."
+      },
+      "danang": {
+        "name": "Da Nang",
+        "description": "A beautiful coastal city known for its scenic beaches and modern infrastructure. Da Nang provides excellent opportunities for both living and working with reasonable rental prices."
+      },
+      "dalat": {
+        "name": "Da Lat",
+        "description": "A charming hill station city famous for its cool climate and natural beauty. Da Lat offers peaceful living conditions perfect for those seeking a quiet lifestyle away from the bustling city."
+      },
+      "hcm": {
+        "name": "Ho Chi Minh City",
+        "description": "A dynamic city with many rental apartment options in diverse areas, prices and sizes. Convenient location for travel, close to essential utilities, meeting the daily living and working needs of tenants."
+      },
+      "nhatrang": {
+        "name": "Nha Trang",
+        "description": "A vibrant coastal city with beautiful beaches and a tropical climate. Nha Trang offers affordable rental options and a relaxed lifestyle with easy access to entertainment and leisure activities."
       }
     },
     "services": {
@@ -1136,17 +1160,34 @@
         {
           "percentage": "70/30",
           "description": "Standard Commission Split for Property Owners",
-          "details": ["Owners retain 70% of rental income", "Platform receives 30% as management and maintenance fee", "Includes professional cleaning, tenant screening, and support", "Quarterly revenue reports provided"]
+          "details": [
+            "Owners retain 70% of rental income",
+            "Platform receives 30% as management and maintenance fee",
+            "Includes professional cleaning, tenant screening, and support",
+            "Quarterly revenue reports provided"
+          ]
         },
         {
           "percentage": "85/15",
           "description": "Premium Partner Program (Annual Contract)",
-          "details": ["Owners retain 85% of rental income", "Platform receives 15% commission", "Minimum 5 properties required", "Dedicated account manager assigned", "Priority repair and maintenance services"]
+          "details": [
+            "Owners retain 85% of rental income",
+            "Platform receives 15% commission",
+            "Minimum 5 properties required",
+            "Dedicated account manager assigned",
+            "Priority repair and maintenance services"
+          ]
         },
         {
           "percentage": "60/40",
           "description": "Full Management Services",
-          "details": ["Platform handles 100% of property management", "Owners receive 60% of rental income", "Includes 24/7 support, tenant management, and maintenance", "Marketing and tenant acquisition included", "Professional photography and virtual tours"]
+          "details": [
+            "Platform handles 100% of property management",
+            "Owners receive 60% of rental income",
+            "Includes 24/7 support, tenant management, and maintenance",
+            "Marketing and tenant acquisition included",
+            "Professional photography and virtual tours"
+          ]
         }
       ],
       "simple": "Simple & Transparent",
@@ -1193,7 +1234,11 @@
     },
     "introduction": {
       "description": "HomeIQ is a modern property management and rental platform that connects tenants with property owners through comprehensive digitization processes.",
-      "features": ["Professional Operations", "Transparent Contracts", "Optimized Sustainable Revenue"]
+      "features": [
+        "Professional Operations",
+        "Transparent Contracts",
+        "Optimized Sustainable Revenue"
+      ]
     },
     "payment": {
       "deposit": "The security deposit must equal 1-2 months of rent and is held throughout the lease period.",

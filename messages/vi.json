@@ -43,7 +43,7 @@
       "peoplePlaceholder": "1-2 người",
       "price": "Khoảng giá",
       "pricePlaceholder": "VNĐ / tháng",
-      "submit": "Tìm kiếm"
+      "submit": "Tìm hiểu ngay"
     },
     "cities": {
       "all": "Tất cả",
@@ -53,17 +53,42 @@
       "nhatrang": "Nha Trang",
       "haiduong": "Hải Dương",
       "hcm": "TP. Hồ Chí Minh",
-      "hatay": "Hà Tây"
+      "hatay": "Hà Tây",
+      "dalat": "Đà Lạt"
     },
     "highlightCity": {
-      "name": "Thành Phố Hồ Chí Minh",
-      "description": "Thành phố năng động với nhiều lựa chọn căn hộ cho thuê ở đa dạng khu vực, mức giá và diện tích. Vị trí thuận tiện di chuyển, gần các tiện ích thiết yếu, đáp ứng tốt nhu cầu sinh hoạt và làm việc hằng ngày của người thuê.",
       "tags": {
         "publicTransport": "Phương tiện công cộng",
         "convenientLife": "Đời sống tiện nghi",
         "easyMove": "Di chuyển thuận tiện",
         "economicCenter": "Trung tâm kinh tế",
-        "manyChoices": "Nhiều lựa chọn"
+        "manyChoices": "Nhiều lựa chọn",
+        "safeArea": "Khu vực an toàn",
+        "nearUtilities": "Gần nhiều tiện ích",
+        "seasideLife": "Cuộc sống ven biển",
+        "tourismHub": "Trung tâm du lịch",
+        "greenSpace": "Không gian xanh",
+        "nightlife": "Nhịp sống về đêm"
+      },
+      "hanoi": {
+        "name": "Hà Nội",
+        "description": "Thủ đô với di sản văn hóa phong phú và điều kiện sinh sống tiện nghi. Hà Nội cung cấp đa dạng lựa chọn căn hộ cho thuê với dễ dàng tiếp cận phương tiện công cộng, các trường học và trung tâm thương mại."
+      },
+      "danang": {
+        "name": "Đà Nẵng",
+        "description": "Thành phố ven biển xinh đẹp nổi tiếng với cơ sở hạ tầng hiện đại. Đà Nẵng cung cấp cơ hội tuyệt vời cho cả sinh sống và làm việc với giá thuê hợp lý."
+      },
+      "dalat": {
+        "name": "Đà Lạt",
+        "description": "Thành phố núi có charm riêng nổi tiếng với khí hậu mát mẻ và phong cảnh tự nhiên. Đà Lạt mang đến điều kiện sống yên tĩnh hoàn hảo cho những ai tìm kiếm lối sống xa xa sự nhộn nhịp của thành phố lớn."
+      },
+      "hcm": {
+        "name": "TP. Hồ Chí Minh",
+        "description": "Thành phố năng động với nhiều lựa chọn căn hộ cho thuê ở đa dạng khu vực, mức giá và diện tích. Vị trí thuận tiện di chuyển, gần các tiện ích thiết yếu, đáp ứng tốt nhu cầu sinh hoạt và làm việc hằng ngày của người thuê."
+      },
+      "nhatrang": {
+        "name": "Nha Trang",
+        "description": "Thành phố ven biển sôi động nổi tiếng với các bãi biển đẹp và khí hậu nhiệt đới. Nha Trang cung cấp các lựa chọn thuê với giá cả hợp lý và lối sống thư giãn với dễ dàng tiếp cận các hoạt động giải trí và thư giãn."
       }
     },
     "services": {
@@ -1139,17 +1164,34 @@
         {
           "percentage": "70/30",
           "description": "Chia Sẻ Hoa Hồng Tiêu Chuẩn Cho Chủ Sở Hữu Bất Động Sản",
-          "details": ["Chủ sở hữu nhận 70% doanh thu cho thuê", "Nền tảng nhận 30% phí quản lý và bảo trì", "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ", "Báo cáo doanh thu hàng quý"]
+          "details": [
+            "Chủ sở hữu nhận 70% doanh thu cho thuê",
+            "Nền tảng nhận 30% phí quản lý và bảo trì",
+            "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ",
+            "Báo cáo doanh thu hàng quý"
+          ]
         },
         {
           "percentage": "85/15",
           "description": "Chương Trình Đối Tác Cao Cấp (Hợp Đồng Hàng Năm)",
-          "details": ["Chủ sở hữu nhận 85% doanh thu cho thuê", "Nền tảng nhận 15% hoa hồng", "Yêu cầu tối thiểu 5 bất động sản", "Chỉ định trưởng tài khoản riêng", "Dịch vụ sửa chữa và bảo trì ưu tiên"]
+          "details": [
+            "Chủ sở hữu nhận 85% doanh thu cho thuê",
+            "Nền tảng nhận 15% hoa hồng",
+            "Yêu cầu tối thiểu 5 bất động sản",
+            "Chỉ định trưởng tài khoản riêng",
+            "Dịch vụ sửa chữa và bảo trì ưu tiên"
+          ]
         },
         {
           "percentage": "60/40",
           "description": "Dịch Vụ Quản Lý Toàn Diện",
-          "details": ["Nền tảng xử lý 100% quản lý bất động sản", "Chủ sở hữu nhận 60% doanh thu cho thuê", "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì", "Tiếp thị và tìm kiếm người thuê được bao gồm", "Chụp ảnh chuyên nghiệp và tour ảo 3D"]
+          "details": [
+            "Nền tảng xử lý 100% quản lý bất động sản",
+            "Chủ sở hữu nhận 60% doanh thu cho thuê",
+            "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì",
+            "Tiếp thị và tìm kiếm người thuê được bao gồm",
+            "Chụp ảnh chuyên nghiệp và tour ảo 3D"
+          ]
         }
       ],
       "simple": "Đơn Giản & Minh Bạch",
@@ -1196,7 +1238,11 @@
     },
     "introduction": {
       "description": "HomeIQ là nền tảng quản lý và khai thác căn hộ hiện đại, kết nối khách thuê với chủ sở hữu tài sản bằng quy trình số hóa toàn diện.",
-      "features": ["Vận hành chuyên nghiệp", "Hợp đồng minh bạch", "Tối ưu doanh thu bền vững"]
+      "features": [
+        "Vận hành chuyên nghiệp",
+        "Hợp đồng minh bạch",
+        "Tối ưu doanh thu bền vững"
+      ]
     },
     "payment": {
       "deposit": "Tiền cọc phải bằng 1-2 tháng tiền thuê, được giữ trong suốt thời gian hợp đồng.",
