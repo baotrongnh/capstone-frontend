@@ -110,17 +110,14 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   const partnerCompanyName = apt?.owner?.companyName?.trim()
 
   const handleFindDirection = () => {
-    if (apt?.latitude && apt?.longitude) {
-      window.open(
-        `https://www.google.com/maps/dir/?api=1&destination=${apt.latitude},${apt.longitude}`,
-        "_blank",
-      )
-    } else if (fullAddress) {
-      window.open(
-        `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`,
-        "_blank",
-      )
+    if (!apt?.latitude || !apt?.longitude) {
+      return
     }
+
+    window.open(
+      `https://www.google.com/maps/dir/?api=1&destination=${apt.latitude},${apt.longitude}`,
+      "_blank",
+    )
   }
 
   const handleSubmitRating = () => {
@@ -479,14 +476,11 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
             </button>
           </div>
         ) : (
-          <button
-            className="w-full h-48 rounded-lg bg-gray-100 flex flex-col items-center justify-center gap-2 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer border-0"
-            onClick={handleFindDirection}
-          >
+          <div className="w-full h-48 rounded-lg bg-gray-100 flex flex-col items-center justify-center gap-2 text-gray-500 border-0">
             <MapPin size={32} />
-            <span className="text-sm">{t("location.searchOnMaps")}</span>
-            <span className="text-xs text-gray-400">{fullAddress}</span>
-          </button>
+            <span className="text-sm">Chưa có tọa độ để mở Google Maps</span>
+            {fullAddress ? <span className="text-xs text-gray-400">{fullAddress}</span> : null}
+          </div>
         )}
       </div>
 
