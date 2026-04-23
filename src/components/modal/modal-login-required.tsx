@@ -1,11 +1,21 @@
-import { Modal } from 'antd';
-import { redirect } from 'next/navigation';
+"use client"
 
-export default function ModalLoginRequired({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (isModalOpen: boolean) => void }) {
+import { Modal } from 'antd';
+
+type ModalLoginRequiredProps = {
+     isModalOpen: boolean
+     setIsModalOpen: (isModalOpen: boolean) => void
+     setAuthModalOpen: (isModalOpen: boolean) => void
+}
+
+export default function ModalLoginRequired({
+     isModalOpen,
+     setIsModalOpen,
+     setAuthModalOpen,
+}: ModalLoginRequiredProps) {
      const handleOk = () => {
           setIsModalOpen(false)
-          const redirectUrl = `/?openAuthModal=true&redirect=${encodeURIComponent(window.location.pathname)}`
-          redirect(redirectUrl)
+          setAuthModalOpen(true)
      }
 
      const handleCancel = () => {
