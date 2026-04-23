@@ -1,4 +1,5 @@
 "use client";
+import AuthModal from "@/components/modal/auth-modal";
 import ModalVerify from "@/components/modal/modal-verify";
 import AppPromoSection from "@/components/sections/app-promo";
 import ServicesSection from "@/components/sections/services";
@@ -38,6 +39,7 @@ export default function PartnerContact() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showModalLogin, setShowModalLogin] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [modalVerify, setModalVerify] = useState(false);
   const { mutateAsync: createCooperation } = useCreateCooperation();
 
@@ -568,7 +570,9 @@ export default function PartnerContact() {
       <ModalLoginRequired
         isModalOpen={showModalLogin}
         setIsModalOpen={setShowModalLogin}
+        setAuthModalOpen={setIsAuthModalOpen}
       />
+      <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 }

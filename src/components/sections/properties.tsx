@@ -10,6 +10,7 @@ import { StarFilled } from "@ant-design/icons";
 import { Button, Image } from "antd";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
+import AuthModal from "../modal/auth-modal";
 import ModalBooking from "../modal/modal-booking";
 import ModalBookingSchedule from "../modal/modal-booking-schedule";
 import ModalLoginRequired from "../modal/modal-login-required";
@@ -20,6 +21,7 @@ export default function PropertiesSection() {
   const [modalReservation, setModalReservation] = useState(false);
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] =
     useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const [selectedApartmentId, setSelectedApartmentId] = useState<
@@ -242,7 +244,10 @@ export default function PropertiesSection() {
         <ModalLoginRequired
           isModalOpen={isModalLoginRequiredOpen}
           setIsModalOpen={setIsModalLoginRequiredLogin}
+          setAuthModalOpen={setIsAuthModalOpen}
         />
+
+        <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       </div>
     </div>
   );
