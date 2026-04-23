@@ -245,7 +245,10 @@ export default function PropertiesSection() {
           setAuthModalOpen={setIsAuthModalOpen}
         />
 
-        <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+        <AuthModal
+          open={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
       </div>
     </div>
   );
