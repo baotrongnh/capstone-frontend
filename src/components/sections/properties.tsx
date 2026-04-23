@@ -41,6 +41,8 @@ export default function PropertiesSection() {
 
   const user = useAuthStore((s) => s.user);
 
+  console.log("USER", user);
+
   const { data: apartments } = useApartments(params);
 
   if (!apartments) {
