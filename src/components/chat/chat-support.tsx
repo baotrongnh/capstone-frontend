@@ -1,5 +1,6 @@
 'use client'
 
+import AuthModal from '@/components/modal/auth-modal'
 import ModalLoginRequired from '@/components/modal/modal-login-required'
 import { useApartment } from '@/hooks/query/useApartments'
 import { chatService } from '@/lib/services/chat.service'
@@ -42,6 +43,7 @@ export default function ChatSupport() {
 
   const user = useAuthStore((s) => s.user)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [conversationId, setConversationId] = useState<string | null>(null)
@@ -246,7 +248,10 @@ export default function ChatSupport() {
       <ModalLoginRequired
         isModalOpen={isLoginModalOpen}
         setIsModalOpen={setIsLoginModalOpen}
+        setAuthModalOpen={setIsAuthModalOpen}
       />
+
+      <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
       <ChatWindow open={isChatOpen} title={title} onClose={() => setIsChatOpen(false)}>
         <div className="flex h-full flex-col">

@@ -2,6 +2,7 @@
 
 import ApartmentMediaCarousel from "@/components/apartments/apartment-media-carousel"
 import SimilarApartments from "@/components/apartments/similar-apartments"
+import AuthModal from "@/components/modal/auth-modal"
 import ModalBooking from "@/components/modal/modal-booking"
 import ModalBookingSchedule from "@/components/modal/modal-booking-schedule"
 import ModalLoginRequired from "@/components/modal/modal-login-required"
@@ -52,6 +53,7 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
   )
 
   const [isModalLoginRequiredOpen, setIsModalLoginRequiredLogin] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isModalBookingApartmentOpen, setIsModalBookingApartmentOpen] = useState(false)
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
@@ -153,7 +155,9 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
       <ModalLoginRequired
         isModalOpen={isModalLoginRequiredOpen}
         setIsModalOpen={setIsModalLoginRequiredLogin}
+        setAuthModalOpen={setIsAuthModalOpen}
       />
+      <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       <ModalBookingSchedule
         open={isScheduleModalOpen}
         onClose={() => setIsScheduleModalOpen(false)}
