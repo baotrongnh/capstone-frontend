@@ -44,7 +44,15 @@ export const useUpdateDoorPin = () => {
     return useMutation({
         mutationFn: updateDoorPin,
         onSuccess: (res) => {
-            message.success(res?.message || 'House password updated successfully')
+            const isSuccess = Boolean(res?.data?.success)
+            const responseMessage = res?.data?.message || res?.message
+
+            if (!isSuccess) {
+                message.error(responseMessage || 'Unable to update house password')
+                return
+            }
+
+            message.success(responseMessage || 'House password updated successfully')
             queryClient.invalidateQueries({ queryKey: ['user-apartments'] })
         },
         onError: (error: AxiosError<UserApartmentApiError>) => {

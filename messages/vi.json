@@ -525,6 +525,8 @@
       "housePasswordModal": {
         "title": "Đổi mật khẩu cửa căn hộ",
         "description": "Vui lòng nhập mã PIN hiện tại và thiết lập mã PIN mới gồm đúng 6 chữ số.",
+        "firstPassTitle": "Thiết lập mật khẩu cửa lần đầu",
+        "firstPassDescription": "Vì chính sách bảo mật, vui lòng tạo mật khẩu cửa mới trước khi sử dụng cửa. Mật khẩu cần gồm đúng 6 chữ số để đảm bảo an toàn.",
         "oldPassword": "Mật khẩu hiện tại",
         "oldPasswordPlaceholder": "Nhập mật khẩu cửa hiện tại",
         "newPassword": "Mật khẩu mới",
@@ -532,6 +534,7 @@
         "confirmPassword": "Xác nhận mật khẩu mới",
         "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
         "submit": "Cập nhật mật khẩu",
+        "firstPassSubmit": "Thiết lập mật khẩu",
         "cancel": "Hủy",
         "validation": {
           "oldRequired": "Vui lòng nhập mật khẩu hiện tại",

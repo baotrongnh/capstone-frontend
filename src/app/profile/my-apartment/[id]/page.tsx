@@ -31,6 +31,7 @@ export default function MyApartmentDetailPage() {
     const userApartmentId = typeof params?.id === 'string' ? params.id : ''
 
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
+    const [hasCompletedFirstPassSetup, setHasCompletedFirstPassSetup] = useState(false)
 
     const { data, isLoading } = useUserApartmentDetail(userApartmentId)
     const { mutate: updateHousePassword, isPending: isUpdatingHousePassword } = useUpdateDoorPin()
@@ -38,6 +39,8 @@ export default function MyApartmentDetailPage() {
     const rawApartment = data?.data as UserApartmentDetailItem | undefined
     const apartment = rawApartment?.apartment
     const apartmentId = rawApartment?.apartmentId
+    const isFirstPassSetup = Boolean(rawApartment?.isFirstPass)
+    const isModalForcedByFirstPass = isFirstPassSetup && !hasCompletedFirstPassSetup
 
     const { data: iotBoardsResponse, isLoading: isIotDevicesLoading } = useIotBoardsByApartment(apartmentId)
 
@@ -81,6 +84,10 @@ export default function MyApartmentDetailPage() {
     }
 
     const handleCloseChangePasswordModal = () => {
+        if (isModalForcedByFirstPass) {
+            return
+        }
+
         setIsChangePasswordModalOpen(false)
     }
 
@@ -106,7 +113,12 @@ export default function MyApartmentDetailPage() {
                     payload,
                 },
                 {
-                    onSuccess: () => {
+                    onSuccess: (res) => {
+                        if (!res?.data?.success) {
+                            return
+                        }
+
+                        setHasCompletedFirstPassSetup(true)
                         setIsChangePasswordModalOpen(false)
                     },
                 },
@@ -204,8 +216,9 @@ export default function MyApartmentDetailPage() {
             />
 
             <ChangeHousePasswordModal
-                open={isChangePasswordModalOpen}
+                open={isModalForcedByFirstPass || isChangePasswordModalOpen}
                 isSubmitting={isUpdatingHousePassword}
+                isFirstPassSetup={isFirstPassSetup}
                 onClose={handleCloseChangePasswordModal}
                 onSubmit={handleChangeHousePassword}
             />

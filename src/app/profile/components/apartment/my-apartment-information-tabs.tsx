@@ -59,15 +59,11 @@ export function MyApartmentInformationTabs({
                 <div className="space-y-2">
                     {iotDevices.map((device) => {
                         const Icon = IOT_TOPIC_ICON_MAP[device.normalizedTopic] ?? DEFAULT_IOT_TOPIC_ICON
-                        const stateLabel = getIotStateLabel(device.state)
                         return (
                             <div key={device.key} className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
                                 <div className="flex items-center gap-2 font-medium text-slate-900">
                                     <Icon className="text-primary" />
                                     <span>{toDisplayText(device.deviceName)}</span>
-                                </div>
-                                <div className="mt-1 text-xs text-slate-500">
-                                    {`${t('statusLabel')}: ${stateLabel}`}
                                 </div>
                             </div>
                         )
@@ -217,33 +213,29 @@ export function MyApartmentInformationTabs({
             ]
             : []),
 
-        ...(hasDisplayValue(rawApartment?.apartmentDoorPassword)
-            ? [
-                {
-                    key: 'apartmentDoorPassword',
-                    label: t('apartmentDoorPassword'),
-                    value: (
-                        <div className="flex w-full items-center justify-start">
-                            <Button
-                                size="small"
-                                type="default"
-                                icon={<LockOutlined />}
-                                style={{
-                                    borderRadius: 8,
-                                    borderColor: '#c7d2fe',
-                                    backgroundColor: '#eef2ff',
-                                    color: '#3730a3',
-                                    fontWeight: 500,
-                                }}
-                                onClick={onOpenChangePasswordModal}
-                            >
-                                {t('changeHousePassword')}
-                            </Button>
-                        </div>
-                    ),
-                },
-            ]
-            : []),
+        {
+            key: 'apartmentDoorPassword',
+            label: t('apartmentDoorPassword'),
+            value: (
+                <div className="flex w-full items-center justify-start">
+                    <Button
+                        size="small"
+                        type="default"
+                        icon={<LockOutlined />}
+                        style={{
+                            borderRadius: 8,
+                            borderColor: '#c7d2fe',
+                            backgroundColor: '#eef2ff',
+                            color: '#3730a3',
+                            fontWeight: 500,
+                        }}
+                        onClick={onOpenChangePasswordModal}
+                    >
+                        {t('changeHousePassword')}
+                    </Button>
+                </div>
+            ),
+        },
         ...(hasDisplayValue(emergencyContactName)
             ? [
                 {

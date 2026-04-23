@@ -57,19 +57,20 @@ export type ApartmentVideoTourProps = {
 }
 
 export type ChangeHousePasswordFormValues = {
-    oldPassword: string
+    oldPassword?: string
     newPassword: string
     confirmNewPassword: string
 }
 
 export type ChangeHousePasswordSubmitPayload = {
-    oldPin: string
+    oldPin?: string
     newPin: string
 }
 
 export type ChangeHousePasswordModalProps = {
     open: boolean
     isSubmitting: boolean
+    isFirstPassSetup?: boolean
     onClose: () => void
     onSubmit: (payload: ChangeHousePasswordSubmitPayload) => void
 }
