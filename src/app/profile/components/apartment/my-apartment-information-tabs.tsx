@@ -38,20 +38,6 @@ export function MyApartmentInformationTabs({
     const emergencyContactName = rawApartment?.emergencyContactName ?? rawApartment?.user?.emergencyContactName
     const emergencyContactPhone = rawApartment?.emergencyContactPhone ?? rawApartment?.user?.emergencyContactPhone
 
-    const getIotStateLabel = (state: string | null | undefined) => {
-        const normalizedState = (state ?? '').trim().toLowerCase()
-
-        if (normalizedState === 'on') {
-            return t('iotStateOn')
-        }
-
-        if (normalizedState === 'off') {
-            return t('iotStateOff')
-        }
-
-        return toDisplayText(state)
-    }
-
     const iotDevicesContent = isIotDevicesLoading
         ? t('loading')
         : iotDevices.length > 0
