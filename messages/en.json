@@ -547,6 +547,8 @@
       "housePasswordModal": {
         "title": "Change apartment door password",
         "description": "Please enter your current PIN and set a new PIN with exactly 6 digits.",
+        "firstPassTitle": "Set up your door password",
+        "firstPassDescription": "For security policy compliance, please set a new door password before using the door. Your password must contain exactly 6 digits.",
         "oldPassword": "Current password",
         "oldPasswordPlaceholder": "Enter current door password",
         "newPassword": "New password",
@@ -554,6 +556,7 @@
         "confirmPassword": "Confirm new password",
         "confirmPasswordPlaceholder": "Re-enter new password",
         "submit": "Update password",
+        "firstPassSubmit": "Set password",
         "cancel": "Cancel",
         "validation": {
           "oldRequired": "Please enter your current password",

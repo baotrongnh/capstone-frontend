@@ -941,7 +941,7 @@ export interface paths {
         head?: never;
         /**
          * Update editable PDF content of contract
-         * @description Update fields that are rendered in contract PDF and regenerate PDF immediately.
+         * @description Update fields that are rendered in the rental contract PDF and regenerate the PDF immediately. landlordAddress is shown as business address, while landlordIdIssuePlace is kept only for backward compatibility.
          */
         patch: operations["ContractsController_updatePdfContent"];
         trace?: never;
@@ -1189,7 +1189,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Update smart door PIN for tenant flow with old PIN verification and board acknowledgement */
+        /** Update smart door PIN for tenant flow with board acknowledgement; old PIN is only required after the first setup */
         patch: operations["IoTController_updateDoorPin"];
         trace?: never;
     };
@@ -1860,7 +1860,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** User updates own house password */
+        /** Legacy endpoint for updating the cached local house password field */
         patch: operations["UserApartmentsController_updateMyHousePassword"];
         trace?: never;
     };
@@ -3164,29 +3164,6 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
-        RoomDto: {
-            id: string;
-            /** @example R01 */
-            roomNumber: string;
-            /** @example bedroom */
-            roomType: string;
-            /** @example 20.00 */
-            area?: string | null;
-            /** @example true */
-            hasWindow: boolean;
-            /** @example true */
-            hasAirConditioning: boolean;
-            /** @example false */
-            hasPrivateBathroom: boolean;
-            /** @example 1 */
-            maxOccupancy: number;
-            /** @example 5000000.00 */
-            rentPrice?: string | null;
-            /** @example available */
-            status: string;
-            description?: string | null;
-            images?: string[] | null;
-        };
         OwnerSummaryDto: {
             /** @example e33f798c-7978-4a86-b243-b3ac43e020ba */
             id: string;
@@ -3366,7 +3343,6 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
-            rooms: components["schemas"]["RoomDto"][];
             owner?: components["schemas"]["OwnerSummaryDto"];
             /** @example [] */
             iotDevices: Record<string, never>[];
@@ -3521,6 +3497,16 @@ export interface components {
             id: string;
             /** @example P-1205 */
             apartmentNumber: string;
+            /**
+             * @description Mã phường/xã (v2)
+             * @example 26728
+             */
+            wardCode?: number | null;
+            /**
+             * @description Mã tỉnh/thành (v2), auto-resolved từ wardCode
+             * @example 79
+             */
+            provinceCode?: number | null;
             /**
              * @description inactive when media is missing, verified when both image and video are uploaded at submit
              * @example inactive
@@ -4059,7 +4045,7 @@ export interface components {
             provinceCode?: number | null;
             /** @example Phuong Ben Nghe */
             wardName?: string | null;
-            /** @example Thanh pho Ho Chi Minh */
+            /** @example Thành phố Hồ Chí Minh */
             provinceName?: string | null;
             /** @example 12 Nguyễn Huệ, Phường Bến Nghé */
             streetAddress?: string | null;
@@ -4076,7 +4062,7 @@ export interface components {
         };
         ContractListMemberUserDto: {
             id: string;
-            /** @example Nguyen Van A */
+            /** @example Nguyễn Văn A */
             fullName: string;
             /** @example user@example.com */
             email: string;
@@ -4135,7 +4121,7 @@ export interface components {
         };
         ContractCreatorDto: {
             id: string;
-            /** @example Le Van B */
+            /** @example Lê Văn B */
             fullName: string;
         };
         ContractInvoiceDto: {
@@ -4151,7 +4137,7 @@ export interface components {
         };
         ContractMemberUserDto: {
             id: string;
-            /** @example Nguyen Van A */
+            /** @example Nguyễn Văn A */
             fullName: string;
             /** @example user@example.com */
             email: string;
@@ -4206,17 +4192,17 @@ export interface components {
             utilitiesCharges?: Record<string, never> | null;
             contractTerms?: string | null;
             specialConditions?: string | null;
-            /** @example Cong ty TNHH IntelliServOps */
+            /** @example Hoàng Kim Long */
             landlordName?: string | null;
-            /** @example 0312345678 */
+            /** @example 060204000351 */
             landlordIdNumber?: string | null;
-            /** @example 01/01/2020 */
+            /** @example 19/04/2021 */
             landlordIdIssueDate?: string | null;
-            /** @example So KH&DT TP. Ho Chi Minh */
+            /** @example Legacy field - not rendered in rental contract PDF */
             landlordIdIssuePlace?: string | null;
-            /** @example TP. Ho Chi Minh, Viet Nam */
+            /** @example Chung cư Vinhomes Grand Park, phường Long Bình, TP Thủ Đức */
             landlordAddress?: string | null;
-            /** @example 1900 0000 */
+            /** @example 0388969964 */
             landlordPhone?: string | null;
             /** @example active */
             status: string;
@@ -4526,32 +4512,32 @@ export interface components {
         UpdateContractPdfContentDto: {
             /**
              * @description Landlord name displayed in PDF (Party A)
-             * @example Cong ty TNHH IntelliServOps
+             * @example Hoàng Kim Long
              */
             landlordName?: string;
             /**
-             * @description Landlord/company ID number displayed in PDF
-             * @example 0312345678
+             * @description Landlord national ID number displayed in PDF
+             * @example 060204000351
              */
             landlordIdNumber?: string;
             /**
              * @description Issue date of landlord ID/license
-             * @example 01/01/2020
+             * @example 19/04/2021
              */
             landlordIdIssueDate?: string;
             /**
-             * @description Issue place of landlord ID/license
-             * @example So KH&DT TP. Ho Chi Minh
+             * @description Legacy issue-place field kept for backward compatibility; rental contract PDF no longer renders this value
+             * @example Canh sat quan ly hanh chinh ve trat tu xa hoi
              */
             landlordIdIssuePlace?: string;
             /**
-             * @description Landlord registered address displayed in PDF
-             * @example TP. Ho Chi Minh, Viet Nam
+             * @description Landlord business address displayed in PDF
+             * @example Chung cư Vinhomes Grand Park, phường Long Bình, TP Thủ Đức
              */
             landlordAddress?: string;
             /**
              * @description Landlord phone number displayed in PDF
-             * @example 1900 0000
+             * @example 0388969964
              */
             landlordPhone?: string;
             /**
@@ -4587,12 +4573,12 @@ export interface components {
             paymentMethod?: "bank_transfer" | "cash" | "e_wallet" | "auto_debit" | "credit_card" | "debit_card";
             /**
              * @description Special conditions shown in contract PDF
-             * @example Khong nuoi thu cung trong can ho.
+             * @example Không nuôi thú cưng trong căn hộ.
              */
             specialConditions?: string;
             /**
              * @description Additional contract terms shown in contract PDF
-             * @example Khong thay doi ket cau can ho trong thoi han thue.
+             * @example Không thay đổi kết cấu căn hộ trong thời hạn thuê.
              */
             contractTerms?: string;
         };
@@ -4664,7 +4650,7 @@ export interface components {
         CancelContractDto: {
             /**
              * @description Reason provided by user when cancelling contract
-             * @example Khong co nhu cau thue nua
+             * @example Không có nhu cầu thuê nữa
              */
             reason: string;
         };
@@ -4865,9 +4851,14 @@ export interface components {
             id?: string;
             /**
              * Format: uuid
-             * @description Optional apartment owning this board and its child devices
+             * @description Optional apartment owning this board and its child devices. Re-link is only allowed after unlink.
              */
             apartmentId?: string;
+            /**
+             * @description Optional board status. When updated, the same status is propagated to all child devices.
+             * @enum {string}
+             */
+            status?: "active" | "inactive";
         };
         IoTBoardDeleteResultDto: {
             /** @example ESP_A101 */
@@ -4937,10 +4928,10 @@ export interface components {
         };
         UpdateDoorPinDto: {
             /**
-             * @description Current 6-digit door PIN
+             * @description Current 6-digit door PIN. Optional on first-time setup when the apartment door has no active PIN yet.
              * @example 258036
              */
-            oldPin: string;
+            oldPin?: string;
             /**
              * @description New 6-digit door PIN
              * @example 290304
@@ -4982,6 +4973,11 @@ export interface components {
              * @enum {string}
              */
             state?: "ON" | "OFF";
+            /**
+             * @description Optional runtime status for this board child device.
+             * @enum {string}
+             */
+            status?: "active" | "inactive";
         };
         IoTBoardDeviceDeleteResultDto: {
             /** @example 36ed4722-82e2-49e9-8175-4d099e80102d */
@@ -6194,7 +6190,11 @@ export interface components {
             moveInDate?: string | null;
             /** Format: date-time */
             moveOutDate?: string | null;
-            apartmentDoorPassword?: string | null;
+            /**
+             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @example true
+             */
+            isFirstPass: boolean;
             buildingGateCode?: string | null;
             smartLockPin?: string | null;
             mailboxCode?: string | null;
@@ -6445,7 +6445,11 @@ export interface components {
             moveInDate?: string | null;
             /** Format: date-time */
             moveOutDate?: string | null;
-            apartmentDoorPassword?: string | null;
+            /**
+             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @example true
+             */
+            isFirstPass: boolean;
             buildingGateCode?: string | null;
             smartLockPin?: string | null;
             mailboxCode?: string | null;
@@ -6475,7 +6479,11 @@ export interface components {
             moveInDate?: string | null;
             /** Format: date-time */
             moveOutDate?: string | null;
-            apartmentDoorPassword?: string | null;
+            /**
+             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @example true
+             */
+            isFirstPass: boolean;
             buildingGateCode?: string | null;
             smartLockPin?: string | null;
             mailboxCode?: string | null;
@@ -6669,7 +6677,7 @@ export interface components {
             id: string;
             /** @example A101 */
             apartmentNumber: string;
-            /** @example 123 Nguyen Hue, Q1 */
+            /** @example 123 Nguyễn Huệ, Quận 1 */
             address: string;
             /** @example 15000000.00 */
             baseRentPrice: string;

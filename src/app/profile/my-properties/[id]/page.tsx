@@ -156,7 +156,7 @@ export default function MyPropertyDetailPage() {
         {
             key: 'roomsCount',
             label: tApartment('roomsCount'),
-            value: toDisplayText(apartment?.rooms?.length),
+            value: toDisplayText(apartment?.numberOfBedrooms),
         },
         {
             key: 'iotDevicesCount',

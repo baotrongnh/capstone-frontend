@@ -5,6 +5,7 @@ import { ChangeHousePasswordFormValues, ChangeHousePasswordModalProps } from '@/
 export function ChangeHousePasswordModal({
     open,
     isSubmitting,
+    isFirstPassSetup = false,
     onClose,
     onSubmit,
 }: ChangeHousePasswordModalProps) {
@@ -12,15 +13,19 @@ export function ChangeHousePasswordModal({
     const [form] = Form.useForm<ChangeHousePasswordFormValues>()
 
     const handleClose = () => {
+        if (isFirstPassSetup) {
+            return
+        }
+
         form.resetFields()
         onClose()
     }
 
     const handleFinish = (values: ChangeHousePasswordFormValues) => {
-        const oldPin = values.oldPassword.trim()
         const newPin = values.newPassword.trim()
+        const oldPin = values.oldPassword?.trim()
 
-        if (oldPin === newPin) {
+        if (!isFirstPassSetup && oldPin === newPin) {
             form.setFields([
                 {
                     name: 'newPassword',
@@ -30,7 +35,11 @@ export function ChangeHousePasswordModal({
             return
         }
 
-        onSubmit({ oldPin, newPin })
+        onSubmit(
+            isFirstPassSetup
+                ? { newPin }
+                : { oldPin, newPin },
+        )
     }
 
     return (
@@ -38,21 +47,33 @@ export function ChangeHousePasswordModal({
             open={open}
             onCancel={handleClose}
             onOk={() => form.submit()}
-            okText={t('housePasswordModal.submit')}
+            okText={isFirstPassSetup ? t('housePasswordModal.firstPassSubmit') : t('housePasswordModal.submit')}
             cancelText={t('housePasswordModal.cancel')}
-            title={t('housePasswordModal.title')}
+            title={isFirstPassSetup ? t('housePasswordModal.firstPassTitle') : t('housePasswordModal.title')}
             confirmLoading={isSubmitting}
             width={520}
             centered
             destroyOnHidden
+            closable={!isFirstPassSetup}
+            maskClosable={!isFirstPassSetup}
+            keyboard={!isFirstPassSetup}
             styles={{
                 header: { borderBottom: '1px solid #f1f5f9', paddingBottom: 12, marginBottom: 4 },
                 footer: { borderTop: '1px solid #f1f5f9', paddingTop: 14, marginTop: 10 },
             }}
             okButtonProps={{ style: { borderRadius: 8, fontWeight: 600 } }}
-            cancelButtonProps={{ style: { borderRadius: 8 } }}
+            cancelButtonProps={{
+                style: {
+                    borderRadius: 8,
+                    display: isFirstPassSetup ? 'none' : 'inline-flex',
+                },
+            }}
         >
-            <p className="mb-4 text-sm text-slate-500">{t('housePasswordModal.description')}</p>
+            <p className="mb-4 text-sm text-slate-500">
+                {isFirstPassSetup
+                    ? t('housePasswordModal.firstPassDescription')
+                    : t('housePasswordModal.description')}
+            </p>
 
             <Form
                 form={form}
@@ -60,24 +81,26 @@ export function ChangeHousePasswordModal({
                 onFinish={handleFinish}
                 requiredMark={false}
             >
-                <Form.Item
-                    name="oldPassword"
-                    label={t('housePasswordModal.oldPassword')}
-                    rules={[
-                        { required: true, message: t('housePasswordModal.validation.oldRequired') },
-                        {
-                            pattern: /^\d{6}$/,
-                            message: t('housePasswordModal.validation.format'),
-                        },
-                    ]}
-                >
-                    <Input.Password
-                        size="large"
-                        placeholder={t('housePasswordModal.oldPasswordPlaceholder')}
-                        autoComplete="current-password"
-                        style={{ borderRadius: 8 }}
-                    />
-                </Form.Item>
+                {!isFirstPassSetup && (
+                    <Form.Item
+                        name="oldPassword"
+                        label={t('housePasswordModal.oldPassword')}
+                        rules={[
+                            { required: true, message: t('housePasswordModal.validation.oldRequired') },
+                            {
+                                pattern: /^\d{6}$/,
+                                message: t('housePasswordModal.validation.format'),
+                            },
+                        ]}
+                    >
+                        <Input.Password
+                            size="large"
+                            placeholder={t('housePasswordModal.oldPasswordPlaceholder')}
+                            autoComplete="current-password"
+                            style={{ borderRadius: 8 }}
+                        />
+                    </Form.Item>
+                )}
 
                 <Form.Item
                     name="newPassword"
