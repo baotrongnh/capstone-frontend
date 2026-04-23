@@ -1,55 +1,105 @@
 "use client";
 
-import { Button, Form, Image, Input } from "antd";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
+import type { StaticImageData } from "next/image";
 import {
-  EnvironmentOutlined,
-  UserOutlined,
-  DollarOutlined,
-  CarOutlined,
-  GlobalOutlined,
   BankOutlined,
+  CarOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  GlobalOutlined,
   SyncOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+import { Button, Form } from "antd";
+import { useTranslations } from "next-intl";
 import banner9 from "../../../public/img/banner9.jpg";
+import hanoi from "../../../public/img/hanoi.jpg";
+import danang from "../../../public/img/danang.jpg";
+import dalat from "../../../public/img/dalat.jpg";
+import nhatrang from "../../../public/img/nhatrang.jpg";
 
 import { useRouter } from "next/navigation";
+
+type CityKey = "hcm" | "hanoi" | "danang" | "dalat" | "nhatrang";
+type ColorKey = "purple" | "teal" | "yellow" | "red" | "blue";
+
+interface CityData {
+  image: StaticImageData;
+  tags: Array<{ icon: React.ReactNode; key: string; color: ColorKey }>;
+}
+
+const COLOR_CLASSES: Record<ColorKey, { text: string; textIcon: string }> = {
+  purple: { text: "text-purple-500", textIcon: "text-purple-500" },
+  teal: { text: "text-teal-500", textIcon: "text-teal-500" },
+  yellow: { text: "text-yellow-500", textIcon: "text-yellow-500" },
+  red: { text: "text-red-500", textIcon: "text-red-500" },
+  blue: { text: "text-blue-500", textIcon: "text-blue-500" },
+};
+
+const CITIES_DATA: Record<CityKey, CityData> = {
+  hcm: {
+    image: banner9,
+    tags: [
+      { icon: <CarOutlined />, key: "publicTransport", color: "purple" },
+      { icon: <GlobalOutlined />, key: "nearUtilities", color: "teal" },
+      { icon: <DollarOutlined />, key: "nightlife", color: "yellow" },
+      { icon: <BankOutlined />, key: "economicCenter", color: "red" },
+      { icon: <SyncOutlined />, key: "manyChoices", color: "blue" },
+    ],
+  },
+  hanoi: {
+    image: hanoi,
+    tags: [
+      { icon: <CarOutlined />, key: "publicTransport", color: "purple" },
+      { icon: <GlobalOutlined />, key: "convenientLife", color: "teal" },
+      { icon: <GlobalOutlined />, key: "safeArea", color: "teal" },
+      { icon: <CarOutlined />, key: "easyMove", color: "yellow" },
+      { icon: <BankOutlined />, key: "economicCenter", color: "red" },
+      { icon: <SyncOutlined />, key: "manyChoices", color: "blue" },
+    ],
+  },
+  danang: {
+    image: danang,
+    tags: [
+      { icon: <CarOutlined />, key: "publicTransport", color: "purple" },
+      { icon: <GlobalOutlined />, key: "convenientLife", color: "teal" },
+      { icon: <CarOutlined />, key: "easyMove", color: "yellow" },
+      { icon: <GlobalOutlined />, key: "seasideLife", color: "teal" },
+      { icon: <BankOutlined />, key: "tourismHub", color: "red" },
+    ],
+  },
+  dalat: {
+    image: dalat,
+    tags: [
+      { icon: <GlobalOutlined />, key: "convenientLife", color: "teal" },
+      { icon: <GlobalOutlined />, key: "greenSpace", color: "teal" },
+      { icon: <CarOutlined />, key: "safeArea", color: "yellow" },
+      { icon: <SyncOutlined />, key: "manyChoices", color: "blue" },
+      { icon: <BankOutlined />, key: "tourismHub", color: "red" },
+    ],
+  },
+
+  nhatrang: {
+    image: nhatrang,
+    tags: [
+      { icon: <GlobalOutlined />, key: "convenientLife", color: "teal" },
+      { icon: <CarOutlined />, key: "easyMove", color: "yellow" },
+      { icon: <GlobalOutlined />, key: "seasideLife", color: "teal" },
+      { icon: <BankOutlined />, key: "tourismHub", color: "red" },
+      { icon: <SyncOutlined />, key: "manyChoices", color: "blue" },
+    ],
+  },
+};
+
 export default function HeroSection() {
   const t = useTranslations("HomePage");
   const [form] = Form.useForm();
-  const [open, setOpen] = useState(false);
   const route = useRouter();
-  // const [typeRoom, setTypeRoom] = useState("");
-  // const [area, setArea] = useState("");
-  // const [people, setPeople] = useState("");
-  // const [price, setPrice] = useState("");
+  const [selectedCity, setSelectedCity] = useState<CityKey>("hanoi");
 
-  const cityKeys = [
-    "all",
-    "hanoi",
-    "danang",
-    "hatinh",
-    "nhatrang",
-    "haiduong",
-    "hcm",
-    "hatay",
-  ];
-
-  // const handleSearch = async () => {
-  //   try {
-  //     const values = await form.validateFields();
-  //     console.log("Search payload:", values);
-  //     setTypeRoom(values.roomType || "");
-  //     setArea(values.area || "");
-  //     setPeople(values.people || "");
-  //     setPrice(values.price || "");
-
-  //     form.resetFields();
-  //   } catch (error) {
-  //     console.log("Validation failed:", error);
-  //   }
-  // };
+  const cityKeys: CityKey[] = ["hcm", "hanoi", "danang", "dalat", "nhatrang"];
+  const cityData = CITIES_DATA[selectedCity];
 
   return (
     <div className="min-h-screen relative">
@@ -77,13 +127,6 @@ export default function HeroSection() {
                     <EnvironmentOutlined className="text-[#334155]" />
                     {t("searchForm.roomType")}
                   </label>
-                  <Form.Item name="roomType" className="m-0" rules={[]}>
-                    <Input
-                      placeholder={t("searchForm.roomTypePlaceholder")}
-                      className="w-full text-gray-500 text-sm"
-                      variant="borderless"
-                    />
-                  </Form.Item>
                 </div>
 
                 <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
@@ -91,13 +134,6 @@ export default function HeroSection() {
                     <EnvironmentOutlined className="text-[#334155]" />
                     {t("searchForm.area")}
                   </label>
-                  <Form.Item name="area" className="m-0" rules={[]}>
-                    <Input
-                      placeholder={t("searchForm.areaPlaceholder")}
-                      className="w-full text-gray-500 text-sm"
-                      variant="borderless"
-                    />
-                  </Form.Item>
                 </div>
 
                 <div className="flex-1 border-r border-gray-200 px-4 last:border-r-0">
@@ -105,13 +141,6 @@ export default function HeroSection() {
                     <UserOutlined className="text-[#334155]" />
                     {t("searchForm.people")}
                   </label>
-                  <Form.Item name="people" className="m-0" rules={[]}>
-                    <Input
-                      placeholder={t("searchForm.peoplePlaceholder")}
-                      className="w-full text-gray-500 text-sm"
-                      variant="borderless"
-                    />
-                  </Form.Item>
                 </div>
 
                 <div className="flex-1 px-4">
@@ -119,13 +148,6 @@ export default function HeroSection() {
                     <DollarOutlined className="text-[#334155]" />
                     {t("searchForm.price")}
                   </label>
-                  <Form.Item name="price" className="m-0" rules={[]}>
-                    <Input
-                      placeholder={t("searchForm.pricePlaceholder")}
-                      className="w-full text-gray-500 text-sm"
-                      variant="borderless"
-                    />
-                  </Form.Item>
                 </div>
 
                 <Button
@@ -155,90 +177,70 @@ export default function HeroSection() {
           </div>
         </div>
 
-          <div className="">
-            <h3 className="flex justify-center text-3xl font-bold text-gray-800 mb-4">
-              {t("exploreTitle")}
-            </h3>
-            <p className="flex justify-center text-[#909090] mb-8">
-              {t("exploreSubtitle")}
-            </p>
+        <div className="">
+          <h3 className="flex justify-center text-3xl font-bold text-gray-800 mb-4">
+            {t("exploreTitle")}
+          </h3>
+          <p className="flex justify-center text-[#909090] mb-8">
+            {t("exploreSubtitle")}
+          </p>
 
-            <div className="flex justify-center gap-2 mb-8 flex-wrap">
-              {cityKeys.map((key) => (
-                <Button
-                  key={key}
-                  size="large"
-                  className="px-4 py-2 bg-gray-100 border-2 border-blue-300 text-[#909090] hover:bg-[#3980F3] hover:text-white transition"
-                >
-                  {t(`cities.${key}`)}
-                </Button>
-              ))}
+          <div className="flex justify-center gap-2 mb-8 flex-wrap">
+            {cityKeys.map((key) => (
+              <Button
+                key={key}
+                size="large"
+                onClick={() => setSelectedCity(key)}
+                className={`px-4 py-2 border-2 transition ${
+                  selectedCity === key
+                    ? "bg-[#3980F3] text-white border-[#3980F3]"
+                    : "bg-gray-100 border-blue-300 text-[#909090] hover:bg-[#3980F3] hover:text-white"
+                }`}
+              >
+                {t(`cities.${key}`)}
+              </Button>
+            ))}
+          </div>
+
+          <div className="w-full">
+            <div className="relative rounded-[3px] h-107.5 w-full overflow-hidden">
+              <img
+                src={cityData.image?.src}
+                alt="City Banner"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-black/10"></div>
             </div>
 
-            <div className="w-full">
-              <div className="relative rounded-[3px] h-87.5 w-full overflow-hidden">
-                <Image
-                  src={
-                    banner9?.src ||
-                    "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop"
-                  }
-                  alt="City Banner"
-                  preview={false}
-                  className="w-full h-full object-cover"
-                  rootClassName="w-full h-full block"
-                />
-                <div className="absolute inset-0 bg-black/10"></div>
-              </div>
-
-              <div className="relative  z-10 -mt-22 w-[95%] max-w-7xl mx-auto px-4 pb-12">
-                <div className="bg-[#F9FFFF] shadow-xl rounded-[3px] p-12 flex flex-col md:flex-row items-center justify-between gap-10">
-                  <div className="flex-1 w-[80%]">
-                    <h4 className="font-bold text-[40px] text-[#1e293b] leading-tight font-sans mb-6">
-                      {t("highlightCity.name")}
-                    </h4>
-                    <p className="text-gray-500 text-sm leading-relaxed">
-                      {t("highlightCity.description")}
-                    </p>
-                  </div>
-                  <div className="flex w-[45%] flex-col items-end gap-4">
-                    <div className="flex justify-end w-full pr-8">
-                      <div className="bg-white px-5 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                        <CarOutlined className="text-purple-500 text-xl" />
-                        <span className="text-purple-500 font-semibold text-xs">
-                          {t("highlightCity.tags.publicTransport")}
+            <div className="relative  z-10 -mt-22 w-[95%] max-w-7xl mx-auto px-4 pb-12">
+              <div className="bg-[#F9FFFF] shadow-xl rounded-[3px] p-12 flex flex-col md:flex-row items-center justify-between gap-10">
+                <div className="flex-1 w-[80%]">
+                  <h4 className="font-bold text-[40px] text-[#1e293b] leading-tight font-sans mb-6">
+                    {t(`highlightCity.${selectedCity}.name`)}
+                  </h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    {t(`highlightCity.${selectedCity}.description`)}
+                  </p>
+                </div>
+                <div className="flex w-[45%] flex-col items-end gap-4">
+                  <div className="flex flex-wrap justify-end gap-4">
+                    {cityData.tags.map((tag, index) => (
+                      <div
+                        key={index}
+                        className={`bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50`}
+                      >
+                        <span
+                          className={`${COLOR_CLASSES[tag.color].textIcon} text-xl`}
+                        >
+                          {tag.icon}
+                        </span>
+                        <span
+                          className={`${COLOR_CLASSES[tag.color].text} font-semibold text-xs`}
+                        >
+                          {t(`highlightCity.tags.${tag.key}`)}
                         </span>
                       </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                        <GlobalOutlined className="text-teal-500 text-xl" />
-                        <span className="text-teal-500 font-semibold text-xs">
-                          {t("highlightCity.tags.convenientLife")}
-                        </span>
-                      </div>
-                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                        <CarOutlined className="text-yellow-500 text-xl" />
-                        <span className="text-yellow-500 font-semibold text-xs">
-                          {t("highlightCity.tags.easyMove")}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 mr-12">
-                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                        <BankOutlined className="text-red-500 text-xl" />
-                        <span className="text-red-500 font-semibold text-xs">
-                          {t("highlightCity.tags.economicCenter")}
-                        </span>
-                      </div>
-                      <div className="bg-white px-3 py-2 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1)] flex items-center gap-3 border border-gray-50">
-                        <SyncOutlined className="text-blue-500 text-xl" />
-                        <span className="text-blue-500 font-semibold text-xs">
-                          {t("highlightCity.tags.manyChoices")}
-                        </span>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -246,5 +248,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-      );
+    </div>
+  );
 }
