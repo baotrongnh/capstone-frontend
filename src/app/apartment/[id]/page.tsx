@@ -1,6 +1,7 @@
 "use client"
 
 import ApartmentMediaCarousel from "@/components/apartments/apartment-media-carousel"
+import { ApartmentCoordinateMap } from "@/components/apartments/apartment-coordinate-map"
 import SimilarApartments from "@/components/apartments/similar-apartments"
 import AuthModal from "@/components/modal/auth-modal"
 import ModalBooking from "@/components/modal/modal-booking"
@@ -459,13 +460,9 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         )}
         {apt?.latitude && apt?.longitude ? (
           <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-120 rounded-lg overflow-hidden">
-            <iframe
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(apt.longitude) - 0.002},
-              ${Number(apt.latitude) - 0.005},
-              ${Number(apt.longitude) + 0.005},
-              ${Number(apt.latitude) + 0.005}&layer=mapnik&marker=${apt.latitude},${apt.longitude}`}
-              className="w-full h-full border-0"
-              loading="lazy"
+            <ApartmentCoordinateMap
+              latitude={Number(apt.latitude)}
+              longitude={Number(apt.longitude)}
             />
             <button
               onClick={handleFindDirection}
