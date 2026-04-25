@@ -22,18 +22,10 @@ interface MemberOption {
 }
 
 const monthOptions = [
-  { label: "1 tháng", value: 1 },
-  { label: "2 tháng", value: 2 },
-  { label: "3 tháng", value: 3 },
-  { label: "4 tháng", value: 4 },
-  { label: "5 tháng", value: 5 },
   { label: "6 tháng", value: 6 },
-  { label: "7 tháng", value: 7 },
-  { label: "8 tháng", value: 8 },
-  { label: "9 tháng", value: 9 },
-  { label: "10 tháng", value: 10 },
-  { label: "11 tháng", value: 11 },
   { label: "12 tháng", value: 12 },
+  { label: "18 tháng", value: 18 },
+  { label: "24 tháng", value: 24 },
 ];
 
 export default function ModalExtendContract({
