@@ -130,10 +130,10 @@
   },
   "Footer": {
     "contact": {
-      "addressLine1": "18/6, Main road Mohammadia",
-      "addressLine2": "Housing Ltd, Mohammadpur, Dhaka",
-      "phone": "+ (88) 01719 461736",
-      "email": "toletxbd@gmail.com"
+      "addressLine1": "Lô E2a-7, đường D1, Khu Công nghệ cao Sài Gòn",
+      "addressLine2": "phường Tăng Nhơn Phú, TP. Hồ Chí Minh, Việt Nam",
+      "phone": "0332667829",
+      "email": "nhbaotrong@gmail.com"
     },
     "sections": {
       "mainMenu": {
@@ -158,7 +158,7 @@
         "agricultural": "Nông nghiệp"
       },
       "about": {
-        "title": "Giới thiệu về ToletX",
+        "title": "Giới thiệu về HomeIQ",
         "terms": "Điều khoản và điều kiện",
         "privacy": "Chính sách bảo mật",
         "legal": "Pháp lý & Tuân thủ",
@@ -169,7 +169,7 @@
         "support": "Hỗ trợ"
       }
     },
-    "copyright": "Copyright {year} • ToletX, All Rights Reserved"
+    "copyright": "Copyright {year} ? HomeIQ, All Rights Reserved"
   },
   "ApartmentList": {
     "filterTitle": "Lọc theo nhà"
@@ -257,7 +257,6 @@
       "accountInformation": "Thông tin tài khoản",
       "myApartment": "Căn hộ của tôi",
       "myContracts": "Hợp đồng của tôi",
-
       "myCooperations": "Hợp đồng hợp tác",
       "mySchedule": "Lịch hẹn của tôi",
       "paymentHistory": "Lịch sử thanh toán",
@@ -1272,5 +1271,37 @@
       "contactButton": "Liên Hệ Hỗ Trợ",
       "downloadButton": "Tải PDF"
     }
+  },
+  "ContactPage": {
+    "badge": "LIÊN HỆ HOMEIQ",
+    "title": "Liên hệ đội ngũ hỗ trợ HomeIQ",
+    "description": "HomeIQ sẵn sàng hỗ trợ bạn về tìm căn hộ, hợp tác cho thuê, lịch xem, chính sách và các vấn đề vận hành hằng ngày.",
+    "callNow": "Gọi ngay",
+    "sendEmail": "Gửi email",
+    "office": "Địa chỉ",
+    "hotline": "Hotline",
+    "supportEmail": "Email hỗ trợ",
+    "businessEmail": "Email hợp tác",
+    "workingHours": "Giờ làm việc",
+    "workingHoursValue": "08:00 - 18:00",
+    "workingHoursNote": "Thứ 2 - Chủ nhật",
+    "secondaryPhone": "Số điện thoại phụ",
+    "quickSupportTitle": "Kênh hỗ trợ nhanh",
+    "quickSupportDescription": "Chọn đúng kênh để được phản hồi nhanh và đúng nhu cầu.",
+    "supportPhoneCta": "Hotline hỗ trợ trực tiếp",
+    "supportEmailCta": "Email hỗ trợ khách hàng",
+    "businessEmailCta": "Email hợp tác kinh doanh",
+    "zaloCta": "Trao đổi qua Zalo",
+    "whatsappCta": "Nhắn qua WhatsApp",
+    "facebookCta": "Facebook cá nhân",
+    "websiteCta": "Website HomeIQ",
+    "helpfulLinksTitle": "Liên kết hữu ích",
+    "apartmentLink": "Xem danh sách căn hộ",
+    "partnerLink": "Gửi yêu cầu trở thành đối tác",
+    "policiesLink": "Xem chính sách nền tảng",
+    "mapTitle": "Vị trí liên hệ",
+    "mapDescription": "Vị trí dưới đây hiển thị trên bản đồ VietMap theo cùng cách như trang chi tiết căn hộ.",
+    "fullAddressLabel": "Địa chỉ đầy đủ",
+    "openGoogleMaps": "Mở Google Maps"
   }
 }

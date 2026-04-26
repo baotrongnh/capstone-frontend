@@ -1,32 +1,80 @@
-import { FOOTER_I18N_KEYS } from "@/constants";
-import { ROUTES } from "@/constants/routes";
-import {
-     ArrowRight,
-     Building2,
-     Clock3,
-     Mail,
-     MapPin,
-     MessageCircleQuestion,
-     PhoneCall,
-     ShieldCheck,
-} from "lucide-react";
-import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { ApartmentCoordinateMap } from "@/components/apartments/apartment-coordinate-map"
+import { FOOTER_I18N_KEYS } from "@/constants"
+import { ROUTES } from "@/constants/routes"
+import { ArrowRight, Clock3, Globe, Mail, MapPin, MessageCircle, PhoneCall } from "lucide-react"
+import { getTranslations } from "next-intl/server"
+import Link from "next/link"
 
-const normalizePhoneHref = (value: string) => value.replace(/[^\d+]/g, "");
+const SECONDARY_PHONE = "0346349968"
+const BUSINESS_EMAIL = "nhbaotrong@gmail.com"
+const ZALO_PHONE = "0332667829"
+const WHATSAPP_PHONE = "0332667829"
+const FACEBOOK_URL = "https://www.facebook.com/baotrong.nguyenhuynh.52"
+const WEBSITE_URL = "https://homeiq.io.vn/"
+const CONTACT_LATITUDE = 10.841127
+const CONTACT_LONGITUDE = 106.809883
+
+const normalizePhoneHref = (value: string) => value.replace(/[^\d+]/g, "")
+const buildPhoneHref = (value: string) => `tel:${normalizePhoneHref(value)}`
+const buildMailHref = (value: string, subject: string) => `mailto:${value}?subject=${encodeURIComponent(subject)}`
+const buildZaloHref = (value: string) => `https://zalo.me/${normalizePhoneHref(value)}`
+const buildWhatsappHref = (value: string) => `https://wa.me/${normalizePhoneHref(value)}`
 
 export default async function ContactPage() {
-     const tFooter = await getTranslations("Footer");
+     const tFooter = await getTranslations("Footer")
+     const t = await getTranslations("ContactPage")
 
-     const addressLine1 = tFooter(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_1);
-     const addressLine2 = tFooter(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_2);
-     const phone = tFooter(FOOTER_I18N_KEYS.CONTACT.PHONE);
-     const email = tFooter(FOOTER_I18N_KEYS.CONTACT.EMAIL);
+     const addressLine1 = tFooter(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_1)
+     const addressLine2 = tFooter(FOOTER_I18N_KEYS.CONTACT.ADDRESS_LINE_2)
+     const phone = tFooter(FOOTER_I18N_KEYS.CONTACT.PHONE)
+     const email = tFooter(FOOTER_I18N_KEYS.CONTACT.EMAIL)
+     const fullAddress = `${addressLine1}, ${addressLine2}`
 
-     const fullAddress = `${addressLine1}, ${addressLine2}`;
-     const phoneHref = `tel:${normalizePhoneHref(phone)}`;
-     const mailHref = `mailto:${email}?subject=${encodeURIComponent("Yeu cau ho tro tu website")}`;
-     const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`;
+     const supportItems = [
+          { href: buildPhoneHref(phone), label: t("supportPhoneCta"), value: phone, icon: PhoneCall },
+          { href: buildPhoneHref(SECONDARY_PHONE), label: t("secondaryPhone"), value: SECONDARY_PHONE, icon: PhoneCall },
+          { href: buildMailHref(email, "Yêu cầu hỗ trợ từ website HomeIQ"), label: t("supportEmailCta"), value: email, icon: Mail },
+          { href: buildMailHref(BUSINESS_EMAIL, "Liên hệ hợp tác HomeIQ"), label: t("businessEmailCta"), value: BUSINESS_EMAIL, icon: Mail },
+          { href: buildZaloHref(ZALO_PHONE), label: t("zaloCta"), value: ZALO_PHONE, icon: MessageCircle },
+          { href: buildWhatsappHref(WHATSAPP_PHONE), label: t("whatsappCta"), value: WHATSAPP_PHONE, icon: MessageCircle },
+          { href: FACEBOOK_URL, label: t("facebookCta"), value: "Facebook", icon: Globe },
+          { href: WEBSITE_URL, label: t("websiteCta"), value: "homeiq.io.vn", icon: Globe },
+     ]
+
+     const quickCards = [
+          {
+               title: t("office"),
+               value: (
+                    <>
+                         {addressLine1}
+                         <br />
+                         {addressLine2}
+                    </>
+               ),
+               icon: MapPin,
+          },
+          { title: t("hotline"), value: phone, href: buildPhoneHref(phone), icon: PhoneCall },
+          { title: t("supportEmail"), value: email, href: buildMailHref(email, "Yêu cầu hỗ trợ từ website HomeIQ"), icon: Mail },
+          {
+               title: t("workingHours"),
+               value: (
+                    <>
+                         {t("workingHoursValue")}
+                         <br />
+                         {t("workingHoursNote")}
+                    </>
+               ),
+               icon: Clock3,
+          },
+     ]
+
+     const helpfulLinks = [
+          { href: ROUTES.APARTMENT, label: t("apartmentLink") },
+          { href: ROUTES.PARTNER_REQUEST, label: t("partnerLink") },
+          { href: "/policies", label: t("policiesLink") },
+     ]
+
+     const openGoogleMapsHref = `https://www.google.com/maps/dir/?api=1&destination=${CONTACT_LATITUDE},${CONTACT_LONGITUDE}`
 
      return (
           <div className="min-h-screen bg-slate-50 text-slate-800">
@@ -37,33 +85,32 @@ export default async function ContactPage() {
                     <div className="relative mx-auto max-w-7xl px-4 py-18 md:px-6 lg:px-8">
                          <div className="max-w-3xl">
                               <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-2 text-xs font-semibold tracking-[0.24em] text-blue-700">
-                                   CONTACT INTELLISERVOPS
+                                   {t("badge")}
                               </div>
 
                               <h1 className="mt-6 text-4xl font-bold leading-tight text-slate-900 md:text-5xl">
-                                   Liên hệ đội ngũ hỗ trợ của chúng tôi
+                                   {t("title")}
                               </h1>
 
                               <p className="mt-5 text-base leading-8 text-slate-600 md:text-lg">
-                                   Cần hỗ trợ tìm căn hộ, lịch xem, hợp đồng, hoặc thông tin vận hành? Chúng tôi luôn sẵn sàng phản hồi
-                                   nhanh để bạn xử lý công việc thuận tiện hơn.
+                                   {t("description")}
                               </p>
 
                               <div className="mt-8 flex flex-wrap gap-3">
                                    <a
-                                        href={phoneHref}
+                                        href={buildPhoneHref(phone)}
                                         className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                                    >
                                         <PhoneCall className="h-4 w-4" />
-                                        Gọi ngay
+                                        {t("callNow")}
                                    </a>
 
                                    <a
-                                        href={mailHref}
+                                        href={buildMailHref(email, "Yêu cầu hỗ trợ từ website HomeIQ")}
                                         className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
                                    >
                                         <Mail className="h-4 w-4" />
-                                        Gửi email
+                                        {t("sendEmail")}
                                    </a>
                               </div>
                          </div>
@@ -72,139 +119,105 @@ export default async function ContactPage() {
 
                <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                              <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">ĐỊA CHỈ</p>
-                              <div className="mt-3 flex items-start gap-2 text-slate-700">
-                                   <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-                                   <p className="text-sm leading-6">
-                                        {addressLine1}
-                                        <br />
-                                        {addressLine2}
-                                   </p>
-                              </div>
-                         </div>
+                         {quickCards.map((item) => {
+                              const Icon = item.icon
 
-                         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                              <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">HOTLINE</p>
-                              <div className="mt-3 flex items-center gap-2 text-slate-700">
-                                   <PhoneCall className="h-5 w-5 shrink-0 text-blue-600" />
-                                   <a href={phoneHref} className="text-sm font-medium hover:text-blue-700">
-                                        {phone}
-                                   </a>
-                              </div>
-                         </div>
-
-                         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                              <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">EMAIL</p>
-                              <div className="mt-3 flex items-center gap-2 text-slate-700">
-                                   <Mail className="h-5 w-5 shrink-0 text-blue-600" />
-                                   <a href={mailHref} className="truncate text-sm font-medium hover:text-blue-700">
-                                        {email}
-                                   </a>
-                              </div>
-                         </div>
-
-                         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                              <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">GIỜ LÀM VIỆC</p>
-                              <div className="mt-3 flex items-start gap-2 text-slate-700">
-                                   <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-                                   <p className="text-sm leading-6">
-                                        Thứ 2 - Thứ 7: 08:00 - 21:00
-                                        <br />
-                                        Chủ nhật: 08:00 - 17:00
-                                   </p>
-                              </div>
-                         </div>
+                              return (
+                                   <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                                        <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">{item.title}</p>
+                                        <div className="mt-3 flex items-start gap-2 text-slate-700">
+                                             <Icon className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
+                                             {item.href ? (
+                                                  <a href={item.href} className="text-sm font-medium leading-6 hover:text-blue-700">
+                                                       {item.value}
+                                                  </a>
+                                             ) : (
+                                                  <p className="text-sm leading-6">{item.value}</p>
+                                             )}
+                                        </div>
+                                   </div>
+                              )
+                         })}
                     </div>
                </section>
 
                <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 pb-16 md:px-6 lg:grid-cols-12 lg:px-8">
                     <div className="space-y-6 lg:col-span-5">
                          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                              <h2 className="text-xl font-bold text-slate-900">Kênh hỗ trợ nhanh</h2>
-                              <p className="mt-2 text-sm leading-7 text-slate-600">
-                                   Chọn kênh phù hợp theo nhu cầu để được hỗ trợ nhanh và chính xác hơn.
-                              </p>
+                              <h2 className="text-xl font-bold text-slate-900">{t("quickSupportTitle")}</h2>
+                              <p className="mt-2 text-sm leading-7 text-slate-600">{t("quickSupportDescription")}</p>
 
                               <div className="mt-5 space-y-3">
-                                   <a
-                                        href={phoneHref}
-                                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50"
-                                   >
-                                        <span className="flex items-center gap-2 text-sm font-medium text-slate-800">
-                                             <PhoneCall className="h-4 w-4 text-blue-600" />
-                                             Hotline tư vấn trực tiếp
-                                        </span>
-                                        <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
-                                   </a>
+                                   {supportItems.map((item) => {
+                                        const Icon = item.icon
 
-                                   <a
-                                        href={mailHref}
-                                        className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50"
-                                   >
-                                        <span className="flex items-center gap-2 text-sm font-medium text-slate-800">
-                                             <Mail className="h-4 w-4 text-blue-600" />
-                                             Email hỗ trợ và phản hồi
-                                        </span>
-                                        <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
-                                   </a>
+                                        return (
+                                             <a
+                                                  key={`${item.label}-${item.value}`}
+                                                  href={item.href}
+                                                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                                                  rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                                                  className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50"
+                                             >
+                                                  <span className="flex items-center gap-2 text-sm font-medium text-slate-800">
+                                                       <Icon className="h-4 w-4 text-blue-600" />
+                                                       <span>
+                                                            {item.label}
+                                                            <span className="ml-2 text-slate-500">{item.value}</span>
+                                                       </span>
+                                                  </span>
+                                                  <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
+                                             </a>
+                                        )
+                                   })}
                               </div>
                          </div>
 
                          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                              <h3 className="text-lg font-semibold text-slate-900">Bạn có thể cần</h3>
+                              <h3 className="text-lg font-semibold text-slate-900">{t("helpfulLinksTitle")}</h3>
 
                               <div className="mt-4 space-y-3 text-sm">
-                                   <Link
-                                        href={ROUTES.APARTMENT}
-                                        className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-                                   >
-                                        <Building2 className="h-4 w-4" />
-                                        Xem danh sách căn hộ đang mở
-                                   </Link>
-
-                                   <Link
-                                        href={ROUTES.PARTNER_REQUEST}
-                                        className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-                                   >
-                                        <ShieldCheck className="h-4 w-4" />
-                                        Gửi yêu cầu trở thành đối tác
-                                   </Link>
-
-                                   <Link
-                                        href="/policies"
-                                        className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-                                   >
-                                        <MessageCircleQuestion className="h-4 w-4" />
-                                        Xem chính sách và câu hỏi thường gặp
-                                   </Link>
+                                   {helpfulLinks.map((item) => (
+                                        <Link
+                                             key={item.href}
+                                             href={item.href}
+                                             className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+                                        >
+                                             <ArrowRight className="h-4 w-4" />
+                                             {item.label}
+                                        </Link>
+                                   ))}
                               </div>
                          </div>
                     </div>
 
                     <div className="lg:col-span-7">
                          <div className="h-full rounded-3xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-                              <h2 className="text-xl font-bold text-slate-900">Vị trí văn phòng</h2>
-                              <p className="mt-2 text-sm leading-7 text-slate-600">
-                                   Bạn có thể ghé văn phòng trong giờ làm việc để được hỗ trợ trực tiếp.
-                              </p>
+                              <h2 className="text-xl font-bold text-slate-900">{t("mapTitle")}</h2>
+                              <p className="mt-2 text-sm leading-7 text-slate-600">{t("mapDescription")}</p>
 
-                              <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-                                   <iframe
-                                        title="INTELLISERVOPS office map"
-                                        src={mapSrc}
-                                        className="h-[360px] w-full"
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
+                              <div className="relative mt-5 h-[360px] overflow-hidden rounded-2xl border border-slate-200">
+                                   <ApartmentCoordinateMap
+                                        latitude={CONTACT_LATITUDE}
+                                        longitude={CONTACT_LONGITUDE}
                                    />
+                                   <a
+                                        href={openGoogleMapsHref}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow hover:bg-slate-50"
+                                   >
+                                        <MapPin size={14} className="text-primary" />
+                                        {t("openGoogleMaps")}
+                                   </a>
                               </div>
 
                               <p className="mt-4 text-sm text-slate-600">
-                                   Địa chỉ: {fullAddress}
+                                   {t("fullAddressLabel")}: {fullAddress}
                               </p>
                          </div>
                     </div>
                </section>
           </div>
-     );
+     )
 }

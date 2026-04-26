@@ -129,10 +129,10 @@
   },
   "Footer": {
     "contact": {
-      "addressLine1": "18/6, Main road Mohammadia",
-      "addressLine2": "Housing Ltd, Mohammadpur, Dhaka",
-      "phone": "+ (88) 01719 461736",
-      "email": "toletxbd@gmail.com"
+      "addressLine1": "Lot E2a-7, D1 Street, Saigon Hi-Tech Park",
+      "addressLine2": "Tang Nhon Phu Ward, Ho Chi Minh City, Vietnam",
+      "phone": "0332667829",
+      "email": "nhbaotrong@gmail.com"
     },
     "sections": {
       "mainMenu": {
@@ -157,7 +157,7 @@
         "agricultural": "Agricultural"
       },
       "about": {
-        "title": "About ToletX",
+        "title": "About HomeIQ",
         "terms": "Terms and Conditions",
         "privacy": "Privacy Policy",
         "legal": "Legal & Compliance",
@@ -168,7 +168,7 @@
         "support": "Support"
       }
     },
-    "copyright": "Copyright {year} • ToletX, All Rights Reserved"
+    "copyright": "Copyright {year} ? HomeIQ, All Rights Reserved"
   },
   "ApartmentList": {
     "filterTitle": "Filter by House"
@@ -1268,5 +1268,37 @@
       "contactButton": "Contact Support",
       "downloadButton": "Download PDF"
     }
+  },
+  "ContactPage": {
+    "badge": "CONTACT HOMEIQ",
+    "title": "Contact the HomeIQ support team",
+    "description": "HomeIQ is ready to support you with apartment search, rental partnerships, viewing schedules, policies, and day-to-day operations.",
+    "callNow": "Call now",
+    "sendEmail": "Send email",
+    "office": "Address",
+    "hotline": "Hotline",
+    "supportEmail": "Support email",
+    "businessEmail": "Business email",
+    "workingHours": "Working hours",
+    "workingHoursValue": "08:00 - 18:00",
+    "workingHoursNote": "Monday - Sunday",
+    "secondaryPhone": "Secondary phone",
+    "quickSupportTitle": "Quick support channels",
+    "quickSupportDescription": "Choose the right channel for a faster and more accurate response.",
+    "supportPhoneCta": "Direct support hotline",
+    "supportEmailCta": "Customer support email",
+    "businessEmailCta": "Business partnership email",
+    "zaloCta": "Chat via Zalo",
+    "whatsappCta": "Message via WhatsApp",
+    "facebookCta": "Personal Facebook",
+    "websiteCta": "HomeIQ website",
+    "helpfulLinksTitle": "Helpful links",
+    "apartmentLink": "Browse apartment listings",
+    "partnerLink": "Submit a partner request",
+    "policiesLink": "View platform policies",
+    "mapTitle": "Contact location",
+    "mapDescription": "The location below is displayed with VietMap using the same approach as the apartment detail page.",
+    "fullAddressLabel": "Full address",
+    "openGoogleMaps": "Open Google Maps"
   }
 }
