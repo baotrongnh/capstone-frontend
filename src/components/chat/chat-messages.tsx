@@ -2,9 +2,9 @@
 
 import { ChatMessage } from "@/types/chat"
 import { formatTime } from "@/utils/format"
-import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { ApartmentCardMessage } from "./apartment-card-message"
+import { ChatImageGrid, ChatImageLightbox } from "./chat-image"
 
 interface ChatMessagesProps {
   messages: ChatMessage[]
@@ -44,36 +44,28 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
       {!isLoading && messages.map((item) => (
         <div
           key={item.id}
-          className={`mb-3 flex ${item.sender === "user" ? "justify-end" : "justify-start"}`}
+          className={`mb-4 flex ${item.sender === "user" ? "justify-end" : "justify-start"}`}
         >
-          <div
-            className={
-              `max-w-[80%] px-3 py-2 rounded-lg
-              ${item.sender === "user" ? "bg-primary text-white" : "bg-gray-100 text-gray-800"}`
-            }
-          >
+          <div className="max-w-[82%]">
             {item.apartmentId && <ApartmentCardMessage apartmentId={item.apartmentId} />}
-            {item.content && <p className="text-sm mb-1 whitespace-pre-wrap">{item.content}</p>}
 
-            {item.images?.map((src, i) => (
-              <button
-                key={`${item.id}-${i}`}
-                type="button"
-                onClick={() => setPreviewImage(src)}
-                className="mt-1 block"
+            {item.content && (
+              <div
+                className={`rounded-2xl px-3 py-2 ${
+                  item.sender === "user" ? "bg-primary text-white" : "bg-gray-100 text-gray-800"
+                }`}
               >
-                <Image
-                  src={src}
-                  alt="attachment"
-                  width={400}
-                  height={200}
-                  unoptimized
-                  className="max-w-full rounded max-h-48 object-contain cursor-zoom-in"
-                />
-              </button>
-            ))}
+                <p className="text-sm whitespace-pre-wrap">{item.content}</p>
+              </div>
+            )}
 
-            <p className={`text-xs mt-1 mb-0 ${item.sender === "user" ? "text-blue-100" : "text-gray-500"}`}>
+            <ChatImageGrid images={item.images ?? []} onPreview={setPreviewImage} />
+
+            <p
+              className={`mt-1 mb-0 px-1 text-xs ${
+                item.sender === "user" ? "text-right text-gray-400" : "text-gray-500"
+              }`}
+            >
               {formatTime(item.timestamp)}
             </p>
           </div>
@@ -82,25 +74,7 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
 
       <div ref={endRef} />
 
-      {previewImage && (
-        <button
-          type="button"
-          onClick={() => setPreviewImage(null)}
-          className="fixed inset-0 z-50 bg-black/80 p-4"
-          aria-label="Close image preview"
-        >
-          <div className="relative h-full w-full">
-            <Image
-              src={previewImage}
-              alt="image preview"
-              fill
-              unoptimized
-              sizes="100vw"
-              className="object-contain"
-            />
-          </div>
-        </button>
-      )}
+      <ChatImageLightbox image={previewImage} onClose={() => setPreviewImage(null)} />
     </div>
   )
 }

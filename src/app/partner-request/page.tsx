@@ -51,6 +51,59 @@ export default function PartnerContact() {
 
   const { data: wardCode } = useWards(selectedProvince);
 
+  const handlePreviewImage = async (file: UploadFile) => {
+    const previewWindow = window.open("", "_blank");
+
+    let previewUrl = file.url || file.thumbUrl;
+
+    if (!previewUrl && file.originFileObj) {
+      previewUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as File);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("Không thể xem trước ảnh"));
+      });
+    }
+
+    if (!previewUrl) {
+      previewWindow?.close();
+      return;
+    }
+
+    if (!previewWindow) {
+      window.open(previewUrl, "_blank");
+      return;
+    }
+
+    previewWindow.document.write(`
+      <html>
+        <head>
+          <title>Xem trước ảnh</title>
+          <style>
+            body {
+              margin: 0;
+              min-height: 100vh;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #111827;
+            }
+            img {
+              max-width: 100vw;
+              max-height: 100vh;
+              object-fit: contain;
+            }
+          </style>
+        </head>
+        <body>
+          <img src="${previewUrl}" alt="preview" />
+        </body>
+      </html>
+    `);
+    previewWindow.document.close();
+    previewWindow.focus();
+  };
+
   const handleRegister = async () => {
     if (user?.isVerified === true && user?.identity !== null) {
       try {
@@ -527,7 +580,10 @@ export default function PartnerContact() {
               <Upload
                 beforeUpload={() => false}
                 listType="picture-card"
+                multiple
+                accept="image/*"
                 maxCount={5}
+                onPreview={handlePreviewImage}
               >
                 <div className="flex flex-col items-center justify-center text-gray-500">
                   <UploadOutlined className="text-xl mb-2" />
@@ -572,7 +628,10 @@ export default function PartnerContact() {
         setIsModalOpen={setShowModalLogin}
         setAuthModalOpen={setIsAuthModalOpen}
       />
-      <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AuthModal
+        open={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </>
   );
 }

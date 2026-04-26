@@ -1,7 +1,7 @@
 import { useCancelContract } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
-import { App, Button, Modal, Select } from "antd";
-import { AlertTriangle, FileText, Home, Info } from "lucide-react";
+import { App, Button, Input, Modal } from "antd";
+import { AlertTriangle, FileText, Home } from "lucide-react";
 import { useState } from "react";
 
 interface ModalContractProps {
@@ -9,39 +9,6 @@ interface ModalContractProps {
   cancel: () => void;
   selectContract: ContractWithMembers | null;
 }
-
-const reasonOptions = [
-  {
-    label: " Người thuê yêu cầu hủy",
-    value: "tenant_request",
-    description: "Người thuê chủ động yêu cầu hủy hợp đồng",
-  },
-  {
-    label: "Chủ nhà yêu cầu hủy",
-    value: "landlord_request",
-    description: "Chủ nhà chủ động yêu cầu hủy hợp đồng",
-  },
-  {
-    label: "Vi phạm điều khoản hợp đồng",
-    value: "violation",
-    description: "Một trong các bên vi phạm điều khoản",
-  },
-  {
-    label: "Không thanh toán đầy đủ",
-    value: "non_payment",
-    description: "Không thanh toán tiền thuê hoặc chi phí",
-  },
-  {
-    label: "Thỏa thuận chung",
-    value: "mutual_agreement",
-    description: "Cả hai bên đồng ý hủy hợp đồng",
-  },
-  {
-    label: "Lý do khác",
-    value: "other",
-    description: "Các lý do không nằm trong danh sách trên",
-  },
-];
 
 export default function ModalCancelContract({
   showModalCancelContract,
@@ -61,23 +28,23 @@ export default function ModalCancelContract({
   };
 
   const handleConfirm = async () => {
-    if (!reason) {
-      message.warning("Vui lòng chọn lý do hủy hợp đồng");
+    const trimmedReason = reason.trim();
+
+    if (!trimmedReason) {
+      message.warning("Vui lòng nhập lý do hủy hợp đồng");
       return;
     }
 
     setIsLoading(true);
     try {
-      await cancelContract(reason);
+      await cancelContract(trimmedReason);
       handleCancel();
-    } catch (error) {
+    } catch {
       message.error("Lỗi khi hủy hợp đồng");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const selectedOption = reasonOptions.find((opt) => opt.value === reason);
 
   return (
     <Modal
@@ -148,29 +115,15 @@ export default function ModalCancelContract({
               <label className="flex items-center gap-1 text-sm font-semibold text-slate-700 mb-2">
                 Lý do hủy <span className="text-red-500">*</span>
               </label>
-              <Select
-                placeholder="Chọn lý do hủy phù hợp..."
-                value={reason || undefined}
-                onChange={setReason}
-                options={reasonOptions}
-                className="w-full [&_.ant-select-selector]:rounded-xl"
-                size="large"
+              <Input.TextArea
+                placeholder="Nhập lý do hủy hợp đồng..."
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                rows={4}
+                maxLength={300}
+                showCount
+                className="[&_.ant-input]:rounded-xl"
               />
-
-              {/* Selected Reason Detail */}
-              {selectedOption && (
-                <div className="mt-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <Info size={18} className="text-slate-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800">
-                      {selectedOption.label}
-                    </p>
-                    <p className="text-sm text-slate-500 mt-0.5 leading-relaxed">
-                      {selectedOption.description}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -190,7 +143,7 @@ export default function ModalCancelContract({
               size="large"
               loading={isLoading}
               onClick={handleConfirm}
-              disabled={!reason}
+              disabled={!reason.trim()}
               className="rounded-xl font-medium px-6 shadow-sm disabled:bg-red-200"
             >
               Xác nhận hủy

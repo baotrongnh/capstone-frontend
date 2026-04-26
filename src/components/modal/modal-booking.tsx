@@ -124,7 +124,6 @@ export default function ModalBooking({
   };
 
   const handleSearchChange = (value: string) => {
-    // Only allow digits, reject any letters or special characters
     const digitsOnly = value.replace(/\D/g, "");
     setSearchValue(digitsOnly);
   };

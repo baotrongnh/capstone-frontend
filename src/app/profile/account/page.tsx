@@ -2,7 +2,13 @@
 
 import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from "antd";
 import { uploadFile } from "@/utils/uploadFile";
-import { UserOutlined, CameraOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  CameraOutlined,
+  CheckCircleOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { AccountEditableValues, AccountUpdateDto } from "@/types/profile";
 import { useTranslations } from "next-intl";
@@ -31,10 +37,11 @@ export default function AccountPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [cccdModalOpen, setCccdModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showIdentityInfo, setShowIdentityInfo] = useState(false);
   const { message } = App.useApp();
   const t = useTranslations("Profile.account");
 
-  console.log(user) 
+  console.log(user)
   const {
     data: profile,
     isLoading,
@@ -53,6 +60,7 @@ export default function AccountPage() {
     setAvatarUrl(getAvatarUrl(profile));
     setHasChanges(false);
     setIsEditing(false);
+    setShowIdentityInfo(false);
   }, [profile]);
 
   const handleUpdate = async (values: AccountUpdateDto) => {
@@ -241,14 +249,23 @@ export default function AccountPage() {
             </div>
             {identity?.isVerified && <Tag icon={<CheckCircleOutlined />} color="success">{t("verified")}</Tag>}
           </div>
-          {!identity?.isVerified && (
-            <Button type="primary" onClick={() => setCccdModalOpen(true)}>
-              {t("cccdUploadSubmit")}
+          <div className="flex items-center gap-2">
+            <Button
+              type="text"
+              icon={showIdentityInfo ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              onClick={() => setShowIdentityInfo((prev) => !prev)}
+            >
+              {showIdentityInfo ? t("hideIdentityInfo") : t("showIdentityInfo")}
             </Button>
-          )}
+            {!identity?.isVerified && (
+              <Button type="primary" onClick={() => setCccdModalOpen(true)}>
+                {t("cccdUploadSubmit")}
+              </Button>
+            )}
+          </div>
         </div>
 
-        {identity && identityFields.some(({ value }) => hasValue(value)) && (
+        {showIdentityInfo && identity && identityFields.some(({ value }) => hasValue(value)) && (
           <div className="border border-gray-200 rounded-xl p-5 space-y-4">
             <h4 className="font-semibold text-sm text-gray-700">{t("identityInfoTitle")}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
