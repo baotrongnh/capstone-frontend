@@ -1,6 +1,6 @@
 import { useCancelCooperation } from "@/hooks/query/useContracts";
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
-import { App, Button, Divider, Modal, Select } from "antd";
+import { App, Button, Divider, Input, Modal } from "antd";
 import { AlertCircle, FileText, Home } from "lucide-react";
 import { useState } from "react";
 
@@ -9,39 +9,6 @@ interface ModalCancelContractProps {
   cancel: () => void;
   selectContract: OwnerApartmentResponse | null;
 }
-
-const reasonOptions = [
-  {
-    label: " Người thuê yêu cầu hủy",
-    value: "tenant_request",
-    description: "Người thuê chủ động yêu cầu hủy hợp đồng",
-  },
-  {
-    label: "Chủ nhà yêu cầu hủy",
-    value: "landlord_request",
-    description: "Chủ nhà chủ động yêu cầu hủy hợp đồng",
-  },
-  {
-    label: "Vi phạm điều khoản hợp đồng",
-    value: "violation",
-    description: "Một trong các bên vi phạm điều khoản",
-  },
-  {
-    label: "Không thanh toán đầy đủ",
-    value: "non_payment",
-    description: "Không thanh toán tiền thuê hoặc chi phí",
-  },
-  {
-    label: "Thỏa thuận chung",
-    value: "mutual_agreement",
-    description: "Cả hai bên đồng ý hủy hợp đồng",
-  },
-  {
-    label: "Lý do khác",
-    value: "other",
-    description: "Các lý do không nằm trong danh sách trên",
-  },
-];
 
 export default function ModalCancelCooperations({
   showModalCancelContract,
@@ -61,24 +28,23 @@ export default function ModalCancelCooperations({
   };
 
   const handleConfirm = async () => {
-    if (!reason) {
-      message.warning("Vui lòng chọn lý do hủy hợp đồng");
+    const trimmedReason = reason.trim();
+
+    if (!trimmedReason) {
+      message.warning("Vui lòng nhập lý do hủy hợp đồng");
       return;
     }
 
     setIsLoading(true);
     try {
-      await cancelCooperation(reason);
+      await cancelCooperation(trimmedReason);
       handleCancel();
-    } catch (error) {
+    } catch {
       message.error("Lỗi khi hủy hợp đồng");
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const selectedOption = reasonOptions.find((opt) => opt.value === reason);
 
   return (
     <Modal
@@ -152,30 +118,15 @@ export default function ModalCancelCooperations({
               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-4">
                 <span className="text-red-500">*</span> Lý do hủy hợp đồng
               </label>
-              <Select
-                placeholder="Chọn lý do hủy..."
-                value={reason || undefined}
-                onChange={setReason}
-                options={reasonOptions}
-                size="large"
-                className="w-full"
-                style={{ height: "44px" }}
+              <Input.TextArea
+                placeholder="Nhập lý do hủy hợp đồng..."
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                rows={4}
+                maxLength={300}
+                showCount
               />
             </div>
-
-            {selectedOption && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-xs text-blue-600 font-medium mb-1">
-                  Lý do được chọn:
-                </p>
-                <p className="text-sm font-semibold text-slate-900 mb-1">
-                  {selectedOption.label}
-                </p>
-                <p className="text-xs text-slate-600">
-                  {selectedOption.description}
-                </p>
-              </div>
-            )}
           </div>
 
           <div className="px-6 py-5 bg-slate-50 border-t border-slate-200 rounded-b-lg flex gap-3 justify-end">
@@ -192,7 +143,7 @@ export default function ModalCancelCooperations({
               size="large"
               loading={isLoading}
               onClick={handleConfirm}
-              disabled={!reason}
+              disabled={!reason.trim()}
               className="rounded-lg font-semibold min-w-40"
             >
               Xác nhận hủy

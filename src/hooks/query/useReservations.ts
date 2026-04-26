@@ -16,12 +16,18 @@ export const useCreateReservations = () => {
     onError: (error: AxiosError<{ message: string }>) => {
       const statusCode = error?.response?.status;
       const backendMessage = error?.response?.data?.message;
+      const cooperationTermMatch = backendMessage?.match(
+        /^Apartment can only be rented within cooperation term (.+) - (.+) for contract (.+)$/,
+      );
 
       let displayMessage = "Lỗi khi gửi yêu cầu";
 
       if (statusCode === 409) {
         displayMessage =
           "Khoảng thời gian bạn chọn hợp đồng bị trùng lặp hoặc đã thuê căn hộ này!";
+      } else if (statusCode === 400 && cooperationTermMatch) {
+        const [, startDate, endDate] = cooperationTermMatch;
+        displayMessage = `Căn hộ chỉ có thể được thuê trong thời hạn ${startDate} - ${endDate}.`;
       } else if (backendMessage) {
         displayMessage = backendMessage;
       }
