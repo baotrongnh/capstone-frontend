@@ -5,7 +5,6 @@ import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import app2 from "../../../public/img/app2.jpg";
-import bg from "../../../public/img/bg.jpg";
 
 export default function AppPromoSection() {
   const t = useTranslations("HomePage.appPromoSection");
@@ -76,29 +75,35 @@ export default function AppPromoSection() {
                 <div className="absolute inset-0 rounded-[3rem] bg-[linear-gradient(145deg,rgba(255,255,255,0.15),transparent_35%,transparent_65%,rgba(255,255,255,0.05))] pointer-events-none" />
 
                 {/* ===== Inner frame & Screen ===== */}
-                <div className="relative w-full h-full rounded-[2.7rem] bg-black p-0.5 shadow-[inset_0_0_12px_rgba(255,255,255,0.1)]">
-                  <div className="relative w-full h-full rounded-[2.6rem] overflow-hidden bg-black">
-                    {/* App Image */}
-                    <img
-                      src={bg.src}
-                      alt="App UI"
-                      className="w-full h-full object-cover object-top"
-                    />
+                <div className="relative w-full h-full rounded-[2.6rem] overflow-hidden bg-black">
+                  {/* App Image */}
+                  <img
+                    src="/img/mobile2.PNG"
+                    alt="App UI"
+                    loading="eager"
+                    draggable={false}
+                    className="block w-full h-full object-cover object-top select-none"
+                    style={{
+                      imageRendering: "auto", // bỏ crisp-edges vì dễ răng cưa / blur
+                      transform: "translate3d(0,0,0)", // GPU render nét hơn
+                      backfaceVisibility: "hidden",
+                      willChange: "transform",
+                      filter: "contrast(1.08) brightness(1.02) saturate(1.05)",
+                    }}
+                  />
 
-                    {/* Screen Glare (Hiệu ứng phản chiếu ánh sáng kính) */}
-                    <div className="absolute top-0 left-[-50%] w-[200%] h-[30%] bg-linear-to-b from-white/10 to-transparent -rotate-12 pointer-events-none z-10" />
+                  {/* Giảm glare vì lớp này làm cảm giác mờ */}
+                  <div className="absolute top-0 left-[-50%] w-[200%] h-[18%] bg-gradient-to-b from-white/6 to-transparent -rotate-12 pointer-events-none z-10" />
 
-                    {/* Dynamic Island */}
-                    <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-23.75 h-7 bg-black rounded-full z-20 shadow-[0_0_2px_rgba(0,0,0,0.8)] flex justify-end items-center pr-2">
-                      {/* Camera lens glint */}
-                      <div className="w-3 h-3 rounded-full bg-[#111] border border-white/5 flex items-center justify-center">
-                        <div className="w-1 h-1 rounded-full bg-blue-500/30 blur-[0.5px]"></div>
-                      </div>
+                  {/* Dynamic Island */}
+                  <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-20 shadow-[0_1px_4px_rgba(0,0,0,0.9)] flex justify-end items-center pr-2">
+                    <div className="w-3 h-3 rounded-full bg-[#111] border border-white/10 flex items-center justify-center">
+                      <div className="w-1 h-1 rounded-full bg-blue-400/50" />
                     </div>
-
-                    {/* Home indicator */}
-                    <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 w-27.5 h-1 bg-black/30 backdrop-blur-md rounded-full z-20 shadow-[0_1px_2px_rgba(255,255,255,0.4)] border border-white/40" />
                   </div>
+
+                  {/* Home indicator */}
+                  <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 w-28 h-1 bg-white/20 rounded-full z-20" />
                 </div>
 
                 {/* Outer glow (Tạo cảm giác máy nổi bật trên nền) */}
