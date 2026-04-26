@@ -334,6 +334,8 @@
       "nationalIdInvalid": "Please enter a valid 9 or 12-digit national ID number",
       "cccdTitle": "Identity Verification (CCCD)",
       "cccdSubtitle": "Upload both sides of your Vietnamese ID card (CCCD) to verify your identity",
+      "showIdentityInfo": "Show ID info",
+      "hideIdentityInfo": "Hide ID info",
       "cccdFront": "Front Side",
       "cccdBack": "Back Side",
       "cccdUploadText": "Click or drag image here to upload",
@@ -1163,34 +1165,17 @@
         {
           "percentage": "70/30",
           "description": "Standard Commission Split for Property Owners",
-          "details": [
-            "Owners retain 70% of rental income",
-            "Platform receives 30% as management and maintenance fee",
-            "Includes professional cleaning, tenant screening, and support",
-            "Quarterly revenue reports provided"
-          ]
+          "details": ["Owners retain 70% of rental income", "Platform receives 30% as management and maintenance fee", "Includes professional cleaning, tenant screening, and support", "Quarterly revenue reports provided"]
         },
         {
           "percentage": "85/15",
           "description": "Premium Partner Program (Annual Contract)",
-          "details": [
-            "Owners retain 85% of rental income",
-            "Platform receives 15% commission",
-            "Minimum 5 properties required",
-            "Dedicated account manager assigned",
-            "Priority repair and maintenance services"
-          ]
+          "details": ["Owners retain 85% of rental income", "Platform receives 15% commission", "Minimum 5 properties required", "Dedicated account manager assigned", "Priority repair and maintenance services"]
         },
         {
           "percentage": "60/40",
           "description": "Full Management Services",
-          "details": [
-            "Platform handles 100% of property management",
-            "Owners receive 60% of rental income",
-            "Includes 24/7 support, tenant management, and maintenance",
-            "Marketing and tenant acquisition included",
-            "Professional photography and virtual tours"
-          ]
+          "details": ["Platform handles 100% of property management", "Owners receive 60% of rental income", "Includes 24/7 support, tenant management, and maintenance", "Marketing and tenant acquisition included", "Professional photography and virtual tours"]
         }
       ],
       "simple": "Simple & Transparent",
@@ -1237,11 +1222,7 @@
     },
     "introduction": {
       "description": "HomeIQ is a modern property management and rental platform that connects tenants with property owners through comprehensive digitization processes.",
-      "features": [
-        "Professional Operations",
-        "Transparent Contracts",
-        "Optimized Sustainable Revenue"
-      ]
+      "features": ["Professional Operations", "Transparent Contracts", "Optimized Sustainable Revenue"]
     },
     "payment": {
       "deposit": "The security deposit must equal 1-2 months of rent and is held throughout the lease period.",
