@@ -5,8 +5,8 @@ import type { ChatApartmentRef } from '@/types/chat'
 import { Icon } from '@iconify/react'
 import { Button, Input } from 'antd'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import { useEffect, useRef, useState, type ClipboardEvent, type KeyboardEvent } from 'react'
+import { ChatImagePreviewStrip } from './chat-image'
 
 const { TextArea } = Input
 const MAX_PENDING_IMAGES = 5
@@ -105,20 +105,15 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
      }
 
      return (
-          <div className="p-3 flex flex-col gap-2">
-               {pendingImages.length > 0 && (
-                    <div className="flex gap-2 flex-wrap">
-                         {pendingImages.map((item, index) => (
-                              <div key={`${item.previewUrl}-${index}`} className="relative">
-                                   <Image src={item.previewUrl} alt="preview" width={64} height={64} unoptimized className="h-16 w-16 object-cover rounded border" />
-                                   <button
-                                        onClick={() => removePendingImage(index)}
-                                        className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center leading-none"
-                                   >×</button>
-                              </div>
-                         ))}
-                    </div>
-               )}
+          <div className="flex flex-col gap-2 p-3">
+               <ChatImagePreviewStrip
+                    images={pendingImages.map((item, index) => ({
+                         key: `${item.previewUrl}-${index}`,
+                         src: item.previewUrl,
+                         alt: 'preview',
+                    }))}
+                    onRemove={removePendingImage}
+               />
 
                {currentApartment && (
                     <button
@@ -136,7 +131,7 @@ export function ChatInput({ onSend, currentApartment, onSendApartment, disabled 
                          onChange={(e) => setMessage(e.target.value)}
                          onPressEnter={handlePressEnter}
                          onPaste={handlePaste}
-                         placeholder={disabled ? 'Hệ thống đang gặp lỗi, vui lòng thử lại sau' : t('inputPlaceholder')}
+                         placeholder={disabled ? 'Há»‡ thá»‘ng Ä‘ang gáº·p lá»—i, vui lÃ²ng thá»­ láº¡i sau' : t('inputPlaceholder')}
                          autoSize={{ minRows: 1, maxRows: 4 }}
                          className="flex-1"
                          disabled={disabled || isSending}
