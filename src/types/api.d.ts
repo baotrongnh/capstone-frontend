@@ -668,6 +668,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/test-push-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test FCM push to all registered device tokens
+         * @description Admin/operator only. Sends a direct Firebase push to every token in fcm_tokens without creating notification records.
+         */
+        post: operations["NotificationsController_sendTestPushToAllDevices"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications/my": {
         parameters: {
             query?: never;
@@ -711,7 +731,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Gửi thông báo (chỉ admin/operator) */
+        /** Gá»­i thĂ´ng bĂ¡o (chá»‰ admin/operator) */
         post: operations["NotificationsController_create"];
         delete?: never;
         options?: never;
@@ -997,6 +1017,23 @@ export interface paths {
          * @description Add a verified user into a draft/pending contract by CCCD number and regenerate contract PDF. Signed contracts cannot add members.
          */
         post: operations["ContractsController_addMemberByNationalId"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/test/fire-alert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fake a FIRE MQTT status event to test resident push notifications */
+        post: operations["IoTController_fakeFireAlert"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2040,7 +2077,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Legacy endpoint for updating the cached local house password field */
+        /** Legacy endpoint for updating the cached local house password field only */
         patch: operations["UserApartmentsController_updateMyHousePassword"];
         trace?: never;
     };
@@ -3122,6 +3159,16 @@ export interface components {
             /** @example available */
             status: string;
             /**
+             * Format: date-time
+             * @description Ngay bat dau hop dong cooperation (neu co)
+             */
+            cooperationContractStartDate?: string | null;
+            /**
+             * Format: date-time
+             * @description Ngay ket thuc hop dong cooperation (neu co)
+             */
+            cooperationContractEndDate?: string | null;
+            /**
              * @description Diem danh gia trung binh cua apartment (1-5)
              * @example 4.5
              */
@@ -3947,6 +3994,20 @@ export interface components {
              */
             token: string;
         };
+        TestPushNotificationDto: {
+            /** @example IntelliRentOps test push */
+            title: string;
+            /** @example This is a test push notification from backend. */
+            message: string;
+            /**
+             * @description Optional string key/value payload sent through FCM data.
+             * @example {
+             *       "type": "test_push",
+             *       "source": "admin"
+             *     }
+             */
+            data?: Record<string, never>;
+        };
         NotificationResponseDto: {
             id: string;
             /** @example user */
@@ -4017,6 +4078,14 @@ export interface components {
             relatedEntityType?: string;
             /** Format: uuid */
             relatedEntityId?: string;
+            /**
+             * @description Additional FCM data payload for mobile deep links
+             * @example {
+             *       "screen": "fire_alarm_control",
+             *       "apartmentId": "apt-123"
+             *     }
+             */
+            data?: Record<string, never>;
         };
         RenewalContractSummaryDto: {
             id: string;
@@ -4676,6 +4745,18 @@ export interface components {
              * @example 50
              */
             sharePercentage?: number;
+        };
+        FakeFireAlertDto: {
+            /**
+             * @description ESP board id to fake a FIRE status event for
+             * @example ESP_A101
+             */
+            espId: string;
+            /**
+             * @description Optional alarm device channel id. If omitted, backend uses the alarm device configured for the board.
+             * @example 3
+             */
+            deviceId?: number;
         };
         IoTHealthCheckResultDto: {
             /** @example ESP_A101 */
@@ -6429,7 +6510,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6684,7 +6765,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6718,7 +6799,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6740,7 +6821,7 @@ export interface components {
         };
         UpdateUserApartmentAccessDto: {
             /**
-             * @description Apartment door password/PIN
+             * @description Legacy cached local house password field. This does not control smart-lock first-pass PIN state.
              * @example 2580
              */
             apartmentDoorPassword?: string;
@@ -6792,7 +6873,7 @@ export interface components {
         };
         UpdateHousePasswordDto: {
             /**
-             * @description New apartment door password (4-12 digits)
+             * @description New legacy cached local house password (4-12 digits). This does not update smart-lock first-pass PIN state.
              * @example 258036
              */
             housePassword: string;
@@ -7359,7 +7440,9 @@ export interface operations {
     };
     AuthController_getSupabaseUrl: {
         parameters: {
-            query?: never;
+            query: {
+                returnUrl: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -8807,6 +8890,28 @@ export interface operations {
             };
         };
     };
+    NotificationsController_sendTestPushToAllDevices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestPushNotificationDto"];
+            };
+        };
+        responses: {
+            /** @description FCM test push result summary */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     NotificationsController_findMyNotifications: {
         parameters: {
             query?: {
@@ -8869,7 +8974,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Đã gửi thông báo và đẩy FCM */
+            /** @description ÄĂ£ gá»­i thĂ´ng bĂ¡o vĂ  Ä‘áº©y FCM */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -9638,6 +9743,27 @@ export interface operations {
             };
             /** @description Contract cannot add members */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_fakeFireAlert: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FakeFireAlertDto"];
+            };
+        };
+        responses: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
