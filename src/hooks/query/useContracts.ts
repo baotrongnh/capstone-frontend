@@ -2,7 +2,7 @@ import { contractsService } from "@/lib/services/contracts.service";
 import { userService } from "@/lib/services/user.service";
 import { useAuthStore } from "@/stores/auth.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { App, message } from "antd";
+import { App } from "antd";
 import { AxiosError } from "axios";
 
 export const useGetContracts = () =>

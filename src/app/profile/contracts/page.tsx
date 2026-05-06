@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Card, Typography, Select, Spin, Empty } from "antd";
-import { Files, FileEdit, FileCheck, AlertCircle } from "lucide-react";
+import { Files, FileEdit, FileCheck, AlertCircle, X } from "lucide-react";
 
 import { useGetContracts } from "@/hooks/query/useContracts";
 import { ContractWithMembers } from "@/lib/services/contracts.service";
@@ -41,8 +41,6 @@ export default function ContractsPage() {
   const contractsList = useMemo<ContractWithMembers[]>(() => {
     return (data?.data ?? []) as ContractWithMembers[];
   }, [data]);
-
-  console.log("DTA", contractsList);
 
   const filteredContracts = useMemo(() => {
     if (statusFilter === "all") return contractsList;
@@ -157,9 +155,9 @@ export default function ContractsPage() {
 
   const stats = [
     {
-      title: "Tổng hợp đồng",
+      title: "Hợp đồng",
       value: contractsList.length,
-      icon: <Files size={24} />,
+      icon: <Files size={18} />,
       textColor: "text-blue-600",
       bgColor: "bg-blue-50",
     },
@@ -168,7 +166,7 @@ export default function ContractsPage() {
       value: contractsList.filter(
         (c: ContractWithMembers) => c.status === "draft",
       ).length,
-      icon: <FileEdit size={24} />,
+      icon: <FileEdit size={18} />,
       textColor: "text-amber-600",
       bgColor: "bg-amber-50",
     },
@@ -178,7 +176,7 @@ export default function ContractsPage() {
         (c: ContractWithMembers) =>
           c.status === "signed" || c.status === "active",
       ).length,
-      icon: <FileCheck size={24} />,
+      icon: <FileCheck size={18} />,
       textColor: "text-emerald-600",
       bgColor: "bg-emerald-50",
     },
@@ -188,7 +186,16 @@ export default function ContractsPage() {
       value: contractsList.filter(
         (c: ContractWithMembers) => c.status === "terminated",
       ).length,
-      icon: <AlertCircle size={24} />,
+      icon: <X size={18} />,
+      textColor: "text-rose-600",
+      bgColor: "bg-rose-50",
+    },
+    {
+      title: "Hết hạn",
+      value: contractsList.filter(
+        (c: ContractWithMembers) => c.status === "expired",
+      ).length,
+      icon: <AlertCircle size={18} />,
       textColor: "text-rose-600",
       bgColor: "bg-rose-50",
     },
@@ -205,13 +212,13 @@ export default function ContractsPage() {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
         {stats.map((stat, index) => (
           <Card
             key={index}
             className="border-gray-100 shadow-sm transition-all duration-300"
             style={{ borderRadius: "16px" }}
-            styles={{ body: { padding: "24px" } }}
+            styles={{ body: { padding: "20px" } }}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -221,7 +228,7 @@ export default function ContractsPage() {
                 <h1 className="text-4xl">{stat.value}</h1>
               </div>
               <div
-                className={`flex items-center justify-center w-12 h-12 rounded-2xl ${stat.bgColor} ${stat.textColor}`}
+                className={`flex items-center justify-center w-6 h-6 rounded-2xl ${stat.bgColor} ${stat.textColor}`}
               >
                 {stat.icon}
               </div>
@@ -260,7 +267,7 @@ export default function ContractsPage() {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4">
         {filteredContracts.map((contract: ContractWithMembers) => (
           <ContractCard
             key={contract.id}

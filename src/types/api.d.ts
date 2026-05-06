@@ -668,6 +668,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications/test-push-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test FCM push to all registered device tokens
+         * @description Admin/operator only. Sends a direct Firebase push to every token in fcm_tokens without creating notification records.
+         */
+        post: operations["NotificationsController_sendTestPushToAllDevices"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications/my": {
         parameters: {
             query?: never;
@@ -711,7 +731,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Gửi thông báo (chỉ admin/operator) */
+        /** Gá»­i thĂ´ng bĂ¡o (chá»‰ admin/operator) */
         post: operations["NotificationsController_create"];
         delete?: never;
         options?: never;
@@ -1003,6 +1023,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/iot/test/fire-alert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fake a FIRE MQTT status event to test resident push notifications */
+        post: operations["IoTController_fakeFireAlert"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/iot/devices/{espId}/check-health": {
         parameters: {
             query?: never;
@@ -1089,6 +1126,111 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/utility-rates/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current flat electricity/water rates for an apartment */
+        get: operations["IoTController_getCurrentUtilityRates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update current flat electricity/water rates for an apartment */
+        patch: operations["IoTController_updateCurrentUtilityRates"];
+        trace?: never;
+    };
+    "/api/v1/iot/meters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List utility meters */
+        get: operations["IoTController_findAllMeters"];
+        put?: never;
+        /** Create utility meter */
+        post: operations["IoTController_createMeter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/meters/{id}/readings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List utility meter readings */
+        get: operations["IoTController_getMeterReadings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/meters/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get utility meter detail */
+        get: operations["IoTController_findOneMeter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update utility meter */
+        patch: operations["IoTController_updateMeter"];
+        trace?: never;
+    };
+    "/api/v1/iot/readings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create utility meter reading */
+        post: operations["IoTController_createReading"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/readings/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Verify utility meter reading */
+        patch: operations["IoTController_verifyReading"];
         trace?: never;
     };
     "/api/v1/iot/boards/{boardId}/unlink-apartment": {
@@ -2040,7 +2182,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Legacy endpoint for updating the cached local house password field */
+        /** Legacy endpoint for updating the cached local house password field only */
         patch: operations["UserApartmentsController_updateMyHousePassword"];
         trace?: never;
     };
@@ -3122,6 +3264,16 @@ export interface components {
             /** @example available */
             status: string;
             /**
+             * Format: date-time
+             * @description Ngay bat dau hop dong cooperation (neu co)
+             */
+            cooperationContractStartDate?: string | null;
+            /**
+             * Format: date-time
+             * @description Ngay ket thuc hop dong cooperation (neu co)
+             */
+            cooperationContractEndDate?: string | null;
+            /**
              * @description Diem danh gia trung binh cua apartment (1-5)
              * @example 4.5
              */
@@ -3947,6 +4099,20 @@ export interface components {
              */
             token: string;
         };
+        TestPushNotificationDto: {
+            /** @example IntelliRentOps test push */
+            title: string;
+            /** @example This is a test push notification from backend. */
+            message: string;
+            /**
+             * @description Optional string key/value payload sent through FCM data.
+             * @example {
+             *       "type": "test_push",
+             *       "source": "admin"
+             *     }
+             */
+            data?: Record<string, never>;
+        };
         NotificationResponseDto: {
             id: string;
             /** @example user */
@@ -4017,6 +4183,14 @@ export interface components {
             relatedEntityType?: string;
             /** Format: uuid */
             relatedEntityId?: string;
+            /**
+             * @description Additional FCM data payload for mobile deep links
+             * @example {
+             *       "screen": "fire_alarm_control",
+             *       "apartmentId": "apt-123"
+             *     }
+             */
+            data?: Record<string, never>;
         };
         RenewalContractSummaryDto: {
             id: string;
@@ -4677,6 +4851,18 @@ export interface components {
              */
             sharePercentage?: number;
         };
+        FakeFireAlertDto: {
+            /**
+             * @description ESP board id to fake a FIRE status event for
+             * @example ESP_A101
+             */
+            espId: string;
+            /**
+             * @description Optional alarm device channel id. If omitted, backend uses the alarm device configured for the board.
+             * @example 3
+             */
+            deviceId?: number;
+        };
         IoTHealthCheckResultDto: {
             /** @example ESP_A101 */
             espId: string;
@@ -4799,6 +4985,108 @@ export interface components {
             apartmentId?: string | null;
             electric?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
             water?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
+        };
+        UpdateCurrentUtilityRateDto: {
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId: string;
+            /**
+             * @description Electricity rate in VND per kWh
+             * @example 3500
+             */
+            electricityRatePerUnit?: number;
+            /**
+             * @description Water rate in VND per m3
+             * @example 15000
+             */
+            waterRatePerUnit?: number;
+        };
+        CreateUtilityMeterDto: {
+            /** @example EL-2026-001 */
+            meterNumber: string;
+            /** @enum {string} */
+            meterType: "electricity" | "water" | "gas" | "internet";
+            /** @example Schneider */
+            brand?: string;
+            /** @example iEM3155 */
+            model?: string;
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId: string;
+            /** @example 2026-01-15 */
+            installationDate: string;
+            /** @example kWh */
+            unitOfMeasurement?: string;
+            /**
+             * @deprecated
+             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @example 3500
+             */
+            ratePerUnit?: number;
+            /** @default false */
+            isDigital: boolean;
+            notes?: string;
+        };
+        UpdateUtilityMeterDto: {
+            /** @example EL-2026-001 */
+            meterNumber?: string;
+            /** @enum {string} */
+            meterType?: "electricity" | "water" | "gas" | "internet";
+            /** @example Schneider */
+            brand?: string;
+            /** @example iEM3155 */
+            model?: string;
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId?: string;
+            /** @example 2026-01-15 */
+            installationDate?: string;
+            /** @example kWh */
+            unitOfMeasurement?: string;
+            /**
+             * @deprecated
+             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @example 3500
+             */
+            ratePerUnit?: number;
+            /** @default false */
+            isDigital: boolean;
+            notes?: string;
+            /** @enum {string} */
+            status?: "active" | "inactive" | "faulty" | "replaced";
+        };
+        CreateUtilityReadingDto: {
+            /**
+             * Format: uuid
+             * @description Utility meter ID
+             */
+            utilityMeterId: string;
+            /**
+             * Format: uuid
+             * @description Rental contract ID
+             */
+            rentalContractId?: string;
+            /** @example 2026-02-01 */
+            readingDate: string;
+            /**
+             * @description Current reading value
+             * @example 1250.5
+             */
+            readingValue: number;
+            /**
+             * @default manual
+             * @enum {string}
+             */
+            readingType: "manual" | "automatic" | "estimated";
+            /** @description Photo evidence of meter reading */
+            images?: string[];
+            notes?: string;
         };
         CreateIoTBoardDeviceDto: {
             /**
@@ -6429,7 +6717,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6684,7 +6972,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6718,7 +7006,7 @@ export interface components {
             /** Format: date-time */
             moveOutDate?: string | null;
             /**
-             * @description True when the apartment door PIN has not been initialized yet and the tenant must set it on first use.
+             * @description True only when a matching door smart-lock exists and its PIN has not been initialized yet. Apartments without a door smart-lock return false.
              * @example true
              */
             isFirstPass: boolean;
@@ -6740,7 +7028,7 @@ export interface components {
         };
         UpdateUserApartmentAccessDto: {
             /**
-             * @description Apartment door password/PIN
+             * @description Legacy cached local house password field. This does not control smart-lock first-pass PIN state.
              * @example 2580
              */
             apartmentDoorPassword?: string;
@@ -6792,7 +7080,7 @@ export interface components {
         };
         UpdateHousePasswordDto: {
             /**
-             * @description New apartment door password (4-12 digits)
+             * @description New legacy cached local house password (4-12 digits). This does not update smart-lock first-pass PIN state.
              * @example 258036
              */
             housePassword: string;
@@ -7359,7 +7647,9 @@ export interface operations {
     };
     AuthController_getSupabaseUrl: {
         parameters: {
-            query?: never;
+            query: {
+                returnUrl: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -8807,6 +9097,28 @@ export interface operations {
             };
         };
     };
+    NotificationsController_sendTestPushToAllDevices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestPushNotificationDto"];
+            };
+        };
+        responses: {
+            /** @description FCM test push result summary */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     NotificationsController_findMyNotifications: {
         parameters: {
             query?: {
@@ -8869,7 +9181,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Đã gửi thông báo và đẩy FCM */
+            /** @description ÄĂ£ gá»­i thĂ´ng bĂ¡o vĂ  Ä‘áº©y FCM */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -9645,6 +9957,27 @@ export interface operations {
             };
         };
     };
+    IoTController_fakeFireAlert: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FakeFireAlertDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IoTController_checkHealth: {
         parameters: {
             query?: never;
@@ -9919,6 +10252,191 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    IoTController_getCurrentUtilityRates: {
+        parameters: {
+            query: {
+                /** @description Apartment ID */
+                apartmentId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_updateCurrentUtilityRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCurrentUtilityRateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_findAllMeters: {
+        parameters: {
+            query?: {
+                apartmentId?: string;
+                status?: "active" | "inactive" | "faulty" | "replaced";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_createMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUtilityMeterDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_getMeterReadings: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_findOneMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_updateMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUtilityMeterDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_createReading: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUtilityReadingDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_verifyReading: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

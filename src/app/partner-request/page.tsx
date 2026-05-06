@@ -566,7 +566,7 @@ export default function PartnerContact() {
             </div>
 
             <Form.Item
-              label="Hình ảnh tài sản"
+              label="Hình ảnh tài sản ( Tối đa 5 ảnh )"
               name="images"
               rules={[
                 {
