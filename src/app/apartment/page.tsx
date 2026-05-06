@@ -132,6 +132,8 @@ export default function ApartmentList() {
             </div>
           )}
 
+          <div className="h-5"></div>
+
           {/* Pagination */}
           {(meta?.totalPages ?? 0) > 1 && (
             <Pagination
