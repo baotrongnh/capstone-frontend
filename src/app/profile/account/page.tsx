@@ -250,13 +250,15 @@ export default function AccountPage() {
             {identity?.isVerified && <Tag icon={<CheckCircleOutlined />} color="success">{t("verified")}</Tag>}
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              type="text"
-              icon={showIdentityInfo ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-              onClick={() => setShowIdentityInfo((prev) => !prev)}
-            >
-              {showIdentityInfo ? t("hideIdentityInfo") : t("showIdentityInfo")}
-            </Button>
+            {identity && (
+              <Button
+                type="text"
+                icon={showIdentityInfo ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                onClick={() => setShowIdentityInfo((prev) => !prev)}
+              >
+                {showIdentityInfo ? t("hideIdentityInfo") : t("showIdentityInfo")}
+              </Button>
+            )}
             {!identity?.isVerified && (
               <Button type="primary" onClick={() => setCccdModalOpen(true)}>
                 {t("cccdUploadSubmit")}

@@ -140,7 +140,10 @@ export const useGoogleLogin = (onSuccess?: () => void) => {
     const login = async () => {
         setLoading(true)
         try {
-            const url = await authService.getSupabaseUrl()
+            const returnUrl = process.env.NEXT_PUBLIC_SUPABASE_RETURN_URL
+                || process.env.NEXT_PUBLIC_APP_URL
+                || window.location.origin
+            const url = await authService.getSupabaseUrl(returnUrl)
 
             const popupWidth = 600
             const popupHeight = 700
