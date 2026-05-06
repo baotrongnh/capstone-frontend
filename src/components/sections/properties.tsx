@@ -127,7 +127,10 @@ export default function PropertiesSection() {
 
                   <div className="p-3">
                     <div onClick={() => handleDetail(apartment.id)}>
-                      <h4 className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
+                      <h4
+                        className="mb-2 truncate text-sm font-semibold leading-snug text-gray-800"
+                        title={`${apartment.buildingName} – ${apartment.apartmentNumber}`}
+                      >
                         {apartment.buildingName} – {apartment.apartmentNumber}
                       </h4>
 
@@ -137,7 +140,10 @@ export default function PropertiesSection() {
                           Không gian: {apartment.numberOfBedrooms} PN ·{" "}
                           {apartment.numberOfBathrooms} WC
                         </div>
-                        <div>
+                        <div
+                          className="truncate"
+                          title={`Tầng ${apartment.floorNumber} · ${apartment.streetAddress}, ${apartment.wardName}`}
+                        >
                           Tầng {apartment.floorNumber} ·{" "}
                           {apartment.streetAddress}, {apartment.wardName}
                         </div>

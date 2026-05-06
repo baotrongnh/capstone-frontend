@@ -1,10 +1,9 @@
 "use client";
 
 import { Card, Empty, Select, Spin, Typography } from "antd";
-import { AlertCircle, FileCheck, FileEdit, Files } from "lucide-react";
+import { AlertCircle, FileCheck, FileEdit, Files, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { CooperationsCard } from "@/components/layout/card-cooperations-layout";
 import ModalAssignCooperations from "@/components/modal/modal-assign-cooperations";
 import ModalCancelCooperations from "@/components/modal/modal-cancel-cooperations";
 import { ROUTES } from "@/constants/routes";
@@ -12,6 +11,7 @@ import { useApartmentOwner } from "@/hooks/query/useApartments";
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "next/navigation";
+import { CooperationsCard } from "@/components/layout/card-cooperations-layout";
 
 const { Title, Text } = Typography;
 
@@ -124,14 +124,14 @@ export default function CooperationsPage() {
 
   const stats = [
     {
-      title: "Tổng căn hộ",
+      title: "Hợp đồng",
       value: contractsList.length,
       icon: <Files size={24} />,
       textColor: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      title: "Chờ duyệt",
+      title: "Chưa ký",
       value: contractsList.filter(
         (c: OwnerApartmentResponse) => c.status === "pending",
       ).length,
@@ -140,20 +140,20 @@ export default function CooperationsPage() {
       bgColor: "bg-amber-50",
     },
     {
-      title: "Đã xác nhận",
+      title: "Đã ký",
       value: contractsList.filter(
-        (c: OwnerApartmentResponse) => c.status === "verified",
+        (c: OwnerApartmentResponse) => c.status === "available",
       ).length,
       icon: <FileCheck size={24} />,
       textColor: "text-emerald-600",
       bgColor: "bg-emerald-50",
     },
     {
-      title: "Bị từ chối",
+      title: "Đã hủy",
       value: contractsList.filter(
-        (c: OwnerApartmentResponse) => c.status === "rejected",
+        (c: OwnerApartmentResponse) => c.status === "inactive",
       ).length,
-      icon: <AlertCircle size={24} />,
+      icon: <X size={24} />,
       textColor: "text-rose-600",
       bgColor: "bg-rose-50",
     },
@@ -176,7 +176,7 @@ export default function CooperationsPage() {
             key={index}
             className="border-gray-100 shadow-sm transition-all duration-300"
             style={{ borderRadius: "16px" }}
-            styles={{ body: { padding: "24px" } }}
+            styles={{ body: { padding: "20px" } }}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -231,14 +231,13 @@ export default function CooperationsPage() {
           </Text>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {filteredContracts.map((apartment: OwnerApartmentResponse) => (
             <CooperationsCard
               key={apartment.id}
               contract={apartment}
               onView={() => handleViewContract(apartment.id)}
               onCancel={() => handleCancelContract(apartment.id)}
-              onRedirectInvoice={() => handleRedirectInvoice()}
               onDownload={() => handleDownloadContract(apartment.id)}
             />
           ))}

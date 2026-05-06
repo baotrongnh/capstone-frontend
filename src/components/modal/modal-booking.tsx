@@ -24,7 +24,7 @@ import {
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BOOKING_ADVANCE_DAYS_LIMIT } from "@/constants/apartment";
 import { ROUTES } from "@/constants/routes";
@@ -40,6 +40,15 @@ interface ModalBookingProps {
   apartmentId?: string | number | null;
   apartmentData: ApartmentItem | undefined;
 }
+
+type CooperationContractWindow = {
+  cooperationContractStartDate?: string | null;
+  cooperationContractEndDate?: string | null;
+  cooperationContract?: {
+    startDate?: string | null;
+    endDate?: string | null;
+  } | null;
+};
 
 const durationOptions = [
   { label: "6 tháng", value: 6 },
@@ -69,6 +78,36 @@ export default function ModalBooking({
 
   const { data: apartment } = useApartment(apartmentId as string | number);
 
+  const resolvedApartment = (apartment?.data ?? apartmentData) as
+    | (ApartmentItem & CooperationContractWindow)
+    | undefined;
+  const cooperationContractStartDate =
+    resolvedApartment?.cooperationContractStartDate ??
+    resolvedApartment?.cooperationContract?.startDate;
+  const cooperationContractEndDate =
+    resolvedApartment?.cooperationContractEndDate ??
+    resolvedApartment?.cooperationContract?.endDate;
+
+  const filteredDurationOptions = useMemo(() => {
+    if (!cooperationContractStartDate || !cooperationContractEndDate) {
+      return durationOptions;
+    }
+
+    const contractStartDate = dayjs(cooperationContractStartDate);
+    const contractEndDate = dayjs(cooperationContractEndDate);
+    const referenceDate = dayjs().isBefore(contractStartDate, "day")
+      ? contractStartDate
+      : dayjs();
+
+    return durationOptions.filter((option) => {
+      const leaseEndDate = referenceDate.add(option.value, "month");
+      return (
+        leaseEndDate.isSame(contractEndDate, "day") ||
+        leaseEndDate.isBefore(contractEndDate, "day")
+      );
+    });
+  }, [cooperationContractEndDate, cooperationContractStartDate]);
+
   const user = useAuthStore((store) => store.user);
 
   const displayAddress = useFullAddress(
@@ -83,23 +122,25 @@ export default function ModalBooking({
     if (!open) {
       setSearchValue("");
       setSelectedMembers(new Map());
+      setAgreeTerms(false);
+      formReservations.resetFields();
     }
   }, [open]);
 
   const handleReservations = async () => {
-    const values = await formReservations.validateFields();
-
-    const payload = {
-      apartmentId: apartmentId,
-      desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),
-      desiredEndDate: values.desiredEndDate.format("YYYY-MM-DD"),
-      additionalMemberNationalIds: values.additionalMemberNationalIds || [],
-      specialRequests: values.specialRequests,
-    };
-
-    setIsLoading(true);
-
     try {
+      const values = await formReservations.validateFields();
+
+      const payload = {
+        apartmentId: apartmentId,
+        desiredStartDate: values.desiredStartDate.format("YYYY-MM-DD"),
+        desiredEndDate: values.desiredEndDate.format("YYYY-MM-DD"),
+        additionalMemberNationalIds: values.additionalMemberNationalIds || [],
+        specialRequests: values.specialRequests,
+      };
+
+      setIsLoading(true);
+
       await createReservation(payload);
       formReservations.resetFields();
       onClose();
@@ -111,8 +152,18 @@ export default function ModalBooking({
     }
   };
 
-  const handleStartDateChange = () => {
+  const handleStartDateChange = (date: dayjs.Dayjs | null) => {
     formReservations.setFieldValue("desiredEndDate", null);
+
+    if (!date) return;
+
+    const currentDuration = formReservations.getFieldValue("durationMonths");
+    if (currentDuration) {
+      formReservations.setFieldValue(
+        "desiredEndDate",
+        date.add(currentDuration, "month"),
+      );
+    }
   };
 
   const handleDurationChange = (value: number) => {
@@ -316,7 +367,7 @@ export default function ModalBooking({
                   <Select
                     className="w-full h-10 rounded-lg"
                     placeholder="Chọn thời hạn"
-                    options={durationOptions}
+                    options={filteredDurationOptions}
                     onChange={handleDurationChange}
                   />
                 </Form.Item>

@@ -1128,6 +1128,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/iot/utility-rates/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current flat electricity/water rates for an apartment */
+        get: operations["IoTController_getCurrentUtilityRates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update current flat electricity/water rates for an apartment */
+        patch: operations["IoTController_updateCurrentUtilityRates"];
+        trace?: never;
+    };
+    "/api/v1/iot/meters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List utility meters */
+        get: operations["IoTController_findAllMeters"];
+        put?: never;
+        /** Create utility meter */
+        post: operations["IoTController_createMeter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/meters/{id}/readings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List utility meter readings */
+        get: operations["IoTController_getMeterReadings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/meters/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get utility meter detail */
+        get: operations["IoTController_findOneMeter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update utility meter */
+        patch: operations["IoTController_updateMeter"];
+        trace?: never;
+    };
+    "/api/v1/iot/readings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create utility meter reading */
+        post: operations["IoTController_createReading"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/iot/readings/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Verify utility meter reading */
+        patch: operations["IoTController_verifyReading"];
+        trace?: never;
+    };
     "/api/v1/iot/boards/{boardId}/unlink-apartment": {
         parameters: {
             query?: never;
@@ -4880,6 +4985,108 @@ export interface components {
             apartmentId?: string | null;
             electric?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
             water?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
+        };
+        UpdateCurrentUtilityRateDto: {
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId: string;
+            /**
+             * @description Electricity rate in VND per kWh
+             * @example 3500
+             */
+            electricityRatePerUnit?: number;
+            /**
+             * @description Water rate in VND per m3
+             * @example 15000
+             */
+            waterRatePerUnit?: number;
+        };
+        CreateUtilityMeterDto: {
+            /** @example EL-2026-001 */
+            meterNumber: string;
+            /** @enum {string} */
+            meterType: "electricity" | "water" | "gas" | "internet";
+            /** @example Schneider */
+            brand?: string;
+            /** @example iEM3155 */
+            model?: string;
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId: string;
+            /** @example 2026-01-15 */
+            installationDate: string;
+            /** @example kWh */
+            unitOfMeasurement?: string;
+            /**
+             * @deprecated
+             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @example 3500
+             */
+            ratePerUnit?: number;
+            /** @default false */
+            isDigital: boolean;
+            notes?: string;
+        };
+        UpdateUtilityMeterDto: {
+            /** @example EL-2026-001 */
+            meterNumber?: string;
+            /** @enum {string} */
+            meterType?: "electricity" | "water" | "gas" | "internet";
+            /** @example Schneider */
+            brand?: string;
+            /** @example iEM3155 */
+            model?: string;
+            /**
+             * Format: uuid
+             * @description Apartment ID
+             */
+            apartmentId?: string;
+            /** @example 2026-01-15 */
+            installationDate?: string;
+            /** @example kWh */
+            unitOfMeasurement?: string;
+            /**
+             * @deprecated
+             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @example 3500
+             */
+            ratePerUnit?: number;
+            /** @default false */
+            isDigital: boolean;
+            notes?: string;
+            /** @enum {string} */
+            status?: "active" | "inactive" | "faulty" | "replaced";
+        };
+        CreateUtilityReadingDto: {
+            /**
+             * Format: uuid
+             * @description Utility meter ID
+             */
+            utilityMeterId: string;
+            /**
+             * Format: uuid
+             * @description Rental contract ID
+             */
+            rentalContractId?: string;
+            /** @example 2026-02-01 */
+            readingDate: string;
+            /**
+             * @description Current reading value
+             * @example 1250.5
+             */
+            readingValue: number;
+            /**
+             * @default manual
+             * @enum {string}
+             */
+            readingType: "manual" | "automatic" | "estimated";
+            /** @description Photo evidence of meter reading */
+            images?: string[];
+            notes?: string;
         };
         CreateIoTBoardDeviceDto: {
             /**
@@ -10045,6 +10252,191 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    IoTController_getCurrentUtilityRates: {
+        parameters: {
+            query: {
+                /** @description Apartment ID */
+                apartmentId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_updateCurrentUtilityRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCurrentUtilityRateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_findAllMeters: {
+        parameters: {
+            query?: {
+                apartmentId?: string;
+                status?: "active" | "inactive" | "faulty" | "replaced";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_createMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUtilityMeterDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_getMeterReadings: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_findOneMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_updateMeter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUtilityMeterDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_createReading: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUtilityReadingDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_verifyReading: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

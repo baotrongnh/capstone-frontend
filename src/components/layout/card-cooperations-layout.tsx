@@ -1,13 +1,17 @@
 import { OwnerApartmentResponse } from "@/lib/services/apartment.service";
-import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { Button, Card, Dropdown } from "antd";
 import { Calendar, Eye, MapPin, User } from "lucide-react";
 
 interface CooperationsCardProps {
   contract: OwnerApartmentResponse;
   onView: () => void;
   onDownload: () => void;
-  onRedirectInvoice: () => void;
   onCancel: () => void;
 }
 
@@ -20,22 +24,28 @@ const StatusBadge = ({ status }: { status: string }) => {
       label: "Chưa ký",
     },
     available: {
-      bg: "bg-green-50",
-      text: "text-green-700",
-      border: "border-green-200",
-      label: "Đã ký",
-    },
-    inactive: {
-      bg: "bg-red-50",
-      text: "text-red-700",
-      border: "border-red-200",
-      label: "Đã hủy",
-    },
-    reserved: {
       bg: "bg-blue-50",
       text: "text-blue-700",
       border: "border-blue-200",
-      label: "Đã đặt trước",
+      label: "Đã ký",
+    },
+    inactive: {
+      bg: "bg-rose-50",
+      text: "text-rose-700",
+      border: "border-rose-200",
+      label: "Đã hủy",
+    },
+    verified: {
+      bg: "bg-emerald-50",
+      text: "text-emerald-700",
+      border: "border-emerald-200",
+      label: "Đã xác nhận",
+    },
+    rejected: {
+      bg: "bg-orange-50",
+      text: "text-orange-700",
+      border: "border-orange-200",
+      label: "Bị từ chối",
     },
   };
 
@@ -57,6 +67,12 @@ export const CooperationsCard = ({
   onDownload,
   onCancel,
 }: CooperationsCardProps) => {
+  const contractNumber = contract.cooperationContract?.contractNumber;
+  const owner = contract.owner?.fullName || "Chưa cập nhật";
+  const buildingName = contract.buildingName || "Chưa cập nhật";
+  const apartmentNumber = contract.apartmentNumber || "Chưa cập nhật";
+  const streetAddress = contract.streetAddress || "Chưa cập nhật";
+
   const startDate = contract.cooperationContract?.startDate
     ? new Date(contract.cooperationContract.startDate).toLocaleDateString(
         "vi-VN",
@@ -66,213 +82,240 @@ export const CooperationsCard = ({
     ? new Date(contract.cooperationContract.endDate).toLocaleDateString("vi-VN")
     : "N/A";
   const baseRentPrice = Number(contract.baseRentPrice).toLocaleString("vi-VN");
-  const contractNumber = contract.cooperationContract?.contractNumber;
 
-  console.log("CON", contract);
+  const actionItems: MenuProps["items"] = [
+    {
+      key: "view",
+      label:
+        contract.status === "pending" ? "Xem & ký hợp đồng" : "Xem hợp đồng",
+      icon: <Eye size={16} />,
+      onClick: () => onView(),
+    },
+    {
+      key: "download",
+      label: "Tải hợp đồng",
+      icon: <DownloadOutlined />,
+      onClick: () => onDownload(),
+    },
+    contract.status === "pending" && {
+      key: "divider",
+      type: "divider",
+    },
+    contract.status === "pending"
+      ? {
+          key: "cancel",
+          label: "Hủy hợp đồng",
+          danger: true,
+          icon: <DeleteOutlined />,
+          onClick: () => onCancel(),
+        }
+      : null,
+  ].filter(Boolean) as MenuProps["items"];
 
   return (
-    <Card
-      hoverable
-      className="h-full border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-      styles={{
-        body: {
-          padding: "20px",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        },
-      }}
-      style={{ borderRadius: "16px", overflow: "hidden" }}
-    >
-      <div className="flex-1 flex flex-col gap-4">
-        <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="flex flex-col">
-              <span className="text-xs text-gray-500 mb-0.5">Mã hợp đồng</span>
-              <span className="text-base font-bold text-gray-800 leading-none">
-                {contractNumber}
-              </span>
+    <>
+      <Card
+        className="border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200"
+        styles={{
+          body: {
+            padding: "0",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0",
+          },
+        }}
+        style={{ borderRadius: "12px", overflow: "hidden" }}
+      >
+        {/* Header with Contract Number & Status - Full Width */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
+          <div>
+            <div className="text-xs text-gray-500 font-semibold uppercase mb-1">
+              Mã hợp đồng
+            </div>
+            <div className="text-base font-bold text-gray-900">
+              {contractNumber}
             </div>
           </div>
-          <div className="flex gap-2 items-center flex-wrap justify-end">
-            <StatusBadge status={contract.status} />
-          </div>
+          <StatusBadge status={contract.status} />
         </div>
 
-        <div className="flex flex-col gap-4 py-2">
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <User size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 ">Chủ sở hữu</span>
-              <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {contract.owner?.fullName || "Chưa cập nhật"}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <MapPin size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 mb-0.5">Toà nhà</span>
-              <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {contract.buildingName || "Chưa cập nhật"}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <MapPin size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 mb-0.5">Căn hộ</span>
-              <span className="text-sm font-semibold text-gray-800 leading-tight">
-                Phòng {contract.apartmentNumber || "Chưa cập nhật"}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <MapPin size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 mb-0.5">Địa chỉ</span>
-              <span className="text-sm font-semibold text-gray-800 leading-tight">
-                {contract.streetAddress || "Chưa cập nhật"}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="flex justify-center w-6 pt-0.5">
-              <Calendar size={18} className="text-gray-400" />
-            </div>
-            <div className="flex flex-col flex-1">
-              <span className="text-xs text-gray-500 mb-0.5">
-                Thời hạn hợp tác
-              </span>
-              <span className="text-sm font-medium text-gray-800 leading-tight">
-                {startDate} <span className="text-gray-400 mx-1">→</span>{" "}
-                {endDate}
-              </span>
-            </div>
-          </div>
-
-          {contract.status === "pending" && (
-            <div className="flex bg-amber-50 border border-amber-100 p-3 rounded-lg shadow-sm">
-              <div className="w-full">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-600"></span>
+        {/* Content Section */}
+        <div className="flex flex-1 items-stretch">
+          {/* Left: Details Content */}
+          <div className="flex-1 min-w-0 px-6 py-4 flex flex-col justify-between border-r border-gray-100">
+            {/* Row 1: Owner & Building */}
+            <div className="grid grid-cols-2 gap-6 mb-4">
+              <div className="flex items-start gap-2">
+                <User size={16} className="text-blue-600 shrink-0 mt-1" />
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-500 font-semibold uppercase">
+                    Chủ sở hữu
                   </div>
-                  <p className="text-sm font-medium text-amber-800">
-                    <span className="font-bold mr-1">Lưu ý:</span>
-                    Đang chờ ký
-                  </p>
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    {owner}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <MapPin size={16} className="text-amber-600 shrink-0 mt-1" />
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-500 font-semibold uppercase">
+                    Toà nhà
+                  </div>
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    {buildingName}
+                  </div>
                 </div>
               </div>
             </div>
-          )}
 
-          {contract.status === "verified" && (
-            <div className="flex bg-emerald-50 border border-emerald-100 p-3 rounded-lg shadow-sm">
-              <div className="w-full">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
+            {/* Row 2: Apartment & Duration */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-start gap-2">
+                <MapPin size={16} className="text-orange-600 shrink-0 mt-1" />
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-500 font-semibold uppercase">
+                    Căn hộ
                   </div>
-                  <p className="text-sm font-medium text-green-800">
-                    <span className="font-bold mr-1">Lưu ý:</span>
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    Phòng {apartmentNumber}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <Calendar
+                  size={16}
+                  className="text-emerald-600 shrink-0 mt-1"
+                />
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-500 font-semibold uppercase">
+                    Thời hạn
+                  </div>
+                  <div className="text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    {startDate} → {endDate}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="mt-5 pt-4 border-t border-gray-200">
+              <div className="flex items-start gap-2">
+                <MapPin size={16} className="text-red-600 shrink-0 mt-1" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs text-gray-500 font-semibold uppercase">
+                    Địa chỉ
+                  </div>
+                  <div className="text-sm font-semibold text-gray-900">
+                    {streetAddress}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Alerts */}
+            <div className="mt-4">
+              {contract.status === "pending" && (
+                <div className="flex items-center justify-between gap-3 w-full rounded-lg border border-amber-100 bg-amber-50 px-3 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="relative flex h-2 w-2 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span>
+                    </div>
+                    <span className="text-amber-800 text-[13px] py-1 font-semibold">
+                      Đang chờ ký
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {contract.status === "verified" && (
+                <div className="flex items-center w-full gap-2 bg-emerald-50 px-3 rounded-lg border border-emerald-100 text-xs">
+                  <div className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-400"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                  </div>
+                  <span className="text-emerald-800 text-[13px] py-1 font-semibold">
                     Căn hộ đã được xác nhận!
-                  </p>
+                  </span>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {contract.status === "rejected" && (
-            <div className="flex bg-rose-50 border border-rose-100 p-3 rounded-lg shadow-sm">
-              <div className="w-full">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-2.5 w-2.5">
+              {contract.status === "rejected" && (
+                <div className="flex items-center w-full gap-2 bg-rose-50 px-3 rounded-lg border border-rose-100 text-xs">
+                  <div className="relative flex h-2 w-2 shrink-0">
                     <span className="inline-flex h-full w-full rounded-full bg-rose-400"></span>
                   </div>
-                  <p className="text-sm font-medium text-rose-800">
-                    <span className="font-bold mr-1">Lưu ý:</span>
+                  <span className="text-rose-800 text-[13px] py-1 font-semibold">
                     Căn hộ bị từ chối
-                  </p>
+                  </span>
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Price & Actions */}
+          <div className="flex w-64 shrink-0 flex-col px-5 py-4 border-l border-gray-100 h-full">
+            {/* PRICE CARD */}
+            <div className="rounded-2xl border border-gray-100 bg-linear-to-br from-white to-blue-50/60 p-5 shadow-sm hover:shadow-md transition-all duration-300">
+              {/* HEADER */}
+              <div className="w-full">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                    Giá căn hộ
+                  </p>
+                  <span className="text-[10px] font-medium text-blue-600 bg-blue-100 px-2.5 py-0.5 rounded-full">
+                    VNĐ
+                  </span>
+                </div>
+
+                <p className="text-[11px] text-gray-400 mt-3">
+                  Theo hợp đồng hiện tại
+                </p>
+              </div>
+
+              {/* PRICE */}
+              <div className="mt-4">
+                <div className="flex items-end gap-1">
+                  <span className="text-[28px] font-bold tracking-tight text-blue-500">
+                    {baseRentPrice}
+                  </span>
+                  <span className="text-sm text-blue-500 pb-1">đ</span>
+                </div>
+
+                <p className="text-xs text-gray-400 mt-1">Giá hợp tác</p>
               </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="flex justify-between items-center bg-gray-50 px-4 py-3.5 rounded-xl mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600 font-medium">
-              Giá căn hộ
-            </span>
+            {/* BUTTON */}
+            <div className="mt-4 pt-4">
+              <Dropdown
+                menu={{ items: actionItems }}
+                trigger={["click"]}
+                placement="bottomRight"
+              >
+                <Button
+                  className="
+          h-11 w-full 
+          rounded-xl 
+          bg-blue-600 hover:bg-blue-700 
+          text-white 
+          shadow-md hover:shadow-lg 
+          active:scale-95 
+          transition-all duration-200 
+          border-none
+        "
+                >
+                  <EyeOutlined />
+                  <span className="ml-1 font-medium">Xem thêm</span>
+                </Button>
+              </Dropdown>
+            </div>
           </div>
-          <div className="text-lg font-bold text-blue-600 flex items-center gap-1">
-            {baseRentPrice}{" "}
-            <span className="text-sm underline decoration-1 underline-offset-2">
-              đ
-            </span>
-          </div>
         </div>
-
-        <Button
-          type="primary"
-          block
-          size="large"
-          style={{ marginBottom: 10 }}
-          onClick={onView}
-          className="flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-200 border-none"
-        >
-          <Eye size={18} />
-          {contract.status === "pending" ? (
-            <>
-              <span className="font-medium">Xem & ký hợp đồng</span>
-            </>
-          ) : (
-            <>
-              <span className="font-medium">Xem hợp đồng</span>
-            </>
-          )}
-        </Button>
-
-        {contract.status === "pending" && (
-          <Button
-            block
-            size="large"
-            style={{ marginBottom: 10 }}
-            onClick={onCancel}
-            className="flex items-center text-white! bg-red-500! justify-center gap-2 h-11 rounded-xl shadow-sm shadow-red-200! border-red-500! hover:bg-red-600!"
-          >
-            <DeleteOutlined size={18} />
-            <span className="font-medium">Hủy hợp đồng</span>
-          </Button>
-        )}
-
-        <Button
-          block
-          size="large"
-          style={{ marginBottom: 10 }}
-          onClick={onDownload}
-        >
-          <DownloadOutlined size={18} />
-          <span className="font-medium">Tải hợp đồng</span>
-        </Button>
-      </div>
-    </Card>
+      </Card>
+    </>
   );
 };

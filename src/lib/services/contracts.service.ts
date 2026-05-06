@@ -29,6 +29,7 @@ export type ContractWithMembers = Omit<
     numberOfBedrooms: number;
     wardName: string;
     districtName: string;
+    maxOccupants: number;
   };
   members: components["schemas"]["ContractMemberDto"][];
   hasPdf?: boolean;
