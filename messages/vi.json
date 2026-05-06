@@ -112,7 +112,7 @@
       }
     },
     "appPromoSection": {
-      "badge": "Tải về ngay",
+      "badge": "HomeIQ",
       "title": "Tải ứng dụng HomeIQ ",
       "free": "miễn phí",
       "subtitle": "Sử dụng IOT và các thiết bị thông minh để quản lý căn hộ, tiện lợi hơn bao giờ hết.",
@@ -137,39 +137,31 @@
     },
     "sections": {
       "mainMenu": {
-        "title": "Menu chính",
-        "partner": "Trở thành đối tác",
-        "post": "Đăng tin bất động sản của bạn",
-        "request": "Yêu cầu thông tin bất động sản",
-        "valuation": "Định giá bất động sản"
-      },
-      "hive": {
-        "title": "Hive",
-        "buy": "Mua",
-        "sell": "Bán",
-        "blog": "Viết blog",
-        "group": "Phân nhóm"
+        "title": "Danh mục chính",
+        "home": "Trang chủ",
+        "find": "Tìm căn hộ",
+        "booking": "Đặt lịch xem nhà",
+        "rental": "Thuê & đặt cọc căn hộ",
+        "partner": "Trở thành đối tác"
       },
       "categories": {
-        "title": "Danh mục bất động sản",
-        "residential": "Nhà ở",
-        "commercial": "Thương mại",
-        "entertainment": "Giải trí",
-        "agricultural": "Nông nghiệp"
+        "title": "Danh mục & dịch vụ",
+        "serviceApartment": "Căn hộ dịch vụ",
+        "miniApartment": "Căn hộ mini / phòng trọ",
+        "partnerApartment": "Căn hộ đối tác",
+        "iot": "Thiết bị thông minh (IoT)",
+        "maintenance": "Bảo trì & hỗ trợ"
       },
       "about": {
-        "title": "Giới thiệu về HomeIQ",
-        "terms": "Điều khoản và điều kiện",
-        "privacy": "Chính sách bảo mật",
-        "legal": "Pháp lý & Tuân thủ",
-        "contact": "Liên hệ với chúng tôi",
-        "aboutUs": "Về chúng tôi",
-        "team": "Đội ngũ",
-        "faq": "Câu hỏi thường gặp",
-        "support": "Hỗ trợ"
+        "title": "Dành cho người dùng",
+        "guide": "Hướng dẫn sử dụng",
+        "contracts": "Quản lý hợp đồng thuê",
+        "invoices": "Hóa đơn & thanh toán",
+        "maintenance": "Yêu cầu bảo trì",
+        "chat": "Chat hỗ trợ"
       }
     },
-    "copyright": "Copyright {year} ? HomeIQ, All Rights Reserved"
+    "copyright": "© {year} HomeIQ. All rights reserved."
   },
   "ApartmentList": {
     "filterTitle": "Lọc theo nhà"

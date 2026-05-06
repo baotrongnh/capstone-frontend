@@ -10,7 +10,7 @@ import { House, LogOut, Menu, Smartphone, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import AuthModal from "../modal/auth-modal";
 import HeaderDesktopActions from "./header-desktop-actions";
@@ -20,6 +20,7 @@ export default function Header() {
   const searchParams = useSearchParams();
   const t = useTranslations("Header");
   const router = useRouter();
+  const pathname = usePathname();
   const { user, isAuthenticated, isHydrated } = useAuthStore();
   const { mutateAsync: logoutApi } = useLogout(() => router.push(ROUTES.HOME));
 
@@ -32,6 +33,34 @@ export default function Header() {
     { href: "/policies", label: 'Chính sách' },
     { href: "/contact", label: t("contact") },
   ];
+  const normalizePath = (path: string) => {
+    if (path === "/") {
+      return "/";
+    }
+
+    return path.replace(/\/$/, "");
+  };
+
+  const stripLocalePrefix = (path: string) => {
+    const prefix = `/${locale}`;
+    if (path === prefix) {
+      return "/";
+    }
+
+    return path.startsWith(`${prefix}/`) ? path.slice(prefix.length) : path;
+  };
+
+  const isActiveLink = (href: string) => {
+    const currentPath = pathname ?? "/";
+    const current = normalizePath(stripLocalePrefix(currentPath));
+    const target = normalizePath(stripLocalePrefix(href));
+
+    if (target === "/") {
+      return current === "/";
+    }
+
+    return current === target || current.startsWith(`${target}/`);
+  };
   const isLoggedIn = Boolean(isHydrated && isAuthenticated && user);
   const userFullName = user?.fullName || "";
   const avatar = user?.profileImageUrl
@@ -125,11 +154,23 @@ export default function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex gap-10 font-medium">
-          {navLinks.map(({ href, label }) => (
-            <Link key={label} href={href} className="hover:opacity-75">
-              {label}
-            </Link>
-          ))}
+          {navLinks.map(({ href, label }) => {
+            const isActive = isActiveLink(href);
+            return (
+              <Link
+                key={label}
+                href={href}
+                aria-current={isActive ? "page" : undefined}
+                className={
+                  isActive
+                    ? "relative inline-flex items-center text-primary after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-['']"
+                    : "relative inline-flex items-center text-gray-700 hover:text-primary after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:content-[''] hover:after:w-full"
+                }
+              >
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
         <HeaderDesktopActions

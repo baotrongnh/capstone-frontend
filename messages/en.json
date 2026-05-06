@@ -136,39 +136,31 @@
     },
     "sections": {
       "mainMenu": {
-        "title": "Main Menu",
-        "partner": "Become a Partner",
-        "post": "Post Your Property",
-        "request": "Request Property Info",
-        "valuation": "Property Valuation"
-      },
-      "hive": {
-        "title": "Hive",
-        "buy": "Buy",
-        "sell": "Sell",
-        "blog": "Blog",
-        "group": "Groups"
+        "title": "Primary",
+        "home": "Home",
+        "find": "Find apartment",
+        "booking": "Booking viewing",
+        "rental": "Reservation & rental",
+        "partner": "Become a partner"
       },
       "categories": {
-        "title": "Property Categories",
-        "residential": "Residential",
-        "commercial": "Commercial",
-        "entertainment": "Entertainment",
-        "agricultural": "Agricultural"
+        "title": "Categories & services",
+        "serviceApartment": "Serviced apartment",
+        "miniApartment": "Mini apartment / boarding room",
+        "partnerApartment": "Partner apartment",
+        "iot": "Smart devices (IoT)",
+        "maintenance": "Maintenance & support"
       },
       "about": {
-        "title": "About HomeIQ",
-        "terms": "Terms and Conditions",
-        "privacy": "Privacy Policy",
-        "legal": "Legal & Compliance",
-        "contact": "Contact Us",
-        "aboutUs": "About Us",
-        "team": "Team",
-        "faq": "FAQ",
-        "support": "Support"
+        "title": "For users",
+        "guide": "User guide",
+        "contracts": "Rental contracts",
+        "invoices": "Invoices & payments",
+        "maintenance": "Maintenance request",
+        "chat": "Support chat"
       }
     },
-    "copyright": "Copyright {year} ? HomeIQ, All Rights Reserved"
+    "copyright": "© {year} HomeIQ. All rights reserved."
   },
   "ApartmentList": {
     "filterTitle": "Filter by House"
