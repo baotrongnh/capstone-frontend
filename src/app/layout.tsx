@@ -15,8 +15,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin", "vietnamese"] })
 
 export const metadata: Metadata = {
-  title: "INTELLISERVOPS",
-  description: "INTELLISERVOPS",
+  title: "HomeIQ – Nền tảng quản lý nhà thông minh",
+  description: "HomeIQ giúp bạn điều khiển và giám sát thiết bị nhà thông minh mọi lúc mọi nơi, theo dõi điện nước realtime và tối ưu cuộc sống tiện nghi.",
 }
 
 export default async function RootLayout({
