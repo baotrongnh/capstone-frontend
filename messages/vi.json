@@ -1126,23 +1126,20 @@
       "items": [
         {
           "title": "Thời Hạn Cho Thuê",
-          "content": "Thời hạn thuê tối thiểu là 3 tháng. Các hợp đồng dài hạn (12+ tháng) được hưởng chiết khấu đặc biệt từ 5-10% tùy thuộc vào thời hạn."
+          "content": "Thời hạn thuê tối thiểu là 6 tháng. Các hợp đồng dài hạn (12+ tháng) và nhiều ưu đãi khác."
         },
         {
           "title": "Điều Khoản Thanh Toán",
-          "content": "Tiền thuê phải thanh toán vào ngày 1 của mỗi tháng. Người thuê có thể thanh toán qua chuyển khoản ngân hàng, ví điện tử hoặc tiền mặt tại văn phòng. Phí chậm trễ 5% được áp dụng sau 5 ngày."
+          "content": "Tiền thuê phải thanh toán vào ngày 1 của mỗi tháng. Người thuê có thể thanh toán qua chuyển khoản ngân hàng, ví điện tử hoặc tiền mặt tại văn phòng. "
         },
-        {
-          "title": "Tiền Ký Quỹ",
-          "content": "Tiền ký quỹ tương đương một tháng tiền thuê là bắt buộc. Tiền ký quỹ này sẽ được hoàn lại trong vòng 30 ngày sau khi dọn dẹp, miễn là không có hư hỏng."
-        },
+
         {
           "title": "Bảo Trì & Sửa Chữa",
-          "content": "Chủ nhà chịu trách nhiệm về sửa chữa cấu trúc và sửa chữa lớn. Người thuê chịu trách nhiệm về bảo trì nhỏ và hư hỏng do lơ là."
+          "content": "Hệ thống chịu trách nhiệm về sửa chữa cấu trúc và sửa chữa lớn. Người thuê chịu trách nhiệm về bảo trì nhỏ và hư hỏng do lơ là."
         },
         {
           "title": "Chính Sách Chấm Dứt",
-          "content": "Bất kỳ bên nào cũng phải thông báo bằng văn bản ít nhất 30 ngày trước khi chấm dứt. Chấm dứt sớm có thể phải chịu các khoản phạt theo quy định hợp đồng."
+          "content": "Chấm dứt sớm có thể phải chịu các khoản phạt theo quy định hợp đồng."
         },
         {
           "title": "Nội Quy Chung",
@@ -1158,19 +1155,14 @@
       "revenueDistribution": "Phân Phối Doanh Thu:",
       "items": [
         {
-          "percentage": "70/30",
+          "percentage": "90/10",
           "description": "Chia Sẻ Hoa Hồng Tiêu Chuẩn Cho Chủ Sở Hữu Bất Động Sản",
-          "details": ["Chủ sở hữu nhận 70% doanh thu cho thuê", "Nền tảng nhận 30% phí quản lý và bảo trì", "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ", "Báo cáo doanh thu hàng quý"]
-        },
-        {
-          "percentage": "85/15",
-          "description": "Chương Trình Đối Tác Cao Cấp (Hợp Đồng Hàng Năm)",
-          "details": ["Chủ sở hữu nhận 85% doanh thu cho thuê", "Nền tảng nhận 15% hoa hồng", "Yêu cầu tối thiểu 5 bất động sản", "Chỉ định trưởng tài khoản riêng", "Dịch vụ sửa chữa và bảo trì ưu tiên"]
-        },
-        {
-          "percentage": "60/40",
-          "description": "Dịch Vụ Quản Lý Toàn Diện",
-          "details": ["Nền tảng xử lý 100% quản lý bất động sản", "Chủ sở hữu nhận 60% doanh thu cho thuê", "Bao gồm hỗ trợ 24/7, quản lý người thuê và bảo trì", "Tiếp thị và tìm kiếm người thuê được bao gồm", "Chụp ảnh chuyên nghiệp và tour ảo 3D"]
+          "details": [
+            "Chủ sở hữu nhận 90% doanh thu cho thuê",
+            "Nền tảng nhận 10% phí quản lý và bảo trì",
+            "Bao gồm vệ sinh chuyên nghiệp, lựa chọn người thuê và hỗ trợ",
+            "Báo cáo doanh thu hàng quý"
+          ]
         }
       ],
       "simple": "Đơn Giản & Minh Bạch",
@@ -1217,13 +1209,17 @@
     },
     "introduction": {
       "description": "HomeIQ là nền tảng quản lý và khai thác căn hộ hiện đại, kết nối khách thuê với chủ sở hữu tài sản bằng quy trình số hóa toàn diện.",
-      "features": ["Vận hành chuyên nghiệp", "Hợp đồng minh bạch", "Tối ưu doanh thu bền vững"]
+      "features": [
+        "Vận hành chuyên nghiệp",
+        "Hợp đồng minh bạch",
+        "Tối ưu doanh thu bền vững"
+      ]
     },
     "payment": {
       "deposit": "Tiền cọc phải bằng 1-2 tháng tiền thuê, được giữ trong suốt thời gian hợp đồng.",
       "methods": "Thanh toán qua chuyển khoản ngân hàng, QR Code hoặc ví điện tử với lệ phí không phát sinh.",
-      "reminder": "Tiền thuê phải thanh toán trước ngày 1 của mỗi tháng. Phí chậm trễ 5% được áp dụng sau 5 ngày không thanh toán.",
-      "receipt": "Biên lai thanh toán được gửi tự động qua email ngay sau khi xác nhận tiền."
+      "reminder": "Tiền thuê phải thanh toán trước ngày 1 của mỗi tháng. ",
+      "receipt": "Hóa đơn sẽ được gửi qua hệ thống sau khi ký hợp đồng và mỗi khi thanh toán thành công."
     },
     "refund": {
       "content": "Cần thông báo trước tối thiểu 30 ngày. Tiền cọc được xử lý hoàn trả sau khi kiểm tra hiện trạng căn hộ và đối soát công nợ. Hoàn cọc trong vòng 5-7 ngày làm việc."
