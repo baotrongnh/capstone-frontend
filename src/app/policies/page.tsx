@@ -226,7 +226,7 @@ export default function PolicyPage() {
               color="emerald"
             />
 
-            <div className="grid md:grid-cols-3 gap-5 mb-8">
+            <div className="grid md:grid-cols-1 gap-5 mb-8">
               {(
                 t.raw("cooperationPolicy.items") as Array<{
                   percentage: string;
