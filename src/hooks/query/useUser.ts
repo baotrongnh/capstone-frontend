@@ -2,7 +2,7 @@
 
 import { userService } from "@/lib/services/user.service";
 import { useAuthStore } from "@/stores/auth.store";
-import { UpdateUserDto } from "@/types/user";
+import { UpdateUserDto, VerifyIdentityInput } from "@/types/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App } from "antd";
 
@@ -92,26 +92,32 @@ export const useVerifyIdentity = () => {
   const tokens = useAuthStore((s) => s.tokens);
   const setAuth = useAuthStore((s) => s.setAuth);
 
-  const syncAuthUser = async () => {
-    if (!tokens) {
-      return;
-    }
-
-    const user = await queryClient.fetchQuery({
-      queryKey: ["user", "profile"],
-      queryFn: () => userService.getProfile(),
-    });
-
-    setAuth(user, tokens);
-  };
-
   return useMutation({
-    mutationFn: (data: { identityCardFront: File; identityCardBack: File }) =>
+    mutationFn: (data: VerifyIdentityInput) =>
       userService.verifyIdentity(data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
-      await syncAuthUser();
+    onSuccess: async (verifiedUser) => {
+      const { aiVerification, ...profile } = verifiedUser;
+      void aiVerification;
+
+      queryClient.setQueryData(["user", "profile"], profile);
+
+      if (tokens) {
+        setAuth(profile, tokens);
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user", "profile"],
+        refetchType: "active",
+      });
     },
+  });
+};
+
+export const useVietnamBanks = () => {
+  return useQuery({
+    queryKey: ["user", "vietnam-banks"],
+    queryFn: () => userService.getVietnamBanks(),
+    staleTime: 1000 * 60 * 60,
   });
 };
 

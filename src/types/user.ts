@@ -5,6 +5,29 @@ export type ContractMembership = NonNullable<NonNullable<UserDetail['contractMem
 export type RentalContractSummary = ContractMembership['rentalContract']
 export type ContractApartment = RentalContractSummary['apartment']
 export type UserIdentity = NonNullable<paths["/api/v1/users/profile/identity"]['get']['responses']['200']['content']['application/json']['data']>
+export type VerifyIdentityInput = {
+  identityCardFront: File
+  identityCardBack: File
+  bankName: string
+  bankAccount: string
+}
+export type VietQrBank = {
+  id: number
+  code: string
+  name: string
+  shortName: string
+  logo: string
+}
+export type VietQrBanksResponse = {
+  data?: VietQrBank[]
+}
+export type IdentityVerificationFormValues = {
+  bankName?: string
+  bankAccount?: string
+}
+export type VerifyIdentityErrorResponse = {
+  message?: string
+}
 
 
 export type UpdateUserDto = Partial<paths["/api/v1/users/{id}"]['patch']['requestBody']['content']['application/json']>

@@ -1,10 +1,14 @@
 import {
   AiVerification,
+  VietQrBanksResponse,
+  VerifyIdentityInput,
   UpdateUserDto,
   UpdateUserResponse,
   UserDetail,
   UserIdentity,
+  VietQrBank,
 } from "@/types/user";
+import axios from "axios";
 import { apiClient } from "../apis/client";
 import { endpoints } from "../apis/endpoints";
 
@@ -59,21 +63,34 @@ export const userService = {
     );
   },
 
-  verifyIdentity: async (data: {
-    identityCardFront: File;
-    identityCardBack: File;
-  }): Promise<
+  verifyIdentity: async (data: VerifyIdentityInput): Promise<
     UserDetail & { identity: UserIdentity; aiVerification: AiVerification }
   > => {
     const formData = new FormData();
     formData.append("identityCardFront", data.identityCardFront);
     formData.append("identityCardBack", data.identityCardBack);
+    formData.append("bank_name", data.bankName);
+    formData.append("bank_account", data.bankAccount);
     const { data: res } = await apiClient.post(
       `${endpoints.users}/profile/verify-identity`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } },
     );
     return res.data;
+  },
+
+  getVietnamBanks: async (): Promise<VietQrBank[]> => {
+    const { data } = await axios.get<VietQrBanksResponse>(
+      "https://api.vietqr.io/v2/banks",
+    );
+
+    return (data.data ?? []).map((bank) => ({
+      id: bank.id,
+      code: bank.code,
+      name: bank.name,
+      shortName: bank.shortName,
+      logo: bank.logo,
+    }));
   },
 
   searchNational: async (id: string) => {
