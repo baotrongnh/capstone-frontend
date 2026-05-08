@@ -41,7 +41,18 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
         <p className="py-2 text-sm text-gray-500">Chưa có tin nhắn</p>
       )}
 
-      {!isLoading && messages.map((item) => (
+      {!isLoading && messages.map((item) => {
+        if (item.messageType === 'system') {
+          return (
+            <div key={item.id} className="mb-4 flex justify-center">
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700">
+                {item.content}
+              </span>
+            </div>
+          )
+        }
+
+        return (
         <div
           key={item.id}
           className={`mb-4 flex ${item.sender === "user" ? "justify-end" : "justify-start"}`}
@@ -59,6 +70,27 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
               </div>
             )}
 
+            {item.blocks?.map((block, index) => {
+              if (block.type === 'text' && !item.content) {
+                return (
+                  <div
+                    key={`${item.id}-block-${index}`}
+                    className={`rounded-2xl px-3 py-2 ${
+                      item.sender === "user" ? "bg-primary text-white" : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{block.text}</p>
+                  </div>
+                )
+              }
+
+              if (block.type === 'apartment_card') {
+                return <ApartmentCardMessage key={`${item.id}-block-${index}`} apartmentId={block.apartmentId} />
+              }
+
+              return null
+            })}
+
             <ChatImageGrid images={item.images ?? []} onPreview={setPreviewImage} />
 
             <p
@@ -70,7 +102,8 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
             </p>
           </div>
         </div>
-      ))}
+        )
+      })}
 
       <div ref={endRef} />
 
