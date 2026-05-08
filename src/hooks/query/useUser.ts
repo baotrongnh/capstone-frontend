@@ -9,7 +9,6 @@ import { App } from "antd";
 export const useUserProfile = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const isHydrated = useAuthStore((s) => s.isHydrated);
-
   return useQuery({
     queryKey: ["user", "profile"],
     queryFn: () => userService.getProfile(),

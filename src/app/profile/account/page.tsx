@@ -29,6 +29,8 @@ export default function AccountPage() {
   const user = useAuthStore((s) => s.user);
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const tokens = useAuthStore((s) => s.tokens);
+  const setAuth = useAuthStore((s) => s.setAuth);
   const id = user?.id ?? "";
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
@@ -57,11 +59,14 @@ export default function AccountPage() {
       return;
     }
 
+    if (tokens) {
+      setAuth(profile, tokens);
+    }
     setAvatarUrl(getAvatarUrl(profile));
     setHasChanges(false);
     setIsEditing(false);
     setShowIdentityInfo(false);
-  }, [profile]);
+  }, [profile, tokens, setAuth]);
 
   const handleUpdate = async (values: AccountUpdateDto) => {
     if (!id) {
