@@ -32,6 +32,9 @@ const toUiMessage = (message: ChatSocketMessage): ChatMessage => {
     content: message.content ?? '',
     images: message.images,
     apartmentId: message.apartmentId,
+    messageType: message.messageType,
+    attachments: message.attachments,
+    blocks: message.blocks,
     sender: message.sender,
     timestamp: Number.isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp,
   }
@@ -235,7 +238,7 @@ export default function ChatSupport() {
     <>
       <FloatButton
         icon={(
-          <Badge count={unreadSupportCount} size="default" overflowCount={9} offset={[10, -7]}>
+          <Badge count={unreadSupportCount} size="medium" overflowCount={9} offset={[10, -7]}>
             <MessageCircleQuestionMark className='text-white' />
           </Badge>
         )}

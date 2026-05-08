@@ -59,6 +59,27 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
               </div>
             )}
 
+            {item.blocks?.map((block, index) => {
+              if (block.type === 'text' && !item.content) {
+                return (
+                  <div
+                    key={`${item.id}-block-${index}`}
+                    className={`rounded-2xl px-3 py-2 ${
+                      item.sender === "user" ? "bg-primary text-white" : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{block.text}</p>
+                  </div>
+                )
+              }
+
+              if (block.type === 'apartment_card') {
+                return <ApartmentCardMessage key={`${item.id}-block-${index}`} apartmentId={block.apartmentId} />
+              }
+
+              return null
+            })}
+
             <ChatImageGrid images={item.images ?? []} onPreview={setPreviewImage} />
 
             <p
