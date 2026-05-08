@@ -1128,6 +1128,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/iot/utility-rates/global": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get global default electricity/water rates for new meters */
+        get: operations["IoTController_getGlobalUtilityRates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update global default electricity/water rates used when creating new meters */
+        patch: operations["IoTController_updateGlobalUtilityRates"];
+        trace?: never;
+    };
     "/api/v1/iot/utility-rates/current": {
         parameters: {
             query?: never;
@@ -1308,7 +1326,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List door open and close history */
+        /** List door unlock history */
         get: operations["IoTController_findDoorHistory"];
         put?: never;
         post?: never;
@@ -2492,6 +2510,57 @@ export interface paths {
          * @description Admin/Operator updates amenity metadata.
          */
         patch: operations["AmenitiesController_update"];
+        trace?: never;
+    };
+    "/api/v1/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List rent overdue tickets */
+        get: operations["TicketsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get ticket detail */
+        get: operations["TicketsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve rent overdue ticket */
+        post: operations["TicketsController_resolve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }
@@ -4986,6 +5055,20 @@ export interface components {
             electric?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
             water?: components["schemas"]["IoTUtilityMeterItemDto"] | null;
         };
+        UpdateGlobalUtilityRateDto: {
+            /**
+             * @description Default electricity rate in VND per kWh for new meters
+             * @example 3500
+             */
+            electricityRatePerUnit?: number;
+            /**
+             * @description Default water rate in VND per m3 for new meters
+             * @example 15000
+             */
+            waterRatePerUnit?: number;
+            /** @example Default rates for new utility meters */
+            notes?: string;
+        };
         UpdateCurrentUtilityRateDto: {
             /**
              * Format: uuid
@@ -5022,8 +5105,7 @@ export interface components {
             /** @example kWh */
             unitOfMeasurement?: string;
             /**
-             * @deprecated
-             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @description Optional per-meter override. When omitted, the global default utility rate is used for electricity/water meters.
              * @example 3500
              */
             ratePerUnit?: number;
@@ -5050,8 +5132,7 @@ export interface components {
             /** @example kWh */
             unitOfMeasurement?: string;
             /**
-             * @deprecated
-             * @description Deprecated legacy flat rate. Use utility rate plans for tiered pricing.
+             * @description Optional per-meter override. When omitted, the global default utility rate is used for electricity/water meters.
              * @example 3500
              */
             ratePerUnit?: number;
@@ -7477,6 +7558,84 @@ export interface components {
              */
             isActive: boolean;
         };
+        TicketRelatedInvoiceDto: {
+            /** @example test-rent-overdue-invoice */
+            id: string;
+            /** @example INV-TEST-OVERDUE-001 */
+            invoiceNumber: string;
+            /** @example overdue */
+            status: string;
+            /** Format: date-time */
+            issueDate: string;
+            /** Format: date-time */
+            dueDate: string;
+        };
+        TicketRelatedContractDto: {
+            /** @example test-rent-overdue-contract */
+            id: string;
+            /** @example RC-TEST-OVERDUE-001 */
+            contractNumber: string;
+        };
+        TicketRelatedApartmentDto: {
+            /** @example test-rent-overdue-apt */
+            id: string;
+            /** @example TEST-OVERDUE-101 */
+            apartmentNumber: string;
+        };
+        TicketStaffSummaryDto: {
+            /** @example test-rent-overdue-staff */
+            id: string;
+            /** @example Staff Rent Overdue */
+            fullName: string;
+        };
+        TicketResponseDto: {
+            /** @example cb939a09-8764-4c45-8fae-e38c2c595bce */
+            id: string;
+            /** @example TO-1778259125923-034 */
+            ticketNumber: string;
+            /**
+             * @example rent_overdue
+             * @enum {string|null}
+             */
+            type: "rent_overdue" | "rent_overdue_recovery" | null;
+            /**
+             * @example open
+             * @enum {string}
+             */
+            status: "open" | "in_progress" | "waiting_for_user" | "resolved" | "closed" | "escalated";
+            /** @enum {string|null} */
+            resolutionAction?: "tenant_left" | "tenant_stays" | "paid" | null;
+            /** @example Kh�ch c�n ?, gia h?n 3 ng�y d? thanh to�n. */
+            resolutionNote?: string | null;
+            resolutionImages?: string[] | null;
+            invoice?: components["schemas"]["TicketRelatedInvoiceDto"] | null;
+            rentalContract: components["schemas"]["TicketRelatedContractDto"];
+            apartment?: components["schemas"]["TicketRelatedApartmentDto"] | null;
+            resolvedByStaff?: components["schemas"]["TicketStaffSummaryDto"] | null;
+            /** Format: date-time */
+            resolvedAt?: string | null;
+            /** Format: date-time */
+            closedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ResolveTicketRequestDto: {
+            /**
+             * @description tenant_stays = khách còn ở; tenant_left = khách không ở nữa/hủy hợp đồng
+             * @example tenant_stays
+             * @enum {string}
+             */
+            action: "tenant_left" | "tenant_stays";
+            /**
+             * @description Ghi chú xác nhận của staff
+             * @example Khách còn ở, gia hạn 3 ngày để thanh toán.
+             */
+            note: string;
+            /** @description Ảnh bằng chứng bắt buộc, upload file JPEG/PNG/WebP */
+            images: string[];
+        };
     };
     responses: never;
     parameters: never;
@@ -8063,6 +8222,10 @@ export interface operations {
                      * @description Back image of identity card (required) - JPEG, PNG, or WebP
                      */
                     identityCardBack: string;
+                    /** @description Bank name for receiving refunds/payouts */
+                    bank_name: string;
+                    /** @description Bank account number for receiving refunds/payouts */
+                    bank_account: string;
                 };
             };
         };
@@ -10255,6 +10418,44 @@ export interface operations {
             };
         };
     };
+    IoTController_getGlobalUtilityRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    IoTController_updateGlobalUtilityRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateGlobalUtilityRateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     IoTController_getCurrentUtilityRates: {
         parameters: {
             query: {
@@ -10594,7 +10795,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Door open and close history derived from MQTT board state updates */
+            /** @description Door unlock history recorded from successful unlock API calls */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13400,6 +13601,80 @@ export interface operations {
             };
             /** @description Amenity code already exists */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TicketsController_findAll: {
+        parameters: {
+            query?: {
+                status?: "open" | "in_progress" | "waiting_for_user" | "resolved" | "closed" | "escalated";
+                type?: "rent_overdue" | "rent_overdue_recovery";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketResponseDto"][];
+                };
+            };
+        };
+    };
+    TicketsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketResponseDto"];
+                };
+            };
+        };
+    };
+    TicketsController_resolve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ResolveTicketRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketResponseDto"];
+                };
+            };
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

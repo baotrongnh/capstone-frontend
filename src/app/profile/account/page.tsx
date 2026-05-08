@@ -2,6 +2,7 @@
 
 import { Form, Input, Button, Avatar, Spin, Upload, App, Tag } from "antd";
 import { uploadFile } from "@/utils/uploadFile";
+import Image from "next/image";
 import {
   UserOutlined,
   CameraOutlined,
@@ -23,7 +24,7 @@ import {
   toText,
 } from "@/utils/account-information";
 import { useAuthStore } from "@/stores/auth.store";
-import { useUserProfile, useUpdateUser } from "@/hooks/query/useUser";
+import { useUserProfile, useUpdateUser, useVietnamBanks } from "@/hooks/query/useUser";
 
 export default function AccountPage() {
   const user = useAuthStore((s) => s.user);
@@ -51,6 +52,7 @@ export default function AccountPage() {
     isPending,
     isFetching,
   } = useUserProfile();
+  const { data: banks = [] } = useVietnamBanks();
 
   const { mutateAsync: updateUser } = useUpdateUser(id);
 
@@ -98,6 +100,17 @@ export default function AccountPage() {
   const editableValues: AccountEditableValues = getUserEditableValues(profile);
 
   const identityFields = getIdentityFields(identity, t);
+  const matchedBank = banks.find(
+    (bank) =>
+      bank.shortName?.toLowerCase() === profile.bankName?.toLowerCase() ||
+      bank.code?.toLowerCase() === profile.bankName?.toLowerCase() ||
+      bank.name?.toLowerCase() === profile.bankName?.toLowerCase(),
+  );
+  const hasBankInfo = hasValue(profile.bankName) || hasValue(profile.bankAccountNumber);
+  const hasVerificationInfo =
+    identityFields.some(({ value }) => hasValue(value)) ||
+    hasBankInfo ||
+    hasValue(identity?.verifiedAt);
 
   const startEditing = () => {
     form.setFieldsValue(editableValues);
@@ -272,7 +285,7 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {showIdentityInfo && identity && identityFields.some(({ value }) => hasValue(value)) && (
+        {showIdentityInfo && identity && hasVerificationInfo && (
           <div className="border border-gray-200 rounded-xl p-5 space-y-4">
             <h4 className="font-semibold text-sm text-gray-700">{t("identityInfoTitle")}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
@@ -288,6 +301,52 @@ export default function AccountPage() {
                   </div>
                 );
               })}
+              {hasBankInfo && (
+                <div className="md:col-span-2">
+                  <div className="rounded-2xl border border-blue-100 bg-linear-to-r from-slate-50 via-white to-blue-50 p-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+                          {matchedBank?.logo ? (
+                            <Image
+                              src={matchedBank.logo}
+                              alt={matchedBank.shortName || displayText(profile.bankName)}
+                              fill
+                              unoptimized
+                              sizes="48px"
+                              className="object-contain p-2"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-blue-100 text-sm font-semibold text-blue-700">
+                              {displayText(profile.bankName).slice(0, 3)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-blue-500">
+                            {t("bankName")}
+                          </p>
+                          <p className="truncate text-base font-semibold text-gray-900">
+                            {displayText(profile.bankName)}
+                          </p>
+                          {matchedBank?.name && matchedBank.name !== profile.bankName && (
+                            <p className="truncate text-xs text-gray-500">{matchedBank.name}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-white/80 bg-white/90 px-4 py-3 shadow-sm sm:min-w-55">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-gray-400">
+                          {t("bankAccountNumber")}
+                        </p>
+                        <p className="mt-1 break-all text-lg font-semibold tracking-[0.02em] text-gray-900">
+                          {displayText(profile.bankAccountNumber)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {hasValue(identity.verifiedAt) && (
                 <div>
                   <p className="text-xs text-muted mb-0.5">{t("idVerifiedAt")}</p>

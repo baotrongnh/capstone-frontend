@@ -59,3 +59,8 @@ export const getIdentityFields = (identity: UserIdentity | null | undefined, t: 
     { key: 'issueDate', label: t('idIssueDate'), value: identity?.issueDate },
     { key: 'doe', label: t('idExpiry'), value: identity?.doe },
 ]
+
+export const getBankFields = (profile: UserDetail, t: (key: string) => string): IdentityField[] => [
+    { key: 'bankName', label: t('bankName'), value: profile.bankName },
+    { key: 'bankAccountNumber', label: t('bankAccountNumber'), value: profile.bankAccountNumber },
+]

@@ -28,6 +28,18 @@ const nextConfig: NextConfig = {
                 port: '',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'cdn.vietqr.io',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'vietqr.net',
+                port: '',
+                pathname: '/**',
+            },
         ],
         domains: ["example.com"],
     },
