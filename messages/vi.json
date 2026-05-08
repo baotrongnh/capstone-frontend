@@ -1130,7 +1130,7 @@
         },
         {
           "title": "Điều Khoản Thanh Toán",
-          "content": "Tiền thuê phải thanh toán vào ngày 1 của mỗi tháng. Người thuê có thể thanh toán qua chuyển khoản ngân hàng, ví điện tử hoặc tiền mặt tại văn phòng. "
+          "content": "Bên thuê có trách nhiệm thanh toán tiền thuê nhà trước ngày đến hạn 01 (một) ngày."
         },
 
         {
@@ -1170,7 +1170,7 @@
       "policyDetails": [
         {
           "title": "Quy trình hợp tác dễ dàng",
-          "content": "Khảo sát căn hộ miễn phí và đề xuất gói khai thác phù hợp với tình hình thực tế. Ký hợp đồng gửi quản lý trong vòng 3-5 ngày. Khô cạnh, nhanh chóng, không phức tạp."
+          "content": "Khảo sát căn hộ miễn phí và tư vấn phương án khai thác phù hợp với thực tế. Hoàn tất ký hợp đồng quản lý chỉ trong 3–5 ngày, thủ tục nhanh gọn, không phức tạp."
         },
         {
           "title": "Quản lý vận hành chuyên nghiệp",
@@ -1184,10 +1184,7 @@
           "title": "Bảo trì & sửa chữa tài sản",
           "content": "Xử lý sự cố nhanh chóng với đội thợ sẵn sàng 24/7. Thông báo chủ nhà trước khi sửa chữa, lấy ý kiến khi chi phí lớn. Bảo hành toàn bộ tài sản trong thời gian hợp đồng."
         },
-        {
-          "title": "Marketing & tiếp thị chuyên nghiệp",
-          "content": "Đưa căn hộ lên tất cả nền tảng lớn như Airbnb, Booking, Agoda, các trang bất động sản. Chiến dịch quảng cáo được tối ưu hóa để tăng lượt xem và booking. Tối thiểu hóa khoảng thời gian trống giữa các khách thuê."
-        },
+
         {
           "title": "Hỗ trợ pháp lý & hợp đồng",
           "content": "Cung cấp hợp đồng mẫu tuân thủ pháp luật hiện hành. Tư vấn các vấn đề pháp lý liên quan đến cho thuê căn hộ. Bảo vệ quyền lợi chủ nhà trong mối quan hệ với khách thuê."
@@ -1216,21 +1213,21 @@
       ]
     },
     "payment": {
-      "deposit": "Tiền cọc phải bằng 1-2 tháng tiền thuê, được giữ trong suốt thời gian hợp đồng.",
+      "deposit": "Tiền cọc phải thanh toán trước khi vào căn hộ, được giữ trong suốt thời gian hợp đồng.",
       "methods": "Thanh toán qua chuyển khoản ngân hàng, QR Code hoặc ví điện tử với lệ phí không phát sinh.",
-      "reminder": "Tiền thuê phải thanh toán trước ngày 1 của mỗi tháng. ",
+      "reminder": "Tiền thuê phải thanh toán trước ngày vào ở. ",
       "receipt": "Hóa đơn sẽ được gửi qua hệ thống sau khi ký hợp đồng và mỗi khi thanh toán thành công."
     },
     "refund": {
-      "content": "Cần thông báo trước tối thiểu 30 ngày. Tiền cọc được xử lý hoàn trả sau khi kiểm tra hiện trạng căn hộ và đối soát công nợ. Hoàn cọc trong vòng 5-7 ngày làm việc."
+      "content": "Tiền cọc sẽ được hoàn sau khi thanh toán hóa đơn điện nước của tháng cuối cùng trong hợp đồng."
     },
     "update": {
       "content": "HomeIQ có quyền cập nhật chính sách nhằm phù hợp với pháp luật, thị trường và chiến lược phát triển. Phiên bản mới nhất luôn được công bố công khai trên hệ thống."
     },
     "support": {
       "heading": "Đội ngũ HomeIQ luôn sẵn sàng hỗ trợ",
-      "email": "Email: support@homeiq.vn",
-      "phone": "Hotline: 1900 8888",
+      "email": "Email: nhbaotrong@gmail.com",
+      "phone": "Hotline: 0332.667.829",
       "hours": "Thời gian hỗ trợ: 08:00 - 22:00 mỗi ngày",
       "button": "Liên hệ ngay"
     },
