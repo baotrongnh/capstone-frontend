@@ -354,9 +354,9 @@ export default function ApartmentDetail({ params }: { params: Promise<{ id: stri
         <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
           <Users size={22} className="text-primary shrink-0" />
           <div>
-            <p className="text-xs text-muted">{t("specs.concurrentViews")}</p>
+            <p className="text-xs text-muted">Số người ở tối đa</p>
             <p className="font-semibold">
-              {apt?.maxConcurrentViewings} {t("specs.concurrentViewsUnit")}
+              {apt?.maxConcurrentViewings} người
             </p>
           </div>
         </div>
