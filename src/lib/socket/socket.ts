@@ -24,6 +24,15 @@ interface ServerToClientEvents {
           staffName: string
           actorType: string
      }) => void
+     'chat:handoff_status': (payload: {
+          conversationId: string
+          status: 'connecting' | 'connected'
+          handoffReason?: string
+          source?: string
+          actorType?: string
+          senderName?: string | null
+          staffName?: string
+     }) => void
      'chat:user_typing': (payload: {
           conversationId: string
           actorType: string

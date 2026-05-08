@@ -13,7 +13,7 @@ import {
   ChatSocketMessage,
   normalizeChatMessage,
 } from '@/types/chat'
-import { Avatar, Badge, Divider, FloatButton, Space } from 'antd'
+import { Avatar, Badge, Button, Divider, FloatButton, Space, Tag } from 'antd'
 import { MessageCircleQuestionMark } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
@@ -23,6 +23,16 @@ import { ChatMessages } from './chat-messages'
 import { ChatWindow } from './chat-window'
 
 const CHAT_NOTIFICATION_SOUND_URL = '/sounds/notification.wav'
+
+type ChatMode = 'ai' | 'cskh'
+
+const createSystemMessage = (content: string): ChatMessage => ({
+  id: `system-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  content,
+  messageType: 'system',
+  sender: 'support',
+  timestamp: new Date(),
+})
 
 const toUiMessage = (message: ChatSocketMessage): ChatMessage => {
   const parsedTimestamp = new Date(message.timestamp)
@@ -52,6 +62,7 @@ export default function ChatSupport() {
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [unreadSupportCount, setUnreadSupportCount] = useState(0)
+  const [chatMode, setChatMode] = useState<ChatMode>('ai')
   const messagesRef = useRef<ChatMessage[]>([])
   const isCreatingConversationRef = useRef(false)
   const notificationAudioRef = useRef<HTMLAudioElement | null>(null)
@@ -61,6 +72,17 @@ export default function ChatSupport() {
   const currentApartment = apartmentData?.data
 
   const resetUnreadSupport = () => setUnreadSupportCount(0)
+
+  const appendSystemMessage = useCallback((content: string) => {
+    const nextMessages = [...messagesRef.current, createSystemMessage(content)]
+    messagesRef.current = nextMessages
+    setMessages(nextMessages)
+  }, [])
+
+  const setModeWithNotice = useCallback((mode: ChatMode, content: string) => {
+    setChatMode(mode)
+    appendSystemMessage(content)
+  }, [appendSystemMessage])
 
   useEffect(() => {
     messagesRef.current = messages
@@ -100,6 +122,7 @@ export default function ChatSupport() {
     setMessages(normalizedMessages)
     messagesRef.current = normalizedMessages
     setIsLoadingHistory(false)
+    setChatMode('ai')
   }, [])
 
   const sendSupportMessage = useCallback((payload: Pick<ChatMessage, 'content' | 'images' | 'apartmentId'>) => {
@@ -116,6 +139,35 @@ export default function ChatSupport() {
       messageType: payload.images?.length ? 'image' : 'text',
     })
   }, [conversationId, requestSupportConversation])
+
+  const requestCskhMode = useCallback(() => {
+    if (!conversationId) {
+      requestSupportConversation()
+      return
+    }
+
+    setModeWithNotice('cskh', 'Đang kết nối với CSKH. Vui lòng chờ nhân viên hỗ trợ.')
+    socket.emit('chat:send_message', {
+      conversationId,
+      content: 'Tôi muốn chat với CSKH',
+      messageType: 'text',
+    })
+  }, [conversationId, requestSupportConversation, setModeWithNotice])
+
+  const requestAiMode = useCallback(() => {
+    if (!conversationId) {
+      setModeWithNotice('ai', 'Đang kết nối với AI HomeIQ Assistant.')
+      requestSupportConversation()
+      return
+    }
+
+    setModeWithNotice('ai', 'Đang kết nối với AI HomeIQ Assistant.')
+    socket.emit('chat:send_message', {
+      conversationId,
+      content: 'Quay lại chat với AI',
+      messageType: 'text',
+    })
+  }, [conversationId, requestSupportConversation, setModeWithNotice])
 
   const canSendSupportMessage = Boolean(conversationId)
 
@@ -164,6 +216,7 @@ export default function ChatSupport() {
 
   useEffect(() => {
     const handleConnect = () => {
+      setChatMode('ai')
       if (conversationId) {
         setIsLoadingHistory(true)
         socket.emit('chat:join_conversation', { conversationId })
@@ -173,26 +226,44 @@ export default function ChatSupport() {
       ensureSupportConversation()
     }
 
+    const handleDisconnect = () => {
+      setChatMode('ai')
+      appendSystemMessage('Mất kết nối CSKH. Khi kết nối lại, cuộc chat sẽ quay về AI Mode.')
+    }
+
     const handleChatError = (payload: { message: string }) => {
       isCreatingConversationRef.current = false
       setIsLoadingHistory(false)
       console.error('[chat] server error', payload?.message)
     }
 
+    const handleHandoffStatus = (payload: { status: 'connecting' | 'connected'; staffName?: string }) => {
+      if (payload.status === 'connected') {
+        setModeWithNotice('cskh', `${payload.staffName ?? 'CSKH'} đã tham gia hỗ trợ bạn.`)
+        return
+      }
+
+      setModeWithNotice('cskh', 'Đang kết nối với CSKH. Vui lòng chờ nhân viên hỗ trợ.')
+    }
+
     socket.on('connect', handleConnect)
+    socket.on('disconnect', handleDisconnect)
     socket.on('chat:error', handleChatError)
     socket.on('chat:conversation_created', handleConversationCreated)
     socket.on('chat:conversation_data', handleConversationData)
     socket.on('chat:new_message', handleIncomingSocketMessage)
+    socket.on('chat:handoff_status', handleHandoffStatus)
 
     return () => {
       socket.off('connect', handleConnect)
+      socket.off('disconnect', handleDisconnect)
       socket.off('chat:error', handleChatError)
       socket.off('chat:conversation_created', handleConversationCreated)
       socket.off('chat:conversation_data', handleConversationData)
       socket.off('chat:new_message', handleIncomingSocketMessage)
+      socket.off('chat:handoff_status', handleHandoffStatus)
     }
-  }, [conversationId, ensureSupportConversation, handleConversationCreated, handleConversationData, handleIncomingSocketMessage])
+  }, [appendSystemMessage, conversationId, ensureSupportConversation, handleConversationCreated, handleConversationData, handleIncomingSocketMessage, setModeWithNotice])
 
   const handleOpenChat = () => {
     if (!user) {
@@ -258,6 +329,20 @@ export default function ChatSupport() {
 
       <ChatWindow open={isChatOpen} title={title} onClose={() => setIsChatOpen(false)}>
         <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-3 py-2">
+            <Tag color={chatMode === 'ai' ? 'blue' : 'green'} className="mb-0">
+              {chatMode === 'ai' ? 'AI Mode' : 'CSKH Mode'}
+            </Tag>
+            {chatMode === 'ai' ? (
+              <Button size="small" onClick={requestCskhMode} disabled={!canSendSupportMessage}>
+                Chat với CSKH
+              </Button>
+            ) : (
+              <Button size="small" onClick={requestAiMode} disabled={!canSendSupportMessage}>
+                Chat với AI
+              </Button>
+            )}
+          </div>
           <ChatMessages messages={messages} isLoading={isLoadingHistory} />
           <Divider className="my-0" />
           <ChatInput
