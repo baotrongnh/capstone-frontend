@@ -237,7 +237,12 @@ export default function ChatSupport() {
       console.error('[chat] server error', payload?.message)
     }
 
-    const handleHandoffStatus = (payload: { status: 'connecting' | 'connected'; staffName?: string }) => {
+    const handleHandoffStatus = (payload: { status: 'connecting' | 'connected'; staffName?: string; source?: string }) => {
+      if (payload.source === 'ai') {
+        setModeWithNotice('ai', 'Đang kết nối với AI HomeIQ Assistant.')
+        return
+      }
+
       if (payload.status === 'connected') {
         setModeWithNotice('cskh', `${payload.staffName ?? 'CSKH'} đã tham gia hỗ trợ bạn.`)
         return

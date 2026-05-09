@@ -42,7 +42,10 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
       )}
 
       {!isLoading && messages.map((item) => {
-        if (item.messageType === 'system') {
+        const hasAiPayload =
+          !Array.isArray(item.attachments) && Boolean(item.attachments?.ai || item.blocks?.length)
+
+        if (item.messageType === 'system' && !hasAiPayload) {
           return (
             <div key={item.id} className="mb-4 flex justify-center">
               <span className="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700">
